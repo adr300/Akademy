@@ -5,12 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EnergyAcademy – Lernplattform Energiewirtschaft</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 :root {
   --navy:       #0d1f3c;
-  --navy-2:     #162645;
   --blue:       #1a56db;
   --blue-hover: #1447b8;
   --blue-light: #e8f0fd;
@@ -28,133 +27,170 @@
   --warn-bg:    #fef3dc;
   --danger:     #b91c1c;
   --danger-bg:  #fef2f2;
-  --r:          8px;
-  --r-lg:       12px;
-  --r-xl:       16px;
+  --r: 8px; --r-lg: 12px; --r-xl: 16px;
 }
-
 html { scroll-behavior: smooth; }
-
 body {
   font-family: 'Inter', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
+  background: var(--bg); color: var(--text);
+  min-height: 100vh; display: flex; justify-content: center;
   padding: 0 0 4rem;
 }
-
 .app { width: 100%; max-width: 900px; padding: 0 1.25rem; }
 .screen { display: none; flex-direction: column; }
 .screen.active { display: flex; }
 
-/* ─── TOPBAR ─── */
+/* ── LOGIN SCREEN ── */
+.login-wrap {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: 2rem 1.25rem;
+}
+.login-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-xl); padding: 2.5rem 2rem;
+  width: 100%; max-width: 420px;
+  box-shadow: 0 4px 24px rgba(13,31,60,0.08);
+}
+.login-logo {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 2rem;
+}
+.login-logo-mark {
+  width: 40px; height: 40px; background: var(--navy);
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+}
+.login-logo-mark svg { width: 22px; height: 22px; fill: white; }
+.login-logo-text { font-size: 18px; font-weight: 700; color: var(--navy); }
+.login-logo-text span { color: var(--blue); }
+.login-title { font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 6px; letter-spacing: -0.3px; }
+.login-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 2rem; line-height: 1.6; }
+.sso-btn {
+  width: 100%; padding: 11px 16px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif;
+  border-radius: var(--r-lg); cursor: pointer; transition: all 0.15s;
+  margin-bottom: 10px;
+}
+.sso-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+.btn-google {
+  background: white; border: 1px solid var(--border); color: var(--text);
+}
+.btn-google:hover { background: var(--bg); border-color: var(--border-md); }
+.btn-microsoft {
+  background: white; border: 1px solid var(--border); color: var(--text);
+}
+.btn-microsoft:hover { background: var(--bg); border-color: var(--border-md); }
+.login-divider {
+  display: flex; align-items: center; gap: 10px;
+  margin: 1.25rem 0; font-size: 12px; color: var(--text-faint);
+}
+.login-divider::before, .login-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+.login-email-form { display: flex; flex-direction: column; gap: 10px; }
+.login-input {
+  width: 100%; padding: 10px 14px; font-size: 14px; font-family: 'Inter', sans-serif;
+  border: 1px solid var(--border); border-radius: var(--r); background: white;
+  color: var(--text); outline: none; transition: border-color 0.15s;
+}
+.login-input:focus { border-color: var(--blue); }
+.login-input::placeholder { color: var(--text-faint); }
+.btn-email-login {
+  width: 100%; padding: 11px; font-size: 14px; font-weight: 600;
+  font-family: 'Inter', sans-serif; background: var(--navy); color: white;
+  border: none; border-radius: var(--r-lg); cursor: pointer; transition: background 0.15s;
+}
+.btn-email-login:hover { background: #162645; }
+.login-toggle {
+  text-align: center; margin-top: 12px; font-size: 13px; color: var(--text-muted);
+}
+.login-toggle a { color: var(--blue); cursor: pointer; text-decoration: none; font-weight: 500; }
+.login-toggle a:hover { text-decoration: underline; }
+.login-msg {
+  margin-top: 12px; padding: 10px 14px; border-radius: var(--r);
+  font-size: 13px; font-weight: 500; display: none;
+}
+.login-msg.show { display: block; }
+.login-msg.ok { background: var(--success-bg); color: var(--success); border: 1px solid #a7d9be; }
+.login-msg.err { background: var(--danger-bg); color: var(--danger); border: 1px solid #f5b9b9; }
+.login-footer { margin-top: 1.5rem; text-align: center; font-size: 12px; color: var(--text-faint); }
+
+/* ── SITE NAV ── */
 .site-nav {
   display: flex; align-items: center; justify-content: space-between;
   padding: 1.25rem 0 2rem;
-  border-bottom: none;
 }
 .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 .brand-logo {
-  width: 38px; height: 38px;
-  background: var(--navy);
-  border-radius: 8px;
+  width: 38px; height: 38px; background: var(--navy); border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
 }
 .brand-logo svg { width: 20px; height: 20px; fill: white; }
 .brand-text { font-size: 17px; font-weight: 700; color: var(--navy); letter-spacing: -0.3px; }
 .brand-text span { color: var(--blue); }
+.nav-right { display: flex; align-items: center; gap: 10px; }
 .nav-badge {
-  font-size: 12px; color: var(--text-muted);
-  background: var(--surface);
-  border: 1px solid var(--border);
+  font-size: 12px; color: var(--text-muted); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px;
+}
+.nav-user {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--text-muted);
+  background: var(--surface); border: 1px solid var(--border);
   border-radius: 20px; padding: 5px 14px;
 }
+.nav-avatar {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--blue-light); display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: var(--blue); flex-shrink: 0;
+}
+.btn-logout {
+  font-size: 12px; color: var(--text-faint); background: none; border: none;
+  cursor: pointer; padding: 5px 8px; border-radius: 6px; font-family: 'Inter', sans-serif;
+  transition: background 0.15s, color 0.15s;
+}
+.btn-logout:hover { background: var(--danger-bg); color: var(--danger); }
 
-/* ─── HERO ─── */
+/* ── HERO ── */
 .hero {
-  background: var(--navy);
-  border-radius: var(--r-xl);
-  padding: 3rem 2.5rem;
-  margin-bottom: 2rem;
-  color: white;
-  position: relative;
-  overflow: hidden;
+  background: var(--navy); border-radius: var(--r-xl);
+  padding: 3rem 2.5rem; margin-bottom: 2rem; color: white;
+  position: relative; overflow: hidden;
 }
 .hero::before {
-  content: '';
-  position: absolute; top: 0; right: 0; bottom: 0;
-  width: 45%;
+  content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 45%;
   background: linear-gradient(135deg, transparent 0%, rgba(26,86,219,0.25) 100%);
   pointer-events: none;
 }
-.hero-eye {
-  display: inline-block;
-  font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
-  color: #93b4f0; margin-bottom: 14px;
-}
-.hero h1 {
-  font-size: 34px; font-weight: 700; line-height: 1.18;
-  letter-spacing: -0.6px; margin-bottom: 14px;
-  color: #ffffff;
-}
+.hero-eye { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #93b4f0; margin-bottom: 14px; }
+.hero h1 { font-size: 34px; font-weight: 700; line-height: 1.18; letter-spacing: -0.6px; margin-bottom: 14px; color: #fff; }
 .hero h1 span { color: #5b9cf6; }
-.hero-sub {
-  font-size: 15px; color: #94a8c8; line-height: 1.75;
-  max-width: 560px; margin-bottom: 2rem; font-weight: 400;
-}
+.hero-sub { font-size: 15px; color: #94a8c8; line-height: 1.75; max-width: 560px; margin-bottom: 2rem; font-weight: 400; }
 .hero-pills { display: flex; gap: 10px; flex-wrap: wrap; }
 .hero-pill {
-  display: flex; align-items: center; gap: 7px;
-  font-size: 13px; color: #c1d1e8;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; gap: 7px; font-size: 13px; color: #c1d1e8;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
   border-radius: 20px; padding: 6px 14px;
 }
 .hero-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: #5b9cf6; flex-shrink: 0; }
 
-/* ─── SECTION ─── */
+/* ── COURSE GRID ── */
 .section-head { margin-bottom: 1rem; }
-.section-title {
-  font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--text-faint);
-}
-
-/* ─── COURSE CARDS ─── */
-.course-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 14px; margin-bottom: 2rem;
-}
+.section-title { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+.course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-bottom: 2rem; }
 .course-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 1.4rem;
-  cursor: pointer;
-  transition: border-color 0.18s, box-shadow 0.18s, transform 0.15s;
-  position: relative;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: 1.4rem; cursor: pointer; transition: border-color 0.18s, box-shadow 0.18s, transform 0.15s;
   animation: fadeUp 0.35s ease both;
 }
 .course-card:nth-child(1) { animation-delay: 0.05s; }
 .course-card:nth-child(2) { animation-delay: 0.1s; }
 .course-card:nth-child(3) { animation-delay: 0.15s; }
-.course-card:hover {
-  border-color: var(--blue-mid);
-  box-shadow: 0 4px 20px rgba(26,86,219,0.1);
-  transform: translateY(-2px);
-}
+.course-card:hover { border-color: var(--blue-mid); box-shadow: 0 4px 20px rgba(26,86,219,0.1); transform: translateY(-2px); }
 .course-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1rem; }
-.course-icon {
-  width: 44px; height: 44px; border-radius: 10px;
-  display: flex; align-items: center; justify-content: center; font-size: 20px;
-}
+.course-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
 .course-arrow {
-  width: 28px; height: 28px; border-radius: 50%;
-  border: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; color: var(--text-faint);
+  width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-faint);
   transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 .course-card:hover .course-arrow { background: var(--blue); border-color: var(--blue); color: white; }
@@ -166,99 +202,61 @@ body {
 .fill1 { background: #0d9488; }
 .fill2 { background: #d97706; }
 .course-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
-.s-badge {
-  font-size: 10px; font-weight: 600; letter-spacing: 0.05em;
-  text-transform: uppercase; padding: 3px 9px; border-radius: 20px;
-}
+.s-badge { font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 9px; border-radius: 20px; }
 .s-new { background: #f1f5f9; color: var(--text-faint); }
 .s-wip { background: var(--warn-bg); color: var(--warn); }
 .s-done { background: var(--success-bg); color: var(--success); }
 
-/* ─── CHROME (slides + quiz wrapper) ─── */
+/* ── CHROME ── */
 .chrome {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-xl);
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-xl);
   overflow: hidden; display: flex; flex-direction: column; min-height: 560px;
   box-shadow: 0 2px 16px rgba(13,31,60,0.06);
 }
 .chrome-topbar {
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 12px;
-  background: #fafbfd;
+  padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px; background: #fafbfd;
 }
 .btn-back {
-  display: flex; align-items: center; gap: 6px;
-  padding: 6px 13px; font-size: 13px; font-weight: 500;
-  font-family: 'Inter', sans-serif;
-  border: 1px solid var(--border); background: white;
-  color: var(--text-muted); border-radius: 7px; cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
-  white-space: nowrap;
+  display: flex; align-items: center; gap: 6px; padding: 6px 13px; font-size: 13px;
+  font-weight: 500; font-family: 'Inter', sans-serif; border: 1px solid var(--border);
+  background: white; color: var(--text-muted); border-radius: 7px; cursor: pointer;
+  transition: background 0.15s; white-space: nowrap;
 }
-.btn-back:hover { background: var(--bg); border-color: var(--border-md); }
+.btn-back:hover { background: var(--bg); }
 .tb-info { flex: 1; min-width: 0; }
-.tb-title {
-  font-size: 13px; font-weight: 600; color: var(--text);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
+.tb-title { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tb-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
-.tb-chip {
-  font-size: 12px; color: var(--text-muted);
-  background: white; border: 1px solid var(--border);
-  padding: 4px 12px; border-radius: 20px; white-space: nowrap;
-}
+.tb-chip { font-size: 12px; color: var(--text-muted); background: white; border: 1px solid var(--border); padding: 4px 12px; border-radius: 20px; white-space: nowrap; }
 .prog-bar { height: 2px; background: var(--border); }
 .prog-bar-fill { height: 100%; transition: width 0.4s ease; }
 
-/* ─── SLIDES ─── */
-.slide-body {
-  flex: 1; padding: 2.5rem; display: flex; flex-direction: column;
-  justify-content: center; overflow-y: auto;
-}
-.slide-tag {
-  display: inline-block; font-size: 11px; font-weight: 600;
-  letter-spacing: 0.07em; text-transform: uppercase;
-  padding: 4px 12px; border-radius: 20px; margin-bottom: 18px; width: fit-content;
-}
-.slide-h {
-  font-size: 26px; font-weight: 700; color: var(--navy);
-  line-height: 1.22; margin-bottom: 18px; letter-spacing: -0.4px;
-}
+/* ── SLIDES ── */
+.slide-body { flex: 1; padding: 2.5rem; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
+.slide-tag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; margin-bottom: 18px; width: fit-content; }
+.slide-h { font-size: 26px; font-weight: 700; color: var(--navy); line-height: 1.22; margin-bottom: 18px; letter-spacing: -0.4px; }
 .slide-text { font-size: 15px; color: var(--text-muted); line-height: 1.8; }
 .slide-text ul { padding-left: 1.25rem; margin-top: 10px; }
 .slide-text li { margin-bottom: 8px; }
 .slide-text strong { color: var(--navy); font-weight: 600; }
 .info-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 1.5rem; }
-.info-tile {
-  background: var(--bg); border: 1px solid var(--border);
-  border-radius: var(--r); padding: 1rem; text-align: center;
-}
+.info-tile { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); padding: 1rem; text-align: center; }
 .info-num { font-size: 18px; font-weight: 700; color: var(--navy); }
 .info-lbl { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-
 .slide-foot {
   padding: 1.1rem 1.5rem; border-top: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-  background: #fafbfd;
+  display: flex; align-items: center; justify-content: space-between; background: #fafbfd;
 }
 .dots { display: flex; gap: 5px; }
-.dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--border-md); transition: all 0.25s;
-}
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border-md); transition: all 0.25s; }
 .dot.on { width: 18px; border-radius: 3px; background: var(--blue); }
-.btn-nav {
-  padding: 8px 22px; font-size: 14px; font-weight: 600;
-  font-family: 'Inter', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.15s;
-}
+.btn-nav { padding: 8px 22px; font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; border-radius: 8px; cursor: pointer; transition: all 0.15s; }
 .btn-ghost { border: 1px solid var(--border); background: white; color: var(--text-muted); }
 .btn-ghost:hover { background: var(--bg); }
 .btn-solid { border: none; background: var(--blue); color: white; }
 .btn-solid:hover { background: var(--blue-hover); }
 
-/* ─── QUIZ ─── */
+/* ── QUIZ ── */
 .quiz-body { flex: 1; padding: 2rem 2.5rem; overflow-y: auto; }
 .q-segs { display: flex; gap: 6px; margin-bottom: 2rem; }
 .q-seg { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background 0.3s; }
@@ -269,17 +267,15 @@ body {
 .q-opts { display: flex; flex-direction: column; gap: 9px; }
 .q-opt {
   padding: 12px 18px; text-align: left; font-size: 14px; font-weight: 500;
-  font-family: 'Inter', sans-serif; color: var(--text-muted);
-  background: white; border: 1px solid var(--border); border-radius: var(--r);
-  cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 12px;
+  font-family: 'Inter', sans-serif; color: var(--text-muted); background: white;
+  border: 1px solid var(--border); border-radius: var(--r); cursor: pointer;
+  transition: all 0.15s; display: flex; align-items: center; gap: 12px;
 }
 .q-opt::before {
-  content: attr(data-l);
-  width: 26px; height: 26px; border-radius: 6px;
+  content: attr(data-l); width: 26px; height: 26px; border-radius: 6px;
   background: var(--bg); border: 1px solid var(--border-md);
   display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 700; color: var(--text-faint);
-  flex-shrink: 0; transition: all 0.15s;
+  font-size: 11px; font-weight: 700; color: var(--text-faint); flex-shrink: 0; transition: all 0.15s;
 }
 .q-opt:hover:not(:disabled) { border-color: var(--blue-mid); background: var(--blue-light); color: var(--navy); }
 .q-opt:hover:not(:disabled)::before { background: var(--blue-light); border-color: var(--blue); color: var(--blue); }
@@ -287,76 +283,123 @@ body {
 .q-opt.correct::before { background: var(--success); border-color: var(--success); color: white; }
 .q-opt.wrong { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
 .q-opt.wrong::before { background: var(--danger); border-color: var(--danger); color: white; }
-.q-fb {
-  margin-top: 14px; padding: 11px 16px; border-radius: var(--r);
-  font-size: 13px; font-weight: 500; display: none; align-items: center; gap: 10px;
-}
+.q-fb { margin-top: 14px; padding: 11px 16px; border-radius: var(--r); font-size: 13px; font-weight: 500; display: none; align-items: center; gap: 10px; }
 .q-fb.show { display: flex; }
 .q-fb.ok { background: var(--success-bg); color: var(--success); border: 1px solid #a7d9be; }
 .q-fb.fail { background: var(--danger-bg); color: var(--danger); border: 1px solid #f5b9b9; }
-.quiz-foot {
-  padding: 1.1rem 1.5rem; border-top: 1px solid var(--border);
-  background: #fafbfd; display: flex; align-items: center; justify-content: space-between;
-}
+.quiz-foot { padding: 1.1rem 1.5rem; border-top: 1px solid var(--border); background: #fafbfd; display: flex; align-items: center; justify-content: space-between; }
 .q-score { font-size: 13px; color: var(--text-muted); }
 .q-score strong { color: var(--navy); }
 
-/* ─── RESULT ─── */
-.result-body {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; padding: 3rem 2rem; text-align: center;
-}
-.res-icon {
-  width: 80px; height: 80px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 1.5rem;
-}
+/* ── RESULT ── */
+.result-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 2rem; text-align: center; }
+.res-icon { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 1.5rem; }
 .r-pass { background: var(--success-bg); border: 2px solid #a7d9be; }
 .r-fail { background: var(--danger-bg); border: 2px solid #f5b9b9; }
 .res-title { font-size: 26px; font-weight: 700; color: var(--navy); margin-bottom: 8px; letter-spacing: -0.4px; }
 .res-sub { font-size: 14px; color: var(--text-muted); max-width: 420px; line-height: 1.75; margin-bottom: 2rem; }
 .res-stats { display: flex; gap: 12px; margin-bottom: 2rem; }
-.r-stat {
-  background: var(--bg); border: 1px solid var(--border);
-  border-radius: var(--r); padding: 1rem 1.5rem; min-width: 90px;
-}
+.r-stat { background: var(--bg); border: 1px solid var(--border); border-radius: var(--r); padding: 1rem 1.5rem; min-width: 90px; }
 .r-num { font-size: 22px; font-weight: 700; color: var(--navy); }
 .r-lbl { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
 .res-btns { display: flex; flex-direction: column; align-items: center; gap: 10px; }
-.btn-cta {
-  padding: 11px 32px; font-size: 14px; font-weight: 600; border: none;
-  background: var(--blue); color: white; border-radius: 9px; cursor: pointer;
-  transition: background 0.15s, transform 0.12s; font-family: 'Inter', sans-serif;
-}
+.btn-cta { padding: 11px 32px; font-size: 14px; font-weight: 600; border: none; background: var(--blue); color: white; border-radius: 9px; cursor: pointer; transition: background 0.15s, transform 0.12s; font-family: 'Inter', sans-serif; }
 .btn-cta:hover { background: var(--blue-hover); transform: translateY(-1px); }
-.btn-sec {
-  padding: 9px 22px; font-size: 13px; font-weight: 500;
-  background: white; border: 1px solid var(--border);
-  color: var(--text-muted); border-radius: 8px; cursor: pointer;
-  transition: background 0.15s; font-family: 'Inter', sans-serif;
-}
+.btn-sec { padding: 9px 22px; font-size: 13px; font-weight: 500; background: white; border: 1px solid var(--border); color: var(--text-muted); border-radius: 8px; cursor: pointer; transition: background 0.15s; font-family: 'Inter', sans-serif; }
 .btn-sec:hover { background: var(--bg); }
 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ── LOADING ── */
+.loading-screen {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 14px;
 }
+.spinner {
+  width: 36px; height: 36px; border: 3px solid var(--border);
+  border-top-color: var(--blue); border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+.loading-text { font-size: 14px; color: var(--text-muted); }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
-<div class="app">
+
+<!-- LOADING -->
+<div id="loading" class="loading-screen">
+  <div class="spinner"></div>
+  <div class="loading-text">Wird geladen…</div>
+</div>
+
+<!-- LOGIN -->
+<div id="screen-login" style="display:none; width:100%">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="login-logo-mark"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+        <span class="login-logo-text">Energy<span>Academy</span></span>
+      </div>
+      <div class="login-title" id="login-title">Willkommen zurück</div>
+      <div class="login-sub" id="login-sub">Melde dich an, um deine Lernfortschritte zu speichern und auf alle Kurse zuzugreifen.</div>
+
+      <button class="sso-btn btn-google" onclick="loginGoogle()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Mit Google anmelden
+      </button>
+
+      <button class="sso-btn btn-microsoft" onclick="loginMicrosoft()">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11.4 2H2v9.4h9.4V2z" fill="#F25022"/>
+          <path d="M22 2h-9.4v9.4H22V2z" fill="#7FBA00"/>
+          <path d="M11.4 12.6H2V22h9.4v-9.4z" fill="#00A4EF"/>
+          <path d="M22 12.6h-9.4V22H22v-9.4z" fill="#FFB900"/>
+        </svg>
+        Mit Microsoft anmelden
+      </button>
+
+      <div class="login-divider">oder mit E-Mail</div>
+
+      <div class="login-email-form">
+        <input class="login-input" type="email" id="email-input" placeholder="E-Mail-Adresse" autocomplete="email">
+        <input class="login-input" type="password" id="pw-input" placeholder="Passwort" autocomplete="current-password" id="login-pw">
+        <button class="btn-email-login" id="email-btn" onclick="loginEmail()">Anmelden</button>
+      </div>
+
+      <div class="login-toggle">
+        <span id="toggle-text">Noch kein Konto?</span>
+        <a onclick="toggleMode()" id="toggle-link">Registrieren</a>
+      </div>
+
+      <div class="login-msg" id="login-msg"></div>
+      <div class="login-footer">Lernplattform Energiewirtschaft · EnergyAcademy</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app" id="main-app" style="display:none">
 
   <!-- DASHBOARD -->
   <div class="screen active" id="screen-dashboard">
     <nav class="site-nav">
       <div class="brand">
-        <div class="brand-logo">
-          <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        </div>
+        <div class="brand-logo"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
         <span class="brand-text">Energy<span>Academy</span></span>
       </div>
-      <div class="nav-badge" id="nav-badge">0 / 3 abgeschlossen</div>
+      <div class="nav-right">
+        <div class="nav-badge" id="nav-badge">0 / 3 abgeschlossen</div>
+        <div class="nav-user">
+          <div class="nav-avatar" id="nav-avatar">?</div>
+          <span id="nav-email"></span>
+        </div>
+        <button class="btn-logout" onclick="logout()">Abmelden</button>
+      </div>
     </nav>
-
     <div class="hero">
       <div class="hero-eye">Energiewirtschaft · Fachwissen</div>
       <h1>Kompetenz für die<br><span>Energiewende.</span></h1>
@@ -367,7 +410,6 @@ body {
         <div class="hero-pill"><div class="hero-pill-dot" style="background:#f5a623"></div>9 Wissenstests</div>
       </div>
     </div>
-
     <div class="section-head"><div class="section-title">Kurse</div></div>
     <div class="course-grid" id="course-grid"></div>
   </div>
@@ -452,24 +494,21 @@ body {
   </div>
 
 </div>
+
 <script>
+const SUPABASE_URL = 'https://tpwfeqdljiyxfaeebvsm.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwd2ZlcWRsaml5eGZhZWVidnNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MTY1MjQsImV4cCI6MjA5MzE5MjUyNH0.PdONNnswgVaoihmZvFlg_epv8M-QFQyMhamwX6nYvtM';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 const COURSES = [
   {
-    title:"Energiedatenmanagement", icon:"⚡",
-    iconBg:"#e8f0fd", fillCls:"fill0",
-    tagBg:"#e8f0fd", tagC:"#1a56db",
-    btnBg:"#1a56db",
+    title:"Energiedatenmanagement", icon:"⚡", iconBg:"#e8f0fd", fillCls:"fill0",
+    tagBg:"#e8f0fd", tagC:"#1a56db", btnBg:"#1a56db",
     slides:[
-      { tag:"Grundlagen", title:"Was ist Energiedatenmanagement?",
-        text:"Das Energiedatenmanagement (EDM) umfasst die systematische Erfassung, Verarbeitung und Auswertung von Energieverbrauchsdaten. Es bildet das Rückgrat der modernen Energiewirtschaft und ermöglicht eine effiziente Netzführung sowie korrekte Abrechnung.", visual:null },
-      { tag:"Marktprozesse", title:"EDIFACT & Nachrichtenformate",
-        text:"Der Datenaustausch zwischen Marktteilnehmern folgt standardisierten Formaten. Die BDEW-Nachrichtenformate regeln den Austausch zwischen Netzbetreibern, Lieferanten und Messstellenbetreibern in ganz Deutschland.",
-        visual:{ stats:[{n:"MSCONS",l:"Zählerwerte"},{n:"INVOIC",l:"Rechnungsdaten"},{n:"UTILMD",l:"Stammdaten"}] } },
-      { tag:"Smart Meter", title:"Intelligente Messsysteme & Rollout",
-        text:"Der gesetzliche Smart-Meter-Rollout verpflichtet Netzbetreiber zum schrittweisen Einbau moderner Messeinrichtungen. Betroffen sind Verbraucher ab 6.000 kWh/Jahr sowie Einspeiser ab 7 kW installierter Leistung.",
-        visual:{ stats:[{n:"6.000 kWh",l:"Verbraucher-Pflicht"},{n:"7 kW",l:"Einspeiser-Pflicht"},{n:"2032",l:"Abschlussjahr"}] } },
-      { tag:"Datenqualität", title:"Plausibilisierung & Substitution",
-        text:"Hohe Datenqualität ist essenziell für korrekte Abrechnung und Bilanzierung. Typische Maßnahmen umfassen:<ul><li><strong>Plausibilisierung:</strong> Prüfung auf physikalische Grenzwerte</li><li><strong>Substitution:</strong> Berechnung von Ersatzwerten bei Datenlücken</li><li><strong>Aggregation:</strong> Zusammenführung verteilter Messwerte</li></ul>", visual:null }
+      { tag:"Grundlagen", title:"Was ist Energiedatenmanagement?", text:"Das Energiedatenmanagement (EDM) umfasst die systematische Erfassung, Verarbeitung und Auswertung von Energieverbrauchsdaten. Es bildet das Rückgrat der modernen Energiewirtschaft und ermöglicht eine effiziente Netzführung sowie korrekte Abrechnung.", visual:null },
+      { tag:"Marktprozesse", title:"EDIFACT & Nachrichtenformate", text:"Der Datenaustausch zwischen Marktteilnehmern folgt standardisierten Formaten. Die BDEW-Nachrichtenformate regeln den Austausch zwischen Netzbetreibern, Lieferanten und Messstellenbetreibern in ganz Deutschland.", visual:{ stats:[{n:"MSCONS",l:"Zählerwerte"},{n:"INVOIC",l:"Rechnungsdaten"},{n:"UTILMD",l:"Stammdaten"}] } },
+      { tag:"Smart Meter", title:"Intelligente Messsysteme & Rollout", text:"Der gesetzliche Smart-Meter-Rollout verpflichtet Netzbetreiber zum schrittweisen Einbau moderner Messeinrichtungen. Betroffen sind Verbraucher ab 6.000 kWh/Jahr sowie Einspeiser ab 7 kW installierter Leistung.", visual:{ stats:[{n:"6.000 kWh",l:"Verbraucher-Pflicht"},{n:"7 kW",l:"Einspeiser-Pflicht"},{n:"2032",l:"Abschlussjahr"}] } },
+      { tag:"Datenqualität", title:"Plausibilisierung & Substitution", text:"Hohe Datenqualität ist essenziell für korrekte Abrechnung und Bilanzierung. Typische Maßnahmen umfassen:<ul><li><strong>Plausibilisierung:</strong> Prüfung auf physikalische Grenzwerte</li><li><strong>Substitution:</strong> Berechnung von Ersatzwerten bei Datenlücken</li><li><strong>Aggregation:</strong> Zusammenführung verteilter Messwerte</li></ul>", visual:null }
     ],
     questions:[
       { q:"Welches EDIFACT-Format wird für den Austausch von Zählerstandswerten genutzt?", opts:["INVOIC","MSCONS","UTILMD","ORDERS"], answer:1 },
@@ -478,21 +517,13 @@ const COURSES = [
     ]
   },
   {
-    title:"SAP IS-U", icon:"🔧",
-    iconBg:"#e6f7f4", fillCls:"fill1",
-    tagBg:"#e6f7f4", tagC:"#0d7e6c",
-    btnBg:"#0d9488",
+    title:"SAP IS-U", icon:"🔧", iconBg:"#e6f7f4", fillCls:"fill1",
+    tagBg:"#e6f7f4", tagC:"#0d7e6c", btnBg:"#0d9488",
     slides:[
-      { tag:"Überblick", title:"SAP IS-U – Industry Solution Utilities",
-        text:"SAP IS-U (Industry Solution for Utilities) ist ein spezialisiertes ERP-System für Energieversorger und Netzbetreiber. Es deckt alle Kernprozesse von der Kundenabrechnung über das Zählerwesen bis hin zum Energiedatenmanagement vollständig ab.", visual:null },
-      { tag:"Module", title:"Kernmodule im Überblick",
-        text:"SAP IS-U gliedert sich in funktionale Bereiche:<ul><li><strong>FI-CA:</strong> Contract Accounting – Debitorenbuchhaltung & Abrechnung</li><li><strong>DM:</strong> Device Management – Zähler- und Geräteverwaltung</li><li><strong>EDM:</strong> Energy Data Management – Messdatenverarbeitung</li></ul>",
-        visual:{ stats:[{n:"FI-CA",l:"Abrechnung"},{n:"DM",l:"Geräte"},{n:"EDM",l:"Messdaten"}] } },
-      { tag:"Prozesse", title:"Abrechnungsprozess in SAP IS-U",
-        text:"Die Abrechnung in SAP IS-U folgt einem strukturierten Ablauf: Zählerstandsablesung → Plausibilisierung → Verbrauchsermittlung → Tarifierung → Rechnungsdruck → Buchung im FI-CA. Jeder Schritt ist eng mit den Stammdaten verknüpft.", visual:null },
-      { tag:"Stammdaten", title:"Stammdatenstrukturen",
-        text:"Die IS-U-Datenhierarchie bildet die Grundlage aller Prozesse:<ul><li><strong>Geschäftspartner</strong> → Vertrag → Vertragsart</li><li><strong>Anlage</strong> → Anlagenteil → Sparte (Strom, Gas, Wasser)</li><li><strong>Gerät</strong> → Zählpunkt (POD) → Register</li></ul>",
-        visual:{ stats:[{n:"GP",l:"Geschäftspartner"},{n:"POD",l:"Zählpunkt"},{n:"MR",l:"Ablesung"}] } }
+      { tag:"Überblick", title:"SAP IS-U – Industry Solution Utilities", text:"SAP IS-U (Industry Solution for Utilities) ist ein spezialisiertes ERP-System für Energieversorger und Netzbetreiber. Es deckt alle Kernprozesse von der Kundenabrechnung über das Zählerwesen bis hin zum Energiedatenmanagement vollständig ab.", visual:null },
+      { tag:"Module", title:"Kernmodule im Überblick", text:"SAP IS-U gliedert sich in funktionale Bereiche:<ul><li><strong>FI-CA:</strong> Contract Accounting – Debitorenbuchhaltung & Abrechnung</li><li><strong>DM:</strong> Device Management – Zähler- und Geräteverwaltung</li><li><strong>EDM:</strong> Energy Data Management – Messdatenverarbeitung</li></ul>", visual:{ stats:[{n:"FI-CA",l:"Abrechnung"},{n:"DM",l:"Geräte"},{n:"EDM",l:"Messdaten"}] } },
+      { tag:"Prozesse", title:"Abrechnungsprozess in SAP IS-U", text:"Die Abrechnung in SAP IS-U folgt einem strukturierten Ablauf: Zählerstandsablesung → Plausibilisierung → Verbrauchsermittlung → Tarifierung → Rechnungsdruck → Buchung im FI-CA. Jeder Schritt ist eng mit den Stammdaten verknüpft.", visual:null },
+      { tag:"Stammdaten", title:"Stammdatenstrukturen", text:"Die IS-U-Datenhierarchie bildet die Grundlage aller Prozesse:<ul><li><strong>Geschäftspartner</strong> → Vertrag → Vertragsart</li><li><strong>Anlage</strong> → Anlagenteil → Sparte (Strom, Gas, Wasser)</li><li><strong>Gerät</strong> → Zählpunkt (POD) → Register</li></ul>", visual:{ stats:[{n:"GP",l:"Geschäftspartner"},{n:"POD",l:"Zählpunkt"},{n:"MR",l:"Ablesung"}] } }
     ],
     questions:[
       { q:"Wofür steht FI-CA in SAP IS-U?", opts:["Financial Calculation","Contract Accounting","Customer Accounting","Cash Accounting"], answer:1 },
@@ -501,20 +532,13 @@ const COURSES = [
     ]
   },
   {
-    title:"Excel für Energiedaten", icon:"📊",
-    iconBg:"#fff8e6", fillCls:"fill2",
-    tagBg:"#fff8e6", tagC:"#92600a",
-    btnBg:"#d97706",
+    title:"Excel für Energiedaten", icon:"📊", iconBg:"#fff8e6", fillCls:"fill2",
+    tagBg:"#fff8e6", tagC:"#92600a", btnBg:"#d97706",
     slides:[
-      { tag:"Grundlagen", title:"Excel im Energiedatenmanagement",
-        text:"Excel ist das meistgenutzte Analysetool in der Energiewirtschaft. Von der Lastganganalyse bis zur Bilanzkreisabrechnung – fundierte Excel-Kenntnisse sind für Fachkräfte unverzichtbar und ermöglichen schnelle, flexible Auswertungen ohne Programmierkenntnisse.", visual:null },
-      { tag:"Formeln", title:"Schlüsselformeln für Energiedaten",
-        text:"Die wichtigsten Excel-Formeln für die Energiedatenanalyse:<ul><li><strong>SUMMEWENNS:</strong> Verbrauch nach Zeitfenstern und Zählpunkten auswerten</li><li><strong>XVERWEIS:</strong> Stammdaten mit Messwerten verknüpfen</li><li><strong>MITTELWERTWENN:</strong> Durchschnittslasten nach Kategorien berechnen</li></ul>", visual:null },
-      { tag:"Pivot", title:"Pivot-Tabellen für Lastgangdaten",
-        text:"Pivot-Tabellen ermöglichen die schnelle Aggregation großer Lastgangmengen. Typische Auswertungen: Tages- und Wochenzusammenfassungen, Peak-Analyse, Jahresvergleiche sowie Aufteilung nach Zählpunkten.",
-        visual:{ stats:[{n:"15 min",l:"Granularität"},{n:"35.040",l:"Werte pro Jahr"},{n:"kWh / kW",l:"Einheiten"}] } },
-      { tag:"Automatisierung", title:"Power Query & VBA",
-        text:"Für wiederkehrende Aufgaben lohnt sich die Automatisierung:<ul><li><strong>Power Query:</strong> Import & Transformation von EDIFACT-Dateien</li><li><strong>VBA-Makros:</strong> Automatisierung standardisierter Monatsreports</li><li><strong>Power BI:</strong> Interaktive Dashboards für das Management</li></ul>", visual:null }
+      { tag:"Grundlagen", title:"Excel im Energiedatenmanagement", text:"Excel ist das meistgenutzte Analysetool in der Energiewirtschaft. Von der Lastganganalyse bis zur Bilanzkreisabrechnung – fundierte Excel-Kenntnisse sind für Fachkräfte unverzichtbar und ermöglichen schnelle, flexible Auswertungen ohne Programmierkenntnisse.", visual:null },
+      { tag:"Formeln", title:"Schlüsselformeln für Energiedaten", text:"Die wichtigsten Excel-Formeln für die Energiedatenanalyse:<ul><li><strong>SUMMEWENNS:</strong> Verbrauch nach Zeitfenstern und Zählpunkten auswerten</li><li><strong>XVERWEIS:</strong> Stammdaten mit Messwerten verknüpfen</li><li><strong>MITTELWERTWENN:</strong> Durchschnittslasten nach Kategorien berechnen</li></ul>", visual:null },
+      { tag:"Pivot", title:"Pivot-Tabellen für Lastgangdaten", text:"Pivot-Tabellen ermöglichen die schnelle Aggregation großer Lastgangmengen. Typische Auswertungen: Tages- und Wochenzusammenfassungen, Peak-Analyse, Jahresvergleiche sowie Aufteilung nach Zählpunkten.", visual:{ stats:[{n:"15 min",l:"Granularität"},{n:"35.040",l:"Werte pro Jahr"},{n:"kWh / kW",l:"Einheiten"}] } },
+      { tag:"Automatisierung", title:"Power Query & VBA", text:"Für wiederkehrende Aufgaben lohnt sich die Automatisierung:<ul><li><strong>Power Query:</strong> Import & Transformation von EDIFACT-Dateien</li><li><strong>VBA-Makros:</strong> Automatisierung standardisierter Monatsreports</li><li><strong>Power BI:</strong> Interaktive Dashboards für das Management</li></ul>", visual:null }
     ],
     questions:[
       { q:"Wie viele 15-Minuten-Messwerte enthält ein vollständiger Jahreslastgang?", opts:["8.760","17.520","35.040","52.560"], answer:2 },
@@ -524,72 +548,189 @@ const COURSES = [
   }
 ];
 
-let ci=0,si=0,qi=0,correct=0;
-const prog=JSON.parse(localStorage.getItem('ea3')||'{}');
-const save=()=>localStorage.setItem('ea3',JSON.stringify(prog));
+let ci=0, si=0, qi=0, correct=0;
+let currentUser = null;
+let userProgress = {};
+let isRegister = false;
 
-function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
-function showDash(){ renderDash(); show('screen-dashboard'); }
+// ── AUTH ──
+async function init() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    await setUser(session.user);
+  } else {
+    showLogin();
+  }
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session) {
+      await setUser(session.user);
+    } else if (event === 'SIGNED_OUT') {
+      currentUser = null; userProgress = {};
+      showLogin();
+    }
+  });
+}
 
-function renderDash(){
-  const done=Object.values(prog).filter(v=>v===100).length;
-  document.getElementById('nav-badge').textContent=`${done} / ${COURSES.length} abgeschlossen`;
-  const g=document.getElementById('course-grid'); g.innerHTML='';
-  COURSES.forEach((c,i)=>{
-    const pct=prog[i]||0,isDone=pct===100,isWip=pct>0&&pct<100;
-    const d=document.createElement('div'); d.className='course-card'; d.onclick=()=>startCourse(i);
-    d.innerHTML=`
+async function setUser(user) {
+  currentUser = user;
+  const email = user.email || user.user_metadata?.email || '';
+  const initials = email ? email[0].toUpperCase() : '?';
+  document.getElementById('nav-avatar').textContent = initials;
+  document.getElementById('nav-email').textContent = email.split('@')[0];
+  await loadProgress();
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+  showDash();
+}
+
+function showLogin() {
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('screen-login').style.display = 'block';
+  document.getElementById('main-app').style.display = 'none';
+}
+
+async function loginGoogle() {
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.href }
+  });
+  if (error) showMsg(error.message, 'err');
+}
+
+async function loginMicrosoft() {
+  const { error } = await sb.auth.signInWithOAuth({
+    provider: 'azure',
+    options: { redirectTo: window.location.href }
+  });
+  if (error) showMsg(error.message, 'err');
+}
+
+async function loginEmail() {
+  const email = document.getElementById('email-input').value.trim();
+  const pw = document.getElementById('pw-input').value;
+  if (!email || !pw) { showMsg('Bitte E-Mail und Passwort eingeben.', 'err'); return; }
+  const btn = document.getElementById('email-btn');
+  btn.disabled = true; btn.textContent = '…';
+  const fn = isRegister
+    ? sb.auth.signUp({ email, password: pw })
+    : sb.auth.signInWithPassword({ email, password: pw });
+  const { error } = await fn;
+  btn.disabled = false; btn.textContent = isRegister ? 'Registrieren' : 'Anmelden';
+  if (error) { showMsg(error.message, 'err'); return; }
+  if (isRegister) showMsg('Bestätigungsmail gesendet! Bitte E-Mail prüfen.', 'ok');
+}
+
+function toggleMode() {
+  isRegister = !isRegister;
+  document.getElementById('login-title').textContent = isRegister ? 'Konto erstellen' : 'Willkommen zurück';
+  document.getElementById('login-sub').textContent = isRegister
+    ? 'Erstelle dein Konto und starte deine Lernreise.'
+    : 'Melde dich an, um deine Lernfortschritte zu speichern.';
+  document.getElementById('toggle-text').textContent = isRegister ? 'Bereits ein Konto?' : 'Noch kein Konto?';
+  document.getElementById('toggle-link').textContent = isRegister ? 'Anmelden' : 'Registrieren';
+  document.getElementById('email-btn').textContent = isRegister ? 'Registrieren' : 'Anmelden';
+}
+
+function showMsg(text, type) {
+  const el = document.getElementById('login-msg');
+  el.textContent = text; el.className = `login-msg show ${type}`;
+}
+
+async function logout() {
+  await sb.auth.signOut();
+}
+
+// ── PROGRESS ──
+async function loadProgress() {
+  const { data } = await sb.from('user_progress')
+    .select('course_index, completed, score')
+    .eq('user_id', currentUser.id);
+  userProgress = {};
+  if (data) data.forEach(r => { userProgress[r.course_index] = { completed: r.completed, score: r.score }; });
+}
+
+async function saveProgress(courseIndex, score) {
+  await sb.from('user_progress').upsert({
+    user_id: currentUser.id,
+    course_index: courseIndex,
+    completed: true,
+    score: score,
+    updated_at: new Date().toISOString()
+  }, { onConflict: 'user_id,course_index' });
+  userProgress[courseIndex] = { completed: true, score };
+}
+
+// ── DASHBOARD ──
+function showDash() {
+  const done = Object.values(userProgress).filter(v => v.completed).length;
+  document.getElementById('nav-badge').textContent = `${done} / ${COURSES.length} abgeschlossen`;
+  const g = document.getElementById('course-grid'); g.innerHTML = '';
+  COURSES.forEach((c, i) => {
+    const p = userProgress[i];
+    const isDone = p?.completed, isWip = false;
+    const pct = isDone ? 100 : 0;
+    const d = document.createElement('div'); d.className = 'course-card'; d.onclick = () => startCourse(i);
+    d.innerHTML = `
       <div class="course-card-top">
         <div class="course-icon" style="background:${c.iconBg}">${c.icon}</div>
         <div class="course-arrow">→</div>
       </div>
       <div class="course-name">${c.title}</div>
-      <div class="course-meta">${c.slides.length} Module · ${c.questions.length} Testfragen</div>
+      <div class="course-meta">${c.slides.length} Module · ${c.questions.length} Testfragen${isDone ? ` · ${p.score}% erreicht` : ''}</div>
       <div class="course-prog"><div class="prog-fill ${c.fillCls}" style="width:${pct}%"></div></div>
       <div class="course-foot">
-        <span class="s-badge ${isDone?'s-done':isWip?'s-wip':'s-new'}">${isDone?'✓ Abgeschlossen':isWip?'In Bearbeitung':'Neu'}</span>
+        <span class="s-badge ${isDone?'s-done':'s-new'}">${isDone?'✓ Abgeschlossen':'Neu'}</span>
       </div>`;
     g.appendChild(d);
   });
+  showScreen('screen-dashboard');
 }
 
-function startCourse(idx){ ci=idx;si=0;renderSlide();show('screen-slides'); }
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function showScreen(id) { show(id); }
 
-function renderSlide(){
-  const c=COURSES[ci],s=c.slides[si],total=c.slides.length;
-  const pct=Math.round(((si+1)/total)*100);
-  document.getElementById('sl-title').textContent=c.title;
-  document.getElementById('sl-sub').textContent=`Modul ${si+1} von ${total}`;
-  document.getElementById('sl-count').textContent=`${si+1} / ${total}`;
-  const p=document.getElementById('sl-prog'); p.style.width=pct+'%'; p.style.background=c.btnBg;
-  let vis='';
-  if(s.visual) vis=`<div class="info-grid">${s.visual.stats.map(st=>`<div class="info-tile"><div class="info-num">${st.n}</div><div class="info-lbl">${st.l}</div></div>`).join('')}</div>`;
-  document.getElementById('slide-body').innerHTML=`
+function startCourse(idx) { ci = idx; si = 0; renderSlide(); show('screen-slides'); }
+
+function renderSlide() {
+  const c = COURSES[ci], s = c.slides[si], total = c.slides.length;
+  const pct = Math.round(((si+1)/total)*100);
+  document.getElementById('sl-title').textContent = c.title;
+  document.getElementById('sl-sub').textContent = `Modul ${si+1} von ${total}`;
+  document.getElementById('sl-count').textContent = `${si+1} / ${total}`;
+  const p = document.getElementById('sl-prog'); p.style.width = pct+'%'; p.style.background = c.btnBg;
+  let vis = '';
+  if (s.visual) vis = `<div class="info-grid">${s.visual.stats.map(st=>`<div class="info-tile"><div class="info-num">${st.n}</div><div class="info-lbl">${st.l}</div></div>`).join('')}</div>`;
+  document.getElementById('slide-body').innerHTML = `
     <div class="slide-tag" style="background:${c.tagBg};color:${c.tagC}">${s.tag}</div>
     <div class="slide-h">${s.title}</div>
     <div class="slide-text">${s.text}${vis}</div>`;
-  document.getElementById('dots').innerHTML=c.slides.map((_,i)=>`<div class="dot ${i===si?'on':''}"></div>`).join('');
-  document.getElementById('btn-prev').style.visibility=si===0?'hidden':'visible';
-  const nb=document.getElementById('btn-next');
-  nb.textContent=si===total-1?'Zum Test →':'Weiter →';
-  nb.style.background=c.btnBg;
+  document.getElementById('dots').innerHTML = c.slides.map((_,i) => `<div class="dot ${i===si?'on':''}"></div>`).join('');
+  document.getElementById('btn-prev').style.visibility = si === 0 ? 'hidden' : 'visible';
+  const nb = document.getElementById('btn-next');
+  nb.textContent = si === total-1 ? 'Zum Test →' : 'Weiter →';
+  nb.style.background = c.btnBg;
 }
 
-function prevSlide(){ if(si>0){si--;renderSlide();} }
-function nextSlide(){ const c=COURSES[ci]; if(si<c.slides.length-1){si++;renderSlide();}else startQuiz(); }
+function prevSlide() { if(si>0){si--;renderSlide();} }
+function nextSlide() { const c=COURSES[ci]; if(si<c.slides.length-1){si++;renderSlide();}else startQuiz(); }
 
-function startQuiz(){ qi=0;correct=0;renderQ();show('screen-quiz'); }
-function retry(){ startQuiz(); }
+function startQuiz() { qi=0;correct=0;renderQ();show('screen-quiz'); }
+function retry() { startQuiz(); }
 
-function renderQ(){
+function renderQ() {
   const c=COURSES[ci],q=c.questions[qi],total=c.questions.length;
-  document.getElementById('qz-title').textContent=c.title;
-  document.getElementById('qz-count').textContent=`${qi+1} / ${total}`;
-  document.getElementById('q-lbl').textContent=`Frage ${qi+1} von ${total}`;
-  document.getElementById('q-text').textContent=q.q;
-  document.getElementById('q-fb').className='q-fb';
-  document.getElementById('qz-score').innerHTML=`Richtig: <strong>${correct}</strong>`;
-  document.getElementById('q-segs').innerHTML=c.questions.map((_,i)=>`<div class="q-seg ${i<qi?'done':i===qi?'cur':''}"></div>`).join('');
+  document.getElementById('qz-title').textContent = c.title;
+  document.getElementById('qz-count').textContent = `${qi+1} / ${total}`;
+  document.getElementById('q-lbl').textContent = `Frage ${qi+1} von ${total}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-fb').className = 'q-fb';
+  document.getElementById('qz-score').innerHTML = `Richtig: <strong>${correct}</strong>`;
+  document.getElementById('q-segs').innerHTML = c.questions.map((_,i)=>`<div class="q-seg ${i<qi?'done':i===qi?'cur':''}"></div>`).join('');
   const nb=document.getElementById('qz-next');
   nb.disabled=true; nb.style.background=c.btnBg;
   nb.textContent=qi===total-1?'Ergebnis →':'Nächste →';
@@ -599,22 +740,22 @@ function renderQ(){
   });
 }
 
-function pick(idx){
+function pick(idx) {
   const c=COURSES[ci],q=c.questions[qi];
   document.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
   const btns=document.querySelectorAll('.q-opt');
   const fb=document.getElementById('q-fb');
-  if(idx===q.answer){ btns[idx].classList.add('correct'); correct++; fb.innerHTML='✓ &nbsp;Richtig! Sehr gut.'; fb.className='q-fb show ok'; }
-  else { btns[idx].classList.add('wrong'); btns[q.answer].classList.add('correct'); fb.innerHTML='✗ &nbsp;Leider falsch. Die richtige Antwort ist grün markiert.'; fb.className='q-fb show fail'; }
+  if(idx===q.answer){btns[idx].classList.add('correct');correct++;fb.innerHTML='✓ &nbsp;Richtig! Sehr gut.';fb.className='q-fb show ok';}
+  else{btns[idx].classList.add('wrong');btns[q.answer].classList.add('correct');fb.innerHTML='✗ &nbsp;Leider falsch. Die richtige Antwort ist grün markiert.';fb.className='q-fb show fail';}
   document.getElementById('qz-score').innerHTML=`Richtig: <strong>${correct}</strong>`;
   document.getElementById('qz-next').disabled=false;
 }
 
-function nextQ(){ const c=COURSES[ci]; if(qi<c.questions.length-1){qi++;renderQ();}else showResult(); }
+function nextQ() { const c=COURSES[ci]; if(qi<c.questions.length-1){qi++;renderQ();}else showResult(); }
 
-function showResult(){
+async function showResult() {
   const c=COURSES[ci],total=c.questions.length,pct=Math.round((correct/total)*100),pass=pct>=70;
-  prog[ci]=100; save();
+  await saveProgress(ci, pct);
   document.getElementById('res-course').textContent=c.title;
   document.getElementById('res-icon').textContent=pass?'✓':'✗';
   document.getElementById('res-icon').className='res-icon '+(pass?'r-pass':'r-fail');
@@ -629,8 +770,8 @@ function showResult(){
   show('screen-result');
 }
 
-function goBack(){ showDash(); }
-showDash();
+function goBack() { showDash(); }
+init();
 </script>
 </body>
 </html>
