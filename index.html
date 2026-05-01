@@ -944,20 +944,23 @@ function showDash(){
     const daysLeft=dl?Math.ceil((dl-new Date())/(1000*60*60*24)):null;
     const isOverdue=daysLeft!==null&&daysLeft<0&&!isDone;
 
-    const d=document.createElement('div');d.className=`course-card c${i%3}`;d.onclick=()=>startCourse(i);
-    d.innerHTML=`
-      <div class="cc-top">
-        <div class="cc-icon" style="background:${c.icon_bg||'#0a1f18'}">${c.icon||'📚'}</div>
-        <div class="cc-badges">
-          ${isMandatory&&!isDone?`<span class="badge ${isOverdue?'b-overdue':'b-mandatory'}">${isOverdue?'Überfällig':daysLeft<=3?`${daysLeft}d':'Pflicht'}</span>`:''}
-          <div class="cc-arrow">→</div>
-        </div>
-      </div>
-      <div class="cc-name">${c.title}</div>
-      <div class="cc-meta">${c.slides.length} Module · ${c.questions.length} Testfragen${isDone?` · ${p.score}% erreicht`:''}</div>
-      ${dl&&!isDone?`<div style="font-size:11px;color:${isOverdue?'var(--red)':'var(--amber)'};margin-top:6px">Deadline: ${dl.toLocaleDateString('de-DE')}</div>`:''}
-      <div class="cc-prog"><div class="cc-fill" style="width:${pct}%;background:${fill}"></div></div>
-      <div class="cc-foot"><span class="badge ${isDone?'b-done':'b-new'}">${isDone?'✓ Abgeschlossen':'Neu'}</span></div>`;
+    const mandatoryBadge = isMandatory&&!isDone ? ('<span class="badge '+(isOverdue?'b-overdue':'b-mandatory')+'">'+( isOverdue?'Überfällig':daysLeft!==null&&daysLeft<=3?(daysLeft+'d'):'Pflicht')+'</span>') : '';
+    const deadlineRow = dl&&!isDone ? '<div style="font-size:11px;color:'+(isOverdue?'var(--red)':'var(--amber)')+';margin-top:6px">Deadline: '+dl.toLocaleDateString('de-DE')+'</div>' : '';
+    const metaExtra = isDone ? ' · '+p.score+'% erreicht' : '';
+    const d=document.createElement('div');d.className='course-card c'+(i%3);d.onclick=()=>startCourse(i);
+    d.innerHTML=
+      '<div class="cc-top">'+
+        '<div class="cc-icon" style="background:'+(c.icon_bg||'#0a1f18')+'">'+( c.icon||'📚')+'</div>'+
+        '<div class="cc-badges">'+
+          mandatoryBadge+
+          '<div class="cc-arrow">→</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="cc-name">'+c.title+'</div>'+
+      '<div class="cc-meta">'+c.slides.length+' Module · '+c.questions.length+' Testfragen'+metaExtra+'</div>'+
+      deadlineRow+
+      '<div class="cc-prog"><div class="cc-fill" style="width:'+pct+'%;background:'+fill+'"></div></div>'+
+      '<div class="cc-foot"><span class="badge '+(isDone?'b-done':'b-new')+'">'+(isDone?'✓ Abgeschlossen':'Neu')+'</span></div>';
     g.appendChild(d);
   });
   showScreen('screen-dashboard');
