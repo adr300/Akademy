@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AcademyPortal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.09);
+    --border-md: rgba(0,0,0,0.16);
+    --text: #1a1a18;
+    --text-muted: #6b6b67;
+    --text-faint: #9f9f9a;
+    --accent: #1D9E75;
+    --accent-light: #e1f5ee;
+    --accent-dark: #0F6E56;
+    --danger: #c94040;
+    --danger-light: #fdf0f0;
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 760px;
+    background: var(--surface);
+    border-radius: 20px;
+    border: 0.5px solid var(--border-md);
+    overflow: hidden;
+    min-height: 560px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 40px rgba(0,0,0,0.07);
+  }
+
+  .screen { display: none; flex-direction: column; flex: 1; }
+  .screen.active { display: flex; }
+
+  /* ── HEADER ── */
+  .app-header {
+    padding: 1.25rem 1.75rem;
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--surface);
+  }
+  .logo-mark {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .logo-label { font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
+  .logo-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+  .header-right { margin-left: auto; font-size: 13px; color: var(--text-muted); }
+
+  /* ── DASHBOARD ── */
+  .dash-hero {
+    padding: 2rem 1.75rem 1.25rem;
+  }
+  .dash-hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .dash-hero p { font-size: 14px; color: var(--text-muted); }
+
+  .section-label {
+    padding: 0.5rem 1.75rem 0.75rem;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .course-grid {
+    padding: 0 1.75rem 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .course-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.1rem 1.1rem 1rem;
+    cursor: pointer;
+    transition: box-shadow 0.18s, border-color 0.18s, transform 0.12s;
+  }
+  .course-card:hover {
+    border-color: var(--border-md);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+    transform: translateY(-1px);
+  }
+  .course-icon {
+    width: 44px; height: 44px;
+    border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    margin-bottom: 14px;
+  }
+  .course-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .course-meta { font-size: 12px; color: var(--text-muted); }
+  .progress-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 12px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .course-badge {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: #f0f0eb;
+    color: var(--text-muted);
+  }
+  .course-badge.done { background: var(--accent-light); color: var(--accent-dark); }
+  .course-badge.wip { background: #fef9e6; color: #8a6400; }
+
+  /* ── SLIDES ── */
+  .slide-topbar {
+    padding: 1rem 1.75rem;
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .btn-back {
+    padding: 5px 13px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    border: 0.5px solid var(--border-md);
+    background: transparent;
+    color: var(--text-muted);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-back:hover { background: var(--bg); }
+  .topbar-title { font-size: 14px; font-weight: 600; flex: 1; color: var(--text); }
+  .topbar-counter { font-size: 13px; color: var(--text-muted); }
+
+  .slide-prog-track { height: 2px; background: var(--border); }
+  .slide-prog-fill { height: 100%; background: var(--accent); transition: width 0.35s ease; }
+
+  .slide-body {
+    flex: 1;
+    padding: 2.25rem 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: auto;
+  }
+  .slide-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 4px 11px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+    width: fit-content;
+  }
+  .slide-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.25;
+  }
+  .slide-text {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.75;
+  }
+  .slide-text ul { padding-left: 1.25rem; margin-top: 8px; }
+  .slide-text li { margin-bottom: 6px; }
+  .slide-text strong { color: var(--text); font-weight: 600; }
+
+  .stat-card {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .stat-card-label { font-size: 12px; color: var(--text-faint); margin-bottom: 12px; font-weight: 500; }
+  .stat-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .stat-item {
+    flex: 1;
+    min-width: 90px;
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.9rem 1rem;
+    text-align: center;
+  }
+  .stat-num { font-size: 20px; font-weight: 600; color: var(--text); }
+  .stat-lbl { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+
+  .slide-footer {
+    padding: 1.1rem 1.75rem;
+    border-top: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .dot-row { display: flex; gap: 6px; }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border-md);
+    transition: background 0.2s, transform 0.2s;
+  }
+  .dot.active { background: var(--accent); transform: scale(1.3); }
+
+  .btn-nav {
+    padding: 8px 22px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-prev {
+    border: 0.5px solid var(--border-md);
+    background: transparent;
+    color: var(--text-muted);
+  }
+  .btn-prev:hover { background: var(--bg); }
+  .btn-prev[style*="hidden"] { visibility: hidden; }
+  .btn-next {
+    border: none;
+    background: var(--accent);
+    color: #fff;
+  }
+  .btn-next:hover { background: var(--accent-dark); }
+
+  /* ── QUIZ ── */
+  .quiz-body {
+    flex: 1;
+    padding: 1.75rem 2rem;
+    overflow-y: auto;
+  }
+  .q-label { font-size: 12px; color: var(--text-faint); font-weight: 500; margin-bottom: 10px; }
+  .q-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    line-height: 1.35;
+  }
+  .q-options { display: flex; flex-direction: column; gap: 9px; }
+  .q-opt {
+    padding: 11px 16px;
+    text-align: left;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .q-opt:hover:not(:disabled) { border-color: var(--border-md); background: var(--bg); }
+  .q-opt.correct { background: var(--accent-light); border-color: var(--accent); color: var(--accent-dark); font-weight: 500; }
+  .q-opt.wrong { background: var(--danger-light); border-color: var(--danger); color: var(--danger); }
+
+  .q-feedback {
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    display: none;
+  }
+  .q-feedback.show { display: block; }
+  .q-feedback.ok { background: var(--accent-light); color: var(--accent-dark); border: 0.5px solid var(--accent); }
+  .q-feedback.fail { background: var(--danger-light); color: var(--danger); border: 0.5px solid var(--danger); }
+
+  .quiz-footer {
+    padding: 1.1rem 1.75rem;
+    border-top: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .quiz-score-label { font-size: 13px; color: var(--text-muted); }
+
+  /* ── RESULT ── */
+  .result-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 2rem;
+    text-align: center;
+  }
+  .result-badge {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    margin-bottom: 1.5rem;
+  }
+  .result-badge.pass { background: var(--accent-light); color: var(--accent); }
+  .result-badge.fail { background: var(--danger-light); color: var(--danger); }
+  .result-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .result-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 2rem; max-width: 380px; }
+  .result-stats { display: flex; gap: 12px; margin-bottom: 2rem; }
+  .result-stat {
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.5rem;
+    min-width: 90px;
+  }
+  .result-stat-n { font-size: 22px; font-weight: 600; color: var(--text); }
+  .result-stat-l { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+  .btn-cta {
+    padding: 10px 28px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-cta:hover { background: var(--accent-dark); }
+  .btn-retry {
+    margin-top: 10px;
+    padding: 8px 20px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    background: transparent;
+    border: 0.5px solid var(--border-md);
+    color: var(--text-muted);
+    border-radius: 9px;
+    cursor: pointer;
+  }
+  .btn-retry:hover { background: var(--bg); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- DASHBOARD -->
+  <div class="screen active" id="screen-dashboard">
+    <div class="app-header">
+      <div class="logo-mark">A</div>
+      <div>
+        <div class="logo-label">AcademyPortal</div>
+        <div class="logo-sub">Deine Lernplattform</div>
+      </div>
+      <div class="header-right" id="dash-progress-summary"></div>
+    </div>
+    <div class="dash-hero">
+      <h1>Willkommen zurück</h1>
+      <p>Wähle einen Kurs und lerne in deinem eigenen Tempo.</p>
+    </div>
+    <div class="section-label">Verfügbare Kurse</div>
+    <div class="course-grid" id="course-grid"></div>
+  </div>
+
+  <!-- SLIDES -->
+  <div class="screen" id="screen-slides">
+    <div class="slide-topbar">
+      <button class="btn-back" onclick="goBack()">← Zurück</button>
+      <span class="topbar-title" id="slide-course-name"></span>
+      <span class="topbar-counter" id="slide-counter"></span>
+    </div>
+    <div class="slide-prog-track"><div class="slide-prog-fill" id="slide-prog"></div></div>
+    <div class="slide-body" id="slide-body"></div>
+    <div class="slide-footer">
+      <button class="btn-nav btn-prev" id="btn-prev" onclick="prevSlide()">← Zurück</button>
+      <div class="dot-row" id="dot-row"></div>
+      <button class="btn-nav btn-next" id="btn-next" onclick="nextSlide()">Weiter →</button>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="screen" id="screen-quiz">
+    <div class="slide-topbar">
+      <button class="btn-back" onclick="goBack()">← Zurück</button>
+      <span class="topbar-title" id="quiz-course-name"></span>
+      <span class="topbar-counter" id="quiz-counter"></span>
+    </div>
+    <div class="quiz-body">
+      <div class="q-label" id="q-label"></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="q-options" id="q-options"></div>
+      <div class="q-feedback" id="q-feedback"></div>
+    </div>
+    <div class="quiz-footer">
+      <span class="quiz-score-label" id="quiz-score-label"></span>
+      <button class="btn-nav btn-next" id="quiz-next-btn" onclick="nextQuestion()" disabled>Nächste →</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="screen" id="screen-result">
+    <div class="app-header">
+      <div class="logo-mark">A</div>
+      <div>
+        <div class="logo-label">AcademyPortal</div>
+        <div class="logo-sub">Testergebnis</div>
+      </div>
+    </div>
+    <div class="result-body">
+      <div class="result-badge" id="result-badge"></div>
+      <div class="result-title" id="result-title"></div>
+      <div class="result-sub" id="result-sub"></div>
+      <div class="result-stats">
+        <div class="result-stat"><div class="result-stat-n" id="res-correct"></div><div class="result-stat-l">Richtig</div></div>
+        <div class="result-stat"><div class="result-stat-n" id="res-total"></div><div class="result-stat-l">Fragen</div></div>
+        <div class="result-stat"><div class="result-stat-n" id="res-pct"></div><div class="result-stat-l">Ergebnis</div></div>
+      </div>
+      <button class="btn-cta" onclick="showDashboard()">Zur Übersicht</button>
+      <button class="btn-retry" id="retry-btn" onclick="retryQuiz()">Test wiederholen</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const COURSES = [
+  {
+    id: 0,
+    title: "Datenschutz Grundlagen",
+    icon: "🔒",
+    color: "#E6F1FB",
+    slides: [
+      {
+        tag: "Einführung",
+        title: "Was ist Datenschutz?",
+        text: "Datenschutz bezeichnet den Schutz personenbezogener Daten vor Missbrauch. Er sichert das Recht jedes Menschen, selbst über die Verwendung seiner Daten zu bestimmen.",
+        visual: null
+      },
+      {
+        tag: "Rechtliches",
+        title: "Die DSGVO im Überblick",
+        text: "Die Datenschutz-Grundverordnung (DSGVO) gilt seit Mai 2018 in der gesamten EU. Sie regelt, wie Unternehmen mit personenbezogenen Daten umgehen müssen.",
+        visual: { label: "Eckdaten der DSGVO", stats: [{ n: "2018", l: "In Kraft getreten" }, { n: "6", l: "Grundprinzipien" }, { n: "99", l: "Artikel" }] }
+      },
+      {
+        tag: "Begriffe",
+        title: "Personenbezogene Daten",
+        text: "Personenbezogene Daten sind alle Informationen, die sich auf eine identifizierbare Person beziehen:<ul><li>Name, Adresse, E-Mail-Adresse</li><li>IP-Adresse, Standortdaten</li><li>Gesundheitsdaten, biometrische Merkmale</li></ul>",
+        visual: null
+      },
+      {
+        tag: "Pflichten",
+        title: "Pflichten von Unternehmen",
+        text: "Unternehmen müssen die Verarbeitung dokumentieren, eine Rechtsgrundlage nachweisen, Betroffenenrechte wahren und bei Datenpannen die Behörden informieren.",
+        visual: { label: "Sanktionen & Fristen", stats: [{ n: "20 Mio €", l: "Max. Bußgeld" }, { n: "4 %", l: "Jahresumsatz" }, { n: "72 h", l: "Meldefrist" }] }
+      }
+    ],
+    questions: [
+      { q: "Seit wann gilt die DSGVO?", opts: ["Januar 2016", "Mai 2018", "März 2020", "Juli 2022"], answer: 1 },
+      { q: "Was zählt zu personenbezogenen Daten?", opts: ["Firmenname", "IP-Adresse einer Person", "Aktuelle Uhrzeit", "Wettervorhersage"], answer: 1 },
+      { q: "Wie lange haben Unternehmen Zeit, einen Datenschutzverstoß zu melden?", opts: ["24 Stunden", "48 Stunden", "72 Stunden", "7 Tage"], answer: 2 }
+    ]
+  },
+  {
+    id: 1,
+    title: "Cybersicherheit Basics",
+    icon: "🛡️",
+    color: "#FAEEDA",
+    slides: [
+      {
+        tag: "Einführung",
+        title: "Was ist Cybersicherheit?",
+        text: "Cybersicherheit schützt Computer, Netzwerke und Daten vor digitalen Angriffen. In einer vernetzten Welt ist sie essenziell für Unternehmen und Privatpersonen gleichermaßen.",
+        visual: null
+      },
+      {
+        tag: "Bedrohungen",
+        title: "Häufige Angriffsarten",
+        text: "Die verbreitetsten Angriffsmethoden im Überblick:<ul><li><strong>Phishing:</strong> Täuschende E-Mails oder gefälschte Webseiten</li><li><strong>Malware:</strong> Schädliche Software, die Systeme infiziert</li><li><strong>Ransomware:</strong> Datenverschlüsselung mit Lösegeld-Forderung</li></ul>",
+        visual: null
+      },
+      {
+        tag: "Schutz",
+        title: "Starke Passwörter",
+        text: "Ein sicheres Passwort ist mindestens 12 Zeichen lang, enthält Groß- und Kleinbuchstaben, Zahlen sowie Sonderzeichen und wird für jedes Konto nur einmal verwendet.",
+        visual: { label: "Sicherheitsstandards", stats: [{ n: "12+", l: "Zeichen mindestens" }, { n: "2FA", l: "Zwei-Faktor-Auth." }, { n: "0×", l: "Wiederverwendung" }] }
+      },
+      {
+        tag: "Verhalten",
+        title: "Sicher im Alltag",
+        text: "Grundlegende Regeln für sicheres Verhalten online: regelmäßige Software-Updates einspielen, nur verschlüsselte WLAN-Verbindungen nutzen, unbekannte Anhänge niemals öffnen und regelmäßige Backups erstellen.",
+        visual: null
+      }
+    ],
+    questions: [
+      { q: "Was ist Phishing?", opts: ["Ein Computervirus", "Täuschende E-Mails oder Webseiten", "Eine Firewall-Technik", "Ein Backup-Verfahren"], answer: 1 },
+      { q: "Wie lang sollte ein sicheres Passwort mindestens sein?", opts: ["6 Zeichen", "8 Zeichen", "12 Zeichen", "20 Zeichen"], answer: 2 },
+      { q: "Was ist Ransomware?", opts: ["Antiviren-Software", "Datenverschlüsselung gegen Lösegeld", "Ein Passwort-Manager", "Eine Backup-Lösung"], answer: 1 }
+    ]
+  },
+  {
+    id: 2,
+    title: "Arbeitsrecht Kompakt",
+    icon: "⚖️",
+    color: "#FBEAF0",
+    slides: [
+      {
+        tag: "Grundlagen",
+        title: "Das Arbeitsverhältnis",
+        text: "Ein Arbeitsverhältnis entsteht durch einen Arbeitsvertrag. Es begründet gegenseitige Rechte und Pflichten zwischen Arbeitgeber und Arbeitnehmer und ist durch viele gesetzliche Regelungen geschützt.",
+        visual: null
+      },
+      {
+        tag: "Rechte",
+        title: "Arbeitnehmerrechte",
+        text: "Arbeitnehmer haben gesetzlichen Anspruch auf wichtige Mindeststandards:<ul><li>Gesetzlicher Mindestlohn (aktuell 12,41 €/Std.)</li><li>Mindestens 24 Werktage Urlaub pro Jahr</li><li>Entgeltfortzahlung im Krankheitsfall bis zu 6 Wochen</li></ul>",
+        visual: { label: "Gesetzliche Mindeststandards", stats: [{ n: "12,41 €", l: "Mindestlohn/Std." }, { n: "24", l: "Mindesturlaubstage" }, { n: "6 Wo.", l: "Lohnfortzahlung" }] }
+      },
+      {
+        tag: "Kündigung",
+        title: "Kündigung & Fristen",
+        text: "Die gesetzliche Mindestkündigungsfrist beträgt 4 Wochen. Nach 2 Betriebsjahren verlängert sie sich auf 1 Monat, nach 5 Jahren auf 2 Monate – jeweils zum Monatsende.",
+        visual: null
+      }
+    ],
+    questions: [
+      { q: "Wie viele Werktage Urlaub stehen Arbeitnehmern mindestens zu?", opts: ["20 Tage", "24 Tage", "28 Tage", "30 Tage"], answer: 1 },
+      { q: "Wie lang ist die gesetzliche Mindestkündigungsfrist?", opts: ["2 Wochen", "4 Wochen", "6 Wochen", "8 Wochen"], answer: 1 },
+      { q: "Ab wann verlängert sich die Frist auf 1 Monat zum Monatsende?", opts: ["Nach 1 Jahr", "Nach 2 Jahren", "Nach 5 Jahren", "Nach 10 Jahren"], answer: 1 }
+    ]
+  }
+];
+
+let courseIdx = 0, slideIdx = 0, quizIdx = 0, correct = 0;
+const progress = JSON.parse(localStorage.getItem('ap_progress') || '{}');
+
+function saveProgress() {
+  localStorage.setItem('ap_progress', JSON.stringify(progress));
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showDashboard() {
+  renderDashboard();
+  showScreen('screen-dashboard');
+}
+
+function renderDashboard() {
+  const done = Object.values(progress).filter(v => v === 100).length;
+  document.getElementById('dash-progress-summary').textContent =
+    done ? `${done} / ${COURSES.length} abgeschlossen` : '';
+
+  const grid = document.getElementById('course-grid');
+  grid.innerHTML = '';
+  COURSES.forEach((c, i) => {
+    const pct = progress[i] || 0;
+    const isDone = pct === 100;
+    const inProg = pct > 0 && pct < 100;
+    const card = document.createElement('div');
+    card.className = 'course-card';
+    card.onclick = () => startCourse(i);
+    card.innerHTML = `
+      <div class="course-icon" style="background:${c.color}">${c.icon}</div>
+      <div class="course-title">${c.title}</div>
+      <div class="course-meta">${c.slides.length} Slides · ${c.questions.length} Fragen</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <span class="course-badge ${isDone ? 'done' : inProg ? 'wip' : ''}">
+        ${isDone ? '✓ Abgeschlossen' : inProg ? 'Fortgesetzt' : 'Neu'}
+      </span>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function startCourse(idx) {
+  courseIdx = idx;
+  slideIdx = 0;
+  renderSlide();
+  showScreen('screen-slides');
+}
+
+function renderSlide() {
+  const c = COURSES[courseIdx];
+  const s = c.slides[slideIdx];
+  const total = c.slides.length;
+  const pct = Math.round(((slideIdx + 1) / total) * 100);
+
+  document.getElementById('slide-course-name').textContent = c.title;
+  document.getElementById('slide-counter').textContent = `${slideIdx + 1} / ${total}`;
+  document.getElementById('slide-prog').style.width = pct + '%';
+
+  let visualHTML = '';
+  if (s.visual) {
+    const statsHTML = s.visual.stats.map(st =>
+      `<div class="stat-item"><div class="stat-num">${st.n}</div><div class="stat-lbl">${st.l}</div></div>`
+    ).join('');
+    visualHTML = `<div class="stat-card"><div class="stat-card-label">${s.visual.label}</div><div class="stat-row">${statsHTML}</div></div>`;
+  }
+
+  document.getElementById('slide-body').innerHTML = `
+    <div class="slide-tag">${s.tag}</div>
+    <div class="slide-title">${s.title}</div>
+    <div class="slide-text">${s.text}${visualHTML}</div>
+  `;
+
+  const dots = document.getElementById('dot-row');
+  dots.innerHTML = c.slides.map((_, i) =>
+    `<div class="dot ${i === slideIdx ? 'active' : ''}"></div>`
+  ).join('');
+
+  const prevBtn = document.getElementById('btn-prev');
+  prevBtn.style.visibility = slideIdx === 0 ? 'hidden' : 'visible';
+
+  const nextBtn = document.getElementById('btn-next');
+  nextBtn.textContent = slideIdx === total - 1 ? 'Zum Test →' : 'Weiter →';
+}
+
+function prevSlide() {
+  if (slideIdx > 0) { slideIdx--; renderSlide(); }
+}
+
+function nextSlide() {
+  const c = COURSES[courseIdx];
+  if (slideIdx < c.slides.length - 1) {
+    slideIdx++;
+    renderSlide();
+  } else {
+    startQuiz();
+  }
+}
+
+function startQuiz() {
+  quizIdx = 0;
+  correct = 0;
+  renderQuestion();
+  showScreen('screen-quiz');
+}
+
+function retryQuiz() {
+  startQuiz();
+}
+
+function renderQuestion() {
+  const c = COURSES[courseIdx];
+  const q = c.questions[quizIdx];
+  const total = c.questions.length;
+
+  document.getElementById('quiz-course-name').textContent = c.title + ' – Test';
+  document.getElementById('quiz-counter').textContent = `${quizIdx + 1} / ${total}`;
+  document.getElementById('q-label').textContent = `Frage ${quizIdx + 1} von ${total}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-feedback').className = 'q-feedback';
+  document.getElementById('quiz-score-label').textContent = `Richtig: ${correct}`;
+
+  const nextBtn = document.getElementById('quiz-next-btn');
+  nextBtn.disabled = true;
+  nextBtn.textContent = quizIdx === c.questions.length - 1 ? 'Ergebnis →' : 'Nächste →';
+
+  const opts = document.getElementById('q-options');
+  opts.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'q-opt';
+    btn.textContent = opt;
+    btn.onclick = () => pickAnswer(i);
+    opts.appendChild(btn);
+  });
+}
+
+function pickAnswer(idx) {
+  const c = COURSES[courseIdx];
+  const q = c.questions[quizIdx];
+  const btns = document.querySelectorAll('.q-opt');
+  btns.forEach(b => b.disabled = true);
+
+  const fb = document.getElementById('q-feedback');
+  if (idx === q.answer) {
+    btns[idx].classList.add('correct');
+    correct++;
+    fb.textContent = '✓ Richtig! Sehr gut.';
+    fb.className = 'q-feedback show ok';
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.answer].classList.add('correct');
+    fb.textContent = '✗ Leider falsch. Die richtige Antwort ist grün markiert.';
+    fb.className = 'q-feedback show fail';
+  }
+
+  document.getElementById('quiz-score-label').textContent = `Richtig: ${correct}`;
+  document.getElementById('quiz-next-btn').disabled = false;
+}
+
+function nextQuestion() {
+  const c = COURSES[courseIdx];
+  if (quizIdx < c.questions.length - 1) {
+    quizIdx++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function showResult() {
+  const c = COURSES[courseIdx];
+  const total = c.questions.length;
+  const pct = Math.round((correct / total) * 100);
+  const pass = pct >= 70;
+
+  progress[courseIdx] = 100;
+  saveProgress();
+
+  document.getElementById('result-badge').textContent = pass ? '✓' : '✗';
+  document.getElementById('result-badge').className = 'result-badge ' + (pass ? 'pass' : 'fail');
+  document.getElementById('result-title').textContent = pass ? 'Kurs abgeschlossen!' : 'Nicht bestanden';
+  document.getElementById('result-sub').textContent = pass
+    ? 'Herzlichen Glückwunsch! Du hast den Abschlusstest erfolgreich bestanden.'
+    : 'Du hast weniger als 70 % erreicht. Wiederhole den Test, um den Kurs abzuschließen.';
+  document.getElementById('res-correct').textContent = correct;
+  document.getElementById('res-total').textContent = total;
+  document.getElementById('res-pct').textContent = pct + ' %';
+
+  showScreen('screen-result');
+}
+
+function goBack() {
+  showDashboard();
+}
+
+showDashboard();
+</script>
+</body>
+</html>
