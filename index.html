@@ -407,6 +407,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div class="admin-wrap">
       <div class="admin-tabs">
         <button class="admin-tab active" onclick="adminTab('courses')">Kursverwaltung</button>
+        <button class="admin-tab" onclick="adminTab('import')">Kurs importieren</button>
         <button class="admin-tab" onclick="adminTab('progress')">Nutzer-Fortschritt</button>
       </div>
 
@@ -417,6 +418,36 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
           <button class="btn-add" onclick="openCourseModal(null)">+ Kurs hinzufügen</button>
         </div>
         <div class="admin-course-list" id="admin-course-list"></div>
+      </div>
+
+
+      <!-- IMPORT TAB -->
+      <div class="admin-section" id="atab-import">
+        <div class="sec-head"><div class="sec-title">Kurs importieren</div></div>
+        <div id="drop-zone">
+          <div class="drop-icon">📂</div>
+          <div class="drop-title">Kursdatei hier ablegen</div>
+          <div class="drop-sub">Ziehe eine <code>.html</code> Kursdatei hier rein oder klicke zum Auswählen</div>
+          <button class="btn-add" style="margin-top:1rem" onclick="document.getElementById('file-input').click()">Datei auswählen</button>
+          <input type="file" id="file-input" accept=".html" style="display:none" onchange="handleFileSelect(event)">
+        </div>
+        <div id="import-preview" style="display:none">
+          <div class="import-preview-card">
+            <div class="import-preview-top">
+              <div class="import-preview-icon" id="prev-icon"></div>
+              <div>
+                <div class="import-preview-title" id="prev-title"></div>
+                <div class="import-preview-meta" id="prev-meta"></div>
+              </div>
+            </div>
+            <div class="import-preview-stats" id="prev-stats"></div>
+            <div class="import-actions">
+              <button class="btn-sec" onclick="cancelImport()">Abbrechen</button>
+              <button class="btn-add" onclick="confirmImport()">✓ Kurs importieren</button>
+            </div>
+          </div>
+        </div>
+        <div class="msg" id="import-msg" style="margin-top:1rem"></div>
       </div>
 
       <!-- PROGRESS TAB -->
