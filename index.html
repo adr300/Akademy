@@ -834,14 +834,32 @@ function renderAdmin(){
 }
 
 async function loadAdminProgress(){
-  const{data}=await sb.from('user_progress').select('*,users:user_id(email)').order('updated_at',{ascending:false});
-  const tbody=document.getElementById('progress-tbody');tbody.innerHTML='';
-  if(!data||data.length===0){tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--faint);padding:2rem">Noch keine Daten</td></tr>';return;}
+  const tbody=document.getElementById('progress-tbody');
+  tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--faint);padding:2rem">Wird geladen…</td></tr>';
 
-  const{data:authUsers}=await sb.auth.admin?.listUsers()||{data:null};
-  const total=data.length;
-  const passed=data.filter(r=>r.score>=70).length;
-  const avgScore=total?Math.round(data.reduce((a,r)=>a+r.score,0)/total):0;
+  // Load progress + emails in parallel
+  const [{data:progData, error:progErr}, {data:emailData}] = await Promise.all([
+    sb.from('user_progress').select('*').order('updated_at',{ascending:false}),
+    sb.from('user_emails').select('id,email')
+  ]);
+
+  if(progErr || !progData){
+    tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--err);padding:2rem">Fehler beim Laden. Bitte SQL-Policies prüfen.</td></tr>';
+    return;
+  }
+
+  // Build email lookup map
+  const emailMap={};
+  if(emailData) emailData.forEach(u=>{ emailMap[u.id]=u.email; });
+
+  tbody.innerHTML='';
+  if(progData.length===0){
+    tbody.innerHTML='<tr><td colspan="4" style="text-align:center;color:var(--faint);padding:2rem">Noch keine Abschlüsse vorhanden</td></tr>';
+  }
+
+  const total=progData.length;
+  const passed=progData.filter(r=>r.score>=70).length;
+  const avgScore=total?Math.round(progData.reduce((a,r)=>a+(r.score||0),0)/total):0;
 
   document.getElementById('admin-stats-row').innerHTML=`
     <div class="stat-card"><div class="stat-card-n">${total}</div><div class="stat-card-l">Abschlüsse gesamt</div></div>
@@ -849,16 +867,16 @@ async function loadAdminProgress(){
     <div class="stat-card"><div class="stat-card-n">${avgScore}%</div><div class="stat-card-l">Ø Score</div></div>
     <div class="stat-card"><div class="stat-card-n">${courses.length}</div><div class="stat-card-l">Aktive Kurse</div></div>`;
 
-  data.forEach(r=>{
+  progData.forEach(r=>{
     const course=courses[r.course_index];
-    const email=r.user_id.slice(0,8)+'…';
+    const email=emailMap[r.user_id]||r.user_id.slice(0,8)+'…';
     const date=new Date(r.updated_at).toLocaleDateString('de-DE');
     const scoreClass=r.score>=70?'score-pass':r.score>0?'score-fail':'score-none';
     const tr=document.createElement('tr');
     tr.innerHTML=`
-      <td style="font-family:monospace;font-size:12px">${email}</td>
+      <td style="font-size:13px">${email}</td>
       <td>${course?.title||'Unbekannt'}</td>
-      <td><span class="score-pill ${scoreClass}">${r.score}%</span></td>
+      <td><span class="score-pill ${scoreClass}">${r.score||0}%</span></td>
       <td style="color:var(--faint)">${date}</td>`;
     tbody.appendChild(tr);
   });
