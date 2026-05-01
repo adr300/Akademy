@@ -246,6 +246,24 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .score-pass{background:var(--ok-bg);color:var(--ok);}
 .score-fail{background:var(--err-bg);color:var(--err);}
 .score-none{background:#f1f5f9;color:var(--faint);}
+
+/* IMPORT */
+#drop-zone{border:2px dashed var(--border-md);border-radius:var(--rx);padding:3rem 2rem;text-align:center;transition:all .2s;background:var(--surface);cursor:pointer;}
+#drop-zone.drag-over{border-color:var(--blue);background:var(--blue-l);}
+.drop-icon{font-size:40px;margin-bottom:1rem;}
+.drop-title{font-size:16px;font-weight:600;color:var(--navy);margin-bottom:6px;}
+.drop-sub{font-size:13px;color:var(--muted);}
+.drop-sub code{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:12px;}
+.import-preview-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:1.5rem;margin-top:1rem;}
+.import-preview-top{display:flex;align-items:center;gap:14px;margin-bottom:1.25rem;}
+.import-preview-icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+.import-preview-title{font-size:17px;font-weight:700;color:var(--navy);}
+.import-preview-meta{font-size:13px;color:var(--muted);margin-top:3px;}
+.import-preview-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:1.25rem;}
+.import-stat{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:.75rem 1rem;text-align:center;}
+.import-stat-n{font-size:18px;font-weight:700;color:var(--navy);}
+.import-stat-l{font-size:11px;color:var(--muted);margin-top:3px;}
+.import-actions{display:flex;justify-content:flex-end;gap:10px;}
 .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:2rem;}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);padding:1.1rem 1.25rem;}
 .stat-card-n{font-size:24px;font-weight:700;color:var(--navy);}
@@ -428,7 +446,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
           <div class="drop-icon">📂</div>
           <div class="drop-title">Kursdatei hier ablegen</div>
           <div class="drop-sub">Ziehe eine <code>.html</code> Kursdatei hier rein oder klicke zum Auswählen</div>
-          <button class="btn-add" style="margin-top:1rem" onclick="document.getElementById('file-input').click()">Datei auswählen</button>
+          <button class="btn-add" style="margin-top:1rem" onclick="openFilePicker()">Datei auswählen</button>
           <input type="file" id="file-input" accept=".html" style="display:none" onchange="handleFileSelect(event)">
         </div>
         <div id="import-preview" style="display:none">
@@ -671,10 +689,11 @@ function switchView(v){
 }
 
 function adminTab(tab){
-  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['courses','progress'][i]===tab));
+  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['courses','import','progress'][i]===tab));
   document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
   document.getElementById('atab-'+tab).classList.add('active');
   if(tab==='progress') loadAdminProgress();
+  if(tab==='import') initDropZone();
 }
 
 // ── USER DASHBOARD ──
@@ -1024,6 +1043,109 @@ function closeModal(id){document.getElementById(id).classList.remove('show');}
 document.querySelectorAll('.modal-overlay').forEach(o=>{
   o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');});
 });
+
+// ── IMPORT ──
+let pendingImport = null;
+let dropZoneInited = false;
+
+function initDropZone(){
+  if(dropZoneInited) return;
+  dropZoneInited = true;
+  const zone = document.getElementById('drop-zone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if(file) readImportFile(file);
+  });
+  zone.addEventListener('click', e => {
+    if(e.target.tagName !== 'BUTTON') document.getElementById('file-input').click();
+  });
+}
+
+function handleFileSelect(e){
+  const file = e.target.files[0];
+  if(file) readImportFile(file);
+  e.target.value = '';
+}
+
+function readImportFile(file){
+  if(!file.name.endsWith('.html')){ showImportMsg('Nur .html Kursdateien werden unterstützt.','err'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    const text = e.target.result;
+    const match = text.match(/<!--ENERGYACADEMY_COURSE-->([\s\S]*?)<!--\/ENERGYACADEMY_COURSE-->/);
+    if(!match){ showImportMsg('Ungültige Datei. Bitte nur EnergyAcademy-Kursdateien verwenden.','err'); return; }
+    try {
+      const data = JSON.parse(match[1].trim());
+      pendingImport = data;
+      showImportPreview(data);
+    } catch(err){ showImportMsg('Fehler beim Lesen der Datei: '+err.message,'err'); }
+  };
+  reader.readAsText(file);
+}
+
+function showImportPreview(data){
+  document.getElementById('drop-zone').style.display = 'none';
+  document.getElementById('import-msg').className = 'msg';
+  document.getElementById('prev-icon').textContent = data.icon || '📚';
+  document.getElementById('prev-icon').style.background = data.icon_bg || '#e8f0fd';
+  document.getElementById('prev-title').textContent = data.title;
+  document.getElementById('prev-meta').textContent = `${data.slides?.length||0} Slides · ${data.questions?.length||0} Testfragen`;
+  document.getElementById('prev-stats').innerHTML = [
+    { n: data.slides?.length||0, l: 'Slides' },
+    { n: data.questions?.length||0, l: 'Testfragen' },
+    { n: data.icon||'📚', l: 'Icon' }
+  ].map(s=>`<div class="import-stat"><div class="import-stat-n">${s.n}</div><div class="import-stat-l">${s.l}</div></div>`).join('');
+  document.getElementById('import-preview').style.display = 'block';
+}
+
+function cancelImport(){
+  pendingImport = null;
+  document.getElementById('import-preview').style.display = 'none';
+  document.getElementById('drop-zone').style.display = 'block';
+}
+
+async function confirmImport(){
+  if(!pendingImport) return;
+  const d = pendingImport;
+  const courseData = {
+    title: d.title, icon: d.icon||'📚',
+    icon_bg: d.icon_bg||'#e8f0fd', tag_bg: d.tag_bg||'#e8f0fd',
+    tag_color: d.tag_color||'#1a56db', btn_color: d.btn_color||'#1a56db',
+    sort_order: courses.length
+  };
+  const { data: created, error } = await sb.from('courses').insert(courseData).select().single();
+  if(error){ showImportMsg('Fehler: '+error.message,'err'); return; }
+  const courseId = created.id;
+  if(d.slides?.length){
+    await sb.from('slides').insert(d.slides.map((s,i)=>({
+      course_id:courseId, sort_order:i, tag:s.tag, title:s.title, content:s.content,
+      stat1_num:s.stat1_num, stat1_lbl:s.stat1_lbl,
+      stat2_num:s.stat2_num, stat2_lbl:s.stat2_lbl,
+      stat3_num:s.stat3_num, stat3_lbl:s.stat3_lbl
+    })));
+  }
+  if(d.questions?.length){
+    await sb.from('questions').insert(d.questions.map((q,i)=>({
+      course_id:courseId, sort_order:i, question:q.question,
+      opt_a:q.opt_a, opt_b:q.opt_b, opt_c:q.opt_c, opt_d:q.opt_d,
+      correct_index:q.correct_index
+    })));
+  }
+  pendingImport = null;
+  document.getElementById('import-preview').style.display = 'none';
+  document.getElementById('drop-zone').style.display = 'block';
+  showImportMsg(`✓ Kurs „${d.title}" erfolgreich importiert!`,'ok');
+  await loadCourses();
+  renderAdmin();
+}
+
+function showImportMsg(text, type){
+  const el = document.getElementById('import-msg');
+  el.textContent = text; el.className = `msg show ${type}`;
+}
 
 init();
 </script>
