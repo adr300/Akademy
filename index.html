@@ -374,6 +374,36 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 @keyframes pulse{0%,100%{opacity:.3;transform:scale(1);}50%{opacity:1;transform:scale(1.2);}}
 .ki-thinking-text{font-size:13px;color:var(--text2);}
 .ki-stream-box{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rl);padding:1rem 1.25rem;margin-top:1rem;font-size:13px;color:var(--text2);line-height:1.7;min-height:60px;font-family:monospace;white-space:pre-wrap;display:none;}
+
+/* ── LEARNING PATHS ── */
+.path-section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;margin-top:.5rem;}
+.path-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:2rem;}
+.path-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rx);padding:1.5rem;transition:border-color .2s,transform .18s;animation:fadeUp .4s ease both;}
+.path-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.path-card-head{display:flex;align-items:center;gap:12px;margin-bottom:1rem;}
+.path-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--bg3);border:1px solid var(--border2);flex-shrink:0;}
+.path-title{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.2px;}
+.path-meta{font-size:12px;color:var(--text3);margin-top:2px;}
+.path-pct{margin-left:auto;font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:var(--path-color,var(--green));}
+.path-prog-track{height:3px;background:var(--border2);border-radius:2px;margin-bottom:1.25rem;overflow:hidden;}
+.path-prog-fill{height:100%;border-radius:2px;background:var(--path-color,var(--green));transition:width .5s ease;}
+.path-steps{display:flex;flex-direction:column;}
+.path-step{display:flex;align-items:center;gap:12px;padding:8px 0;}
+.ps-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;border:1px solid var(--border2);background:var(--bg3);color:var(--text3);transition:all .2s;}
+.ps-done .ps-dot{background:var(--path-color,var(--green));border-color:var(--path-color,var(--green));color:#020d08;}
+.ps-next .ps-dot{background:var(--bg3);border-color:var(--path-color,var(--green));color:var(--path-color,var(--green));box-shadow:0 0 10px rgba(16,185,129,0.25);}
+.ps-locked .ps-dot{opacity:.4;}
+.ps-info{flex:1;min-width:0;}
+.ps-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ps-locked .ps-name{color:var(--text3);}
+.ps-status{font-size:11px;color:var(--text3);margin-top:2px;}
+.ps-next .ps-status{color:var(--path-color,var(--green));}
+.ps-btn{padding:5px 12px;font-size:12px;font-weight:700;font-family:'Inter',sans-serif;background:var(--path-color,var(--green));color:#020d08;border:none;border-radius:6px;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;}
+.ps-btn:hover{filter:brightness(1.1);}
+.ps-connector{width:2px;height:16px;background:var(--border2);margin-left:13px;border-radius:1px;}
+.ps-conn-done{background:var(--path-color,var(--green));}
+/* admin path */
+.admin-path-list{display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem;}
 </style>
 </head>
 <body>
@@ -452,7 +482,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <div class="deadline-banner-title">⚠ Offene Pflicht-Kurse</div>
         <div id="deadline-list"></div>
       </div>
-      <div class="sec-head"><div class="sec-title">Kurse</div></div>
+      <div id="path-section" style="display:none">
+        <div class="path-section-head">
+          <div class="sec-title">Lernpfade</div>
+        </div>
+        <div class="path-grid" id="path-grid"></div>
+      </div>
+      <div class="sec-head"><div class="sec-title">Alle Kurse</div></div>
       <div class="course-grid" id="course-grid"></div>
     </div>
 
@@ -605,6 +641,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
           <div class="ki-questions-preview" id="ki-questions-preview"></div>
         </div>
       </div>
+    </div>
+
+    <!-- PATHS -->
+    <div class="admin-section" id="atab-paths">
+      <div class="sec-head"><div class="sec-title">Lernpfade</div><button class="btn-add" onclick="openPathModal(null)">+ Lernpfad erstellen</button></div>
+      <div class="admin-path-list" id="admin-path-list"></div>
     </div>
 
     <!-- TEAMS -->
@@ -800,6 +842,7 @@ let editCourseId=null,draftSlides=[],draftQuestions=[];
 let pendingImport=null,dropZoneInited=false;
 let sessionStart=null,currentSessionCourseId=null;
 let lastPassedCourse=null,lastPassedScore=0;
+let learningPaths=[],pathCourses=[];
 
 // ── INIT ──
 async function init(){
@@ -820,7 +863,7 @@ async function setUser(user){
   document.getElementById('nav-avatar').textContent=email[0]?.toUpperCase()||'?';
   document.getElementById('nav-email').textContent=email.split('@')[0];
   if(isAdmin) document.getElementById('admin-tab-switch').style.display='block';
-  await Promise.all([loadCourses(),loadProgress(),loadTeams(),loadAssignments()]);
+  await Promise.all([loadCourses(),loadProgress(),loadTeams(),loadAssignments(),loadPaths()]);
   document.getElementById('loading').style.display='none';
   document.getElementById('screen-login').style.display='none';
   document.getElementById('main-app').style.display='block';
@@ -893,6 +936,13 @@ async function loadTeams(){
 async function loadAssignments(){
   const{data}=await sb.from('course_assignments').select('*');
   assignments=data||[];
+}
+
+async function loadPaths(){
+  const{data:p}=await sb.from('learning_paths').select('*').order('sort_order');
+  const{data:pc}=await sb.from('path_courses').select('*').order('position');
+  learningPaths=p||[];
+  pathCourses=pc||[];
 }
 
 async function saveProgress(courseId,score){
@@ -1005,7 +1055,7 @@ function switchView(v){
 }
 
 function adminTab(tab){
-  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['courses','ki','teams','assignments','analytics','progress','import'][i]===tab));
+  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['courses','paths','teams','assignments','analytics','progress','import'][i]===tab));
   document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
   document.getElementById('atab-'+tab).classList.add('active');
   if(tab==='progress') loadAdminProgress();
@@ -1013,6 +1063,7 @@ function adminTab(tab){
   if(tab==='teams') renderTeams();
   if(tab==='assignments') renderAssignments();
   if(tab==='import') initDropZone();
+  if(tab==='paths') renderPaths();
 }
 
 // ── DEADLINE BANNER ──
@@ -1084,6 +1135,7 @@ function showDash(){
       '<div class="cc-foot"><span class="badge '+(isDone?'b-done':'b-new')+'">'+(isDone?'✓ Abgeschlossen':'Neu')+'</span></div>';
     g.appendChild(d);
   });
+  renderUserPaths();
   showScreen('screen-dashboard');
 }
 
@@ -1202,6 +1254,173 @@ function renderAdmin(){
       </div>`;
     list.appendChild(div);
   });
+}
+
+// ── LEARNING PATHS ──
+function renderPaths(){
+  const list=document.getElementById('admin-path-list');
+  if(!list)return;
+  list.innerHTML='';
+  if(!learningPaths.length){
+    list.innerHTML='<div style="color:var(--text3);font-size:13px;padding:1rem 0">Noch keine Lernpfade erstellt.</div>';
+    return;
+  }
+  learningPaths.forEach(p=>{
+    const pcs=pathCourses.filter(pc=>pc.path_id===p.id).sort((a,b)=>a.position-b.position);
+    const courseNames=pcs.map(pc=>{const c=courses.find(x=>x.id===pc.course_id);return c?c.title:'?';});
+    const div=document.createElement('div');div.className='admin-course-row';
+    div.innerHTML=
+      '<div class="admin-course-icon">'+p.icon+'</div>'+
+      '<div class="admin-course-info">'+
+        '<div class="admin-course-name">'+p.title+'</div>'+
+        '<div class="admin-course-meta">'+pcs.length+' Kurse: '+courseNames.join(' → ')+'</div>'+
+      '</div>'+
+      '<div class="admin-course-actions">'+
+        '<button class="btn-sm btn-edit" onclick="openPathModal('+p.id+')">Bearbeiten</button>'+
+        '<button class="btn-sm btn-del" onclick="deletePath('+p.id+')">Löschen</button>'+
+      '</div>';
+    list.appendChild(div);
+  });
+}
+
+function openPathModal(pathId){
+  const p=pathId?learningPaths.find(x=>x.id===pathId):null;
+  document.getElementById('pm-id').value=pathId||'';
+  document.getElementById('pm-title').value=p?.title||'';
+  document.getElementById('pm-desc').value=p?.description||'';
+  document.getElementById('pm-icon').value=p?.icon||'🎯';
+  document.getElementById('pm-color').value=p?.color||'#10b981';
+  // populate course selects
+  renderPathCourseSelects(pathId);
+  openModal('path-modal');
+}
+
+function renderPathCourseSelects(pathId){
+  const container=document.getElementById('pm-courses');
+  container.innerHTML='';
+  const existing=pathId?pathCourses.filter(pc=>pc.path_id===pathId).sort((a,b)=>a.position-b.position):[];
+  // show at least 2 course selects, up to existing+1
+  const count=Math.max(2, existing.length+1);
+  for(let i=0;i<count;i++){
+    const sel=document.createElement('select');
+    sel.className='form-input';sel.id='pm-course-'+i;
+    sel.style.marginBottom='8px';
+    sel.innerHTML='<option value="">— Kurs '+(i+1)+' wählen —</option>'+
+      courses.map(c=>'<option value="'+c.id+'"'+(existing[i]&&existing[i].course_id===c.id?' selected':'')+'>'+c.title+'</option>').join('');
+    container.appendChild(sel);
+  }
+  // add more button
+  const btn=document.createElement('button');
+  btn.type='button';btn.className='add-sub-btn';btn.textContent='+ Weiteren Kurs hinzufügen';
+  btn.onclick=()=>{
+    const newSel=document.createElement('select');
+    newSel.className='form-input';newSel.style.marginBottom='8px';
+    const n=container.querySelectorAll('select').length;
+    newSel.id='pm-course-'+n;
+    newSel.innerHTML='<option value="">— Kurs '+(n+1)+' wählen —</option>'+
+      courses.map(c=>'<option value="'+c.id+'">'+c.title+'</option>').join('');
+    container.insertBefore(newSel, btn);
+  };
+  container.appendChild(btn);
+}
+
+async function savePath(){
+  const title=document.getElementById('pm-title').value.trim();
+  if(!title){alert('Bitte Titel eingeben.');return;}
+  const pathData={
+    title,
+    description:document.getElementById('pm-desc').value,
+    icon:document.getElementById('pm-icon').value||'🎯',
+    color:document.getElementById('pm-color').value||'#10b981',
+    sort_order:learningPaths.length
+  };
+  const pathId=document.getElementById('pm-id').value;
+  let pid;
+  if(pathId){
+    await sb.from('learning_paths').update(pathData).eq('id',pathId);
+    await sb.from('path_courses').delete().eq('path_id',pathId);
+    pid=parseInt(pathId);
+  } else {
+    const{data}=await sb.from('learning_paths').insert(pathData).select().single();
+    pid=data.id;
+  }
+  // save course order
+  const selects=document.getElementById('pm-courses').querySelectorAll('select');
+  const entries=[];
+  selects.forEach((sel,i)=>{if(sel.value)entries.push({path_id:pid,course_id:parseInt(sel.value),position:i});});
+  if(entries.length) await sb.from('path_courses').insert(entries);
+  closeModal('path-modal');
+  await loadPaths();
+  renderPaths();
+}
+
+async function deletePath(id){
+  if(!confirm('Lernpfad wirklich löschen?'))return;
+  await sb.from('learning_paths').delete().eq('id',id);
+  await loadPaths();renderPaths();
+}
+
+// User-facing path view
+function renderUserPaths(){
+  const container=document.getElementById('path-section');
+  if(!container)return;
+  if(!learningPaths.length){container.style.display='none';return;}
+  container.style.display='block';
+  const grid=document.getElementById('path-grid');
+  grid.innerHTML='';
+  learningPaths.forEach(p=>{
+    const pcs=pathCourses.filter(pc=>pc.path_id===p.id).sort((a,b)=>a.position-b.position);
+    const total=pcs.length;
+    const done=pcs.filter(pc=>{
+      const idx=courses.findIndex(c=>c.id===pc.course_id);
+      return userProgress[idx]?.completed;
+    }).length;
+    const pct=total?Math.round((done/total)*100):0;
+    // find next locked course
+    let nextIdx=-1;
+    for(let i=0;i<pcs.length;i++){
+      const cidx=courses.findIndex(c=>c.id===pcs[i].course_id);
+      if(!userProgress[cidx]?.completed){nextIdx=i;break;}
+    }
+    const card=document.createElement('div');card.className='path-card';
+    card.style.setProperty('--path-color', p.color||'#10b981');
+    let stepsHTML='';
+    pcs.forEach((pc,i)=>{
+      const c=courses.find(x=>x.id===pc.course_id);
+      const cidx=courses.findIndex(x=>x.id===pc.course_id);
+      const isDone=!!userProgress[cidx]?.completed;
+      const isNext=i===nextIdx;
+      const isLocked=i>nextIdx&&nextIdx>=0;
+      stepsHTML+=
+        '<div class="path-step'+(isDone?' ps-done':isNext?' ps-next':isLocked?' ps-locked':'')+'">'+
+          '<div class="ps-dot">'+(isDone?'✓':i===0&&nextIdx<0?'✓':(i+1))+'</div>'+
+          '<div class="ps-info">'+
+            '<div class="ps-name">'+(c?.title||'?')+'</div>'+
+            '<div class="ps-status">'+(isDone?'Abgeschlossen':isNext?'Als nächstes':isLocked?'Gesperrt':'')+'</div>'+
+          '</div>'+
+          (isNext?'<button class="ps-btn" onclick="startCourseById('+pc.course_id+')">Starten →</button>':'')+ 
+          (isDone&&i===pcs.length-1?'<span style="font-size:11px;color:var(--green);font-weight:600">✓ Pfad abgeschlossen</span>':'')+ 
+        '</div>'+
+        (i<pcs.length-1?'<div class="ps-connector'+(isDone?' ps-conn-done':'')+'"></div>':'');
+    });
+    card.innerHTML=
+      '<div class="path-card-head">'+
+        '<div class="path-icon">'+p.icon+'</div>'+
+        '<div>'+
+          '<div class="path-title">'+p.title+'</div>'+
+          '<div class="path-meta">'+done+' / '+total+' Kurse abgeschlossen</div>'+
+        '</div>'+
+        '<div class="path-pct">'+pct+'%</div>'+
+      '</div>'+
+      '<div class="path-prog-track"><div class="path-prog-fill" style="width:'+pct+'%"></div></div>'+
+      '<div class="path-steps">'+stepsHTML+'</div>';
+    grid.appendChild(card);
+  });
+}
+
+function startCourseById(courseId){
+  const idx=courses.findIndex(c=>c.id===courseId);
+  if(idx>=0) startCourse(idx);
 }
 
 // ── TEAMS ──
@@ -1669,14 +1888,10 @@ async function generateCourse(){
     '- Nur valides JSON zurückgeben';
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('/api/generate-course', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 4000,
-        messages: [{ role: 'user', content: prompt }]
-      })
+      body: JSON.stringify({ prompt })
     });
 
     if(!response.ok){
@@ -1834,6 +2049,26 @@ function showKiMsg(text, type){
 
 init();
 </script>
+
+<!-- PATH MODAL -->
+<div class="modal-overlay" id="path-modal">
+  <div class="modal">
+    <div class="modal-title" id="path-modal-title">Lernpfad erstellen</div>
+    <input type="hidden" id="pm-id">
+    <div class="form-grid">
+      <div class="form-full"><label class="form-label">Titel</label><input class="form-input" id="pm-title" placeholder="z.B. Energiewirtschaft Grundkurs"></div>
+      <div class="form-full"><label class="form-label">Beschreibung</label><input class="form-input" id="pm-desc" placeholder="Kurze Beschreibung des Lernpfads"></div>
+      <div><label class="form-label">Icon (Emoji)</label><input class="form-input" id="pm-icon" placeholder="🎯" maxlength="4"></div>
+      <div><label class="form-label">Akzentfarbe</label><input class="form-input" id="pm-color" placeholder="#10b981"></div>
+    </div>
+    <div class="form-section">Kurse in diesem Pfad (Reihenfolge = Pflicht-Reihenfolge)</div>
+    <div id="pm-courses"></div>
+    <div class="modal-actions">
+      <button class="btn-sec" onclick="closeModal('path-modal')">Abbrechen</button>
+      <button class="btn-cta" style="background:var(--green)" onclick="savePath()">Speichern</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
