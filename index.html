@@ -849,30 +849,37 @@ let learningPaths=[],pathCourses=[];
 
 // ── INIT ──
 async function init(){
-  // onAuthStateChange fires reliably after OAuth redirects — use it as primary signal
-  let resolved=false;
+  let loading=false;
 
+  // getSession is reliable for page loads — no race condition here
+  const{data:{session},error}=await sb.auth.getSession();
+
+  if(error){
+    console.error('Session error:',error);
+    showLogin();
+    return;
+  }
+
+  if(session){
+    await setUser(session.user);
+  } else {
+    showLogin();
+  }
+
+  // Listen for future auth changes (login, logout, token refresh)
   sb.auth.onAuthStateChange(async(event,session)=>{
-    if(event==='SIGNED_IN'&&session){
-      resolved=true;
+    if(loading) return; // prevent double calls
+    if(event==='SIGNED_IN' && session && !currentUser){
+      loading=true;
       await setUser(session.user);
+      loading=false;
     } else if(event==='SIGNED_OUT'){
-      resolved=true;
-      currentUser=null;isAdmin=false;showLogin();
-    } else if(event==='INITIAL_SESSION'){
-      resolved=true;
-      if(session) await setUser(session.user);
-      else showLogin();
+      currentUser=null;isAdmin=false;
+      showLogin();
+    } else if(event==='TOKEN_REFRESHED' && session && currentUser){
+      // just update token, no full reload needed
     }
   });
-
-  // Fallback: if onAuthStateChange doesn't fire within 3s, check session manually
-  setTimeout(async()=>{
-    if(resolved)return;
-    const{data:{session}}=await sb.auth.getSession();
-    if(session) await setUser(session.user);
-    else showLogin();
-  }, 3000);
 }
 
 async function setUser(user){
@@ -883,7 +890,11 @@ async function setUser(user){
   document.getElementById('nav-avatar').textContent=email[0]?.toUpperCase()||'?';
   document.getElementById('nav-email').textContent=email.split('@')[0];
   if(isAdmin) document.getElementById('admin-tab-switch').style.display='block';
-  await Promise.all([loadCourses(),loadProgress(),loadTeams(),loadAssignments(),loadPaths()]);
+  try{
+    await Promise.all([loadCourses(),loadProgress(),loadTeams(),loadAssignments(),loadPaths()]);
+  } catch(err){
+    console.error('Data load error:',err);
+  }
   document.getElementById('loading').style.display='none';
   document.getElementById('screen-login').style.display='none';
   document.getElementById('main-app').style.display='block';
