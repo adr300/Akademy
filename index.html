@@ -115,6 +115,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .course-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rx);padding:1.6rem;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;animation:fadeUp .4s ease both;}
 .course-card:nth-child(1){animation-delay:.05s;}.course-card:nth-child(2){animation-delay:.1s;}.course-card:nth-child(3){animation-delay:.15s;}
 .course-card::after{content:'';position:absolute;inset:0;opacity:0;transition:opacity .22s;pointer-events:none;}
+.course-locked{opacity:.55;cursor:default!important;}
+.course-locked:hover{border-color:var(--border)!important;transform:none!important;box-shadow:none!important;}
+.course-locked:hover .cc-arrow{background:transparent!important;border-color:var(--border2)!important;color:var(--text3)!important;box-shadow:none!important;}
 .course-card:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:0 0 40px rgba(16,185,129,0.1),0 16px 40px rgba(0,0,0,0.5);}
 .course-card:hover::after{opacity:1;}
 .c0::after{background:radial-gradient(ellipse 60% 50% at 80% 0%,rgba(16,185,129,0.06),transparent);}
@@ -998,6 +1001,13 @@ async function loadProgress(){
   if(data)data.forEach(r=>{userProgress[r.course_index]={completed:r.completed,score:r.score};});
 }
 
+// Helper: check if a course is completed by course_id
+function isCourseCompleted(courseId){
+  const idx = courses.findIndex(c=>c.id===courseId);
+  if(idx<0) return false;
+  return !!userProgress[idx]?.completed;
+}
+
 async function loadTeams(){
   const{data:t}=await sb.from('teams').select('*').order('name');
   const{data:m}=await sb.from('team_members').select('*');
@@ -1189,33 +1199,49 @@ function showDash(){
   const myTeamIds=teams.filter(t=>t.members.some(m=>m.user_id===currentUser.id)).map(t=>t.id);
   const mandatoryCourseIds=assignments.filter(a=>myTeamIds.includes(a.team_id)).map(a=>a.course_id);
 
+  // Build locked course IDs from learning paths (sequential lock)
+  const lockedCourseIds=new Set();
+  learningPaths.forEach(lp=>{
+    const pcs=pathCourses.filter(pc=>pc.path_id===lp.id).sort((a,b)=>a.position-b.position);
+    pcs.forEach((pc,i)=>{
+      if(i===0) return; // first course always unlocked
+      const prevCidx=courses.findIndex(x=>x.id===pcs[i-1].course_id);
+      const prevDone=!!userProgress[prevCidx]?.completed;
+      if(!prevDone) lockedCourseIds.add(pc.course_id);
+    });
+  });
+
   const g=document.getElementById('course-grid');g.innerHTML='';
   courses.forEach((c,i)=>{
-    const p=userProgress[i],isDone=p?.completed,pct=isDone?100:0;
+    const p=userProgress[i],isDone=isCourseCompleted(c.id),pct=isDone?100:0;
     const fill=c.btn_color||'#10b981';
     const isMandatory=mandatoryCourseIds.includes(c.id);
+    const isLocked=lockedCourseIds.has(c.id)&&!isDone;
     const assign=assignments.find(a=>a.course_id===c.id&&myTeamIds.includes(a.team_id));
     const dl=assign?new Date(assign.deadline):null;
     const daysLeft=dl?Math.ceil((dl-new Date())/(1000*60*60*24)):null;
     const isOverdue=daysLeft!==null&&daysLeft<0&&!isDone;
 
     const mandatoryBadge = isMandatory&&!isDone ? ('<span class="badge '+(isOverdue?'b-overdue':'b-mandatory')+'">'+( isOverdue?'Überfällig':daysLeft!==null&&daysLeft<=3?(daysLeft+'d'):'Pflicht')+'</span>') : '';
+    const lockedBadge = isLocked ? '<span class="badge b-overdue">🔒 Gesperrt</span>' : '';
     const deadlineRow = dl&&!isDone ? '<div style="font-size:11px;color:'+(isOverdue?'var(--red)':'var(--amber)')+';margin-top:6px">Deadline: '+dl.toLocaleDateString('de-DE')+'</div>' : '';
     const metaExtra = isDone ? ' · '+p.score+'% erreicht' : '';
-    const d=document.createElement('div');d.className='course-card c'+(i%3);d.onclick=()=>startCourse(i);
+    const d=document.createElement('div');
+    d.className='course-card c'+(i%3)+(isLocked?' course-locked':'');
+    if(!isLocked) d.onclick=()=>startCourse(i);
     d.innerHTML=
       '<div class="cc-top">'+
         '<div class="cc-icon" style="background:'+(c.icon_bg||'#0a1f18')+'">'+( c.icon||'📚')+'</div>'+
         '<div class="cc-badges">'+
-          mandatoryBadge+
-          '<div class="cc-arrow">→</div>'+
+          (lockedBadge||mandatoryBadge)+
+          '<div class="cc-arrow">'+(isLocked?'🔒':'→')+'</div>'+
         '</div>'+
       '</div>'+
       '<div class="cc-name">'+c.title+'</div>'+
       '<div class="cc-meta">'+c.slides.length+' Module · '+c.questions.length+' Testfragen'+metaExtra+'</div>'+
-      deadlineRow+
+      (isLocked?'<div style="font-size:11px;color:var(--text3);margin-top:6px">Im Lernpfad gesperrt – vorherigen Kurs abschließen</div>':deadlineRow)+
       '<div class="cc-prog"><div class="cc-fill" style="width:'+pct+'%;background:'+fill+'"></div></div>'+
-      '<div class="cc-foot"><span class="badge '+(isDone?'b-done':'b-new')+'">'+(isDone?'✓ Abgeschlossen':'Neu')+'</span></div>';
+      '<div class="cc-foot"><span class="badge '+(isDone?'b-done':isLocked?'b-new':'b-new')+'">'+(isDone?'✓ Abgeschlossen':isLocked?'Gesperrt':'Neu')+'</span></div>';
     g.appendChild(d);
   });
   renderUserPaths();
@@ -1512,16 +1538,12 @@ function renderUserPaths(){
   learningPaths.forEach(p=>{
     const pcs=pathCourses.filter(pc=>pc.path_id===p.id).sort((a,b)=>a.position-b.position);
     const total=pcs.length;
-    const done=pcs.filter(pc=>{
-      const idx=courses.findIndex(c=>c.id===pc.course_id);
-      return userProgress[idx]?.completed;
-    }).length;
+    const done=pcs.filter(pc=>isCourseCompleted(pc.course_id)).length;
     const pct=total?Math.round((done/total)*100):0;
-    // find next locked course
+    // find first incomplete course
     let nextIdx=-1;
     for(let i=0;i<pcs.length;i++){
-      const cidx=courses.findIndex(c=>c.id===pcs[i].course_id);
-      if(!userProgress[cidx]?.completed){nextIdx=i;break;}
+      if(!isCourseCompleted(pcs[i].course_id)){nextIdx=i;break;}
     }
     const card=document.createElement('div');card.className='path-card';
     card.style.setProperty('--path-color', p.color||'#10b981');
@@ -1529,9 +1551,9 @@ function renderUserPaths(){
     pcs.forEach((pc,i)=>{
       const c=courses.find(x=>x.id===pc.course_id);
       const cidx=courses.findIndex(x=>x.id===pc.course_id);
-      const isDone=!!userProgress[cidx]?.completed;
+      const isDone=isCourseCompleted(pc.course_id);
       // Streng sequenziell: Vorgänger muss abgeschlossen sein
-      const prevDone=i===0||!!userProgress[courses.findIndex(x=>x.id===pcs[i-1].course_id)]?.completed;
+      const prevDone=i===0||isCourseCompleted(pcs[i-1].course_id);
       const isNext=!isDone&&prevDone;   // erster offene Kurs mit fertigem Vorgänger
       const isLocked=!isDone&&!prevDone; // Vorgänger noch nicht fertig
       stepsHTML+=
