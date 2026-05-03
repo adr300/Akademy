@@ -766,7 +766,19 @@ async function loadProgress(){
 async function loadTeams(){
   const{data:t}=await sb.from('teams').select('*').order('name');
   const{data:m}=await sb.from('team_members').select('*');
-  teams=(t||[]).map(team=>({...team,members:(m||[]).filter(x=>x.team_id===team.id)}));
+  const members=m||[];
+  // Fetch emails for all member user_ids
+  const userIds=[...new Set(members.map(x=>x.user_id))];
+  let emailMap={};
+  if(userIds.length){
+    const{data:emails}=await sb.from('user_emails').select('id,email').in('id',userIds);
+    if(emails)emails.forEach(u=>{emailMap[u.id]=u.email;});
+  }
+  teams=(t||[]).map(team=>({
+    ...team,
+    members:members.filter(x=>x.team_id===team.id),
+    memberEmails:emailMap
+  }));
 }
 
 async function loadAssignments(){
@@ -1089,10 +1101,10 @@ function renderTeams(){
   if(!teams.length){list.innerHTML='<div style="color:var(--text3);font-size:13px;padding:1rem 0">Noch keine Teams erstellt.</div>';return;}
   teams.forEach(t=>{
     const div=document.createElement('div');div.className='team-row';
-    const membersHTML=t.members.map(m=>`
-      <div class="member-pill">${m.user_id.slice(0,8)}…
-        <button onclick="removeMember(${t.id},'${m.user_id}')">✕</button>
-      </div>`).join('');
+    const membersHTML=t.members.map(m=>{
+      const email=t.memberEmails&&t.memberEmails[m.user_id]||m.user_id.slice(0,8)+'…';
+      return '<div class="member-pill">'+email+'<button onclick="removeMember('+t.id+',\''+m.user_id+'\')">✕</button></div>';
+    }).join('');
     div.innerHTML=`
       <div class="team-row-top">
         <div class="team-name">${t.name} <span style="font-size:11px;color:var(--text3);font-weight:400">(${t.members.length} Mitglieder)</span></div>
@@ -1103,7 +1115,7 @@ function renderTeams(){
       </div>
       <div class="team-members">${membersHTML||'<span style="font-size:12px;color:var(--text3)">Noch keine Mitglieder</span>'}</div>
       <div class="add-member-row">
-        <input class="add-member-input" id="member-input-${t.id}" placeholder="User-ID einfügen (aus Supabase → Auth → Users)">
+        <input class="add-member-input" id="member-input-${t.id}" placeholder="E-Mail-Adresse des Nutzers">
         <button class="btn-sm btn-edit" onclick="addMember(${t.id})">+ Hinzufügen</button>
       </div>`;
     list.appendChild(div);
@@ -1136,9 +1148,17 @@ async function deleteTeam(id){
 }
 
 async function addMember(teamId){
-  const uid=document.getElementById(`member-input-${teamId}`).value.trim();
-  if(!uid)return;
-  await sb.from('team_members').upsert({team_id:teamId,user_id:uid},{onConflict:'team_id,user_id'});
+  const email=document.getElementById('member-input-'+teamId).value.trim().toLowerCase();
+  if(!email)return;
+  const btn=document.querySelector('#team-list [onclick="addMember('+teamId+')"]');
+  if(btn){btn.disabled=true;btn.textContent='...';}
+  const{data,error}=await sb.from('user_emails').select('id,email').ilike('email',email).single();
+  if(btn){btn.disabled=false;btn.textContent='+ Hinzufügen';}
+  if(error||!data){
+    alert('Nutzer mit E-Mail "'+email+'" nicht gefunden. Der Nutzer muss sich zuerst einmal einloggen.');
+    return;
+  }
+  await sb.from('team_members').upsert({team_id:teamId,user_id:data.id},{onConflict:'team_id,user_id'});
   await loadTeams();renderTeams();
 }
 
