@@ -680,10 +680,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
     <!-- PROGRESS -->
     <div class="admin-section" id="atab-progress">
-      <div class="sec-head"><div class="sec-title">Nutzer-Fortschritt</div></div>
+      <div class="sec-head">
+        <div class="sec-title">Nutzer-Fortschritt</div>
+        <div id="reset-all-btns" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+      </div>
       <div class="chrome" style="min-height:auto">
         <table class="progress-table">
-          <thead><tr><th>Nutzer</th><th>Kurs</th><th>Score</th><th>Lernzeit</th><th>Datum</th></tr></thead>
+          <thead><tr><th>Nutzer</th><th>Kurs</th><th>Score</th><th>Lernzeit</th><th>Datum</th><th>Aktionen</th></tr></thead>
           <tbody id="progress-tbody"></tbody>
         </table>
       </div>
@@ -1627,16 +1630,31 @@ async function loadAnalytics(){
 // ── PROGRESS TABLE ──
 async function loadAdminProgress(){
   const tbody=document.getElementById('progress-tbody');
-  tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:2rem">Wird geladen…</td></tr>';
+  tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:2rem">Wird geladen…</td></tr>';
   const[{data:progData,error},{data:emailData},{data:sessionData}]=await Promise.all([
     sb.from('user_progress').select('*').order('updated_at',{ascending:false}),
     sb.from('user_emails').select('id,email'),
     sb.from('learning_sessions').select('user_id,course_id,seconds_spent')
   ]);
-  if(error){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--red);padding:2rem">Fehler beim Laden.</td></tr>';return;}
+  if(error){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--red);padding:2rem">Fehler beim Laden.</td></tr>';return;}
   tbody.innerHTML='';
-  if(!progData?.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:2rem">Noch keine Abschlüsse</td></tr>';return;}
+  if(!progData?.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:2rem">Noch keine Abschlüsse</td></tr>';return;}
   const emailMap={};(emailData||[]).forEach(u=>{emailMap[u.id]=u.email;});
+  // Build per-user "reset all" buttons
+  const uniqueUsers=[...new Set((progData||[]).map(r=>r.user_id))];
+  const resetBtns=document.getElementById('reset-all-btns');
+  if(resetBtns){
+    resetBtns.innerHTML='';
+    uniqueUsers.forEach(uid=>{
+      const em=emailMap[uid]||uid.slice(0,8)+'…';
+      const btn=document.createElement('button');
+      btn.className='btn-sm btn-del';
+      btn.style.fontSize='11px';
+      btn.textContent='↺ '+em.split('@')[0]+' komplett';
+      btn.onclick=()=>resetAllProgress(uid,em);
+      resetBtns.appendChild(btn);
+    });
+  }
   progData.forEach(r=>{
     const c=courses[r.course_index];
     const email=emailMap[r.user_id]||r.user_id.slice(0,8)+'…';
@@ -1645,14 +1663,41 @@ async function loadAdminProgress(){
     const totalSecs=sess.reduce((a,s)=>a+(s.seconds_spent||0),0);
     const scoreClass=r.score>=70?'score-pass':r.score>0?'score-fail':'score-none';
     const tr=document.createElement('tr');
-    tr.innerHTML=`
-      <td style="font-size:13px">${email}</td>
-      <td>${c?.title||'Unbekannt'}</td>
-      <td><span class="score-pill ${scoreClass}">${r.score||0}%</span></td>
-      <td style="color:var(--teal)">${fmtTime(totalSecs)||'–'}</td>
-      <td style="color:var(--text3)">${date}</td>`;
+    tr.innerHTML=
+      '<td style="font-size:13px">'+email+'</td>'+
+      '<td>'+(c?.title||'Unbekannt')+'</td>'+
+      '<td><span class="score-pill '+scoreClass+'">'+(r.score||0)+'%</span></td>'+
+      '<td style="color:var(--teal)">'+(fmtTime(totalSecs)||'–')+'</td>'+
+      '<td style="color:var(--text3)">'+date+'</td>'+
+      '<td></td>';
+    const resetBtn=document.createElement('button');
+    resetBtn.className='btn-sm btn-del';
+    resetBtn.style.cssText='font-size:11px;padding:4px 9px';
+    resetBtn.textContent='↺ Zurücksetzen';
+    resetBtn.onclick=()=>resetProgress(r.user_id, email, r.course_index);
+    tr.lastElementChild.appendChild(resetBtn);
     tbody.appendChild(tr);
   });
+}
+
+// ── RESET PROGRESS ──
+async function resetProgress(userId, userEmail, courseIndex){
+  const course = courses[courseIndex];
+  if(!confirm('Fortschritt von "'+userEmail+'" für "'+( course?.title||'diesem Kurs')+'" wirklich zurücksetzen?\nDies löscht auch die Lernzeit-Daten.')) return;
+  await Promise.all([
+    sb.from('user_progress').delete().eq('user_id', userId).eq('course_index', courseIndex),
+    sb.from('learning_sessions').delete().eq('user_id', userId).eq('course_id', course?.id)
+  ]);
+  loadAdminProgress();
+}
+
+async function resetAllProgress(userId, userEmail){
+  if(!confirm('GESAMTEN Fortschritt von "'+userEmail+'" zurücksetzen?\nAlle Kurse und Lernzeiten werden gelöscht.')) return;
+  await Promise.all([
+    sb.from('user_progress').delete().eq('user_id', userId),
+    sb.from('learning_sessions').delete().eq('user_id', userId)
+  ]);
+  loadAdminProgress();
 }
 
 // ── COURSE MODAL ──
