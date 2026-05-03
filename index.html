@@ -320,6 +320,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .add-sub-btn:hover{border-color:var(--green);color:var(--green);}
 
 /* IMPORT */
+.pe-course-row:hover{background:var(--bg3);border-radius:var(--r);}
+.pe-course-row span[style*="grab"]:active{cursor:grabbing;}
+
 #drop-zone{border:2px dashed var(--border2);border-radius:var(--rx);padding:3.5rem 2rem;text-align:center;transition:all .2s;background:var(--bg2);cursor:pointer;}
 #drop-zone.drag-over{border-color:var(--green);background:var(--glow2);box-shadow:0 0 40px rgba(16,185,129,0.08);}
 .drop-icon{font-size:48px;margin-bottom:1rem;}
@@ -645,8 +648,57 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
     <!-- PATHS -->
     <div class="admin-section" id="atab-paths">
-      <div class="sec-head"><div class="sec-title">Lernpfade</div><button class="btn-add" onclick="openPathModal(null)">+ Lernpfad erstellen</button></div>
-      <div class="admin-path-list" id="admin-path-list"></div>
+      <div style="display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap">
+        <!-- LEFT: path list -->
+        <div style="flex:1;min-width:260px">
+          <div class="sec-head">
+            <div class="sec-title">Lernpfade</div>
+            <button class="btn-add" onclick="newPath()">+ Neu</button>
+          </div>
+          <div class="admin-path-list" id="admin-path-list"></div>
+        </div>
+        <!-- RIGHT: inline editor -->
+        <div style="flex:2;min-width:300px" id="path-editor-wrap">
+          <div class="sec-head"><div class="sec-title">Editor</div></div>
+          <div class="path-editor-empty" id="path-editor-empty">
+            <div style="color:var(--text3);font-size:13px;padding:2rem 1.5rem;background:var(--bg2);border:1px dashed var(--border2);border-radius:var(--rl);text-align:center">
+              Wähle einen Lernpfad zum Bearbeiten oder klicke &ldquo;+ Neu&rdquo;
+            </div>
+          </div>
+          <div id="path-editor-form" style="display:none">
+            <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1.5rem;display:flex;flex-direction:column;gap:12px">
+              <input type="hidden" id="pe-id">
+              <div class="form-grid">
+                <div class="form-full">
+                  <label class="form-label">Titel</label>
+                  <input class="form-input" id="pe-title" placeholder="z.B. WiM Strom Komplettkurs">
+                </div>
+                <div class="form-full">
+                  <label class="form-label">Beschreibung</label>
+                  <input class="form-input" id="pe-desc" placeholder="Kurze Beschreibung">
+                </div>
+                <div>
+                  <label class="form-label">Icon (Emoji)</label>
+                  <input class="form-input" id="pe-icon" placeholder="🎯" maxlength="4">
+                </div>
+                <div>
+                  <label class="form-label">Akzentfarbe</label>
+                  <input class="form-input" id="pe-color" placeholder="#10b981">
+                </div>
+              </div>
+              <div>
+                <label class="form-label">Kurse in diesem Pfad <span style="color:var(--text3);font-weight:400">(Reihenfolge = Lernreihenfolge)</span></label>
+                <div id="pe-courses-list" style="display:flex;flex-direction:column;gap:8px;margin-top:6px"></div>
+                <button type="button" class="add-sub-btn" style="margin-top:8px" onclick="peAddCourse()">+ Kurs hinzufügen</button>
+              </div>
+              <div style="display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border2);padding-top:12px">
+                <button class="btn-sec" onclick="cancelPathEdit()">Abbrechen</button>
+                <button class="btn-add" onclick="savePath()">💾 Speichern</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- TEAMS -->
@@ -1288,106 +1340,164 @@ function renderAdmin(){
 }
 
 // ── LEARNING PATHS ──
+// ── PATH INLINE EDITOR ──
 function renderPaths(){
   const list=document.getElementById('admin-path-list');
   if(!list)return;
   list.innerHTML='';
   if(!learningPaths.length){
-    list.innerHTML='<div style="color:var(--text3);font-size:13px;padding:1rem 0">Noch keine Lernpfade erstellt.</div>';
+    list.innerHTML='<div style="color:var(--text3);font-size:13px;padding:1rem 0;text-align:center">Noch keine Lernpfade</div>';
     return;
   }
   learningPaths.forEach(p=>{
     const pcs=pathCourses.filter(pc=>pc.path_id===p.id).sort((a,b)=>a.position-b.position);
-    const courseNames=pcs.map(pc=>{const c=courses.find(x=>x.id===pc.course_id);return c?c.title:'?';});
-    const div=document.createElement('div');div.className='admin-course-row';
+    const div=document.createElement('div');
+    div.className='admin-course-row';
+    div.id='path-row-'+p.id;
+    div.style.cursor='pointer';
     div.innerHTML=
-      '<div class="admin-course-icon">'+p.icon+'</div>'+
+      '<div class="admin-course-icon" style="font-size:20px">'+p.icon+'</div>'+
       '<div class="admin-course-info">'+
         '<div class="admin-course-name">'+p.title+'</div>'+
-        '<div class="admin-course-meta">'+pcs.length+' Kurse: '+courseNames.join(' → ')+'</div>'+
+        '<div class="admin-course-meta">'+pcs.length+' Kurse</div>'+
       '</div>'+
       '<div class="admin-course-actions">'+
-        '<button class="btn-sm btn-edit" onclick="openPathModal('+p.id+')">Bearbeiten</button>'+
-        '<button class="btn-sm btn-del" onclick="deletePath('+p.id+')">Löschen</button>'+
+        '<button class="btn-sm btn-edit" onclick="editPath('+p.id+');event.stopPropagation()">✏️ Bearbeiten</button>'+
+        '<button class="btn-sm btn-del" onclick="deletePath('+p.id+');event.stopPropagation()">Löschen</button>'+
       '</div>';
+    div.onclick=()=>editPath(p.id);
     list.appendChild(div);
   });
 }
 
-function openPathModal(pathId){
-  const p=pathId?learningPaths.find(x=>x.id===pathId):null;
-  document.getElementById('pm-id').value=pathId||'';
-  document.getElementById('pm-title').value=p?.title||'';
-  document.getElementById('pm-desc').value=p?.description||'';
-  document.getElementById('pm-icon').value=p?.icon||'🎯';
-  document.getElementById('pm-color').value=p?.color||'#10b981';
-  // populate course selects
-  renderPathCourseSelects(pathId);
-  openModal('path-modal');
+function newPath(){
+  // clear form and show
+  document.getElementById('pe-id').value='';
+  document.getElementById('pe-title').value='';
+  document.getElementById('pe-desc').value='';
+  document.getElementById('pe-icon').value='🎯';
+  document.getElementById('pe-color').value='#10b981';
+  peRenderCourseRows([]);
+  document.getElementById('path-editor-empty').style.display='none';
+  document.getElementById('path-editor-form').style.display='block';
+  // highlight no row
+  document.querySelectorAll('.admin-course-row').forEach(r=>r.style.borderColor='');
+  document.getElementById('pe-title').focus();
 }
 
-function renderPathCourseSelects(pathId){
-  const container=document.getElementById('pm-courses');
-  container.innerHTML='';
-  const existing=pathId?pathCourses.filter(pc=>pc.path_id===pathId).sort((a,b)=>a.position-b.position):[];
-  // show at least 2 course selects, up to existing+1
-  const count=Math.max(2, existing.length+1);
-  for(let i=0;i<count;i++){
-    const sel=document.createElement('select');
-    sel.className='form-input';sel.id='pm-course-'+i;
-    sel.style.marginBottom='8px';
-    sel.innerHTML='<option value="">— Kurs '+(i+1)+' wählen —</option>'+
-      courses.map(c=>'<option value="'+c.id+'"'+(existing[i]&&existing[i].course_id===c.id?' selected':'')+'>'+c.title+'</option>').join('');
-    container.appendChild(sel);
-  }
-  // add more button
-  const btn=document.createElement('button');
-  btn.type='button';btn.className='add-sub-btn';btn.textContent='+ Weiteren Kurs hinzufügen';
-  btn.onclick=()=>{
-    const newSel=document.createElement('select');
-    newSel.className='form-input';newSel.style.marginBottom='8px';
-    const n=container.querySelectorAll('select').length;
-    newSel.id='pm-course-'+n;
-    newSel.innerHTML='<option value="">— Kurs '+(n+1)+' wählen —</option>'+
-      courses.map(c=>'<option value="'+c.id+'">'+c.title+'</option>').join('');
-    container.insertBefore(newSel, btn);
-  };
-  container.appendChild(btn);
+function editPath(pathId){
+  const p=learningPaths.find(x=>x.id===pathId);
+  if(!p)return;
+  document.getElementById('pe-id').value=pathId;
+  document.getElementById('pe-title').value=p.title||'';
+  document.getElementById('pe-desc').value=p.description||'';
+  document.getElementById('pe-icon').value=p.icon||'🎯';
+  document.getElementById('pe-color').value=p.color||'#10b981';
+  const existing=pathCourses.filter(pc=>pc.path_id===pathId).sort((a,b)=>a.position-b.position);
+  peRenderCourseRows(existing);
+  document.getElementById('path-editor-empty').style.display='none';
+  document.getElementById('path-editor-form').style.display='block';
+  // highlight active row
+  document.querySelectorAll('.admin-course-row').forEach(r=>r.style.borderColor='');
+  const row=document.getElementById('path-row-'+pathId);
+  if(row) row.style.borderColor='var(--green)';
+}
+
+function peRenderCourseRows(existing){
+  const list=document.getElementById('pe-courses-list');
+  list.innerHTML='';
+  const toShow=existing.length?existing:[{course_id:''},{course_id:''}];
+  toShow.forEach((pc,i)=>peAddCourseRow(pc.course_id,i));
+}
+
+function peAddCourse(){
+  const list=document.getElementById('pe-courses-list');
+  const n=list.querySelectorAll('.pe-course-row').length;
+  peAddCourseRow('',n);
+}
+
+function peAddCourseRow(selectedId, idx){
+  const list=document.getElementById('pe-courses-list');
+  const row=document.createElement('div');
+  row.className='pe-course-row';
+  row.style.cssText='display:flex;align-items:center;gap:8px';
+  const num=document.createElement('span');
+  num.style.cssText='font-size:11px;color:var(--text3);width:20px;text-align:right;flex-shrink:0';
+  num.textContent=(list.querySelectorAll('.pe-course-row').length+1)+'.';
+  const sel=document.createElement('select');
+  sel.className='form-input';
+  sel.style.flex='1';
+  sel.innerHTML='<option value="">— Kurs wählen —</option>'+
+    courses.map(c=>'<option value="'+c.id+'"'+(String(c.id)===String(selectedId)?' selected':'')+'>'+c.icon+' '+c.title+'</option>').join('');
+  const delBtn=document.createElement('button');
+  delBtn.type='button';delBtn.className='btn-icon';delBtn.textContent='✕';
+  delBtn.title='Entfernen';
+  delBtn.onclick=()=>{row.remove();peReorderNumbers();};
+  // drag handle
+  const drag=document.createElement('span');
+  drag.textContent='⠿';
+  drag.style.cssText='cursor:grab;color:var(--text3);font-size:16px;flex-shrink:0';
+  row.appendChild(drag);
+  row.appendChild(num);
+  row.appendChild(sel);
+  row.appendChild(delBtn);
+  list.appendChild(row);
+}
+
+function peReorderNumbers(){
+  document.querySelectorAll('#pe-courses-list .pe-course-row').forEach((row,i)=>{
+    const num=row.querySelector('span');
+    if(num)num.textContent=(i+1)+'.';
+  });
+}
+
+function cancelPathEdit(){
+  document.getElementById('path-editor-form').style.display='none';
+  document.getElementById('path-editor-empty').style.display='block';
+  document.querySelectorAll('.admin-course-row').forEach(r=>r.style.borderColor='');
 }
 
 async function savePath(){
-  const title=document.getElementById('pm-title').value.trim();
+  const title=document.getElementById('pe-title').value.trim();
   if(!title){alert('Bitte Titel eingeben.');return;}
   const pathData={
     title,
-    description:document.getElementById('pm-desc').value,
-    icon:document.getElementById('pm-icon').value||'🎯',
-    color:document.getElementById('pm-color').value||'#10b981',
+    description:document.getElementById('pe-desc').value,
+    icon:document.getElementById('pe-icon').value||'🎯',
+    color:document.getElementById('pe-color').value||'#10b981',
     sort_order:learningPaths.length
   };
-  const pathId=document.getElementById('pm-id').value;
+  const pathId=document.getElementById('pe-id').value;
+  const saveBtn=document.querySelector('#path-editor-form .btn-add');
+  if(saveBtn){saveBtn.disabled=true;saveBtn.textContent='Speichern...';}
   let pid;
-  if(pathId){
-    await sb.from('learning_paths').update(pathData).eq('id',pathId);
-    await sb.from('path_courses').delete().eq('path_id',pathId);
-    pid=parseInt(pathId);
-  } else {
-    const{data}=await sb.from('learning_paths').insert(pathData).select().single();
-    pid=data.id;
+  try{
+    if(pathId){
+      await sb.from('learning_paths').update(pathData).eq('id',pathId);
+      await sb.from('path_courses').delete().eq('path_id',pathId);
+      pid=parseInt(pathId);
+    } else {
+      const{data}=await sb.from('learning_paths').insert(pathData).select().single();
+      pid=data.id;
+    }
+    const selects=document.getElementById('pe-courses-list').querySelectorAll('select');
+    const entries=[];
+    selects.forEach((sel,i)=>{if(sel.value)entries.push({path_id:pid,course_id:parseInt(sel.value),position:i});});
+    if(entries.length) await sb.from('path_courses').insert(entries);
+    await loadPaths();
+    renderPaths();
+    cancelPathEdit();
+  } catch(err){
+    alert('Fehler beim Speichern: '+err.message);
+  } finally {
+    if(saveBtn){saveBtn.disabled=false;saveBtn.textContent='💾 Speichern';}
   }
-  // save course order
-  const selects=document.getElementById('pm-courses').querySelectorAll('select');
-  const entries=[];
-  selects.forEach((sel,i)=>{if(sel.value)entries.push({path_id:pid,course_id:parseInt(sel.value),position:i});});
-  if(entries.length) await sb.from('path_courses').insert(entries);
-  closeModal('path-modal');
-  await loadPaths();
-  renderPaths();
 }
 
 async function deletePath(id){
   if(!confirm('Lernpfad wirklich löschen?'))return;
   await sb.from('learning_paths').delete().eq('id',id);
+  cancelPathEdit();
   await loadPaths();renderPaths();
 }
 
