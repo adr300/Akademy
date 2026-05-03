@@ -336,6 +336,44 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .import-stat-n{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:var(--green);}
 .import-stat-l{font-size:11px;color:var(--text3);margin-top:3px;}
 .import-actions{display:flex;justify-content:flex-end;gap:10px;}
+
+/* ── KI GENERATOR ── */
+.ki-wrap{max-width:700px;}
+.ki-hero{display:flex;align-items:flex-start;gap:16px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rx);padding:1.5rem;margin-bottom:1.5rem;}
+.ki-hero-icon{font-size:36px;flex-shrink:0;line-height:1;}
+.ki-hero-title{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:6px;letter-spacing:-.3px;}
+.ki-hero-sub{font-size:14px;color:var(--text2);line-height:1.65;}
+.ki-form{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rx);padding:1.5rem;margin-bottom:1.5rem;}
+.ki-form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;}
+.ki-form-row .form-full{grid-column:1/-1;}
+.btn-ki-generate{width:100%;padding:13px;font-size:15px;font-weight:700;font-family:'Inter',sans-serif;background:linear-gradient(135deg,var(--green),var(--teal));color:#020d08;border:none;border-radius:var(--rl);cursor:pointer;transition:all .2s;letter-spacing:.02em;}
+.btn-ki-generate:hover{filter:brightness(1.1);box-shadow:0 0 28px rgba(16,185,129,0.4);transform:translateY(-1px);}
+.btn-ki-generate:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+.ki-preview-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px;}
+.ki-preview-title{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:800;color:var(--text);}
+.ki-preview-actions{display:flex;gap:10px;}
+.ki-course-card{background:var(--bg2);border:1px solid var(--green);border-radius:var(--rx);padding:1.25rem;margin-bottom:1rem;box-shadow:0 0 24px rgba(16,185,129,0.08);}
+.ki-course-name{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:800;color:var(--green);margin-bottom:6px;}
+.ki-course-meta{font-size:13px;color:var(--text3);}
+.ki-slides-preview,.ki-questions-preview{display:flex;flex-direction:column;gap:10px;margin-bottom:1.25rem;}
+.ki-slide-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1.1rem 1.25rem;}
+.ki-slide-num{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.ki-slide-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.ki-slide-text{font-size:13px;color:var(--text2);line-height:1.6;}
+.ki-q-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1.1rem 1.25rem;}
+.ki-q-num{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+.ki-q-text{font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px;}
+.ki-q-opts{display:flex;flex-direction:column;gap:4px;}
+.ki-q-opt{font-size:13px;color:var(--text2);padding:3px 0;}
+.ki-q-opt.correct{color:var(--green);font-weight:600;}
+.ki-thinking{display:flex;align-items:center;gap:12px;padding:1.25rem;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);margin-top:1rem;}
+.ki-thinking-dots{display:flex;gap:5px;}
+.ki-thinking-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.2s ease-in-out infinite;}
+.ki-thinking-dot:nth-child(2){animation-delay:.2s;}
+.ki-thinking-dot:nth-child(3){animation-delay:.4s;}
+@keyframes pulse{0%,100%{opacity:.3;transform:scale(1);}50%{opacity:1;transform:scale(1.2);}}
+.ki-thinking-text{font-size:13px;color:var(--text2);}
+.ki-stream-box{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rl);padding:1rem 1.25rem;margin-top:1rem;font-size:13px;color:var(--text2);line-height:1.7;min-height:60px;font-family:monospace;white-space:pre-wrap;display:none;}
 </style>
 </head>
 <body>
@@ -485,6 +523,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   <div id="view-admin" style="display:none">
     <div class="admin-tabs">
       <button class="admin-tab active" onclick="adminTab('courses')">Kurse</button>
+      <button class="admin-tab" onclick="adminTab('ki')">🤖 KI-Generator</button>
       <button class="admin-tab" onclick="adminTab('teams')">Teams</button>
       <button class="admin-tab" onclick="adminTab('assignments')">Pflicht-Kurse</button>
       <button class="admin-tab" onclick="adminTab('analytics')">Analytics</button>
@@ -496,6 +535,76 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div class="admin-section active" id="atab-courses">
       <div class="sec-head"><div class="sec-title">Alle Kurse</div><button class="btn-add" onclick="openCourseModal(null)">+ Kurs hinzufügen</button></div>
       <div class="admin-course-list" id="admin-course-list"></div>
+    </div>
+
+    <!-- KI GENERATOR -->
+    <div class="admin-section" id="atab-ki">
+      <div class="ki-wrap">
+        <div class="ki-hero">
+          <div class="ki-hero-icon">🤖</div>
+          <div>
+            <div class="ki-hero-title">KI-Kurs-Generator</div>
+            <div class="ki-hero-sub">Gib ein Thema ein — die KI erstellt automatisch Slides, Inhalte und Testfragen für einen kompletten Kurs.</div>
+          </div>
+        </div>
+
+        <div class="ki-form">
+          <div class="ki-form-row">
+            <div class="form-full">
+              <label class="form-label">Kursthema</label>
+              <input class="form-input" id="ki-topic" placeholder="z.B. Bilanzkreismanagement, Netzkostenabrechnung, Lastganganalyse…">
+            </div>
+          </div>
+          <div class="ki-form-row">
+            <div>
+              <label class="form-label">Anzahl Slides</label>
+              <select class="form-input" id="ki-slides">
+                <option value="3">3 Slides</option>
+                <option value="4" selected>4 Slides</option>
+                <option value="5">5 Slides</option>
+                <option value="6">6 Slides</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Anzahl Testfragen</label>
+              <select class="form-input" id="ki-questions">
+                <option value="3" selected>3 Fragen</option>
+                <option value="4">4 Fragen</option>
+                <option value="5">5 Fragen</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Schwierigkeitsgrad</label>
+              <select class="form-input" id="ki-level">
+                <option value="Einsteiger">Einsteiger</option>
+                <option value="Fortgeschritten" selected>Fortgeschritten</option>
+                <option value="Experte">Experte</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn-ki-generate" id="ki-generate-btn" onclick="generateCourse()">
+            <span id="ki-btn-text">✨ Kurs generieren</span>
+          </button>
+        </div>
+
+        <div class="msg" id="ki-msg" style="margin-top:1rem"></div>
+
+        <div id="ki-preview" style="display:none">
+          <div class="ki-preview-header">
+            <div class="ki-preview-title">Vorschau</div>
+            <div class="ki-preview-actions">
+              <button class="btn-sec" onclick="resetKiGenerator()">Neu erstellen</button>
+              <button class="btn-add" onclick="saveGeneratedCourse()">✓ Kurs speichern</button>
+            </div>
+          </div>
+
+          <div class="ki-course-card" id="ki-course-preview"></div>
+
+          <div class="ki-slides-preview" id="ki-slides-preview"></div>
+
+          <div class="ki-questions-preview" id="ki-questions-preview"></div>
+        </div>
+      </div>
     </div>
 
     <!-- TEAMS -->
@@ -896,7 +1005,7 @@ function switchView(v){
 }
 
 function adminTab(tab){
-  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['courses','teams','assignments','analytics','progress','import'][i]===tab));
+  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['courses','ki','teams','assignments','analytics','progress','import'][i]===tab));
   document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
   document.getElementById('atab-'+tab).classList.add('active');
   if(tab==='progress') loadAdminProgress();
@@ -1499,6 +1608,229 @@ function showImportMsg(text,type){const el=document.getElementById('import-msg')
 function openModal(id){document.getElementById(id).classList.add('show');}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');});});
+
+// ── KI GENERATOR ──
+let generatedCourse = null;
+
+async function generateCourse(){
+  const topic = document.getElementById('ki-topic').value.trim();
+  if(!topic){ showKiMsg('Bitte ein Thema eingeben.','err'); return; }
+
+  const numSlides = parseInt(document.getElementById('ki-slides').value);
+  const numQuestions = parseInt(document.getElementById('ki-questions').value);
+  const level = document.getElementById('ki-level').value;
+
+  const btn = document.getElementById('ki-generate-btn');
+  const btnText = document.getElementById('ki-btn-text');
+  btn.disabled = true;
+  btnText.textContent = '⏳ KI arbeitet…';
+  document.getElementById('ki-preview').style.display = 'none';
+  document.getElementById('ki-msg').className = 'msg';
+
+  // Show thinking indicator
+  showKiMsg('🤖 KI generiert deinen Kurs — das dauert ca. 15–30 Sekunden…', 'ok');
+
+  const prompt = 'Du bist ein Experte für Energiewirtschaft und erstellst Lernkurse für Fachkräfte.\n\n' +
+    'Erstelle einen vollständigen Lernkurs zum Thema: "' + topic + '"\n' +
+    'Schwierigkeitsgrad: ' + level + '\n' +
+    'Anzahl Slides: ' + numSlides + '\n' +
+    'Anzahl Testfragen: ' + numQuestions + '\n\n' +
+    'Antworte NUR mit einem gültigen JSON-Objekt, ohne Markdown-Formatierung, ohne Backticks, ohne Kommentare.\n\n' +
+    'Format:\n' +
+    '{\n' +
+    '  "title": "Kurztitel des Kurses",\n' +
+    '  "icon": "passendes Emoji",\n' +
+    '  "slides": [\n' +
+    '    {\n' +
+    '      "tag": "Kurzes Schlagwort (1-2 Wörter)",\n' +
+    '      "title": "Slide-Titel",\n' +
+    '      "content": "Erklärender Text mit 3-5 Sätzen. Fachlich korrekt und praxisnah.",\n' +
+    '      "stat1_num": "Zahl oder Kürzel (optional, sonst null)",\n' +
+    '      "stat1_lbl": "Beschriftung (optional, sonst null)",\n' +
+    '      "stat2_num": null, "stat2_lbl": null,\n' +
+    '      "stat3_num": null, "stat3_lbl": null\n' +
+    '    }\n' +
+    '  ],\n' +
+    '  "questions": [\n' +
+    '    {\n' +
+    '      "question": "Vollständige Frage?",\n' +
+    '      "opt_a": "Antwort A", "opt_b": "Antwort B",\n' +
+    '      "opt_c": "Antwort C", "opt_d": "Antwort D",\n' +
+    '      "correct_index": 0\n' +
+    '    }\n' +
+    '  ]\n' +
+    '}\n\n' +
+    'Wichtig:\n' +
+    '- Alle Texte auf Deutsch\n' +
+    '- Fachlich korrekt für die deutsche Energiewirtschaft\n' +
+    '- correct_index ist 0-basiert (0=A, 1=B, 2=C, 3=D)\n' +
+    '- Bei Slides ohne Statistik: stat-Felder auf null setzen\n' +
+    '- Mindestens 1-2 Slides mit sinnvollen Statistik-Kacheln\n' +
+    '- Nur valides JSON zurückgeben';
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if(!response.ok){
+      const err = await response.json();
+      throw new Error(err.error?.message || 'API Fehler: ' + response.status);
+    }
+
+    const data = await response.json();
+    const raw = data.content?.[0]?.text || '';
+
+    // Parse JSON - strip any markdown fences if present
+    let jsonStr = raw.trim();
+    // Strip markdown code fences if present
+    if(jsonStr.startsWith('{')) { /* already clean JSON */ }
+    else {
+      const firstBrace = jsonStr.indexOf('{');
+      const lastBrace = jsonStr.lastIndexOf('}');
+      if(firstBrace !== -1 && lastBrace !== -1) jsonStr = jsonStr.slice(firstBrace, lastBrace+1);
+    }
+
+    const course = JSON.parse(jsonStr);
+
+    // Validate structure
+    if(!course.title || !Array.isArray(course.slides) || !Array.isArray(course.questions)){
+      throw new Error('Ungültige Kursstruktur erhalten. Bitte erneut versuchen.');
+    }
+
+    // Add default colors
+    course.icon_bg = '#0a1f18';
+    course.tag_bg = '#0a1f18';
+    course.tag_color = '#10b981';
+    course.btn_color = '#10b981';
+
+    generatedCourse = course;
+    showKiPreview(course);
+    document.getElementById('ki-msg').className = 'msg';
+
+  } catch(err){
+    showKiMsg('Fehler: ' + err.message, 'err');
+  } finally {
+    btn.disabled = false;
+    btnText.textContent = '✨ Kurs generieren';
+  }
+}
+
+function showKiPreview(course){
+  // Course header
+  document.getElementById('ki-course-preview').innerHTML =
+    '<div class="ki-course-name">' + (course.icon||'📚') + ' ' + course.title + '</div>' +
+    '<div class="ki-course-meta">' + course.slides.length + ' Slides · ' + course.questions.length + ' Testfragen · Automatisch generiert</div>';
+
+  // Slides
+  const slidesEl = document.getElementById('ki-slides-preview');
+  slidesEl.innerHTML = '<div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Slides</div>';
+  course.slides.forEach((s,i) => {
+    const hasStats = s.stat1_num || s.stat2_num || s.stat3_num;
+    let statsHTML = '';
+    if(hasStats){
+      const stats = [[s.stat1_num,s.stat1_lbl],[s.stat2_num,s.stat2_lbl],[s.stat3_num,s.stat3_lbl]].filter(x=>x[0]);
+      statsHTML = '<div style="display:flex;gap:8px;margin-top:10px">' +
+        stats.map(([n,l]) => '<div style="background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:8px 12px;text-align:center;flex:1"><div style="font-weight:700;color:var(--green);font-size:14px">'+n+'</div><div style="font-size:11px;color:var(--text3);margin-top:2px">'+l+'</div></div>').join('') +
+        '</div>';
+    }
+    const card = document.createElement('div');
+    card.className = 'ki-slide-card';
+    card.innerHTML =
+      '<div class="ki-slide-num">Slide ' + (i+1) + ' · ' + (s.tag||'') + '</div>' +
+      '<div class="ki-slide-title">' + s.title + '</div>' +
+      '<div class="ki-slide-text">' + s.content + '</div>' +
+      statsHTML;
+    slidesEl.appendChild(card);
+  });
+
+  // Questions
+  const qEl = document.getElementById('ki-questions-preview');
+  qEl.innerHTML = '<div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Testfragen</div>';
+  const letters = ['A','B','C','D'];
+  course.questions.forEach((q,i) => {
+    const opts = [q.opt_a,q.opt_b,q.opt_c,q.opt_d].filter(Boolean);
+    const optsHTML = opts.map((o,j) =>
+      '<div class="ki-q-opt ' + (j===q.correct_index?'correct':'') + '">' +
+        letters[j] + (j===q.correct_index?' ✓':' ·') + ' ' + o +
+      '</div>'
+    ).join('');
+    const card = document.createElement('div');
+    card.className = 'ki-q-card';
+    card.innerHTML =
+      '<div class="ki-q-num">Frage ' + (i+1) + '</div>' +
+      '<div class="ki-q-text">' + q.question + '</div>' +
+      '<div class="ki-q-opts">' + optsHTML + '</div>';
+    qEl.appendChild(card);
+  });
+
+  document.getElementById('ki-preview').style.display = 'block';
+  document.getElementById('ki-preview').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+async function saveGeneratedCourse(){
+  if(!generatedCourse) return;
+  const btn = document.querySelector('#ki-preview .btn-add');
+  btn.disabled = true; btn.textContent = 'Wird gespeichert…';
+
+  const courseData = {
+    title: generatedCourse.title,
+    icon: generatedCourse.icon || '📚',
+    icon_bg: generatedCourse.icon_bg || '#0a1f18',
+    tag_bg: generatedCourse.tag_bg || '#0a1f18',
+    tag_color: generatedCourse.tag_color || '#10b981',
+    btn_color: generatedCourse.btn_color || '#10b981',
+    sort_order: courses.length
+  };
+
+  const{data:created,error} = await sb.from('courses').insert(courseData).select().single();
+  if(error){ alert('Fehler: '+error.message); btn.disabled=false; btn.textContent='✓ Kurs speichern'; return; }
+
+  const courseId = created.id;
+  if(generatedCourse.slides?.length){
+    await sb.from('slides').insert(generatedCourse.slides.map((s,i) => ({
+      course_id:courseId, sort_order:i,
+      tag:s.tag, title:s.title, content:s.content,
+      stat1_num:s.stat1_num||null, stat1_lbl:s.stat1_lbl||null,
+      stat2_num:s.stat2_num||null, stat2_lbl:s.stat2_lbl||null,
+      stat3_num:s.stat3_num||null, stat3_lbl:s.stat3_lbl||null
+    })));
+  }
+  if(generatedCourse.questions?.length){
+    await sb.from('questions').insert(generatedCourse.questions.map((q,i) => ({
+      course_id:courseId, sort_order:i,
+      question:q.question,
+      opt_a:q.opt_a, opt_b:q.opt_b, opt_c:q.opt_c, opt_d:q.opt_d,
+      correct_index:q.correct_index
+    })));
+  }
+
+  await loadCourses();
+  renderAdmin();
+  resetKiGenerator();
+  showKiMsg('✓ Kurs "' + generatedCourse.title + '" wurde gespeichert und ist jetzt für Nutzer sichtbar!', 'ok');
+  generatedCourse = null;
+  btn.disabled = false; btn.textContent = '✓ Kurs speichern';
+}
+
+function resetKiGenerator(){
+  generatedCourse = null;
+  document.getElementById('ki-preview').style.display = 'none';
+  document.getElementById('ki-topic').value = '';
+  document.getElementById('ki-msg').className = 'msg';
+}
+
+function showKiMsg(text, type){
+  const el = document.getElementById('ki-msg');
+  el.textContent = text;
+  el.className = 'msg show ' + type;
+}
 
 init();
 </script>
