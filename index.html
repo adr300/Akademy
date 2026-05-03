@@ -1530,16 +1530,18 @@ function renderUserPaths(){
       const c=courses.find(x=>x.id===pc.course_id);
       const cidx=courses.findIndex(x=>x.id===pc.course_id);
       const isDone=!!userProgress[cidx]?.completed;
-      const isNext=i===nextIdx;
-      const isLocked=i>nextIdx&&nextIdx>=0;
+      // Streng sequenziell: Vorgänger muss abgeschlossen sein
+      const prevDone=i===0||!!userProgress[courses.findIndex(x=>x.id===pcs[i-1].course_id)]?.completed;
+      const isNext=!isDone&&prevDone;   // erster offene Kurs mit fertigem Vorgänger
+      const isLocked=!isDone&&!prevDone; // Vorgänger noch nicht fertig
       stepsHTML+=
         '<div class="path-step'+(isDone?' ps-done':isNext?' ps-next':isLocked?' ps-locked':'')+'">'+
-          '<div class="ps-dot">'+(isDone?'✓':i===0&&nextIdx<0?'✓':(i+1))+'</div>'+
+          '<div class="ps-dot">'+(isDone?'✓':isLocked?'🔒':(i+1))+'</div>'+
           '<div class="ps-info">'+
             '<div class="ps-name">'+(c?.title||'?')+'</div>'+
-            '<div class="ps-status">'+(isDone?'Abgeschlossen':isNext?'Als nächstes':isLocked?'Gesperrt':'')+'</div>'+
+            '<div class="ps-status">'+(isDone?'Abgeschlossen':isNext?'Als nächstes':'Gesperrt – vorherigen Kurs abschließen')+'</div>'+
           '</div>'+
-          (isNext?'<button class="ps-btn" onclick="startCourseById('+pc.course_id+')">Starten →</button>':'')+ 
+          (isNext?'<button class="ps-btn" onclick="startCourseById('+pc.course_id+')">Starten →</button>':'')+
           (isDone&&i===pcs.length-1?'<span style="font-size:11px;color:var(--green);font-weight:600">✓ Pfad abgeschlossen</span>':'')+ 
         '</div>'+
         (i<pcs.length-1?'<div class="ps-connector'+(isDone?' ps-conn-done':'')+'"></div>':'');
