@@ -410,6 +410,40 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .ps-conn-done{background:var(--path-color,var(--green));}
 /* admin path */
 .admin-path-list{display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem;}
+
+/* ── GAMIFICATION ── */
+.nav-level-pill{font-size:10px;font-weight:700;background:rgba(16,185,129,0.15);color:var(--green);border:1px solid rgba(16,185,129,0.3);border-radius:20px;padding:2px 7px;margin-left:2px;}
+.xp-bar-wrap{display:flex;align-items:center;gap:12px;padding:.6rem 0 1rem;flex-wrap:wrap;}
+.xp-bar-inner{flex:1;min-width:200px;}
+.xp-bar-track{height:6px;background:var(--border2);border-radius:3px;overflow:hidden;margin-bottom:4px;}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--teal));border-radius:3px;transition:width .6s ease;width:0%;}
+.xp-label{font-size:11px;color:var(--text3);}
+.xp-profile-btn{padding:6px 14px;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:var(--green);border-radius:20px;cursor:pointer;white-space:nowrap;transition:all .15s;}
+.xp-profile-btn:hover{background:rgba(16,185,129,0.2);}
+
+/* XP Toast */
+.xp-toast{position:fixed;bottom:2rem;right:2rem;background:var(--bg2);border:1px solid var(--green);border-radius:var(--rl);padding:1rem 1.25rem;font-size:13px;color:var(--text);box-shadow:0 8px 32px rgba(0,0,0,0.4),0 0 20px rgba(16,185,129,0.2);z-index:999;opacity:0;transform:translateY(12px);transition:all .35s;max-width:260px;line-height:1.5;}
+.xp-toast.show{opacity:1;transform:translateY(0);}
+.xp-toast strong{color:var(--green);}
+.level-up-toast{border-color:var(--amber);box-shadow:0 8px 32px rgba(0,0,0,0.4),0 0 20px rgba(245,158,11,0.3);}
+.level-up-toast strong{color:var(--amber);}
+
+/* XP gained on result */
+.xp-gained-badge{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.3);color:var(--green);border-radius:20px;padding:6px 18px;font-size:14px;font-weight:700;margin-bottom:1rem;align-items:center;gap:6px;justify-content:center;}
+
+/* Profile screen */
+.profile-xp-card{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rl);padding:1.5rem;display:flex;align-items:center;gap:1.25rem;}
+.profile-level-badge{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--green),var(--teal));display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-size:24px;font-weight:800;color:#020d08;flex-shrink:0;box-shadow:0 0 24px rgba(16,185,129,0.3);}
+
+/* Badge grid */
+.badge-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;}
+.badge-card{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rl);padding:1.1rem;text-align:center;transition:border-color .15s,transform .15s;}
+.badge-card:not(.badge-locked):hover{border-color:var(--green);transform:translateY(-2px);}
+.badge-locked{opacity:.4;filter:grayscale(1);}
+.badge-icon{font-size:28px;margin-bottom:8px;}
+.badge-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.badge-desc{font-size:11px;color:var(--text3);line-height:1.4;}
+.badge-xp{font-size:11px;color:var(--green);font-weight:600;margin-top:6px;}
 </style>
 </head>
 <body>
@@ -464,12 +498,20 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         </div>
       </div>
       <div class="nav-user">
-        <div class="nav-avatar" id="nav-avatar">?</div>
+        <div class="nav-avatar" id="nav-avatar">?</div><span class="nav-level-pill" id="nav-level">Lv.1</span>
         <span id="nav-email"></span>
       </div>
       <button class="btn-logout" onclick="logout()">Abmelden</button>
     </div>
   </nav>
+  <!-- XP BAR -->
+  <div class="xp-bar-wrap" id="xp-bar-wrap">
+    <div class="xp-bar-inner">
+      <div class="xp-bar-track"><div class="xp-bar-fill" id="xp-bar-fill"></div></div>
+      <div class="xp-label" id="xp-label">Level 1 · 0 XP</div>
+    </div>
+    <button class="xp-profile-btn" onclick="showProfile()">🏅 Meine Erfolge</button>
+  </div>
 
   <!-- USER VIEW -->
   <div id="view-user">
@@ -551,6 +593,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
             <div class="r-stat"><div class="r-num" id="res-t"></div><div class="r-lbl">Fragen</div></div>
             <div class="r-stat"><div class="r-num" id="res-p"></div><div class="r-lbl">Ergebnis</div></div>
           </div>
+          <div class="xp-gained-badge" id="res-xp" style="display:none"></div>
           <div class="res-btns">
             <button class="btn-cta" id="res-cta" onclick="showDash()">Zur Kursübersicht</button>
             <button class="cert-btn" id="cert-btn" onclick="downloadCert()" style="display:none">🏆 Zertifikat herunterladen</button>
@@ -559,6 +602,28 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         </div>
       </div>
     </div></div>
+
+    <!-- PROFILE / BADGES SCREEN -->
+    <div class="screen" id="screen-profile">
+      <div style="padding-top:1.5rem">
+      <div class="chrome">
+        <div class="chrome-top">
+          <button class="btn-back" onclick="showDash()">← Zurück</button>
+          <div class="tb-info"><div class="tb-title">Meine Erfolge</div><div class="tb-sub">XP, Level & Badges</div></div>
+          <div class="tb-chip" id="profile-xp-chip">0 XP</div>
+        </div>
+        <div style="padding:2rem;overflow-y:auto;flex:1">
+          <!-- XP Progress -->
+          <div class="profile-xp-card" id="profile-xp-card"></div>
+          <!-- Badges -->
+          <div style="margin-top:2rem">
+            <div class="sec-title" style="margin-bottom:1rem">Badges</div>
+            <div class="badge-grid" id="badge-grid"></div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
   </div>
 
   <!-- ADMIN VIEW -->
@@ -570,6 +635,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <button class="admin-tab" onclick="adminTab('assignments')">Pflicht-Kurse</button>
       <button class="admin-tab" onclick="adminTab('analytics')">Analytics</button>
       <button class="admin-tab" onclick="adminTab('progress')">Fortschritt</button>
+      <button class="admin-tab" onclick="adminTab('leaderboard')">Leaderboard</button>
       <button class="admin-tab" onclick="adminTab('import')">Import</button>
     </div>
 
@@ -747,6 +813,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
     </div>
 
+    <!-- LEADERBOARD -->
+    <div class="admin-section" id="atab-leaderboard">
+      <div class="sec-head"><div class="sec-title">XP Leaderboard</div></div>
+      <div class="chrome" style="min-height:auto">
+        <table class="progress-table">
+          <thead><tr><th>Rang</th><th>Nutzer</th><th>Level</th><th>XP</th><th>Badges</th></tr></thead>
+          <tbody id="lb-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
     <!-- IMPORT -->
     <div class="admin-section" id="atab-import">
       <div class="sec-head"><div class="sec-title">Kurs importieren</div></div>
@@ -901,6 +978,7 @@ let pendingImport=null,dropZoneInited=false;
 let sessionStart=null,currentSessionCourseId=null;
 let lastPassedCourse=null,lastPassedScore=0;
 let learningPaths=[],pathCourses=[];
+let userXP={total_xp:0,level:1},userBadges=[],allBadges=[];
 
 // ── INIT ──
 async function init(){
@@ -946,13 +1024,14 @@ async function setUser(user){
   document.getElementById('nav-email').textContent=email.split('@')[0];
   if(isAdmin) document.getElementById('admin-tab-switch').style.display='block';
   try{
-    await Promise.all([loadCourses(),loadProgress(),loadTeams(),loadAssignments(),loadPaths()]);
+    await Promise.all([loadCourses(),loadProgress(),loadTeams(),loadAssignments(),loadPaths(),loadXP()]);
   } catch(err){
     console.error('Data load error:',err);
   }
   document.getElementById('loading').style.display='none';
   document.getElementById('screen-login').style.display='none';
   document.getElementById('main-app').style.display='block';
+  updateXPBar();
   showDash();
 }
 
@@ -1036,6 +1115,111 @@ async function loadPaths(){
   const{data:pc}=await sb.from('path_courses').select('*').order('position');
   learningPaths=p||[];
   pathCourses=pc||[];
+}
+
+// ── XP & GAMIFICATION ──
+async function loadXP(){
+  const[{data:xp},{data:ub},{data:ab}]=await Promise.all([
+    sb.from('user_xp').select('*').eq('user_id',currentUser.id).single(),
+    sb.from('user_badges').select('*').eq('user_id',currentUser.id),
+    sb.from('badges').select('*').order('sort_order')
+  ]);
+  userXP=xp||{total_xp:0,level:1};
+  userBadges=ub||[];
+  allBadges=ab||[];
+}
+
+function xpForLevel(lvl){ return lvl*lvl*100; } // 100, 400, 900, 1600...
+function levelFromXP(xp){
+  let lvl=1;
+  while(xpForLevel(lvl+1)<=xp) lvl++;
+  return lvl;
+}
+
+async function awardXP(amount){
+  const newXP=(userXP.total_xp||0)+amount;
+  const newLevel=levelFromXP(newXP);
+  const levelUp=newLevel>(userXP.level||1);
+  await sb.from('user_xp').upsert({user_id:currentUser.id,total_xp:newXP,level:newLevel,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+  const oldLevel=userXP.level||1;
+  userXP={total_xp:newXP,level:newLevel};
+  updateXPBar();
+  if(levelUp) showLevelUpToast(newLevel);
+  return {newXP,newLevel,levelUp};
+}
+
+async function checkAndAwardBadges(courseId,score,sessionSecs){
+  const earned=[];
+  const completedCount=Object.values(userProgress).filter(p=>p.completed).length;
+  const allScores=Object.values(userProgress).filter(p=>p.completed).map(p=>p.score||0);
+  const avgScore=allScores.length?Math.round(allScores.reduce((a,b)=>a+b,0)/allScores.length):0;
+
+  // Check all path completions
+  const pathCompleted=learningPaths.some(lp=>{
+    const pcs=pathCourses.filter(pc=>pc.path_id===lp.id);
+    return pcs.length>0&&pcs.every(pc=>{
+      const idx=courses.findIndex(c=>c.id===pc.course_id);
+      return userProgress[idx]?.completed;
+    });
+  });
+
+  const checks=[
+    {key:'first_course',  met:completedCount>=1},
+    {key:'three_courses', met:completedCount>=3},
+    {key:'all_courses',   met:courses.length>0&&completedCount>=courses.length},
+    {key:'perfect_score', met:score===100},
+    {key:'speed_learner', met:sessionSecs>0&&sessionSecs<600},
+    {key:'path_complete', met:pathCompleted},
+    {key:'high_score',    met:avgScore>=90&&allScores.length>=2},
+  ];
+
+  for(const chk of checks){
+    const badge=allBadges.find(b=>b.key===chk.key);
+    if(!badge)continue;
+    const alreadyEarned=userBadges.some(ub=>ub.badge_id===badge.id);
+    if(chk.met&&!alreadyEarned){
+      await sb.from('user_badges').insert({user_id:currentUser.id,badge_id:badge.id});
+      userBadges.push({badge_id:badge.id,earned_at:new Date().toISOString()});
+      earned.push(badge);
+      await awardXP(badge.xp_reward||0);
+    }
+  }
+  return earned;
+}
+
+function updateXPBar(){
+  const bar=document.getElementById('xp-bar-fill');
+  const label=document.getElementById('xp-label');
+  const lvlEl=document.getElementById('nav-level');
+  if(!bar||!label)return;
+  const cur=userXP.total_xp||0;
+  const lvl=userXP.level||1;
+  const thisLvlXP=xpForLevel(lvl);
+  const nextLvlXP=xpForLevel(lvl+1);
+  const pct=Math.min(100,Math.round(((cur-thisLvlXP)/(nextLvlXP-thisLvlXP))*100));
+  bar.style.width=pct+'%';
+  label.textContent='Level '+lvl+' · '+cur+' XP · '+pct+'% bis Level '+(lvl+1);
+  if(lvlEl) lvlEl.textContent='Lv.'+lvl;
+}
+
+function showLevelUpToast(level){
+  const t=document.createElement('div');
+  t.className='xp-toast level-up-toast';
+  t.innerHTML='🎉 <strong>Level Up!</strong> Du bist jetzt Level '+level+'!';
+  document.body.appendChild(t);
+  setTimeout(()=>t.classList.add('show'),50);
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},3500);
+}
+
+function showXPToast(amount,badges){
+  const t=document.createElement('div');
+  t.className='xp-toast';
+  let html='<strong>+'+amount+' XP</strong>';
+  if(badges.length) html+='<br>'+badges.map(b=>b.icon+' '+b.title).join('<br>');
+  t.innerHTML=html;
+  document.body.appendChild(t);
+  setTimeout(()=>t.classList.add('show'),50);
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},3500);
 }
 
 async function saveProgress(courseId,score){
@@ -1148,7 +1332,7 @@ function switchView(v){
 }
 
 function adminTab(tab){
-  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['courses','paths','teams','assignments','analytics','progress','import'][i]===tab));
+  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['courses','paths','teams','assignments','analytics','progress','leaderboard','import'][i]===tab));
   document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
   document.getElementById('atab-'+tab).classList.add('active');
   if(tab==='progress') loadAdminProgress();
@@ -1157,6 +1341,7 @@ function adminTab(tab){
   if(tab==='assignments') renderAssignments();
   if(tab==='import') initDropZone();
   if(tab==='paths') renderPaths();
+  if(tab==='leaderboard') loadLeaderboard();
 }
 
 // ── DEADLINE BANNER ──
@@ -1325,26 +1510,82 @@ function nextQ(){const c=courses[ci];if(qi<c.questions.length-1){qi++;renderQ();
 
 async function showResult(){
   const c=courses[ci],total=c.questions.length,pct=Math.round((correct/total)*100),pass=pct>=70;
+  const sessSecs=sessionStart?Math.round((Date.now()-sessionStart)/1000):0;
   await endSession();
   await saveProgress(c.id,pct);
   lastPassedCourse=pass?c:null;
   lastPassedScore=pct;
+
+  // Award XP for passing
+  let xpGained=0;
+  let newBadges=[];
+  if(pass){
+    // Base XP: 50 + bonus for score
+    xpGained=50+Math.round((pct-70)/30*50);
+    await awardXP(xpGained);
+    newBadges=await checkAndAwardBadges(c.id,pct,sessSecs);
+    setTimeout(()=>showXPToast(xpGained,newBadges),600);
+  }
+
   document.getElementById('res-course').textContent=c.title;
   document.getElementById('res-icon').textContent=pass?'✓':'✗';
   document.getElementById('res-icon').className='res-icon '+(pass?'r-pass':'r-fail');
   document.getElementById('res-title').textContent=pass?'Kurs abgeschlossen!':'Nicht bestanden';
   document.getElementById('res-sub').textContent=pass
-    ?`Herzlichen Glückwunsch! Du hast „${c.title}" mit ${pct} % abgeschlossen.`
-    :`Du hast ${pct} % erreicht. Zum Bestehen sind mindestens 70 % nötig.`;
+    ?'Herzlichen Glückwunsch! Du hast &bdquo;'+c.title+'&rdquo; mit '+pct+' % abgeschlossen.'
+    :'Du hast '+pct+' % erreicht. Zum Bestehen sind mindestens 70 % nötig.';
   document.getElementById('res-c').textContent=correct;
   document.getElementById('res-t').textContent=total;
   document.getElementById('res-p').textContent=pct+' %';
   document.getElementById('res-cta').style.background=c.btn_color||'#10b981';
   document.getElementById('cert-btn').style.display=pass?'flex':'none';
+
+  // Show XP gained on result screen
+  const xpEl=document.getElementById('res-xp');
+  if(xpEl) xpEl.style.display=pass?'flex':'none';
+  if(pass&&xpEl) xpEl.textContent='+'+xpGained+' XP';
+
   showScreen('screen-result');
 }
 
 async function goBack(){await endSession();showDash();}
+
+function showProfile(){
+  const lvl=userXP.level||1;
+  const cur=userXP.total_xp||0;
+  const thisLvlXP=xpForLevel(lvl);
+  const nextLvlXP=xpForLevel(lvl+1);
+  const pct=Math.min(100,Math.round(((cur-thisLvlXP)/(nextLvlXP-thisLvlXP))*100));
+  document.getElementById('profile-xp-chip').textContent=cur+' XP';
+
+  // XP card
+  document.getElementById('profile-xp-card').innerHTML=
+    '<div class="profile-level-badge">'+lvl+'</div>'+
+    '<div style="flex:1">'+
+      '<div style="font-family:Bricolage Grotesque,sans-serif;font-size:18px;font-weight:800;color:var(--text)">Level '+lvl+'</div>'+
+      '<div style="font-size:12px;color:var(--text3);margin-top:2px">'+cur+' / '+nextLvlXP+' XP bis Level '+(lvl+1)+'</div>'+
+      '<div style="height:6px;background:var(--border2);border-radius:3px;margin-top:10px;overflow:hidden">'+
+        '<div style="height:100%;width:'+pct+'%;background:var(--green);border-radius:3px;transition:width .5s ease"></div>'+
+      '</div>'+
+    '</div>';
+
+  // Badges grid
+  const grid=document.getElementById('badge-grid');
+  grid.innerHTML='';
+  allBadges.forEach(b=>{
+    const earned=userBadges.some(ub=>ub.badge_id===b.id);
+    const div=document.createElement('div');
+    div.className='badge-card'+(earned?'':' badge-locked');
+    div.innerHTML=
+      '<div class="badge-icon">'+(earned?b.icon:'🔒')+'</div>'+
+      '<div class="badge-title">'+b.title+'</div>'+
+      '<div class="badge-desc">'+(earned?b.description:'???')+'</div>'+
+      '<div class="badge-xp">'+(earned?'+'+b.xp_reward+' XP':'')+'</div>';
+    grid.appendChild(div);
+  });
+
+  showScreen('screen-profile');
+}
 
 // ── ADMIN RENDER ──
 function renderAdmin(){
@@ -2031,6 +2272,29 @@ async function confirmImport(){
 function showImportMsg(text,type){const el=document.getElementById('import-msg');el.textContent=text;el.className=`msg show ${type}`;}
 
 // ── MODAL UTILS ──
+// ── LEADERBOARD ──
+async function loadLeaderboard(){
+  const tbody=document.getElementById('lb-tbody');
+  if(!tbody)return;
+  tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:2rem">Wird geladen…</td></tr>';
+  const{data,error}=await sb.from('leaderboard').select('*').limit(50);
+  if(error||!data){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--red);padding:2rem">Fehler beim Laden.</td></tr>';return;}
+  tbody.innerHTML='';
+  if(!data.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:2rem">Noch keine XP vergeben</td></tr>';return;}
+  data.forEach((row,i)=>{
+    const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
+    const lvlBar=`<div style="display:flex;align-items:center;gap:6px"><span class="score-pill score-pass" style="font-size:10px">Lv.${row.level}</span><div style="width:60px;height:4px;background:var(--border2);border-radius:2px;overflow:hidden"><div style="height:100%;background:var(--green);width:${Math.min(100,Math.round(((row.total_xp-row.level*row.level*100)/((row.level+1)*(row.level+1)*100-row.level*row.level*100))*100))}%"></div></div></div>`;
+    const tr=document.createElement('tr');
+    tr.innerHTML=
+      '<td style="font-size:13px;font-weight:600">'+(i+1)+' '+medal+'</td>'+
+      '<td style="font-size:13px">'+(row.email||row.user_id.slice(0,8)+'…')+'</td>'+
+      '<td>'+lvlBar+'</td>'+
+      '<td style="font-family:monospace;color:var(--green);font-weight:600">'+row.total_xp+' XP</td>'+
+      '<td><span class="score-pill score-pass">'+row.badge_count+' 🏅</span></td>';
+    tbody.appendChild(tr);
+  });
+}
+
 function openModal(id){document.getElementById(id).classList.add('show');}
 function closeModal(id){document.getElementById(id).classList.remove('show');}
 document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('show');});});
