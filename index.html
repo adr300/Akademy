@@ -444,6 +444,47 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .badge-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
 .badge-desc{font-size:11px;color:var(--text3);line-height:1.4;}
 .badge-xp{font-size:11px;color:var(--green);font-weight:600;margin-top:6px;}
+
+/* ── GAMIFICATION PANEL ── */
+.gp-panel{display:flex;flex-direction:column;gap:12px;margin-bottom:2rem;}
+
+/* Streak banner */
+.gp-streak-banner{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1.1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.gp-streak-left{display:flex;align-items:center;gap:14px;}
+.streak-fire{font-size:36px;flex-shrink:0;}
+.gp-streak-num{font-family:'Bricolage Grotesque',sans-serif;font-size:28px;font-weight:800;color:var(--amber);line-height:1;}
+.gp-streak-unit{font-size:14px;font-weight:600;color:var(--text2);}
+.gp-streak-msg{font-size:13px;color:var(--text3);margin-top:3px;}
+.gp-profile-link{font-size:13px;font-weight:600;color:var(--green);background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:20px;padding:7px 16px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;transition:all .15s;}
+.gp-profile-link:hover{background:rgba(16,185,129,0.16);}
+@keyframes pulse-fire{0%,100%{transform:scale(1);}50%{transform:scale(1.2);}}
+
+/* Daily Challenge */
+.gp-daily-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1.25rem 1.5rem;overflow:hidden;position:relative;}
+.gp-daily-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 40% 60% at 95% 50%,rgba(16,185,129,0.07),transparent);pointer-events:none;}
+.dc-eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:10px;}
+.dc-body{display:flex;align-items:center;gap:14px;}
+.dc-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;border:1px solid var(--border2);}
+.dc-info{flex:1;min-width:0;}
+.dc-title{font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:800;color:var(--text);letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dc-meta{font-size:12px;color:var(--text3);margin-top:3px;}
+.dc-bonus{margin-top:6px;}
+.dc-xp-badge{font-size:11px;font-weight:700;background:rgba(245,158,11,0.12);color:var(--amber);border:1px solid rgba(245,158,11,0.25);border-radius:20px;padding:2px 10px;}
+.dc-done-badge{font-size:11px;font-weight:700;background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.2);border-radius:20px;padding:2px 10px;}
+.dc-btn{padding:9px 20px;font-size:13px;font-weight:700;font-family:'Inter',sans-serif;color:#020d08;border:none;border-radius:9px;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.dc-btn:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 4px 16px rgba(16,185,129,0.3);}
+.dc-check{width:36px;height:36px;border-radius:50%;background:rgba(16,185,129,0.12);display:flex;align-items:center;justify-content:center;color:var(--green);font-size:16px;font-weight:700;flex-shrink:0;}
+.dc-progress-bar{height:3px;background:var(--border2);border-radius:2px;margin-top:14px;overflow:hidden;}
+.dc-progress-fill{height:100%;border-radius:2px;transition:width 1s ease;}
+
+/* Course rings */
+.cc-ring-wrap{display:flex;align-items:center;gap:8px;margin-top:1.1rem;}
+.cc-ring{width:32px;height:32px;flex-shrink:0;}
+.cc-ring-pct{font-size:11px;font-weight:700;color:var(--text2);}
+
+/* Confetti */
+.confetti-piece{position:fixed;top:-10px;z-index:9999;pointer-events:none;animation:confetti-fall linear forwards;}
+@keyframes confetti-fall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(105vh) rotate(720deg);opacity:0;}}
 </style>
 </head>
 <body>
@@ -530,6 +571,21 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <div class="deadline-banner-title">⚠ Offene Pflicht-Kurse</div>
         <div id="deadline-list"></div>
       </div>
+      <!-- GAMIFICATION PANEL -->
+      <div class="gp-panel">
+        <div class="gp-streak-banner">
+          <div class="gp-streak-left">
+            <span id="gp-streak-fire" class="streak-fire">🔥</span>
+            <div>
+              <div class="gp-streak-num"><span id="gp-streak">0</span><span class="gp-streak-unit"> Tage Streak</span></div>
+              <div class="gp-streak-msg" id="gp-streak-msg">Starte heute deinen Streak!</div>
+            </div>
+          </div>
+          <button class="gp-profile-link" onclick="showProfile()">Profil &amp; Badges →</button>
+        </div>
+        <div class="gp-daily-card" id="daily-challenge"></div>
+      </div>
+
       <div id="path-section" style="display:none">
         <div class="path-section-head">
           <div class="sec-title">Lernpfade</div>
@@ -979,6 +1035,7 @@ let sessionStart=null,currentSessionCourseId=null;
 let lastPassedCourse=null,lastPassedScore=0;
 let learningPaths=[],pathCourses=[];
 let userXP={total_xp:0,level:1},userBadges=[],allBadges=[];
+let userStreak=0,leaderboardData=[];
 
 // ── INIT ──
 async function init(){
@@ -1016,23 +1073,32 @@ async function init(){
 }
 
 async function setUser(user){
-  currentUser=user;
-  const{data}=await sb.from('admins').select('user_id').eq('user_id',user.id).single();
-  isAdmin=!!data;
-  const email=user.email||'';
-  document.getElementById('nav-avatar').textContent=email[0]?.toUpperCase()||'?';
-  document.getElementById('nav-email').textContent=email.split('@')[0];
-  if(isAdmin) document.getElementById('admin-tab-switch').style.display='block';
   try{
-    await Promise.all([loadCourses(),loadProgress(),loadTeams(),loadAssignments(),loadPaths(),loadXP()]);
+    currentUser=user;
+    try{const{data}=await sb.from('admins').select('user_id').eq('user_id',user.id).single();isAdmin=!!data;}
+    catch(e){isAdmin=false;}
+    const email=user.email||'';
+    document.getElementById('nav-avatar').textContent=email[0]?.toUpperCase()||'?';
+    document.getElementById('nav-email').textContent=email.split('@')[0];
+    if(isAdmin) document.getElementById('admin-tab-switch').style.display='block';
+    // Load all data — each function has its own try/catch so failures are safe
+    await Promise.allSettled([loadCourses(),loadProgress(),loadTeams(),loadAssignments(),loadPaths(),loadXP()]);
+    document.getElementById('loading').style.display='none';
+    document.getElementById('screen-login').style.display='none';
+    document.getElementById('main-app').style.display='block';
+    updateXPBar();
+    showDash();
   } catch(err){
-    console.error('Data load error:',err);
+    console.error('setUser failed:',err);
+    // Show a friendly retry message instead of infinite loading
+    document.getElementById('loading').innerHTML=
+      '<div style="text-align:center;padding:2rem">' +
+      '<div style="font-size:32px;margin-bottom:1rem">⚠️</div>' +
+      '<div style="font-size:16px;font-weight:600;color:#e8f5f0;margin-bottom:8px">Verbindungsfehler</div>' +
+      '<div style="font-size:13px;color:#7ab5a0;margin-bottom:1.5rem">Bitte Seite neu laden</div>' +
+      '<button onclick="location.reload()" style="padding:10px 24px;background:#10b981;color:#020d08;border:none;border-radius:9px;font-size:14px;font-weight:700;cursor:pointer">Neu laden</button>' +
+      '</div>';
   }
-  document.getElementById('loading').style.display='none';
-  document.getElementById('screen-login').style.display='none';
-  document.getElementById('main-app').style.display='block';
-  updateXPBar();
-  showDash();
 }
 
 function showLogin(){
@@ -1067,17 +1133,23 @@ async function logout(){await sb.auth.signOut();}
 
 // ── DATA LOADING ──
 async function loadCourses(){
-  const{data:cs}=await sb.from('courses').select('*').order('sort_order');
-  if(!cs){courses=[];return;}
-  const{data:sl}=await sb.from('slides').select('*').order('sort_order');
-  const{data:qs}=await sb.from('questions').select('*').order('sort_order');
-  courses=cs.map(c=>({...c,slides:(sl||[]).filter(s=>s.course_id===c.id),questions:(qs||[]).filter(q=>q.course_id===c.id)}));
+  try{
+    const{data:cs}=await sb.from('courses').select('*').order('sort_order');
+    if(!cs){courses=[];return;}
+    const[{data:sl},{data:qs}]=await Promise.all([
+      sb.from('slides').select('*').order('sort_order'),
+      sb.from('questions').select('*').order('sort_order')
+    ]);
+    courses=cs.map(c=>({...c,slides:(sl||[]).filter(s=>s.course_id===c.id),questions:(qs||[]).filter(q=>q.course_id===c.id)}));
+  }catch(e){console.error('loadCourses:',e.message);courses=[];}
 }
 
 async function loadProgress(){
-  const{data}=await sb.from('user_progress').select('course_index,completed,score').eq('user_id',currentUser.id);
-  userProgress={};
-  if(data)data.forEach(r=>{userProgress[r.course_index]={completed:r.completed,score:r.score};});
+  try{
+    const{data}=await sb.from('user_progress').select('course_index,completed,score').eq('user_id',currentUser.id);
+    userProgress={};
+    if(data)data.forEach(r=>{userProgress[r.course_index]={completed:r.completed,score:r.score};});
+  }catch(e){console.error('loadProgress:',e.message);userProgress={};}
 }
 
 // Helper: check if a course is completed by course_id
@@ -1088,45 +1160,72 @@ function isCourseCompleted(courseId){
 }
 
 async function loadTeams(){
+  try{
   const{data:t}=await sb.from('teams').select('*').order('name');
   const{data:m}=await sb.from('team_members').select('*');
   const members=m||[];
-  // Fetch emails for all member user_ids
   const userIds=[...new Set(members.map(x=>x.user_id))];
   let emailMap={};
   if(userIds.length){
-    const{data:emails}=await sb.from('user_emails').select('id,email').in('id',userIds);
-    if(emails)emails.forEach(u=>{emailMap[u.id]=u.email;});
+    try{const{data:emails}=await sb.from('user_emails').select('id,email').in('id',userIds);if(emails)emails.forEach(u=>{emailMap[u.id]=u.email;});}catch(e){}
   }
   teams=(t||[]).map(team=>({
     ...team,
     members:members.filter(x=>x.team_id===team.id),
     memberEmails:emailMap
   }));
+  }catch(e){console.error('loadTeams:',e.message);teams=[];}
 }
 
 async function loadAssignments(){
-  const{data}=await sb.from('course_assignments').select('*');
-  assignments=data||[];
+  try{
+    const{data}=await sb.from('course_assignments').select('*');
+    assignments=data||[];
+  }catch(e){console.error('loadAssignments:',e.message);assignments=[];}
 }
 
 async function loadPaths(){
-  const{data:p}=await sb.from('learning_paths').select('*').order('sort_order');
-  const{data:pc}=await sb.from('path_courses').select('*').order('position');
-  learningPaths=p||[];
-  pathCourses=pc||[];
+  try{
+    const{data:p}=await sb.from('learning_paths').select('*').order('sort_order');
+    const{data:pc}=await sb.from('path_courses').select('*').order('position');
+    learningPaths=p||[];
+    pathCourses=pc||[];
+  }catch(e){console.error('loadPaths:',e.message);learningPaths=[];pathCourses=[];}
 }
 
 // ── XP & GAMIFICATION ──
 async function loadXP(){
-  const[{data:xp},{data:ub},{data:ab}]=await Promise.all([
-    sb.from('user_xp').select('*').eq('user_id',currentUser.id).single(),
-    sb.from('user_badges').select('*').eq('user_id',currentUser.id),
-    sb.from('badges').select('*').order('sort_order')
-  ]);
-  userXP=xp||{total_xp:0,level:1};
-  userBadges=ub||[];
-  allBadges=ab||[];
+  // Each query individually with fallback — one failure won't break everything
+  try{const{data}=await sb.from('user_xp').select('*').eq('user_id',currentUser.id).single();userXP=data||{total_xp:0,level:1};}
+  catch(e){userXP={total_xp:0,level:1};}
+
+  try{const{data}=await sb.from('user_badges').select('*').eq('user_id',currentUser.id);userBadges=data||[];}
+  catch(e){userBadges=[];}
+
+  try{const{data}=await sb.from('badges').select('*').order('sort_order');allBadges=data||[];}
+  catch(e){allBadges=[];}
+
+  try{const{data}=await sb.from('leaderboard').select('*').limit(5);leaderboardData=data||[];}
+  catch(e){leaderboardData=[];console.warn('Leaderboard nicht verfuegbar:',e.message);}
+
+  try{
+    const{data}=await sb.from('user_progress')
+      .select('updated_at').eq('user_id',currentUser.id).order('updated_at',{ascending:false});
+    userStreak=calcStreak(data||[]);
+  }catch(e){userStreak=0;}
+}
+
+function calcStreak(progHistory){
+  if(!progHistory.length)return 0;
+  const days=new Set(progHistory.map(p=>new Date(p.updated_at).toDateString()));
+  let streak=0;
+  const today=new Date();
+  for(let i=0;i<365;i++){
+    const d=new Date(today);d.setDate(d.getDate()-i);
+    if(days.has(d.toDateString()))streak++;
+    else if(i>0)break;
+  }
+  return streak;
 }
 
 function xpForLevel(lvl){ return lvl*lvl*100; } // 100, 400, 900, 1600...
@@ -1140,10 +1239,14 @@ async function awardXP(amount){
   const newXP=(userXP.total_xp||0)+amount;
   const newLevel=levelFromXP(newXP);
   const levelUp=newLevel>(userXP.level||1);
-  await sb.from('user_xp').upsert({user_id:currentUser.id,total_xp:newXP,level:newLevel,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+  try{await sb.from('user_xp').upsert({user_id:currentUser.id,total_xp:newXP,level:newLevel,updated_at:new Date().toISOString()},{onConflict:'user_id'});}catch(e){console.warn('XP save failed:',e.message);}
   const oldLevel=userXP.level||1;
+  const oldXP=userXP.total_xp||0;
   userXP={total_xp:newXP,level:newLevel};
   updateXPBar();
+  // animate XP counter
+  const xpEl=document.getElementById('xp-ring-xp');
+  if(xpEl) animateXPCounter(xpEl,oldXP,newXP,800);
   if(levelUp) showLevelUpToast(newLevel);
   return {newXP,newLevel,levelUp};
 }
@@ -1188,34 +1291,86 @@ async function checkAndAwardBadges(courseId,score,sessionSecs){
 }
 
 function updateXPBar(){
-  const bar=document.getElementById('xp-bar-fill');
-  const label=document.getElementById('xp-label');
-  const lvlEl=document.getElementById('nav-level');
-  if(!bar||!label)return;
   const cur=userXP.total_xp||0;
   const lvl=userXP.level||1;
   const thisLvlXP=xpForLevel(lvl);
   const nextLvlXP=xpForLevel(lvl+1);
   const pct=Math.min(100,Math.round(((cur-thisLvlXP)/(nextLvlXP-thisLvlXP))*100));
-  bar.style.width=pct+'%';
-  label.textContent='Level '+lvl+' · '+cur+' XP · '+pct+'% bis Level '+(lvl+1);
+  // nav level pill
+  const lvlEl=document.getElementById('nav-level');
   if(lvlEl) lvlEl.textContent='Lv.'+lvl;
+  // old xp bar (keep for backward compat)
+  const bar=document.getElementById('xp-bar-fill');
+  const label=document.getElementById('xp-label');
+  if(bar) bar.style.width=pct+'%';
+  if(label) label.textContent='Level '+lvl+' · '+cur+' XP · '+pct+'% bis Level '+(lvl+1);
+  // new ring widget
+  updateXPRing(lvl,cur,pct);
+}
+
+function updateXPRing(lvl,cur,pct){
+  const ring=document.getElementById('xp-ring-circle');
+  if(!ring)return;
+  const r=42,circ=2*Math.PI*r;
+  const offset=circ-(pct/100)*circ;
+  ring.style.strokeDasharray=circ;
+  ring.style.strokeDashoffset=offset;
+  const lvlNum=document.getElementById('xp-ring-level');
+  const xpNum=document.getElementById('xp-ring-xp');
+  const xpPct=document.getElementById('xp-ring-pct');
+  if(lvlNum) lvlNum.textContent=lvl;
+  if(xpNum) xpNum.textContent=cur.toLocaleString('de-DE')+' XP';
+  if(xpPct) xpPct.textContent=pct+'% bis Lv.'+(lvl+1);
+}
+
+function animateXPCounter(el, from, to, duration){
+  if(!el)return;
+  const start=performance.now();
+  function step(now){
+    const t=Math.min(1,(now-start)/duration);
+    const ease=1-Math.pow(1-t,3);
+    el.textContent=Math.round(from+(to-from)*ease).toLocaleString('de-DE')+' XP';
+    if(t<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
 }
 
 function showLevelUpToast(level){
+  // Confetti
+  launchConfetti();
   const t=document.createElement('div');
   t.className='xp-toast level-up-toast';
-  t.innerHTML='🎉 <strong>Level Up!</strong> Du bist jetzt Level '+level+'!';
+  t.innerHTML='🎉 <strong>Level Up!</strong><br>Du bist jetzt <strong>Level '+level+'</strong>!';
   document.body.appendChild(t);
   setTimeout(()=>t.classList.add('show'),50);
-  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},3500);
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},4000);
 }
 
-function showXPToast(amount,badges){
+function launchConfetti(){
+  const colors=['#10b981','#14b8a6','#f59e0b','#a78bfa','#f87171','#60a5fa'];
+  for(let i=0;i<80;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.cssText=
+      'left:'+Math.random()*100+'vw;'+
+      'background:'+colors[Math.floor(Math.random()*colors.length)]+';'+
+      'animation-delay:'+Math.random()*0.8+'s;'+
+      'animation-duration:'+(1.5+Math.random()*1.5)+'s;'+
+      'width:'+(6+Math.random()*6)+'px;'+
+      'height:'+(6+Math.random()*6)+'px;'+
+      'border-radius:'+Math.random()*50+'%;'+
+      'transform:rotate('+Math.random()*360+'deg)';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),3500);
+  }
+}
+
+function showXPToast(amount,badges,dailyBonus){
   const t=document.createElement('div');
   t.className='xp-toast';
   let html='<strong>+'+amount+' XP</strong>';
-  if(badges.length) html+='<br>'+badges.map(b=>b.icon+' '+b.title).join('<br>');
+  if(dailyBonus>0) html+='<br>⚡ +'+dailyBonus+' Tagesaufgabe Bonus!';
+  if(badges&&badges.length) html+='<br>'+badges.map(b=>b.icon+' '+b.title).join('<br>');
   t.innerHTML=html;
   document.body.appendChild(t);
   setTimeout(()=>t.classList.add('show'),50);
@@ -1425,12 +1580,102 @@ function showDash(){
       '<div class="cc-name">'+c.title+'</div>'+
       '<div class="cc-meta">'+c.slides.length+' Module · '+c.questions.length+' Testfragen'+metaExtra+'</div>'+
       (isLocked?'<div style="font-size:11px;color:var(--text3);margin-top:6px">Im Lernpfad gesperrt – vorherigen Kurs abschließen</div>':deadlineRow)+
-      '<div class="cc-prog"><div class="cc-fill" style="width:'+pct+'%;background:'+fill+'"></div></div>'+
+      '<div class="cc-ring-wrap">'+
+        '<svg class="cc-ring" viewBox="0 0 36 36">'+
+          '<circle cx="18" cy="18" r="14" fill="none" stroke="var(--border2)" stroke-width="3"/>'+
+          '<circle cx="18" cy="18" r="14" fill="none" stroke="'+fill+'" stroke-width="3"'+
+            ' stroke-linecap="round" transform="rotate(-90 18 18)"'+
+            ' style="stroke-dasharray:88;stroke-dashoffset:'+(88-(pct/100)*88)+';transition:stroke-dashoffset 1s ease"/>'+
+        '</svg>'+
+        '<span class="cc-ring-pct">'+(isDone?'✓':pct+'%')+'</span>'+
+      '</div>'+
       '<div class="cc-foot"><span class="badge '+(isDone?'b-done':isLocked?'b-new':'b-new')+'">'+(isDone?'✓ Abgeschlossen':isLocked?'Gesperrt':'Neu')+'</span></div>';
     g.appendChild(d);
   });
   renderUserPaths();
+  renderGamificationPanel();
   showScreen('screen-dashboard');
+  // animate XP ring after render
+  setTimeout(()=>updateXPBar(),100);
+}
+
+function renderGamificationPanel(){
+  // ── Streak ──
+  const streakEl=document.getElementById('gp-streak');
+  if(streakEl) streakEl.textContent=userStreak;
+  const streakFire=document.getElementById('gp-streak-fire');
+  if(streakFire) streakFire.style.animation=userStreak>=3?'pulse-fire 1s ease-in-out infinite':'none';
+  // streak message
+  const streakMsg=document.getElementById('gp-streak-msg');
+  if(streakMsg){
+    if(userStreak===0) streakMsg.textContent='Starte heute deinen Streak!';
+    else if(userStreak===1) streakMsg.textContent='Guter Start – bleib dabei!';
+    else if(userStreak<7) streakMsg.textContent='Super! '+userStreak+' Tage in Folge!';
+    else if(userStreak<30) streakMsg.textContent='Beeindruckend! Woche '+Math.floor(userStreak/7)+' läuft!';
+    else streakMsg.textContent='Legende! '+userStreak+' Tage Streak!';
+  }
+
+  // ── Daily Challenge ──
+  renderDailyChallenge();
+}
+
+function renderDailyChallenge(){
+  const el=document.getElementById('daily-challenge');
+  if(!el||!courses.length)return;
+
+  // Pick today's course deterministically (changes daily)
+  const dayOfYear=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/(1000*60*60*24));
+  const availableCourses=courses.filter((c,i)=>!userProgress[i]?.completed);
+  const pool=availableCourses.length?availableCourses:courses;
+  const todayCourse=pool[dayOfYear%pool.length];
+  const courseIdx=courses.findIndex(c=>c.id===todayCourse.id);
+  const isDone=!!userProgress[courseIdx]?.completed;
+  const fill=todayCourse.btn_color||'#10b981';
+
+  // Check if already done today
+  const todayKey='daily_'+new Date().toDateString()+'_'+todayCourse.id;
+  const doneTodayXP=localStorage.getItem(todayKey);
+
+  el.innerHTML=
+    '<div class="dc-eyebrow">⚡ Tagesaufgabe</div>'+
+    '<div class="dc-body">'+
+      '<div class="dc-icon" style="background:'+(todayCourse.icon_bg||'#0a1f18')+'">'+todayCourse.icon+'</div>'+
+      '<div class="dc-info">'+
+        '<div class="dc-title">'+todayCourse.title+'</div>'+
+        '<div class="dc-meta">'+todayCourse.slides.length+' Slides · '+todayCourse.questions.length+' Fragen</div>'+
+        '<div class="dc-bonus">'+
+          (doneTodayXP
+            ? '<span class="dc-done-badge">✓ Heute erledigt · +'+doneTodayXP+' XP</span>'
+            : '<span class="dc-xp-badge">+25 Bonus-XP heute</span>'
+          )+
+        '</div>'+
+      '</div>'+
+      (doneTodayXP
+        ? '<div class="dc-check">✓</div>'
+        : '<button class="dc-btn" style="background:'+fill+'" onclick="startDailyChallenge('+courseIdx+')">Jetzt starten →</button>'
+      )+
+    '</div>'+
+    '<div class="dc-progress-bar"><div class="dc-progress-fill" style="background:'+fill+';width:'+(isDone?100:0)+'%"></div></div>';
+}
+
+function startDailyChallenge(courseIdx){
+  // Mark that we started the daily challenge — bonus XP awarded on completion
+  sessionStorage.setItem('daily_challenge_course', courses[courseIdx].id);
+  startCourse(courseIdx);
+}
+
+async function checkDailyBonus(courseId, score){
+  try{
+    const stored=sessionStorage.getItem('daily_challenge_course');
+    if(!stored||parseInt(stored)!==courseId||score<70)return 0;
+    const todayKey='daily_'+new Date().toDateString()+'_'+courseId;
+    if(localStorage.getItem(todayKey))return 0;
+    const bonus=25;
+    localStorage.setItem(todayKey,bonus);
+    sessionStorage.removeItem('daily_challenge_course');
+    await awardXP(bonus);
+    return bonus;
+  }catch(e){return 0;}
 }
 
 function showScreen(id){
@@ -1524,7 +1769,10 @@ async function showResult(){
     xpGained=50+Math.round((pct-70)/30*50);
     await awardXP(xpGained);
     newBadges=await checkAndAwardBadges(c.id,pct,sessSecs);
-    setTimeout(()=>showXPToast(xpGained,newBadges),600);
+    // Daily challenge bonus
+    const dailyBonus=await checkDailyBonus(c.id,pct);
+    if(dailyBonus>0) xpGained+=dailyBonus;
+    setTimeout(()=>showXPToast(xpGained,newBadges,dailyBonus),600);
   }
 
   document.getElementById('res-course').textContent=c.title;
