@@ -444,57 +444,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .badge-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
 .badge-desc{font-size:11px;color:var(--text3);line-height:1.4;}
 .badge-xp{font-size:11px;color:var(--green);font-weight:600;margin-top:6px;}
-
-/* ── GAMIFICATION PANEL ── */
-.gp-panel{display:grid;grid-template-columns:auto 1fr 1fr 1fr;gap:12px;margin-bottom:2rem;align-items:stretch;}
-@media(max-width:700px){.gp-panel{grid-template-columns:1fr 1fr;}}
-.gp-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1.1rem 1.25rem;display:flex;flex-direction:column;gap:6px;transition:border-color .15s;}
-.gp-card-label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);}
-.gp-card-sub{font-size:11px;color:var(--text3);}
-
-/* XP Ring card */
-.gp-xp-card{flex-direction:row;align-items:center;gap:14px;cursor:pointer;}
-.gp-xp-card:hover{border-color:var(--green);}
-.xp-ring-svg{width:80px;height:80px;flex-shrink:0;}
-.gp-xp-info{display:flex;flex-direction:column;gap:3px;}
-.gp-xp-val{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:800;color:var(--green);}
-.gp-xp-sub{font-size:11px;color:var(--text3);}
-.gp-xp-hint{font-size:10px;color:var(--text3);margin-top:4px;}
-
-/* Streak card */
-.gp-streak-card{align-items:center;text-align:center;justify-content:center;}
-.gp-streak-row{display:flex;align-items:center;gap:6px;}
-.streak-fire{font-size:28px;}
-.gp-streak-num{font-family:'Bricolage Grotesque',sans-serif;font-size:36px;font-weight:800;color:var(--amber);}
-@keyframes pulse-fire{0%,100%{transform:scale(1);}50%{transform:scale(1.25);}}
-
-/* Badges card */
-.gp-badges-card{justify-content:space-between;}
-.gp-badge-row{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0;}
-.gp-badge-pill{width:32px;height:32px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:default;transition:transform .15s,box-shadow .15s;}
-.gp-badge-pill:hover{transform:scale(1.2);box-shadow:0 0 12px rgba(16,185,129,0.3);}
-.gp-badge-locked{background:var(--bg4);font-size:11px;font-weight:700;color:var(--text3);}
-.gp-more-btn{font-size:11px;color:var(--green);background:none;border:none;cursor:pointer;padding:0;font-family:'Inter',sans-serif;text-align:left;font-weight:600;}
-.gp-more-btn:hover{text-decoration:underline;}
-
-/* Leaderboard card */
-.gp-lb-card{min-width:0;}
-.gp-lb-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);}
-.gp-lb-row:last-child{border-bottom:none;}
-.gp-lb-me{color:var(--green);font-weight:600;}
-.gp-lb-rank{width:20px;flex-shrink:0;font-size:13px;}
-.gp-lb-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.gp-lb-xp{font-size:11px;color:var(--green);font-weight:600;}
-.gp-lb-lvl{font-size:10px;color:var(--text3);background:var(--bg3);border-radius:4px;padding:1px 5px;}
-
-/* Course rings */
-.cc-ring-wrap{display:flex;align-items:center;gap:8px;margin-top:1.1rem;}
-.cc-ring{width:32px;height:32px;flex-shrink:0;}
-.cc-ring-pct{font-size:11px;font-weight:700;color:var(--text2);}
-
-/* Confetti */
-.confetti-piece{position:fixed;top:-10px;z-index:9999;pointer-events:none;animation:confetti-fall linear forwards;}
-@keyframes confetti-fall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(105vh) rotate(720deg);opacity:0;}}
 </style>
 </head>
 <body>
@@ -1030,7 +979,6 @@ let sessionStart=null,currentSessionCourseId=null;
 let lastPassedCourse=null,lastPassedScore=0;
 let learningPaths=[],pathCourses=[];
 let userXP={total_xp:0,level:1},userBadges=[],allBadges=[];
-let userStreak=0,leaderboardData=[];
 
 // ── INIT ──
 async function init(){
@@ -1171,33 +1119,14 @@ async function loadPaths(){
 
 // ── XP & GAMIFICATION ──
 async function loadXP(){
-  const[{data:xp},{data:ub},{data:ab},{data:lb}]=await Promise.all([
+  const[{data:xp},{data:ub},{data:ab}]=await Promise.all([
     sb.from('user_xp').select('*').eq('user_id',currentUser.id).single(),
     sb.from('user_badges').select('*').eq('user_id',currentUser.id),
-    sb.from('badges').select('*').order('sort_order'),
-    sb.from('leaderboard').select('*').limit(5)
+    sb.from('badges').select('*').order('sort_order')
   ]);
   userXP=xp||{total_xp:0,level:1};
   userBadges=ub||[];
   allBadges=ab||[];
-  leaderboardData=lb||[];
-  // Calculate streak from progress dates
-  const{data:progHistory}=await sb.from('user_progress')
-    .select('updated_at').eq('user_id',currentUser.id).order('updated_at',{ascending:false});
-  userStreak=calcStreak(progHistory||[]);
-}
-
-function calcStreak(progHistory){
-  if(!progHistory.length)return 0;
-  const days=new Set(progHistory.map(p=>new Date(p.updated_at).toDateString()));
-  let streak=0;
-  const today=new Date();
-  for(let i=0;i<365;i++){
-    const d=new Date(today);d.setDate(d.getDate()-i);
-    if(days.has(d.toDateString()))streak++;
-    else if(i>0)break;
-  }
-  return streak;
 }
 
 function xpForLevel(lvl){ return lvl*lvl*100; } // 100, 400, 900, 1600...
@@ -1213,12 +1142,8 @@ async function awardXP(amount){
   const levelUp=newLevel>(userXP.level||1);
   await sb.from('user_xp').upsert({user_id:currentUser.id,total_xp:newXP,level:newLevel,updated_at:new Date().toISOString()},{onConflict:'user_id'});
   const oldLevel=userXP.level||1;
-  const oldXP=userXP.total_xp||0;
   userXP={total_xp:newXP,level:newLevel};
   updateXPBar();
-  // animate XP counter
-  const xpEl=document.getElementById('xp-ring-xp');
-  if(xpEl) animateXPCounter(xpEl,oldXP,newXP,800);
   if(levelUp) showLevelUpToast(newLevel);
   return {newXP,newLevel,levelUp};
 }
@@ -1263,78 +1188,27 @@ async function checkAndAwardBadges(courseId,score,sessionSecs){
 }
 
 function updateXPBar(){
+  const bar=document.getElementById('xp-bar-fill');
+  const label=document.getElementById('xp-label');
+  const lvlEl=document.getElementById('nav-level');
+  if(!bar||!label)return;
   const cur=userXP.total_xp||0;
   const lvl=userXP.level||1;
   const thisLvlXP=xpForLevel(lvl);
   const nextLvlXP=xpForLevel(lvl+1);
   const pct=Math.min(100,Math.round(((cur-thisLvlXP)/(nextLvlXP-thisLvlXP))*100));
-  // nav level pill
-  const lvlEl=document.getElementById('nav-level');
+  bar.style.width=pct+'%';
+  label.textContent='Level '+lvl+' · '+cur+' XP · '+pct+'% bis Level '+(lvl+1);
   if(lvlEl) lvlEl.textContent='Lv.'+lvl;
-  // old xp bar (keep for backward compat)
-  const bar=document.getElementById('xp-bar-fill');
-  const label=document.getElementById('xp-label');
-  if(bar) bar.style.width=pct+'%';
-  if(label) label.textContent='Level '+lvl+' · '+cur+' XP · '+pct+'% bis Level '+(lvl+1);
-  // new ring widget
-  updateXPRing(lvl,cur,pct);
-}
-
-function updateXPRing(lvl,cur,pct){
-  const ring=document.getElementById('xp-ring-circle');
-  if(!ring)return;
-  const r=42,circ=2*Math.PI*r;
-  const offset=circ-(pct/100)*circ;
-  ring.style.strokeDasharray=circ;
-  ring.style.strokeDashoffset=offset;
-  const lvlNum=document.getElementById('xp-ring-level');
-  const xpNum=document.getElementById('xp-ring-xp');
-  const xpPct=document.getElementById('xp-ring-pct');
-  if(lvlNum) lvlNum.textContent=lvl;
-  if(xpNum) xpNum.textContent=cur.toLocaleString('de-DE')+' XP';
-  if(xpPct) xpPct.textContent=pct+'% bis Lv.'+(lvl+1);
-}
-
-function animateXPCounter(el, from, to, duration){
-  if(!el)return;
-  const start=performance.now();
-  function step(now){
-    const t=Math.min(1,(now-start)/duration);
-    const ease=1-Math.pow(1-t,3);
-    el.textContent=Math.round(from+(to-from)*ease).toLocaleString('de-DE')+' XP';
-    if(t<1)requestAnimationFrame(step);
-  }
-  requestAnimationFrame(step);
 }
 
 function showLevelUpToast(level){
-  // Confetti
-  launchConfetti();
   const t=document.createElement('div');
   t.className='xp-toast level-up-toast';
-  t.innerHTML='🎉 <strong>Level Up!</strong><br>Du bist jetzt <strong>Level '+level+'</strong>!';
+  t.innerHTML='🎉 <strong>Level Up!</strong> Du bist jetzt Level '+level+'!';
   document.body.appendChild(t);
   setTimeout(()=>t.classList.add('show'),50);
-  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},4000);
-}
-
-function launchConfetti(){
-  const colors=['#10b981','#14b8a6','#f59e0b','#a78bfa','#f87171','#60a5fa'];
-  for(let i=0;i<80;i++){
-    const el=document.createElement('div');
-    el.className='confetti-piece';
-    el.style.cssText=
-      'left:'+Math.random()*100+'vw;'+
-      'background:'+colors[Math.floor(Math.random()*colors.length)]+';'+
-      'animation-delay:'+Math.random()*0.8+'s;'+
-      'animation-duration:'+(1.5+Math.random()*1.5)+'s;'+
-      'width:'+(6+Math.random()*6)+'px;'+
-      'height:'+(6+Math.random()*6)+'px;'+
-      'border-radius:'+Math.random()*50+'%;'+
-      'transform:rotate('+Math.random()*360+'deg)';
-    document.body.appendChild(el);
-    setTimeout(()=>el.remove(),3500);
-  }
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},3500);
 }
 
 function showXPToast(amount,badges){
@@ -1551,85 +1425,12 @@ function showDash(){
       '<div class="cc-name">'+c.title+'</div>'+
       '<div class="cc-meta">'+c.slides.length+' Module · '+c.questions.length+' Testfragen'+metaExtra+'</div>'+
       (isLocked?'<div style="font-size:11px;color:var(--text3);margin-top:6px">Im Lernpfad gesperrt – vorherigen Kurs abschließen</div>':deadlineRow)+
-      '<div class="cc-ring-wrap">'+
-        '<svg class="cc-ring" viewBox="0 0 36 36">'+
-          '<circle cx="18" cy="18" r="14" fill="none" stroke="var(--border2)" stroke-width="3"/>'+
-          '<circle cx="18" cy="18" r="14" fill="none" stroke="'+fill+'" stroke-width="3"'+
-            ' stroke-linecap="round" transform="rotate(-90 18 18)"'+
-            ' style="stroke-dasharray:88;stroke-dashoffset:'+(88-(pct/100)*88)+';transition:stroke-dashoffset 1s ease"/>'+
-        '</svg>'+
-        '<span class="cc-ring-pct">'+(isDone?'✓':pct+'%')+'</span>'+
-      '</div>'+
+      '<div class="cc-prog"><div class="cc-fill" style="width:'+pct+'%;background:'+fill+'"></div></div>'+
       '<div class="cc-foot"><span class="badge '+(isDone?'b-done':isLocked?'b-new':'b-new')+'">'+(isDone?'✓ Abgeschlossen':isLocked?'Gesperrt':'Neu')+'</span></div>';
     g.appendChild(d);
   });
   renderUserPaths();
-  renderGamificationPanel();
   showScreen('screen-dashboard');
-  // animate XP ring after render
-  setTimeout(()=>updateXPBar(),100);
-}
-
-function renderGamificationPanel(){
-  // ── XP Ring Widget ──
-  const lvl=userXP.level||1;
-  const cur=userXP.total_xp||0;
-  const thisLvlXP=xpForLevel(lvl);
-  const nextLvlXP=xpForLevel(lvl+1);
-  const pct=Math.min(100,Math.round(((cur-thisLvlXP)/(nextLvlXP-thisLvlXP))*100));
-  const r=42, circ=2*Math.PI*r;
-
-  // ── Streak ──
-  const streakEl=document.getElementById('gp-streak');
-  if(streakEl) streakEl.textContent=userStreak;
-  const streakFire=document.getElementById('gp-streak-fire');
-  if(streakFire) streakFire.style.animation=userStreak>=3?'pulse-fire 1s ease-in-out infinite':'none';
-
-  // ── Recent badges ──
-  const badgeRow=document.getElementById('gp-badges');
-  if(badgeRow){
-    badgeRow.innerHTML='';
-    const earned=allBadges.filter(b=>userBadges.some(ub=>ub.badge_id===b.id));
-    if(!earned.length){
-      badgeRow.innerHTML='<span style="font-size:12px;color:var(--text3)">Noch keine Badges – schliesse deinen ersten Kurs ab!</span>';
-    } else {
-      earned.slice(-5).forEach(b=>{
-        const span=document.createElement('div');
-        span.className='gp-badge-pill';
-        span.title=b.title+': '+b.description;
-        span.textContent=b.icon;
-        badgeRow.appendChild(span);
-      });
-      if(earned.length<allBadges.length){
-        const more=document.createElement('div');
-        more.className='gp-badge-pill gp-badge-locked';
-        more.textContent='+'+(allBadges.length-earned.length);
-        more.title='Noch '+( allBadges.length-earned.length)+' Badges zu verdienen';
-        badgeRow.appendChild(more);
-      }
-    }
-  }
-
-  // ── Mini Leaderboard ──
-  const lbEl=document.getElementById('gp-leaderboard');
-  if(lbEl&&leaderboardData.length){
-    lbEl.innerHTML='';
-    leaderboardData.slice(0,5).forEach((row,i)=>{
-      const medals=['🥇','🥈','🥉','4.','5.'];
-      const isMe=row.user_id===currentUser.id;
-      const div=document.createElement('div');
-      div.className='gp-lb-row'+(isMe?' gp-lb-me':'');
-      const name=(row.email||'').split('@')[0]||'Anonym';
-      div.innerHTML=
-        '<span class="gp-lb-rank">'+medals[i]+'</span>'+
-        '<span class="gp-lb-name">'+name+'</span>'+
-        '<span class="gp-lb-xp">'+( row.total_xp||0)+' XP</span>'+
-        '<span class="gp-lb-lvl">Lv.'+( row.level||1)+'</span>';
-      lbEl.appendChild(div);
-    });
-  } else if(lbEl){
-    lbEl.innerHTML='<div style="font-size:12px;color:var(--text3);padding:.5rem 0">Noch keine Eintraege</div>';
-  }
 }
 
 function showScreen(id){
