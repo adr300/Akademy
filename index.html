@@ -485,6 +485,17 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 /* Confetti */
 .confetti-piece{position:fixed;top:-10px;z-index:9999;pointer-events:none;animation:confetti-fall linear forwards;}
 @keyframes confetti-fall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(105vh) rotate(720deg);opacity:0;}}
+
+/* ── NEW QUESTION TYPES ── */
+.sort-item.dragging{opacity:.4;border-color:var(--green)!important;}
+.sort-item.drag-over{border-color:var(--green);background:var(--glow2);}
+.sort-item.correct{background:rgba(16,185,129,0.1);border-color:rgba(16,185,129,0.4)!important;color:var(--green);}
+.sort-item.wrong{background:var(--red-dim);border-color:rgba(248,113,113,0.4)!important;color:var(--red);}
+.q-type-badge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:10px;}
+.q-type-sort{background:rgba(167,139,250,0.12);color:var(--purple);border:1px solid rgba(167,139,250,0.25);}
+.q-type-match{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.25);}
+.q-type-deadline{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.25);}
+.q-type-mc{background:var(--glow2);color:var(--green);border:1px solid rgba(16,185,129,0.2);}
 </style>
 </head>
 <body>
@@ -1725,18 +1736,183 @@ function retry(){startQuiz();}
 function renderQ(){
   const c=courses[ci],q=c.questions[qi],total=c.questions.length;
   document.getElementById('qz-title').textContent=c.title;
-  document.getElementById('qz-count').textContent=`${qi+1} / ${total}`;
-  document.getElementById('q-lbl').textContent=`Frage ${qi+1} von ${total}`;
+  document.getElementById('qz-count').textContent=(qi+1)+' / '+total;
+  document.getElementById('q-lbl').textContent='Frage '+(qi+1)+' von '+total;
   document.getElementById('q-text').textContent=q.question;
+  // Show question type badge
+  const lbl=document.getElementById('q-lbl');
+  const type2=q.question_type||'multiple_choice';
+  const badges={'sort':'⠿ Reihenfolge','match':'⟷ Zuordnung','deadline':'🗓 Fristenrechner','multiple_choice':'◉ Multiple Choice'};
+  const cls={'sort':'q-type-sort','match':'q-type-match','deadline':'q-type-deadline','multiple_choice':'q-type-mc'};
+  let badge=document.getElementById('q-type-badge');
+  if(!badge){badge=document.createElement('div');badge.id='q-type-badge';lbl.parentNode.insertBefore(badge,lbl);}
+  badge.className='q-type-badge '+(cls[type2]||'q-type-mc');
+  badge.textContent=badges[type2]||'◉ Multiple Choice';
   document.getElementById('q-fb').className='q-fb';
-  document.getElementById('qz-score').innerHTML=`Richtig: <strong>${correct}</strong>`;
-  document.getElementById('q-segs').innerHTML=c.questions.map((_,i)=>`<div class="q-seg ${i<qi?'done':i===qi?'cur':''}"></div>`).join('');
+  document.getElementById('qz-score').innerHTML='Richtig: <strong>'+correct+'</strong>';
+  document.getElementById('q-segs').innerHTML=c.questions.map((_,i)=>'<div class="q-seg '+(i<qi?'done':i===qi?'cur':'')+'"></div>').join('');
   const nb=document.getElementById('qz-next');nb.disabled=true;nb.style.background=c.btn_color||'#10b981';
   nb.textContent=qi===total-1?'Ergebnis →':'Nächste →';
-  const opts=[q.opt_a,q.opt_b,q.opt_c,q.opt_d].filter(Boolean);
   const container=document.getElementById('q-opts');container.innerHTML='';
+  const type=q.question_type||'multiple_choice';
+  if(type==='sort') renderSortQ(q,container);
+  else if(type==='match') renderMatchQ(q,container);
+  else if(type==='deadline') renderDeadlineQ(q,container);
+  else renderMCQ(q,container);
+}
+
+// ── Standard Multiple Choice ──
+function renderMCQ(q,container){
+  const opts=[q.opt_a,q.opt_b,q.opt_c,q.opt_d].filter(Boolean);
   ['A','B','C','D'].slice(0,opts.length).forEach((l,i)=>{
-    const b=document.createElement('button');b.className='q-opt';b.setAttribute('data-l',l);b.textContent=opts[i];b.onclick=()=>pick(i);container.appendChild(b);
+    const b=document.createElement('button');b.className='q-opt';b.setAttribute('data-l',l);b.textContent=opts[i];
+    b.onclick=()=>pick(i);container.appendChild(b);
+  });
+}
+
+// ── Sort / Drag-and-Drop Reihenfolge ──
+function renderSortQ(q,container){
+  // Items stored in opt_a..opt_d, correct order in correct_index as JSON string "[0,2,1,3]"
+  const opts=[q.opt_a,q.opt_b,q.opt_c,q.opt_d].filter(Boolean);
+  let correctOrder;
+  try{correctOrder=JSON.parse(q.correct_order||'[0,1,2,3]');}
+  catch(e){correctOrder=[0,1,2,3];}
+  // Shuffle display order
+  const displayed=[...opts.map((t,i)=>({text:t,origIdx:i}))];
+  displayed.sort(()=>Math.random()-0.5);
+  container.style.display='flex';container.style.flexDirection='column';container.style.gap='8px';
+  const hint=document.createElement('div');
+  hint.style.cssText='font-size:12px;color:var(--text3);margin-bottom:4px';
+  hint.textContent='Ziehe die Elemente in die richtige Reihenfolge:';
+  container.appendChild(hint);
+  const list=document.createElement('div');list.id='sort-list';
+  list.style.cssText='display:flex;flex-direction:column;gap:8px';
+  displayed.forEach((item,i)=>{
+    const d=document.createElement('div');
+    d.className='q-opt sort-item';d.draggable=true;d.dataset.origIdx=item.origIdx;
+    d.style.cssText='cursor:grab;display:flex;align-items:center;gap:12px;user-select:none';
+    d.innerHTML='<span style="font-size:16px;color:var(--text3)">⠿</span><span>'+item.text+'</span>';
+    d.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',i.toString());d.classList.add('dragging');});
+    d.addEventListener('dragend',()=>d.classList.remove('dragging'));
+    d.addEventListener('dragover',e=>{e.preventDefault();d.classList.add('drag-over');});
+    d.addEventListener('dragleave',()=>d.classList.remove('drag-over'));
+    d.addEventListener('drop',e=>{
+      e.preventDefault();d.classList.remove('drag-over');
+      const fromIdx=parseInt(e.dataTransfer.getData('text/plain'));
+      const items=[...list.querySelectorAll('.sort-item')];
+      const toIdx=items.indexOf(d);
+      if(fromIdx!==toIdx){
+        const fromEl=items[fromIdx];
+        if(fromIdx<toIdx) list.insertBefore(fromEl,d.nextSibling);
+        else list.insertBefore(fromEl,d);
+      }
+    });
+    list.appendChild(d);
+  });
+  container.appendChild(list);
+  const btn=document.createElement('button');
+  btn.className='btn-nav btn-solid';
+  btn.style.cssText='margin-top:12px;padding:10px 24px;background:var(--green);border:none;color:#020d08;font-weight:700;border-radius:10px;cursor:pointer;font-family:Inter,sans-serif;font-size:13px';
+  btn.textContent='Reihenfolge bestätigen';
+  btn.onclick=()=>{
+    const items=[...list.querySelectorAll('.sort-item')];
+    const userOrder=items.map(el=>parseInt(el.dataset.origIdx));
+    const isCorrect=JSON.stringify(userOrder)===JSON.stringify(correctOrder);
+    items.forEach((el,i)=>{
+      const shouldBe=correctOrder.indexOf(parseInt(el.dataset.origIdx));
+      if(isCorrect||(i===shouldBe)) el.classList.add('correct');
+      else el.classList.add('wrong');
+    });
+    btn.disabled=true;
+    const fb=document.getElementById('q-fb');
+    if(isCorrect){correct++;fb.innerHTML='✓ &nbsp;Perfekt! Richtige Reihenfolge!';fb.className='q-fb show ok';}
+    else{fb.innerHTML='✗ &nbsp;Nicht ganz. Die grünen Elemente zeigen die richtige Reihenfolge.';fb.className='q-fb show fail';}
+    document.getElementById('qz-score').innerHTML='Richtig: <strong>'+correct+'</strong>';
+    document.getElementById('qz-next').disabled=false;
+  };
+  container.appendChild(btn);
+}
+
+// ── Match / Zuordnung ──
+function renderMatchQ(q,container){
+  // pairs: opt_a..opt_d = left side terms, correct_pairs = JSON "[0,1,2,3]" (right side index for each left)
+  const lefts=[q.opt_a,q.opt_b,q.opt_c,q.opt_d].filter(Boolean);
+  const rights=[q.match_a,q.match_b,q.match_c,q.match_d].filter(Boolean);
+  let correctPairs;
+  try{correctPairs=JSON.parse(q.correct_order||'[0,1,2,3]');}
+  catch(e){correctPairs=lefts.map((_,i)=>i);}
+  const shuffledRights=[...rights].sort(()=>Math.random()-0.5);
+  const userMatches={};
+  container.style.display='block';
+  const hint=document.createElement('div');
+  hint.style.cssText='font-size:12px;color:var(--text3);margin-bottom:12px';
+  hint.textContent='Wähle für jeden Begriff die passende Definition:';
+  container.appendChild(hint);
+  const grid=document.createElement('div');
+  grid.style.cssText='display:flex;flex-direction:column;gap:10px';
+  lefts.forEach((left,i)=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:10px';
+    const term=document.createElement('div');
+    term.style.cssText='flex:1;padding:10px 14px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);font-size:13px;font-weight:600;color:var(--text)';
+    term.textContent=left;
+    const sel=document.createElement('select');
+    sel.style.cssText='flex:1.5;padding:9px 12px;font-size:13px;font-family:Inter,sans-serif;border:1px solid var(--border2);border-radius:var(--r);background:var(--bg3);color:var(--text);outline:none';
+    sel.innerHTML='<option value="">— Zuordnung wählen —</option>'+
+      shuffledRights.map((r,ri)=>'<option value="'+ri+'">'+r+'</option>').join('');
+    sel.onchange=()=>{userMatches[i]=parseInt(sel.value);};
+    row.appendChild(term);row.appendChild(sel);grid.appendChild(row);
+  });
+  container.appendChild(grid);
+  const btn=document.createElement('button');
+  btn.className='btn-nav btn-solid';
+  btn.style.cssText='margin-top:14px;padding:10px 24px;background:var(--green);border:none;color:#020d08;font-weight:700;border-radius:10px;cursor:pointer;font-family:Inter,sans-serif;font-size:13px';
+  btn.textContent='Zuordnung bestätigen';
+  btn.onclick=()=>{
+    let allRight=true;
+    lefts.forEach((_,i)=>{
+      const selected=userMatches[i];
+      const correctRightText=rights[correctPairs[i]];
+      const selectedRightText=shuffledRights[selected];
+      const ok=(selectedRightText===correctRightText);
+      if(!ok) allRight=false;
+      const row=grid.children[i];
+      const sel=row.querySelector('select');
+      sel.style.borderColor=ok?'var(--green)':'var(--red)';
+      sel.style.color=ok?'var(--green)':'var(--red)';
+      if(!ok){
+        const hint2=document.createElement('div');
+        hint2.style.cssText='font-size:11px;color:var(--green);margin-top:3px';
+        hint2.textContent='Richtig: '+correctRightText;
+        row.appendChild(hint2);
+      }
+    });
+    if(allRight) correct++;
+    btn.disabled=true;
+    const fb=document.getElementById('q-fb');
+    if(allRight){fb.innerHTML='✓ &nbsp;Alle Zuordnungen korrekt!';fb.className='q-fb show ok';}
+    else{fb.innerHTML='✗ &nbsp;Nicht alle korrekt. Richtige Zuordnungen sind grün markiert.';fb.className='q-fb show fail';}
+    document.getElementById('qz-score').innerHTML='Richtig: <strong>'+correct+'</strong>';
+    document.getElementById('qz-next').disabled=false;
+  };
+  container.appendChild(btn);
+}
+
+// ── Deadline Calculator ──
+function renderDeadlineQ(q,container){
+  // question has a date in opt_a (e.g. "Dienstag, 14. Januar") and frist in opt_b (e.g. "7")
+  // correct_index = correct option index as usual
+  const opts=[q.opt_a,q.opt_b,q.opt_c,q.opt_d].filter(Boolean);
+  container.style.display='flex';container.style.flexDirection='column';container.style.gap='10px';
+  // Scenario box
+  const scenario=document.createElement('div');
+  scenario.style.cssText='background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:var(--r);padding:14px 16px;font-size:13px;color:var(--text2);line-height:1.7';
+  scenario.innerHTML=q.scenario||'';
+  if(q.scenario) container.appendChild(scenario);
+  // Answer options as buttons (special styling)
+  opts.forEach((opt,i)=>{
+    const b=document.createElement('button');b.className='q-opt';b.setAttribute('data-l',['A','B','C','D'][i]);
+    b.textContent=opt;b.onclick=()=>pick(i);container.appendChild(b);
   });
 }
 
@@ -2398,7 +2574,7 @@ async function saveCourse(){
     courseId=data.id;
   }
   if(draftSlides.length) await sb.from('slides').insert(draftSlides.map((s,i)=>({course_id:courseId,sort_order:i,tag:s.tag,title:s.title,content:s.content,stat1_num:s.stat1_num,stat1_lbl:s.stat1_lbl,stat2_num:s.stat2_num,stat2_lbl:s.stat2_lbl,stat3_num:s.stat3_num,stat3_lbl:s.stat3_lbl})));
-  if(draftQuestions.length) await sb.from('questions').insert(draftQuestions.map((q,i)=>({course_id:courseId,sort_order:i,question:q.question,opt_a:q.opt_a,opt_b:q.opt_b,opt_c:q.opt_c,opt_d:q.opt_d,correct_index:q.correct_index})));
+  if(draftQuestions.length) await sb.from('questions').insert(draftQuestions.map((q,i)=>({course_id:courseId,sort_order:i,question:q.question,opt_a:q.opt_a,opt_b:q.opt_b,opt_c:q.opt_c,opt_d:q.opt_d,correct_index:q.correct_index,question_type:q.question_type||'multiple_choice',correct_order:q.correct_order||null,match_a:q.match_a||null,match_b:q.match_b||null,match_c:q.match_c||null,match_d:q.match_d||null,scenario:q.scenario||null})));
   closeModal('course-modal');
   await loadCourses();
   renderAdmin();
@@ -2509,7 +2685,7 @@ async function confirmImport(){
   if(error){showImportMsg('Fehler: '+error.message,'err');return;}
   const courseId=created.id;
   if(d.slides?.length) await sb.from('slides').insert(d.slides.map((s,i)=>({course_id:courseId,sort_order:i,tag:s.tag,title:s.title,content:s.content,stat1_num:s.stat1_num,stat1_lbl:s.stat1_lbl,stat2_num:s.stat2_num,stat2_lbl:s.stat2_lbl,stat3_num:s.stat3_num,stat3_lbl:s.stat3_lbl})));
-  if(d.questions?.length) await sb.from('questions').insert(d.questions.map((q,i)=>({course_id:courseId,sort_order:i,question:q.question,opt_a:q.opt_a,opt_b:q.opt_b,opt_c:q.opt_c,opt_d:q.opt_d,correct_index:q.correct_index})));
+  if(d.questions?.length) await sb.from('questions').insert(d.questions.map((q,i)=>({course_id:courseId,sort_order:i,question:q.question,opt_a:q.opt_a,opt_b:q.opt_b,opt_c:q.opt_c,opt_d:q.opt_d,correct_index:q.correct_index,question_type:q.question_type||'multiple_choice',correct_order:q.correct_order||null,match_a:q.match_a||null,match_b:q.match_b||null,match_c:q.match_c||null,match_d:q.match_d||null,scenario:q.scenario||null})));
   pendingImport=null;
   document.getElementById('import-preview').style.display='none';
   document.getElementById('drop-zone').style.display='block';
