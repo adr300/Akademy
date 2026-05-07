@@ -1604,26 +1604,53 @@ async function submitReport(){
   const isSlide=currentReportType==='slide';
   const item=isSlide?c.slides[si]:c.questions[qi];
   const itemTitle=isSlide?item.title:item.question;
+  const itemIndex=isSlide?si:qi;
   const details=document.getElementById('report-details').value.trim();
   const btn=document.getElementById('report-submit-btn');
-  btn.disabled=true;btn.textContent='Wird gesendet...';
+  btn.disabled=true;btn.textContent='Wird geprüft...';
+  const m=document.getElementById('report-msg');
   try{
+    // ── Check 1: max 3 open tickets per user ──
+    const{data:openReports}=await sb.from('reports')
+      .select('id')
+      .eq('user_id',currentUser.id)
+      .eq('status','open');
+    if((openReports||[]).length>=3){
+      m.textContent='Du hast bereits 3 offene Meldungen. Warte bis eine davon bearbeitet wurde.';
+      m.className='msg show err';
+      btn.disabled=false;btn.textContent='Meldung senden';
+      return;
+    }
+    // ── Check 2: no duplicate open ticket on same slide/question ──
+    const{data:dupReports}=await sb.from('reports')
+      .select('id')
+      .eq('user_id',currentUser.id)
+      .eq('course_id',c.id)
+      .eq('type',currentReportType)
+      .eq('item_index',itemIndex)
+      .eq('status','open');
+    if((dupReports||[]).length>0){
+      m.textContent='Du hast für diese '+(isSlide?'Slide':'Frage')+' bereits eine offene Meldung.';
+      m.className='msg show err';
+      btn.disabled=false;btn.textContent='Meldung senden';
+      return;
+    }
+    // ── Insert ──
+    btn.textContent='Wird gesendet...';
     const{error}=await sb.from('reports').insert({
       user_id:currentUser.id,
       course_id:c.id,
       type:currentReportType,
-      item_index:isSlide?si:qi,
+      item_index:itemIndex,
       item_title:itemTitle,
       reason,
       details:details||null,
       status:'open'
     });
     if(error)throw error;
-    const m=document.getElementById('report-msg');
     m.textContent='✓ Meldung gesendet. Danke!';m.className='msg show ok';
     setTimeout(closeReportModal,1500);
   }catch(err){
-    const m=document.getElementById('report-msg');
     m.textContent='Fehler: '+err.message;m.className='msg show err';
   }finally{
     btn.disabled=false;btn.textContent='Meldung senden';
@@ -1676,8 +1703,11 @@ function renderReports(){
       '<div class="rp-card-head">'+
         '<span class="rp-status '+statusClass+'">'+statusLabel+'</span>'+
         '<div class="rp-meta">'+
-          '<div class="rp-title">'+typeLabel+' · '+r.item_title+'</div>'+
-          '<div class="rp-sub">'+courseName+' · '+date+'</div>'+
+          '<div class="rp-title">'+typeLabel+' '+(r.item_index+1)+' · '+r.item_title+'</div>'+
+          '<div class="rp-sub">'+
+            '<span style="color:var(--green);font-weight:600">'+courseName+'</span>'+
+            ' · '+date+
+          '</div>'+
         '</div>'+
       '</div>'+
       '<div class="rp-reason">'+r.reason+'</div>'+
