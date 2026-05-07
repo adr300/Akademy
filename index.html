@@ -1376,33 +1376,32 @@ let allUsersData=[], allAdminsData=[], allManagersData=[];
 async function loadSuperAdmin(){
   try{
     // Load roles + stats in parallel — user list built from role tables + user_emails join
-    const[{data:adm},{data:mgr},{data:crs},{data:prog},{data:sessions},{data:ue}]=await Promise.all([
+    const[{data:adm},{data:mgr},{data:crs},{data:prog},{data:sessions},{data:profiles}]=await Promise.all([
       sb.from('admins').select('user_id'),
       sb.from('managers').select('user_id'),
       sb.from('courses').select('id'),
       sb.from('user_progress').select('user_id,completed').eq('completed',true),
       sb.from('learning_sessions').select('user_id,started_at').gte('started_at',new Date(Date.now()-86400000).toISOString()),
-      sb.from('user_emails').select('user_id,email')
+      sb.from('profiles').select('user_id,email,created_at').order('created_at',{ascending:false})
     ]);
 
     allAdminsData=(adm||[]).map(a=>a.user_id);
     allManagersData=(mgr||[]).map(m=>m.user_id);
 
-    // Build user list: merge user_emails with known role IDs
-    // Collect all known user_ids from all tables
+    // Build from profiles table
     const emailMap={};
-    (ue||[]).forEach(u=>{emailMap[u.user_id]=u.email;});
+    (profiles||[]).forEach(u=>{emailMap[u.user_id]=u.email;});
 
-    // Known users = anyone in user_emails + admins + managers not yet in list
+    // Also include admins/managers even if not in profiles yet
     const knownIds=new Set([
-      ...(ue||[]).map(u=>u.user_id),
+      ...(profiles||[]).map(u=>u.user_id),
       ...allAdminsData,
       ...allManagersData
     ]);
 
     allUsersData=[...knownIds].map(id=>({
       user_id:id,
-      email:emailMap[id]||'(unbekannt)'
+      email:emailMap[id]||'(kein Profil)'
     }));
 
     // Stats
@@ -1417,16 +1416,10 @@ async function loadSuperAdmin(){
       // user_emails view might be empty — show helpful message
       document.getElementById('sa-user-list').innerHTML=
         '<div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1.5rem;text-align:center">'+
-        '<div style="font-size:24px;margin-bottom:8px">⚠️</div>'+
-        '<div style="font-weight:600;color:var(--text);margin-bottom:6px">Keine Nutzer sichtbar</div>'+
-        '<div style="font-size:13px;color:var(--text3);line-height:1.6">Die <code>user_emails</code> View hat möglicherweise keine RLS-Policy für Admins.<br>'+
-        'Führe dieses SQL in Supabase aus:</div>'+
-        '<div style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:.75rem 1rem;font-family:monospace;font-size:12px;color:var(--green);margin-top:.75rem;text-align:left">'+
-        'grant select on user_emails to authenticated;<br>'+
-        'create policy "Admins sehen alle Emails"<br>'+
-        '&nbsp;&nbsp;on user_emails for select<br>'+
-        '&nbsp;&nbsp;using (exists (select 1 from admins where user_id = auth.uid()));'+
-        '</div></div>';
+        '<div style="font-size:24px;margin-bottom:8px">👤</div>'+
+        '<div style="font-weight:600;color:var(--text);margin-bottom:6px">Noch keine Nutzer in der profiles-Tabelle</div>'+
+        '<div style="font-size:13px;color:var(--text3);line-height:1.6">Führe das SQL aus dem Setup-Script aus um bestehende Nutzer zu importieren.</div>'+
+        '</div>';
       return;
     }
 
