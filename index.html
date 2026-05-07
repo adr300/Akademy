@@ -649,6 +649,26 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .ai-q-type-match{background:rgba(167,139,250,0.12);color:var(--purple);}
 .ai-q-type-deadline{background:rgba(245,158,11,0.12);color:var(--amber);}
 .ai-q-text{color:var(--text2);}
+
+/* ── SUPERADMIN ── */
+.sa-stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1rem;}
+@media(max-width:640px){.sa-stats-grid{grid-template-columns:repeat(2,1fr);}}
+.sa-stat-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1.25rem;text-align:center;}
+.sa-stat-num{font-family:'Bricolage Grotesque',sans-serif;font-size:32px;font-weight:800;color:var(--green);line-height:1;}
+.sa-stat-lbl{font-size:12px;color:var(--text3);margin-top:4px;}
+.sa-user-list{display:flex;flex-direction:column;gap:8px;}
+.sa-user-row{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:.9rem 1.1rem;display:flex;align-items:center;gap:12px;}
+.sa-user-avatar{width:36px;height:36px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--green);flex-shrink:0;}
+.sa-user-info{flex:1;min-width:0;}
+.sa-user-email{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sa-user-meta{font-size:11px;color:var(--text3);margin-top:2px;}
+.sa-role-badge{font-size:10px;font-weight:700;padding:2px 9px;border-radius:20px;flex-shrink:0;}
+.sa-role-admin{background:rgba(245,158,11,0.12);color:var(--amber);border:1px solid rgba(245,158,11,0.25);}
+.sa-role-manager{background:rgba(59,130,246,0.12);color:var(--blue);border:1px solid rgba(59,130,246,0.25);}
+.sa-role-user{background:var(--bg3);color:var(--text3);border:1px solid var(--border2);}
+.sa-actions{display:flex;gap:6px;flex-shrink:0;}
+.sa-filter{font-size:12px!important;padding:5px 12px!important;}
+.sa-filter.active{background:var(--green)!important;color:#020d08!important;border-color:var(--green)!important;}
 </style>
 </head>
 <body>
@@ -850,15 +870,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   <!-- ADMIN VIEW -->
   <div id="view-admin" style="display:none">
     <div class="admin-tabs">
-      <button class="admin-tab active" onclick="adminTab('courses')">Kurse</button>
-      <button class="admin-tab" onclick="adminTab('paths')">Lernpfade</button>
-      <button class="admin-tab" onclick="adminTab('teams')">Teams</button>
-      <button class="admin-tab" onclick="adminTab('assignments')">Pflicht-Kurse</button>
-      <button class="admin-tab" onclick="adminTab('analytics')">Analytics</button>
-      <button class="admin-tab" onclick="adminTab('progress')">Fortschritt</button>
-      <button class="admin-tab" onclick="adminTab('leaderboard')">Leaderboard</button>
-      <button class="admin-tab" onclick="adminTab('ai-import')">🤖 KI-Import</button>
-      <button class="admin-tab" onclick="adminTab('import')">Import</button>
+      <button class="admin-tab" data-tab="superadmin" data-role="admin-only" onclick="adminTab('superadmin')">👑 EnergyAcademy</button>
+      <button class="admin-tab active" data-tab="courses" data-role="manager-up" onclick="adminTab('courses')">Kurse</button>
+      <button class="admin-tab" data-tab="paths" data-role="manager-up" onclick="adminTab('paths')">Lernpfade</button>
+      <button class="admin-tab" data-tab="teams" data-role="manager-up" onclick="adminTab('teams')">Teams</button>
+      <button class="admin-tab" data-tab="assignments" data-role="manager-up" onclick="adminTab('assignments')">Pflicht-Kurse</button>
+      <button class="admin-tab" data-tab="analytics" data-role="manager-up" onclick="adminTab('analytics')">Analytics</button>
+      <button class="admin-tab" data-tab="progress" data-role="manager-up" onclick="adminTab('progress')">Fortschritt</button>
+      <button class="admin-tab" data-tab="leaderboard" data-role="manager-up" onclick="adminTab('leaderboard')">Leaderboard</button>
+      <button class="admin-tab" data-tab="ai-import" data-role="manager-up" onclick="adminTab('ai-import')">🤖 KI-Import</button>
+      <button class="admin-tab" data-tab="import" data-role="manager-up" onclick="adminTab('import')">Import</button>
     </div>
 
     <!-- COURSES -->
@@ -1047,6 +1068,37 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
           <tbody id="lb-tbody"></tbody>
         </table>
       </div>
+    </div>
+
+    <!-- SUPERADMIN -->
+    <div class="admin-section" id="atab-superadmin">
+      <div class="sec-head"><div class="sec-title">👑 EnergyAcademy – Plattformverwaltung</div></div>
+
+      <!-- Stats overview -->
+      <div class="sa-stats-grid" id="sa-stats-grid">
+        <div class="sa-stat-card"><div class="sa-stat-num" id="sa-total-users">–</div><div class="sa-stat-lbl">Nutzer gesamt</div></div>
+        <div class="sa-stat-card"><div class="sa-stat-num" id="sa-total-managers">–</div><div class="sa-stat-lbl">Manager</div></div>
+        <div class="sa-stat-card"><div class="sa-stat-num" id="sa-total-courses">–</div><div class="sa-stat-lbl">Kurse</div></div>
+        <div class="sa-stat-card"><div class="sa-stat-num" id="sa-total-completions">–</div><div class="sa-stat-lbl">Abschlüsse</div></div>
+        <div class="sa-stat-card"><div class="sa-stat-num" id="sa-ai-imports">–</div><div class="sa-stat-lbl">KI-Imports</div></div>
+        <div class="sa-stat-card"><div class="sa-stat-num" id="sa-active-today">–</div><div class="sa-stat-lbl">Aktiv heute</div></div>
+      </div>
+
+      <!-- User management -->
+      <div class="sec-head" style="margin-top:2rem">
+        <div class="sec-title">Nutzerverwaltung</div>
+        <button class="btn-add" onclick="showAddUserModal()">+ Nutzer einladen</button>
+      </div>
+
+      <!-- Role filter -->
+      <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap">
+        <button class="btn-sec sa-filter active" data-filter="all" onclick="filterUsers('all')">Alle</button>
+        <button class="btn-sec sa-filter" data-filter="admin" onclick="filterUsers('admin')">Admins</button>
+        <button class="btn-sec sa-filter" data-filter="manager" onclick="filterUsers('manager')">Manager</button>
+        <button class="btn-sec sa-filter" data-filter="user" onclick="filterUsers('user')">Nutzer</button>
+      </div>
+
+      <div id="sa-user-list" class="sa-user-list"></div>
     </div>
 
     <!-- AI IMPORT -->
@@ -1306,7 +1358,7 @@ const SB_URL='https://tpwfeqdljiyxfaeebvsm.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwd2ZlcWRsaml5eGZhZWVidnNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MTY1MjQsImV4cCI6MjA5MzE5MjUyNH0.PdONNnswgVaoihmZvFlg_epv8M-QFQyMhamwX6nYvtM';
 const sb=supabase.createClient(SB_URL,SB_KEY);
 
-let currentUser=null,isAdmin=false,isRegister=false;
+let currentUser=null,isAdmin=false,isManager=false,isRegister=false;
 let courses=[],userProgress={},teams=[],assignments=[];
 let ci=0,si=0,qi=0,correct=0;
 let editCourseId=null,draftSlides=[],draftQuestions=[];
@@ -1316,6 +1368,125 @@ let lastPassedCourse=null,lastPassedScore=0;
 let learningPaths=[],pathCourses=[];
 let userXP={total_xp:0,level:1},userBadges=[],allBadges=[];
 let userStreak=0,leaderboardData=[];
+
+
+// ── SUPERADMIN ──
+let allUsersData=[], allAdminsData=[], allManagersData=[];
+
+async function loadSuperAdmin(){
+  try{
+    // Load all users via user_emails view
+    const[{data:ue},{data:adm},{data:mgr},{data:crs},{data:prog},{data:sessions}]=await Promise.all([
+      sb.from('user_emails').select('*'),
+      sb.from('admins').select('user_id'),
+      sb.from('managers').select('user_id'),
+      sb.from('courses').select('id'),
+      sb.from('user_progress').select('user_id,completed').eq('completed',true),
+      sb.from('learning_sessions').select('user_id,started_at').gte('started_at',new Date(Date.now()-86400000).toISOString())
+    ]);
+    allUsersData=ue||[];
+    allAdminsData=(adm||[]).map(a=>a.user_id);
+    allManagersData=(mgr||[]).map(m=>m.user_id);
+
+    // Stats
+    document.getElementById('sa-total-users').textContent=allUsersData.length;
+    document.getElementById('sa-total-managers').textContent=allManagersData.length;
+    document.getElementById('sa-total-courses').textContent=(crs||[]).length;
+    document.getElementById('sa-total-completions').textContent=(prog||[]).length;
+    document.getElementById('sa-active-today').textContent=new Set((sessions||[]).map(s=>s.user_id)).size;
+
+    // Count AI imports from app_settings log (simple: count courses as proxy)
+    document.getElementById('sa-ai-imports').textContent=(crs||[]).length+' Kurse';
+
+    renderUserList(allUsersData);
+  }catch(err){console.error('loadSuperAdmin:',err);}
+}
+
+function getUserRole(userId){
+  if(allAdminsData.includes(userId)) return 'admin';
+  if(allManagersData.includes(userId)) return 'manager';
+  return 'user';
+}
+
+let currentFilter='all';
+function filterUsers(filter){
+  currentFilter=filter;
+  document.querySelectorAll('.sa-filter').forEach(b=>b.classList.toggle('active',b.dataset.filter===filter));
+  renderUserList(allUsersData);
+}
+
+function renderUserList(users){
+  const list=document.getElementById('sa-user-list');
+  list.innerHTML='';
+  const filtered=users.filter(u=>{
+    if(currentFilter==='all') return true;
+    return getUserRole(u.user_id)===currentFilter;
+  });
+  if(!filtered.length){
+    list.innerHTML='<div style="color:var(--text3);font-size:13px;padding:1rem">Keine Nutzer in dieser Kategorie.</div>';
+    return;
+  }
+  filtered.forEach(u=>{
+    const role=getUserRole(u.user_id);
+    const roleLabel={admin:'Admin',manager:'Manager',user:'Nutzer'}[role];
+    const roleClass={admin:'sa-role-admin',manager:'sa-role-manager',user:'sa-role-user'}[role];
+    const email=u.email||'Unbekannt';
+    const initial=email[0]?.toUpperCase()||'?';
+    const isSelf=u.user_id===currentUser?.id;
+    const row=document.createElement('div');
+    row.className='sa-user-row';
+    row.innerHTML=
+      '<div class="sa-user-avatar">'+initial+'</div>'+
+      '<div class="sa-user-info">'+
+        '<div class="sa-user-email">'+email+(isSelf?' <span style="font-size:10px;color:var(--text3)">(Du)</span>':'')+'</div>'+
+        '<div class="sa-user-meta">ID: '+u.user_id.substring(0,8)+'...</div>'+
+      '</div>'+
+      '<span class="sa-role-badge '+roleClass+'">'+roleLabel+'</span>'+
+      (!isSelf?
+        '<div class="sa-actions">'+
+          '<select class="form-input" style="font-size:11px;padding:4px 8px" onchange="changeRole(this.dataset.uid,this.value)" data-uid="'+u.user_id+'">'+
+            '<option value="user"'+(role==='user'?' selected':'')+'>Nutzer</option>'+
+            '<option value="manager"'+(role==='manager'?' selected':'')+'>Manager</option>'+
+            '<option value="admin"'+(role==='admin'?' selected':'')+'>Admin</option>'+
+          '</select>'+
+        '</div>'
+      :'');
+    list.appendChild(row);
+  });
+}
+
+async function changeRole(userId, newRole){
+  try{
+    // Remove from all role tables first
+    await sb.from('admins').delete().eq('user_id',userId);
+    await sb.from('managers').delete().eq('user_id',userId);
+    // Add to new role table if needed
+    if(newRole==='admin') await sb.from('admins').insert({user_id:userId});
+    if(newRole==='manager') await sb.from('managers').insert({user_id:userId});
+    // Update local data
+    allAdminsData=allAdminsData.filter(id=>id!==userId);
+    allManagersData=allManagersData.filter(id=>id!==userId);
+    if(newRole==='admin') allAdminsData.push(userId);
+    if(newRole==='manager') allManagersData.push(userId);
+    // Update stat counts
+    document.getElementById('sa-total-managers').textContent=allManagersData.length;
+    renderUserList(allUsersData);
+    // Toast
+    const msg=document.createElement('div');msg.className='xp-toast';
+    msg.innerHTML='✓ Rolle geändert zu '+{user:'Nutzer',manager:'Manager',admin:'Admin'}[newRole];
+    document.body.appendChild(msg);
+    setTimeout(()=>msg.classList.add('show'),50);
+    setTimeout(()=>{msg.classList.remove('show');setTimeout(()=>msg.remove(),400);},2500);
+  }catch(err){alert('Fehler: '+err.message);}
+}
+
+function showAddUserModal(){
+  const email=prompt('E-Mail-Adresse des neuen Nutzers:');
+  if(!email||!email.includes('@')) return;
+  // Supabase invite via admin API not available client-side
+  // Show instructions instead
+  alert('Um '+email+' einzuladen:\n\nGehe zu Supabase → Authentication → Users → Invite User\nund gib die E-Mail-Adresse ein.\n\nNach der Registrierung kannst du hier die Rolle zuweisen.');
+}
 
 // ── INIT ──
 // ── THEME ──
@@ -1362,7 +1533,7 @@ async function init(){
       await setUser(session.user);
       loading=false;
     } else if(event==='SIGNED_OUT'){
-      currentUser=null;isAdmin=false;
+      currentUser=null;isAdmin=false;isManager=false;
       showLogin();
     } else if(event==='TOKEN_REFRESHED' && session && currentUser){
       // just update token, no full reload needed
@@ -1375,10 +1546,16 @@ async function setUser(user){
     currentUser=user;
     try{const{data}=await sb.from('admins').select('user_id').eq('user_id',user.id).single();isAdmin=!!data;}
     catch(e){isAdmin=false;}
+    try{const{data}=await sb.from('managers').select('user_id').eq('user_id',user.id).single();isManager=!!data;}
+    catch(e){isManager=false;}
     const email=user.email||'';
     document.getElementById('nav-avatar').textContent=email[0]?.toUpperCase()||'?';
     document.getElementById('nav-email').textContent=email.split('@')[0];
-    if(isAdmin) document.getElementById('admin-tab-switch').style.display='block';
+    if(isAdmin||isManager){
+      document.getElementById('admin-tab-switch').style.display='block';
+      // Update tab label
+      document.getElementById('tab-admin').textContent=isAdmin?'Admin':'Manager';
+    }
     // Load all data — each function has its own try/catch so failures are safe
     await Promise.allSettled([loadCourses(),loadProgress(),loadTeams(),loadAssignments(),loadPaths(),loadXP()]);
     document.getElementById('loading').style.display='none';
@@ -1785,9 +1962,16 @@ function switchView(v){
 }
 
 function adminTab(tab){
-  document.querySelectorAll('.admin-tab').forEach((t,i)=>t.classList.toggle('active',['courses','paths','teams','assignments','analytics','progress','leaderboard','import'][i]===tab));
+  // Hide admin-only tabs for managers
+  document.querySelectorAll('.admin-tab[data-role]').forEach(t=>{
+    const role=t.dataset.role;
+    if(role==='admin-only') t.style.display=isAdmin?'':'none';
+    if(role==='manager-up') t.style.display=(isAdmin||isManager)?'':'none';
+  });
+  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
   document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
-  document.getElementById('atab-'+tab).classList.add('active');
+  const sec=document.getElementById('atab-'+tab);
+  if(sec)sec.classList.add('active');
   if(tab==='progress') loadAdminProgress();
   if(tab==='analytics') loadAnalytics();
   if(tab==='teams') renderTeams();
@@ -1796,6 +1980,7 @@ function adminTab(tab){
   if(tab==='ai-import') initAiImport();
   if(tab==='paths') renderPaths();
   if(tab==='leaderboard') loadLeaderboard();
+  if(tab==='superadmin') loadSuperAdmin();
 }
 
 // ── DEADLINE BANNER ──
