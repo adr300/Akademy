@@ -624,6 +624,31 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   .course-grid{grid-template-columns:repeat(2,1fr);}
   .gp-streak-banner{flex-direction:row;}
 }
+
+/* ── AI IMPORT ── */
+.ai-setup-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:2rem;margin-bottom:1rem;text-align:center;}
+.ai-setup-icon{font-size:40px;margin-bottom:12px;}
+.ai-setup-title{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px;}
+.ai-setup-sub{font-size:13px;color:var(--text3);line-height:1.6;}
+.ai-key-status{display:flex;align-items:center;gap:10px;font-size:13px;margin-bottom:1rem;padding:.75rem 1rem;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:var(--r);}
+.ai-drop-zone{border:2px dashed var(--border2);border-radius:var(--rx);padding:3rem 2rem;text-align:center;transition:all .2s;background:var(--bg2);cursor:pointer;}
+.ai-drop-zone.drag-over{border-color:var(--green);background:var(--glow2);}
+.ai-file-info{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:.9rem 1.1rem;font-size:13px;color:var(--text2);display:flex;align-items:center;gap:10px;}
+.ai-options{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1.25rem;margin-top:1rem;}
+.ai-progress{display:flex;flex-direction:column;align-items:center;gap:12px;padding:3rem 2rem;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);margin-top:1rem;text-align:center;}
+.ai-progress-spinner{width:40px;height:40px;border:3px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:spin .7s linear infinite;}
+.ai-progress-text{font-size:15px;font-weight:600;color:var(--text);}
+.ai-progress-sub{font-size:12px;color:var(--text3);}
+.ai-slide-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:.65rem 1rem;font-size:12px;color:var(--text2);}
+.ai-slide-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--green);margin-bottom:2px;}
+.ai-slide-title{font-size:13px;font-weight:600;color:var(--text);}
+.ai-q-item{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:.65rem 1rem;font-size:12px;}
+.ai-q-type{display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;margin-bottom:3px;}
+.ai-q-type-mc{background:rgba(59,130,246,0.12);color:var(--blue);}
+.ai-q-type-sort{background:rgba(16,185,129,0.12);color:var(--green);}
+.ai-q-type-match{background:rgba(167,139,250,0.12);color:var(--purple);}
+.ai-q-type-deadline{background:rgba(245,158,11,0.12);color:var(--amber);}
+.ai-q-text{color:var(--text2);}
 </style>
 </head>
 <body>
@@ -832,6 +857,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <button class="admin-tab" onclick="adminTab('analytics')">Analytics</button>
       <button class="admin-tab" onclick="adminTab('progress')">Fortschritt</button>
       <button class="admin-tab" onclick="adminTab('leaderboard')">Leaderboard</button>
+      <button class="admin-tab" onclick="adminTab('ai-import')">🤖 KI-Import</button>
       <button class="admin-tab" onclick="adminTab('import')">Import</button>
     </div>
 
@@ -1020,6 +1046,117 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
           <thead><tr><th>Rang</th><th>Nutzer</th><th>Level</th><th>XP</th><th>Badges</th></tr></thead>
           <tbody id="lb-tbody"></tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- AI IMPORT -->
+    <div class="admin-section" id="atab-ai-import">
+      <div class="sec-head">
+        <div class="sec-title">🤖 KI-Kurs aus PDF erstellen</div>
+      </div>
+
+      <!-- API Key Setup -->
+      <div class="ai-setup-card" id="ai-setup-card">
+        <div class="ai-setup-icon">🔑</div>
+        <div class="ai-setup-title">Anthropic API Key eingeben</div>
+        <div class="ai-setup-sub">Der Key wird verschlüsselt in Supabase gespeichert. Nur Admins können ihn sehen. Er geht direkt von deinem Browser an Anthropic.</div>
+        <div style="display:flex;gap:8px;margin-top:12px;max-width:500px">
+          <input type="password" class="form-input" id="ai-api-key" placeholder="sk-ant-api03-..." style="flex:1">
+          <button class="btn-add" onclick="saveApiKey()">Speichern</button>
+        </div>
+        <div id="ai-key-msg" style="font-size:12px;margin-top:8px;color:var(--text3)"></div>
+      </div>
+
+      <!-- PDF Upload -->
+      <div id="ai-upload-area" style="display:none">
+        <div class="ai-key-status">
+          <span style="color:var(--green)">✓ API Key gespeichert</span>
+          <button class="btn-sec" style="font-size:11px;padding:4px 10px" onclick="clearApiKey()">Ändern</button>
+        </div>
+
+        <div id="ai-drop-zone" class="ai-drop-zone">
+          <div class="drop-icon">🤖</div>
+          <div class="drop-title">PDF hier ablegen</div>
+          <div class="drop-sub">Claude analysiert das Dokument und erstellt automatisch Slides und Testfragen</div>
+          <button class="btn-add" style="margin-top:1.25rem" onclick="openAiFilePicker()">PDF auswählen</button>
+          <input type="file" id="ai-file-input" accept=".pdf" style="display:none" onchange="handleAiFileSelect(event)">
+        </div>
+
+        <!-- Options -->
+        <div class="ai-options" id="ai-options" style="display:none">
+          <div class="ai-file-info" id="ai-file-info"></div>
+          <div class="form-grid" style="margin-top:1rem">
+            <div>
+              <label class="form-label">Anzahl Slides</label>
+              <select class="form-input" id="ai-slides-count">
+                <option value="5">5 Slides</option>
+                <option value="7" selected>7 Slides</option>
+                <option value="9">9 Slides</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Anzahl Fragen</label>
+              <select class="form-input" id="ai-questions-count">
+                <option value="5">5 Fragen</option>
+                <option value="8" selected>8 Fragen</option>
+                <option value="10">10 Fragen</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Fragetypen</label>
+              <select class="form-input" id="ai-question-types">
+                <option value="mixed" selected>Gemischt (MC + Sort + Match + Fristen)</option>
+                <option value="mc">Nur Multiple Choice</option>
+                <option value="interactive">Nur interaktiv (Sort + Match)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Kursfarbe</label>
+              <input class="form-input" id="ai-course-color" value="#10b981" placeholder="#10b981">
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:1rem">
+            <button class="btn-sec" onclick="resetAiUpload()">Abbrechen</button>
+            <button class="btn-add" id="ai-generate-btn" onclick="generateCourseFromPdf()">🤖 Kurs generieren</button>
+          </div>
+        </div>
+
+        <!-- Progress -->
+        <div class="ai-progress" id="ai-progress" style="display:none">
+          <div class="ai-progress-spinner"></div>
+          <div class="ai-progress-text" id="ai-progress-text">Claude analysiert das PDF…</div>
+          <div class="ai-progress-sub">Das kann 15–30 Sekunden dauern</div>
+        </div>
+
+        <!-- Preview before import -->
+        <div id="ai-preview" style="display:none">
+          <div class="import-preview-card">
+            <div class="import-preview-top">
+              <div class="import-preview-icon" id="ai-prev-icon">📚</div>
+              <div>
+                <div class="import-preview-title" id="ai-prev-title"></div>
+                <div class="import-preview-meta" id="ai-prev-meta"></div>
+              </div>
+            </div>
+            <div class="import-preview-stats" id="ai-prev-stats"></div>
+            <!-- Slide preview -->
+            <div style="margin-top:1rem">
+              <div class="form-section" style="border:none;padding:0;margin:0 0 .75rem">Slides Vorschau</div>
+              <div id="ai-slides-preview" style="display:flex;flex-direction:column;gap:6px"></div>
+            </div>
+            <div style="margin-top:1rem">
+              <div class="form-section" style="border:none;padding:0;margin:0 0 .75rem">Fragen Vorschau</div>
+              <div id="ai-questions-preview" style="display:flex;flex-direction:column;gap:6px"></div>
+            </div>
+            <div class="import-actions" style="margin-top:1.5rem">
+              <button class="btn-sec" onclick="resetAiUpload()">Verwerfen</button>
+              <button class="btn-sec" onclick="regenerateCourse()">🔄 Neu generieren</button>
+              <button class="btn-add" onclick="confirmAiImport()">✓ Kurs importieren</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="msg" id="ai-msg" style="margin-top:1rem"></div>
       </div>
     </div>
 
@@ -1656,6 +1793,7 @@ function adminTab(tab){
   if(tab==='teams') renderTeams();
   if(tab==='assignments') renderAssignments();
   if(tab==='import') initDropZone();
+  if(tab==='ai-import') initAiImport();
   if(tab==='paths') renderPaths();
   if(tab==='leaderboard') loadLeaderboard();
 }
