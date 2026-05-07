@@ -1420,6 +1420,9 @@ let lastPassedCourse=null,lastPassedScore=0;
 let learningPaths=[],pathCourses=[];
 let userXP={total_xp:0,level:1},userBadges=[],allBadges=[];
 let userStreak=0,leaderboardData=[];
+let consecutivePerfect=0;
+let konamiSequence=[];
+let titleClickCount={};
 
 
 // ── SUPERADMIN ──
@@ -1753,6 +1756,66 @@ async function loadReportBadge(){
   }catch(e){}
 }
 
+
+// ── EASTER EGGS ──
+
+// Konami Code: ↑↑↓↓←→←→BA
+const KONAMI=[38,38,40,40,37,39,37,39,66,65];
+document.addEventListener('keydown',e=>{
+  konamiSequence.push(e.keyCode);
+  if(konamiSequence.length>KONAMI.length) konamiSequence.shift();
+  if(konamiSequence.join(',')===KONAMI.join(',')){
+    konamiSequence=[];
+    triggerKonamiBadge();
+  }
+});
+
+async function triggerKonamiBadge(){
+  // Visual effect first
+  launchConfetti();
+  const toast=document.createElement('div');
+  toast.className='xp-toast';
+  toast.style.cssText='border-color:var(--purple);background:rgba(167,139,250,0.12);max-width:280px';
+  toast.innerHTML='🥚 <strong>Konami Code!</strong><br><span style="font-size:11px;color:var(--purple)">↑↑↓↓←→←→BA</span>';
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.classList.add('show'),50);
+  setTimeout(()=>{toast.classList.remove('show');setTimeout(()=>toast.remove(),400);},4000);
+  // Award badge
+  if(!currentUser) return;
+  const badge=allBadges.find(b=>b.key==='konami');
+  if(badge&&!userBadges.some(ub=>ub.badge_id===badge.id)){
+    await sb.from('user_badges').insert({user_id:currentUser.id,badge_id:badge.id});
+    userBadges.push({badge_id:badge.id,earned_at:new Date().toISOString()});
+    await awardXP(badge.xp_reward||0);
+    setTimeout(()=>showXPToast(badge.xp_reward,[badge],0),500);
+  }
+}
+
+// Steckdosenphilosoph: click course title 3x without starting
+function trackTitleClick(courseId){
+  titleClickCount[courseId]=(titleClickCount[courseId]||0)+1;
+  if(titleClickCount[courseId]>=3){
+    titleClickCount[courseId]=0;
+    triggerSteckdoseBadge();
+  }
+}
+
+async function triggerSteckdoseBadge(){
+  const badge=allBadges.find(b=>b.key==='steckdose');
+  if(!badge||!currentUser) return;
+  if(userBadges.some(ub=>ub.badge_id===badge.id)) return;
+  const toast=document.createElement('div');
+  toast.className='xp-toast';
+  toast.style.cssText='border-color:var(--amber);max-width:280px';
+  toast.innerHTML='🔌 <strong>Steckdosenphilosoph!</strong><br><span style="font-size:11px;color:var(--text3)">Manchmal reicht Nachdenken.</span>';
+  document.body.appendChild(toast);
+  setTimeout(()=>toast.classList.add('show'),50);
+  setTimeout(()=>{toast.classList.remove('show');setTimeout(()=>toast.remove(),400);},3500);
+  await sb.from('user_badges').insert({user_id:currentUser.id,badge_id:badge.id});
+  userBadges.push({badge_id:badge.id,earned_at:new Date().toISOString()});
+  await awardXP(badge.xp_reward||0);
+}
+
 // ── INIT ──
 // ── THEME ──
 function toggleTheme(){
@@ -2007,14 +2070,46 @@ async function checkAndAwardBadges(courseId,score,sessionSecs){
     });
   });
 
+  // Update consecutive perfect counter
+  if(score===100) consecutivePerfect++;
+  else consecutivePerfect=0;
+
+  // Time-based checks
+  const now=new Date();
+  const h=now.getHours(),m=now.getMinutes();
+  const mo=now.getMonth(),d=now.getDate();
+  const dow=now.getDay(); // 0=Sun,6=Sat
+  const isWeekend=dow===0||dow===6;
+  const isEarlyBird=h>=4&&h<7;
+  const isNightOwl=h>=22;
+  const isMidnight=h>=0&&h<4;
+  const isLunch=h===12||(h===12&&m<60);
+  const isSunrise=h>=5&&h<6;
+  const isChristmas=mo===11&&d===25;
+  const isNewYear=(mo===11&&d===31&&h===23&&m>=50)||(mo===0&&d===1&&h===0&&m<=10);
+
   const checks=[
-    {key:'first_course',  met:completedCount>=1},
-    {key:'three_courses', met:completedCount>=3},
-    {key:'all_courses',   met:courses.length>0&&completedCount>=courses.length},
-    {key:'perfect_score', met:score===100},
-    {key:'speed_learner', met:sessionSecs>0&&sessionSecs<600},
-    {key:'path_complete', met:pathCompleted},
-    {key:'high_score',    met:avgScore>=90&&allScores.length>=2},
+    {key:'first_course',       met:completedCount>=1},
+    {key:'three_courses',      met:completedCount>=3},
+    {key:'all_courses',        met:courses.length>0&&completedCount>=courses.length},
+    {key:'perfect_score',      met:score===100},
+    {key:'speed_learner',      met:sessionSecs>0&&sessionSecs<600},
+    {key:'path_complete',      met:pathCompleted},
+    {key:'high_score',         met:avgScore>=90&&allScores.length>=2},
+    // Uhrzeit-Badges
+    {key:'early_bird',         met:isEarlyBird},
+    {key:'night_owl',          met:isNightOwl},
+    {key:'midnight_operator',  met:isMidnight},
+    {key:'lunch_learner',      met:isLunch},
+    {key:'sunrise_reader',     met:isSunrise},
+    {key:'weekend_warrior',    met:isWeekend},
+    // Skill-Badges
+    {key:'speed_runner',       met:sessionSecs>0&&sessionSecs<180},
+    {key:'deep_diver',         met:sessionSecs>1800},
+    {key:'voltmeter',          met:consecutivePerfect>=5},
+    // Easter Eggs
+    {key:'christmas',          met:isChristmas},
+    {key:'new_year',           met:isNewYear},
   ];
 
   for(const chk of checks){
@@ -2022,6 +2117,16 @@ async function checkAndAwardBadges(courseId,score,sessionSecs){
     if(!badge)continue;
     const alreadyEarned=userBadges.some(ub=>ub.badge_id===badge.id);
     if(chk.met&&!alreadyEarned){
+      await sb.from('user_badges').insert({user_id:currentUser.id,badge_id:badge.id});
+      userBadges.push({badge_id:badge.id,earned_at:new Date().toISOString()});
+      earned.push(badge);
+      await awardXP(badge.xp_reward||0);
+    }
+  }
+  // Streak badges (checked separately)
+  for(const {key,met} of [{key:'streak_7',met:userStreak>=7},{key:'streak_30',met:userStreak>=30}]){
+    const badge=allBadges.find(b=>b.key===key);
+    if(badge&&met&&!userBadges.some(ub=>ub.badge_id===badge.id)){
       await sb.from('user_badges').insert({user_id:currentUser.id,badge_id:badge.id});
       userBadges.push({badge_id:badge.id,earned_at:new Date().toISOString()});
       earned.push(badge);
@@ -2111,11 +2216,32 @@ function showXPToast(amount,badges,dailyBonus){
   t.className='xp-toast';
   let html='<strong>+'+amount+' XP</strong>';
   if(dailyBonus>0) html+='<br>⚡ +'+dailyBonus+' Tagesaufgabe Bonus!';
-  if(badges&&badges.length) html+='<br>'+badges.map(b=>b.icon+' '+b.title).join('<br>');
+  if(badges&&badges.length){
+    html+='<br>'+badges.map(b=>{
+      // Special flavor text for easter egg badges
+      const flavor={
+        early_bird:'☕ Frühaufsteher erkannt!',
+        night_owl:'🦉 Noch wach um diese Zeit?',
+        midnight_operator:'🌙 Der Grid schläft nie...',
+        lunch_learner:'🥐 Mittagspause gut genutzt!',
+        sunrise_reader:'🌅 Die Sonne geht gerade auf.',
+        weekend_warrior:'🎉 Auch am Wochenende dabei!',
+        streak_7:'🔥 Eine Woche am Stück!',
+        streak_30:'💎 30 Tage – das ist Hingabe!',
+        speed_runner:'⚡ Blitzschnell!',
+        deep_diver:'🐢 Gründlichkeit zahlt sich aus.',
+        voltmeter:'💯 5× perfekt – beeindruckend!',
+        christmas:'🎄 Frohe Weihnachten!',
+        new_year:'🥂 Frohes neues Jahr!',
+        steckdose:'🔌 Philosophisch veranlagt.',
+      }[b.key];
+      return flavor?b.icon+' '+b.title+'<br><span style="font-size:11px;color:var(--text3)">'+flavor+'</span>':b.icon+' '+b.title;
+    }).join('<br>');
+  }
   t.innerHTML=html;
   document.body.appendChild(t);
   setTimeout(()=>t.classList.add('show'),50);
-  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},3500);
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},4000);
 }
 
 async function saveProgress(courseId,score){
