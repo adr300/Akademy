@@ -1375,31 +1375,67 @@ let allUsersData=[], allAdminsData=[], allManagersData=[];
 
 async function loadSuperAdmin(){
   try{
-    // Load all users via user_emails view
-    const[{data:ue},{data:adm},{data:mgr},{data:crs},{data:prog},{data:sessions}]=await Promise.all([
-      sb.from('user_emails').select('*'),
+    // Load roles + stats in parallel — user list built from role tables + user_emails join
+    const[{data:adm},{data:mgr},{data:crs},{data:prog},{data:sessions},{data:ue}]=await Promise.all([
       sb.from('admins').select('user_id'),
       sb.from('managers').select('user_id'),
       sb.from('courses').select('id'),
       sb.from('user_progress').select('user_id,completed').eq('completed',true),
-      sb.from('learning_sessions').select('user_id,started_at').gte('started_at',new Date(Date.now()-86400000).toISOString())
+      sb.from('learning_sessions').select('user_id,started_at').gte('started_at',new Date(Date.now()-86400000).toISOString()),
+      sb.from('user_emails').select('user_id,email')
     ]);
-    allUsersData=ue||[];
+
     allAdminsData=(adm||[]).map(a=>a.user_id);
     allManagersData=(mgr||[]).map(m=>m.user_id);
+
+    // Build user list: merge user_emails with known role IDs
+    // Collect all known user_ids from all tables
+    const emailMap={};
+    (ue||[]).forEach(u=>{emailMap[u.user_id]=u.email;});
+
+    // Known users = anyone in user_emails + admins + managers not yet in list
+    const knownIds=new Set([
+      ...(ue||[]).map(u=>u.user_id),
+      ...allAdminsData,
+      ...allManagersData
+    ]);
+
+    allUsersData=[...knownIds].map(id=>({
+      user_id:id,
+      email:emailMap[id]||'(unbekannt)'
+    }));
 
     // Stats
     document.getElementById('sa-total-users').textContent=allUsersData.length;
     document.getElementById('sa-total-managers').textContent=allManagersData.length;
     document.getElementById('sa-total-courses').textContent=(crs||[]).length;
-    document.getElementById('sa-total-completions').textContent=(prog||[]).length;
+    document.getElementById('sa-total-completions').textContent=(prog||[]).filter(p=>p.completed).length;
     document.getElementById('sa-active-today').textContent=new Set((sessions||[]).map(s=>s.user_id)).size;
-
-    // Count AI imports from app_settings log (simple: count courses as proxy)
     document.getElementById('sa-ai-imports').textContent=(crs||[]).length+' Kurse';
 
+    if(allUsersData.length===0){
+      // user_emails view might be empty — show helpful message
+      document.getElementById('sa-user-list').innerHTML=
+        '<div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1.5rem;text-align:center">'+
+        '<div style="font-size:24px;margin-bottom:8px">⚠️</div>'+
+        '<div style="font-weight:600;color:var(--text);margin-bottom:6px">Keine Nutzer sichtbar</div>'+
+        '<div style="font-size:13px;color:var(--text3);line-height:1.6">Die <code>user_emails</code> View hat möglicherweise keine RLS-Policy für Admins.<br>'+
+        'Führe dieses SQL in Supabase aus:</div>'+
+        '<div style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:.75rem 1rem;font-family:monospace;font-size:12px;color:var(--green);margin-top:.75rem;text-align:left">'+
+        'grant select on user_emails to authenticated;<br>'+
+        'create policy "Admins sehen alle Emails"<br>'+
+        '&nbsp;&nbsp;on user_emails for select<br>'+
+        '&nbsp;&nbsp;using (exists (select 1 from admins where user_id = auth.uid()));'+
+        '</div></div>';
+      return;
+    }
+
     renderUserList(allUsersData);
-  }catch(err){console.error('loadSuperAdmin:',err);}
+  }catch(err){
+    console.error('loadSuperAdmin:',err);
+    document.getElementById('sa-user-list').innerHTML=
+      '<div style="color:var(--red);font-size:13px;padding:1rem">Fehler: '+err.message+'</div>';
+  }
 }
 
 function getUserRole(userId){
