@@ -22,6 +22,18 @@
   --purple:#a78bfa;--purple-dim:rgba(167,139,250,0.1);
   --r:8px;--rl:12px;--rx:16px;
 }
+[data-theme="light"]{
+  --bg:#f0faf5;--bg2:#ffffff;--bg3:#f5faf7;--bg4:#e8f5ef;
+  --border:#d1ead9;--border2:#b6ddc4;
+  --text:#0d2b1e;--text2:#2d6b4a;--text3:#6aaa88;
+  --green:#059669;--green2:#047857;--green3:#065f46;
+  --teal:#0d9488;--teal2:#0f766e;
+  --glow:rgba(5,150,105,0.12);--glow2:rgba(5,150,105,0.06);
+  --amber:#b45309;--amber-dim:rgba(180,83,9,0.08);
+  --blue:#1d4ed8;--blue-dim:rgba(29,78,216,0.08);
+  --red:#dc2626;--red-dim:rgba(220,38,38,0.08);
+  --purple:#6d28d9;--purple-dim:rgba(109,40,217,0.08);
+}
 html{scroll-behavior:smooth;}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;justify-content:center;padding:0 0 5rem;}
 .app{width:100%;max-width:1000px;padding:0 1.5rem;}
@@ -498,6 +510,120 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .q-type-match{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(59,130,246,0.25);}
 .q-type-deadline{background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.25);}
 .q-type-mc{background:var(--glow2);color:var(--green);border:1px solid rgba(16,185,129,0.2);}
+
+/* ── LIGHT/DARK TOGGLE ── */
+.theme-toggle{width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;flex-shrink:0;}
+.theme-toggle:hover{border-color:var(--green);background:var(--glow2);}
+
+/* ── MOBILE RESPONSIVE ── */
+@media(max-width:640px){
+  /* Layout */
+  body{padding:0;}
+  .app{padding:0 1rem;}
+
+  /* Nav */
+  .topnav{padding:1rem 0 1.25rem;gap:8px;}
+  .brand-name{font-size:15px;}
+  .brand-logo{width:32px;height:32px;border-radius:9px;}
+  .nav-right{gap:6px;}
+  .nav-chip{display:none;}
+  .nav-user span{display:none;}
+  .nav-avatar{width:28px;height:28px;font-size:11px;}
+  .btn-logout{padding:5px 6px;font-size:11px;}
+  #admin-tab-switch .tab-btn{padding:4px 10px;font-size:11px;}
+
+  /* Hero */
+  .hero{padding:2rem 1.5rem;border-radius:16px;}
+  .hero h1{font-size:28px;letter-spacing:-.5px;}
+  .hero-sub{font-size:14px;}
+  .hero-pills{gap:6px;}
+  .hero-pill{font-size:11px;padding:5px 10px;}
+
+  /* Gamification panel */
+  .gp-panel{gap:8px;}
+  .gp-streak-banner{flex-direction:column;align-items:flex-start;gap:10px;padding:.9rem 1rem;}
+  .gp-streak-num{font-size:22px;}
+  .streak-fire{font-size:28px;}
+  .gp-daily-card{padding:1rem;}
+  .dc-body{gap:10px;}
+  .dc-icon{width:40px;height:40px;font-size:20px;}
+  .dc-title{font-size:14px;}
+  .dc-btn{padding:7px 14px;font-size:12px;}
+
+  /* Course grid */
+  .course-grid{grid-template-columns:1fr;}
+
+  /* Path grid */
+  .path-grid{grid-template-columns:1fr;}
+  .path-card{padding:1.1rem;}
+
+  /* XP bar */
+  .xp-bar-wrap{flex-wrap:wrap;gap:8px;padding:.5rem 0 .75rem;}
+  .xp-bar-inner{min-width:160px;}
+  .xp-profile-btn{font-size:11px;padding:5px 12px;}
+
+  /* Slides */
+  .chrome{border-radius:12px;}
+  .slide-body{padding:1.75rem 1.25rem;}
+  .slide-h{font-size:22px;}
+  .slide-text{font-size:14px;}
+  .info-grid{grid-template-columns:1fr 1fr;}
+  .slide-foot{padding:.9rem 1rem;}
+
+  /* Quiz */
+  .quiz-body{padding:1.5rem 1.25rem;}
+  .q-text{font-size:18px;}
+  .q-opt{font-size:13px;padding:11px 14px;}
+  .quiz-foot{padding:.9rem 1rem;flex-wrap:wrap;gap:8px;}
+
+  /* Result */
+  .result-body{padding:2.5rem 1.25rem;}
+  .res-title{font-size:24px;}
+  .res-stats{gap:8px;}
+  .r-stat{padding:1rem 1.25rem;}
+  .r-num{font-size:22px;}
+
+  /* Admin tabs */
+  .admin-tabs{gap:0;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .admin-tab{padding:10px 13px;font-size:12px;white-space:nowrap;}
+
+  /* Admin path editor */
+  #path-editor-wrap{display:none!important;}
+
+  /* Forms + modals */
+  .modal{padding:1.5rem;border-radius:16px;max-height:95vh;}
+  .form-grid{grid-template-columns:1fr;}
+  .form-full{grid-column:1;}
+
+  /* Teams */
+  .add-member-row{flex-direction:column;}
+
+  /* Progress table */
+  .progress-table th:nth-child(4),.progress-table td:nth-child(4){display:none;}
+
+  /* Analytics */
+  .analytics-grid{grid-template-columns:1fr 1fr;}
+  .bar-label{width:100px;}
+
+  /* XP toast */
+  .xp-toast{bottom:1rem;right:1rem;left:1rem;max-width:none;}
+
+  /* Login */
+  .login-card{padding:2rem 1.5rem;border-radius:16px;}
+  .login-title{font-size:22px;}
+}
+
+@media(max-width:400px){
+  .hero h1{font-size:24px;}
+  .course-grid{grid-template-columns:1fr;}
+  .res-stats{flex-direction:column;align-items:center;}
+  .analytics-grid{grid-template-columns:1fr;}
+}
+
+@media(min-width:641px) and (max-width:900px){
+  .course-grid{grid-template-columns:repeat(2,1fr);}
+  .gp-streak-banner{flex-direction:row;}
+}
 </style>
 </head>
 <body>
@@ -545,6 +671,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     </div>
     <div class="nav-right">
       <div class="nav-chip" id="nav-progress">0 / 0 abgeschlossen</div>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Hell/Dunkel umschalten">🌙</button>
       <div id="admin-tab-switch" style="display:none">
         <div class="tab-switch">
           <button class="tab-btn active" id="tab-user" onclick="switchView('user')">Nutzer</button>
@@ -1054,6 +1181,24 @@ let userXP={total_xp:0,level:1},userBadges=[],allBadges=[];
 let userStreak=0,leaderboardData=[];
 
 // ── INIT ──
+// ── THEME ──
+function toggleTheme(){
+  const isLight=document.documentElement.getAttribute('data-theme')==='light';
+  const newTheme=isLight?'dark':'light';
+  document.documentElement.setAttribute('data-theme',newTheme==='dark'?'':newTheme);
+  localStorage.setItem('ea-theme',newTheme);
+  document.getElementById('theme-toggle').textContent=newTheme==='light'?'🌙':'☀️';
+}
+
+function initTheme(){
+  const saved=localStorage.getItem('ea-theme')||'dark';
+  if(saved==='light'){
+    document.documentElement.setAttribute('data-theme','light');
+    const btn=document.getElementById('theme-toggle');
+    if(btn)btn.textContent='🌙';
+  }
+}
+
 async function init(){
   let loading=false;
 
@@ -3017,6 +3162,7 @@ function showKiMsg(text, type){
   el.className = 'msg show ' + type;
 }
 
+initTheme();
 init();
 </script>
 
