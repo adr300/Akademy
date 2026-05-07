@@ -324,6 +324,8 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 /* IMPORT */
 .pe-course-row:hover{background:var(--bg3);border-radius:var(--r);}
+.pe-course-row[draggable="true"]:active{cursor:grabbing;}
+.pe-course-row.drag-over{background:var(--glow2);border-radius:var(--r);}
 .pe-course-row span[style*="grab"]:active{cursor:grabbing;}
 
 #drop-zone{border:2px dashed var(--border2);border-radius:var(--rx);padding:3.5rem 2rem;text-align:center;transition:all .2s;background:var(--bg2);cursor:pointer;}
@@ -697,7 +699,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   <div id="view-admin" style="display:none">
     <div class="admin-tabs">
       <button class="admin-tab active" onclick="adminTab('courses')">Kurse</button>
-      <button class="admin-tab" onclick="adminTab('ki')">🤖 KI-Generator</button>
+      <button class="admin-tab" onclick="adminTab('paths')">Lernpfade</button>
       <button class="admin-tab" onclick="adminTab('teams')">Teams</button>
       <button class="admin-tab" onclick="adminTab('assignments')">Pflicht-Kurse</button>
       <button class="admin-tab" onclick="adminTab('analytics')">Analytics</button>
@@ -819,7 +821,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
                 </div>
                 <div>
                   <label class="form-label">Akzentfarbe</label>
-                  <input class="form-input" id="pe-color" placeholder="#10b981">
+                  <div style="display:flex;gap:8px;align-items:center">
+                    <input class="form-input" id="pe-color" placeholder="#10b981" oninput="document.getElementById('pe-color-preview').style.background=this.value">
+                    <div id="pe-color-preview" style="width:32px;height:32px;border-radius:8px;background:#10b981;flex-shrink:0;border:1px solid var(--border2)"></div>
+                  </div>
                 </div>
               </div>
               <div>
@@ -2051,19 +2056,24 @@ function renderPaths(){
   }
   learningPaths.forEach(p=>{
     const pcs=pathCourses.filter(pc=>pc.path_id===p.id).sort((a,b)=>a.position-b.position);
+    const courseNames=pcs.map(pc=>{const c=courses.find(x=>x.id===pc.course_id);return c?c.icon+' '+c.title:'?';});
     const div=document.createElement('div');
     div.className='admin-course-row';
     div.id='path-row-'+p.id;
     div.style.cursor='pointer';
+    // color accent bar
+    div.style.borderLeft='3px solid '+(p.color||'var(--green)');
     div.innerHTML=
-      '<div class="admin-course-icon" style="font-size:20px">'+p.icon+'</div>'+
-      '<div class="admin-course-info">'+
+      '<div class="admin-course-icon" style="font-size:22px;min-width:38px;text-align:center">'+p.icon+'</div>'+
+      '<div class="admin-course-info" style="flex:1;min-width:0">'+
         '<div class="admin-course-name">'+p.title+'</div>'+
-        '<div class="admin-course-meta">'+pcs.length+' Kurse</div>'+
+        '<div class="admin-course-meta" style="color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+
+          (courseNames.length?courseNames.join(' → '):'Keine Kurse')+
+        '</div>'+
       '</div>'+
       '<div class="admin-course-actions">'+
-        '<button class="btn-sm btn-edit" onclick="editPath('+p.id+');event.stopPropagation()">✏️ Bearbeiten</button>'+
-        '<button class="btn-sm btn-del" onclick="deletePath('+p.id+');event.stopPropagation()">Löschen</button>'+
+        '<button class="btn-sm btn-edit" onclick="editPath('+p.id+');event.stopPropagation()">✏️</button>'+
+        '<button class="btn-sm btn-del" onclick="deletePath('+p.id+');event.stopPropagation()">🗑</button>'+
       '</div>';
     div.onclick=()=>editPath(p.id);
     list.appendChild(div);
@@ -2077,6 +2087,8 @@ function newPath(){
   document.getElementById('pe-desc').value='';
   document.getElementById('pe-icon').value='🎯';
   document.getElementById('pe-color').value='#10b981';
+  const cprev=document.getElementById('pe-color-preview');
+  if(cprev)cprev.style.background='#10b981';
   peRenderCourseRows([]);
   document.getElementById('path-editor-empty').style.display='none';
   document.getElementById('path-editor-form').style.display='block';
@@ -2093,6 +2105,8 @@ function editPath(pathId){
   document.getElementById('pe-desc').value=p.description||'';
   document.getElementById('pe-icon').value=p.icon||'🎯';
   document.getElementById('pe-color').value=p.color||'#10b981';
+  const prev=document.getElementById('pe-color-preview');
+  if(prev)prev.style.background=p.color||'#10b981';
   const existing=pathCourses.filter(pc=>pc.path_id===pathId).sort((a,b)=>a.position-b.position);
   peRenderCourseRows(existing);
   document.getElementById('path-editor-empty').style.display='none';
@@ -2120,23 +2134,58 @@ function peAddCourseRow(selectedId, idx){
   const list=document.getElementById('pe-courses-list');
   const row=document.createElement('div');
   row.className='pe-course-row';
-  row.style.cssText='display:flex;align-items:center;gap:8px';
+  row.draggable=true;
+  row.style.cssText='display:flex;align-items:center;gap:8px;padding:4px 2px;border-radius:6px;transition:background .1s';
+  let peDragSrc=null;
+  // Drag handle
+  const drag=document.createElement('span');
+  drag.textContent='⠿';
+  drag.style.cssText='cursor:grab;color:var(--text3);font-size:18px;flex-shrink:0;padding:0 2px';
+  // Row number
   const num=document.createElement('span');
-  num.style.cssText='font-size:11px;color:var(--text3);width:20px;text-align:right;flex-shrink:0';
+  num.style.cssText='font-size:11px;color:var(--text3);width:18px;text-align:right;flex-shrink:0';
   num.textContent=(list.querySelectorAll('.pe-course-row').length+1)+'.';
+  // Course select
   const sel=document.createElement('select');
   sel.className='form-input';
   sel.style.flex='1';
   sel.innerHTML='<option value="">— Kurs wählen —</option>'+
     courses.map(c=>'<option value="'+c.id+'"'+(String(c.id)===String(selectedId)?' selected':'')+'>'+c.icon+' '+c.title+'</option>').join('');
+  // Remove button
   const delBtn=document.createElement('button');
   delBtn.type='button';delBtn.className='btn-icon';delBtn.textContent='✕';
   delBtn.title='Entfernen';
   delBtn.onclick=()=>{row.remove();peReorderNumbers();};
-  // drag handle
-  const drag=document.createElement('span');
-  drag.textContent='⠿';
-  drag.style.cssText='cursor:grab;color:var(--text3);font-size:16px;flex-shrink:0';
+  // Drag events
+  row.addEventListener('dragstart',e=>{
+    peDragSrc=row;
+    e.dataTransfer.effectAllowed='move';
+    e.dataTransfer.setData('text/plain','');
+    setTimeout(()=>row.style.opacity='0.4',0);
+  });
+  row.addEventListener('dragend',()=>{
+    row.style.opacity='1';
+    document.querySelectorAll('.pe-course-row').forEach(r=>r.style.background='');
+    peDragSrc=null;
+  });
+  row.addEventListener('dragover',e=>{
+    e.preventDefault();
+    row.style.background='var(--glow2)';
+  });
+  row.addEventListener('dragleave',()=>row.style.background='');
+  row.addEventListener('drop',e=>{
+    e.preventDefault();
+    row.style.background='';
+    const src=list.querySelector('.pe-course-row[style*="opacity: 0.4"]')||peDragSrc;
+    if(src&&src!==row){
+      const allRows=[...list.querySelectorAll('.pe-course-row')];
+      const fromIdx=allRows.indexOf(src);
+      const toIdx=allRows.indexOf(row);
+      if(fromIdx<toIdx) list.insertBefore(src,row.nextSibling);
+      else list.insertBefore(src,row);
+      peReorderNumbers();
+    }
+  });
   row.appendChild(drag);
   row.appendChild(num);
   row.appendChild(sel);
@@ -2187,6 +2236,13 @@ async function savePath(){
     await loadPaths();
     renderPaths();
     cancelPathEdit();
+    // success feedback
+    const msg=document.createElement('div');
+    msg.className='xp-toast';msg.style.borderColor='var(--green)';
+    msg.innerHTML='✓ Lernpfad gespeichert';
+    document.body.appendChild(msg);
+    setTimeout(()=>msg.classList.add('show'),50);
+    setTimeout(()=>{msg.classList.remove('show');setTimeout(()=>msg.remove(),400);},2500);
   } catch(err){
     alert('Fehler beim Speichern: '+err.message);
   } finally {
@@ -2195,10 +2251,20 @@ async function savePath(){
 }
 
 async function deletePath(id){
-  if(!confirm('Lernpfad wirklich löschen?'))return;
-  await sb.from('learning_paths').delete().eq('id',id);
-  cancelPathEdit();
-  await loadPaths();renderPaths();
+  const p=learningPaths.find(x=>x.id===id);
+  if(!confirm('Lernpfad "'+(p?.title||'')+'" wirklich löschen?\nAlle Kursverknüpfungen werden entfernt.'))return;
+  try{
+    await sb.from('learning_paths').delete().eq('id',id);
+    cancelPathEdit();
+    await loadPaths();
+    renderPaths();
+    const msg=document.createElement('div');
+    msg.className='xp-toast';msg.style.borderColor='var(--red)';msg.style.color='var(--red)';
+    msg.innerHTML='🗑 Lernpfad gelöscht';
+    document.body.appendChild(msg);
+    setTimeout(()=>msg.classList.add('show'),50);
+    setTimeout(()=>{msg.classList.remove('show');setTimeout(()=>msg.remove(),400);},2500);
+  }catch(err){alert('Fehler: '+err.message);}
 }
 
 // User-facing path view
