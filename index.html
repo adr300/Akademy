@@ -669,6 +669,32 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .sa-actions{display:flex;gap:6px;flex-shrink:0;}
 .sa-filter{font-size:12px!important;padding:5px 12px!important;}
 .sa-filter.active{background:var(--green)!important;color:#020d08!important;border-color:var(--green)!important;}
+
+/* ── REPORT BUTTON ── */
+.btn-report{width:28px;height:28px;border-radius:6px;border:1px solid var(--border2);background:transparent;color:var(--text3);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.btn-report:hover{border-color:var(--amber);color:var(--amber);background:var(--amber-dim);}
+
+/* ── REPORT BADGE ── */
+.report-badge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:0 5px;margin-left:5px;vertical-align:middle;}
+
+/* ── REPORT CARDS ── */
+.rp-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1.1rem 1.25rem;transition:border-color .15s;}
+.rp-card:hover{border-color:var(--green);}
+.rp-card-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:.75rem;}
+.rp-status{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;flex-shrink:0;margin-top:2px;}
+.rp-status-open{background:rgba(248,113,113,0.12);color:var(--red);border:1px solid rgba(248,113,113,0.25);}
+.rp-status-in_progress{background:rgba(245,158,11,0.12);color:var(--amber);border:1px solid rgba(245,158,11,0.25);}
+.rp-status-resolved{background:rgba(16,185,129,0.12);color:var(--green);border:1px solid rgba(16,185,129,0.25);}
+.rp-status-dismissed{background:var(--bg3);color:var(--text3);border:1px solid var(--border2);}
+.rp-meta{flex:1;min-width:0;}
+.rp-title{font-size:14px;font-weight:600;color:var(--text);}
+.rp-sub{font-size:12px;color:var(--text3);margin-top:3px;}
+.rp-reason{font-size:13px;font-weight:600;color:var(--amber);margin-bottom:4px;}
+.rp-details{font-size:13px;color:var(--text2);line-height:1.5;}
+.rp-actions{display:flex;gap:8px;margin-top:.9rem;flex-wrap:wrap;align-items:center;}
+.rp-note-input{flex:1;min-width:160px;}
+.rp-filter{font-size:12px!important;padding:5px 12px!important;}
+.rp-filter.active{background:var(--green)!important;color:#020d08!important;border-color:var(--green)!important;}
 </style>
 </head>
 <body>
@@ -793,7 +819,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <div class="slide-foot">
           <button class="btn-nav btn-ghost" id="btn-prev" onclick="prevSlide()">← Zurück</button>
           <div class="dots" id="dots"></div>
-          <button class="btn-nav btn-solid" id="btn-next" onclick="nextSlide()">Weiter →</button>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button class="btn-report" onclick="openReportModal('slide')" title="Slide melden">⚑</button>
+            <button class="btn-nav btn-solid" id="btn-next" onclick="nextSlide()">Weiter →</button>
+          </div>
         </div>
       </div>
     </div></div>
@@ -814,7 +843,10 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         </div>
         <div class="quiz-foot">
           <div class="q-score" id="qz-score"></div>
-          <button class="btn-nav btn-solid" id="qz-next" onclick="nextQ()" disabled>Nächste →</button>
+          <div style="display:flex;align-items:center;gap:8px">
+            <button class="btn-report" onclick="openReportModal('question')" title="Frage melden">⚑</button>
+            <button class="btn-nav btn-solid" id="qz-next" onclick="nextQ()" disabled>Nächste →</button>
+          </div>
         </div>
       </div>
     </div></div>
@@ -879,6 +911,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <button class="admin-tab" data-tab="progress" data-role="manager-up" onclick="adminTab('progress')">Fortschritt</button>
       <button class="admin-tab" data-tab="leaderboard" data-role="manager-up" onclick="adminTab('leaderboard')">Leaderboard</button>
       <button class="admin-tab" data-tab="ai-import" data-role="manager-up" onclick="adminTab('ai-import')">🤖 KI-Import</button>
+      <button class="admin-tab" data-tab="reports" data-role="manager-up" onclick="adminTab('reports')">⚑ Meldungen <span class="report-badge" id="report-badge" style="display:none"></span></button>
       <button class="admin-tab" data-tab="import" data-role="manager-up" onclick="adminTab('import')">Import</button>
     </div>
 
@@ -1099,6 +1132,21 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
 
       <div id="sa-user-list" class="sa-user-list"></div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="admin-section" id="atab-reports">
+      <div class="sec-head">
+        <div class="sec-title">⚑ Inhaltsmeldungen</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn-sec rp-filter active" data-status="open" onclick="filterReports('open')">Offen</button>
+          <button class="btn-sec rp-filter" data-status="in_progress" onclick="filterReports('in_progress')">In Bearbeitung</button>
+          <button class="btn-sec rp-filter" data-status="resolved" onclick="filterReports('resolved')">Gelöst</button>
+          <button class="btn-sec rp-filter" data-status="dismissed" onclick="filterReports('dismissed')">Abgelehnt</button>
+          <button class="btn-sec rp-filter" data-status="all" onclick="filterReports('all')">Alle</button>
+        </div>
+      </div>
+      <div id="reports-list" style="display:flex;flex-direction:column;gap:10px;margin-top:1rem"></div>
     </div>
 
     <!-- AI IMPORT -->
@@ -1517,6 +1565,162 @@ function showAddUserModal(){
   alert('Um '+email+' einzuladen:\n\nGehe zu Supabase → Authentication → Users → Invite User\nund gib die E-Mail-Adresse ein.\n\nNach der Registrierung kannst du hier die Rolle zuweisen.');
 }
 
+
+// ── REPORT SYSTEM ──
+let currentReportType=null, reportFilter='open', allReports=[];
+
+function openReportModal(type){
+  currentReportType=type;
+  const c=courses[ci];
+  const isSlide=type==='slide';
+  const item=isSlide?c.slides[si]:c.questions[qi];
+  const title=isSlide?item.title:item.question;
+  const label=isSlide?'Slide '+(si+1)+': ':'Frage '+(qi+1)+': ';
+  document.getElementById('report-context').innerHTML=
+    '<span style="color:var(--text3);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">'+(isSlide?'📋 Slide':'❓ Frage')+'</span><br>'+
+    '<span style="color:var(--text);font-weight:600">'+label+title+'</span><br>'+
+    '<span style="color:var(--text3);font-size:11px">Kurs: '+c.title+'</span>';
+  document.getElementById('report-reason').value='';
+  document.getElementById('report-details').value='';
+  document.getElementById('report-msg').className='msg';
+  document.getElementById('report-overlay').style.display='block';
+  document.getElementById('report-modal').style.display='block';
+}
+
+function closeReportModal(){
+  document.getElementById('report-overlay').style.display='none';
+  document.getElementById('report-modal').style.display='none';
+}
+
+async function submitReport(){
+  const reason=document.getElementById('report-reason').value;
+  if(!reason){
+    const m=document.getElementById('report-msg');
+    m.textContent='Bitte einen Grund auswählen.';m.className='msg show err';return;
+  }
+  const c=courses[ci];
+  const isSlide=currentReportType==='slide';
+  const item=isSlide?c.slides[si]:c.questions[qi];
+  const itemTitle=isSlide?item.title:item.question;
+  const details=document.getElementById('report-details').value.trim();
+  const btn=document.getElementById('report-submit-btn');
+  btn.disabled=true;btn.textContent='Wird gesendet...';
+  try{
+    const{error}=await sb.from('reports').insert({
+      user_id:currentUser.id,
+      course_id:c.id,
+      type:currentReportType,
+      item_index:isSlide?si:qi,
+      item_title:itemTitle,
+      reason,
+      details:details||null,
+      status:'open'
+    });
+    if(error)throw error;
+    const m=document.getElementById('report-msg');
+    m.textContent='✓ Meldung gesendet. Danke!';m.className='msg show ok';
+    setTimeout(closeReportModal,1500);
+  }catch(err){
+    const m=document.getElementById('report-msg');
+    m.textContent='Fehler: '+err.message;m.className='msg show err';
+  }finally{
+    btn.disabled=false;btn.textContent='Meldung senden';
+  }
+}
+
+// ── ADMIN: Reports ──
+async function loadReports(){
+  try{
+    const{data,error}=await sb.from('reports')
+      .select('*')
+      .order('created_at',{ascending:false});
+    if(error)throw error;
+    allReports=data||[];
+    // Update badge
+    const openCount=allReports.filter(r=>r.status==='open').length;
+    const badge=document.getElementById('report-badge');
+    if(openCount>0){badge.textContent=openCount;badge.style.display='inline-flex';}
+    else{badge.style.display='none';}
+    renderReports();
+  }catch(err){
+    document.getElementById('reports-list').innerHTML='<div style="color:var(--red);font-size:13px">Fehler: '+err.message+'</div>';
+  }
+}
+
+function filterReports(status){
+  reportFilter=status;
+  document.querySelectorAll('.rp-filter').forEach(b=>b.classList.toggle('active',b.dataset.status===status));
+  renderReports();
+}
+
+function renderReports(){
+  const list=document.getElementById('reports-list');
+  const filtered=reportFilter==='all'?allReports:allReports.filter(r=>r.status===reportFilter);
+  if(!filtered.length){
+    list.innerHTML='<div style="color:var(--text3);font-size:13px;padding:1rem;text-align:center">Keine Meldungen in dieser Kategorie.</div>';
+    return;
+  }
+  list.innerHTML='';
+  filtered.forEach(r=>{
+    const course=courses.find(c=>c.id===r.course_id);
+    const courseName=course?course.title:'Unbekannter Kurs';
+    const typeLabel=r.type==='slide'?'📋 Slide':'❓ Frage';
+    const date=new Date(r.created_at).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+    const statusLabel={open:'Offen',in_progress:'In Bearbeitung',resolved:'Gelöst',dismissed:'Abgelehnt'}[r.status]||r.status;
+    const statusClass='rp-status-'+r.status;
+    const card=document.createElement('div');
+    card.className='rp-card';
+    card.innerHTML=
+      '<div class="rp-card-head">'+
+        '<span class="rp-status '+statusClass+'">'+statusLabel+'</span>'+
+        '<div class="rp-meta">'+
+          '<div class="rp-title">'+typeLabel+' · '+r.item_title+'</div>'+
+          '<div class="rp-sub">'+courseName+' · '+date+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<div class="rp-reason">'+r.reason+'</div>'+
+      (r.details?'<div class="rp-details">'+r.details+'</div>':'')+
+      (r.resolution_note?'<div style="margin-top:8px;font-size:12px;color:var(--text3);border-top:1px solid var(--border);padding-top:8px">📝 Notiz: '+r.resolution_note+'</div>':'')+
+      '<div class="rp-actions">'+
+        (r.status!=='resolved'&&r.status!=='dismissed'?
+          '<input class="form-input rp-note-input" placeholder="Notiz (optional)" id="rp-note-'+r.id+'" style="font-size:12px;padding:6px 10px">'+
+          (r.status==='open'?'<button class="btn-sec" style="font-size:12px" onclick="updateReport('+r.id+',\'in_progress\')">In Bearbeitung</button>':'')+
+          '<button class="btn-add" style="font-size:12px;background:var(--green)" onclick="updateReport('+r.id+',\'resolved\')">✓ Gelöst</button>'+
+          '<button class="btn-sec" style="font-size:12px;color:var(--text3)" onclick="updateReport('+r.id+',\'dismissed\')">Ablehnen</button>'
+        :'<span style="font-size:12px;color:var(--text3)">Abgeschlossen am '+(r.resolved_at?new Date(r.resolved_at).toLocaleDateString('de-DE'):'-')+'</span>')+
+      '</div>';
+    list.appendChild(card);
+  });
+}
+
+async function updateReport(id, status){
+  const note=document.getElementById('rp-note-'+id)?.value.trim()||null;
+  try{
+    const{error}=await sb.from('reports').update({
+      status,
+      resolved_at:['resolved','dismissed'].includes(status)?new Date().toISOString():null,
+      resolved_by:currentUser.id,
+      resolution_note:note
+    }).eq('id',id);
+    if(error)throw error;
+    await loadReports();
+  }catch(err){alert('Fehler: '+err.message);}
+}
+
+// Load report badge count on dashboard
+async function loadReportBadge(){
+  if(!isAdmin&&!isManager)return;
+  try{
+    const{data}=await sb.from('reports').select('id').eq('status','open');
+    const count=(data||[]).length;
+    const badge=document.getElementById('report-badge');
+    if(badge){
+      if(count>0){badge.textContent=count;badge.style.display='inline-flex';}
+      else{badge.style.display='none';}
+    }
+  }catch(e){}
+}
+
 // ── INIT ──
 // ── THEME ──
 function toggleTheme(){
@@ -1592,6 +1796,7 @@ async function setUser(user){
     document.getElementById('main-app').style.display='block';
     updateXPBar();
     showDash();
+    loadReportBadge();
   } catch(err){
     console.error('setUser failed:',err);
     // Show a friendly retry message instead of infinite loading
@@ -2010,6 +2215,7 @@ function adminTab(tab){
   if(tab==='paths') renderPaths();
   if(tab==='leaderboard') loadLeaderboard();
   if(tab==='superadmin') loadSuperAdmin();
+  if(tab==='reports') loadReports();
 }
 
 // ── DEADLINE BANNER ──
@@ -3701,5 +3907,36 @@ init();
   </div>
 </div>
 
+
+  <!-- REPORT MODAL -->
+  <div class="modal-overlay" id="report-overlay" onclick="closeReportModal()" style="display:none"></div>
+  <div class="modal" id="report-modal" style="display:none;max-width:480px">
+    <div class="modal-head">
+      <div class="modal-title">⚑ Inhalt melden</div>
+      <button class="modal-close" onclick="closeReportModal()">✕</button>
+    </div>
+    <div id="report-context" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:.75rem 1rem;font-size:13px;color:var(--text2);margin-bottom:1rem;"></div>
+    <div class="form-group">
+      <label class="form-label">Grund der Meldung</label>
+      <select class="form-input" id="report-reason">
+        <option value="">— Bitte wählen —</option>
+        <option value="Inhaltlicher Fehler">Inhaltlicher Fehler</option>
+        <option value="Veraltete Information">Veraltete Information</option>
+        <option value="Unklare Formulierung">Unklare Formulierung</option>
+        <option value="Falsche Antwort">Falsche Antwort (bei Fragen)</option>
+        <option value="Technisches Problem">Technisches Problem</option>
+        <option value="Sonstiges">Sonstiges</option>
+      </select>
+    </div>
+    <div class="form-group" style="margin-top:.75rem">
+      <label class="form-label">Details <span style="color:var(--text3)">(optional)</span></label>
+      <textarea class="form-input" id="report-details" rows="3" placeholder="Was genau ist falsch oder unklar?" style="resize:vertical"></textarea>
+    </div>
+    <div class="modal-actions" style="margin-top:1.25rem">
+      <button class="btn-sec" onclick="closeReportModal()">Abbrechen</button>
+      <button class="btn-add" id="report-submit-btn" onclick="submitReport()">Meldung senden</button>
+    </div>
+    <div class="msg" id="report-msg" style="margin-top:.75rem"></div>
+  </div>
 </body>
 </html>
