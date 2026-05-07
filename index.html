@@ -308,7 +308,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .score-none{background:var(--bg4);color:var(--text3);}
 
 /* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:100;padding:1rem;backdrop-filter:blur(6px);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:none;align-items:center;justify-content:center;z-index:100;padding:1rem;}
 .modal-overlay.show{display:flex;}
 .modal{background:var(--bg2);border:1px solid var(--border2);border-radius:20px;padding:2rem;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 0 80px rgba(16,185,129,0.08),0 24px 80px rgba(0,0,0,0.7);}
 .modal-title{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin-bottom:1.5rem;letter-spacing:-.4px;}
@@ -1583,13 +1583,11 @@ function openReportModal(type){
   document.getElementById('report-reason').value='';
   document.getElementById('report-details').value='';
   document.getElementById('report-msg').className='msg';
-  document.getElementById('report-overlay').style.display='block';
-  document.getElementById('report-modal').style.display='block';
+  document.getElementById('report-overlay').style.display='flex';
 }
 
 function closeReportModal(){
   document.getElementById('report-overlay').style.display='none';
-  document.getElementById('report-modal').style.display='none';
 }
 
 async function submitReport(){
@@ -3909,8 +3907,8 @@ init();
 
 
   <!-- REPORT MODAL -->
-  <div class="modal-overlay" id="report-overlay" onclick="closeReportModal()" style="display:none"></div>
-  <div class="modal" id="report-modal" style="display:none;max-width:480px">
+  <div class="modal-overlay" id="report-overlay" onclick="closeReportModal()" style="display:none;z-index:200">
+  <div class="modal" id="report-modal" style="max-width:480px" onclick="event.stopPropagation()">
     <div class="modal-head">
       <div class="modal-title">⚑ Inhalt melden</div>
       <button class="modal-close" onclick="closeReportModal()">✕</button>
@@ -3937,6 +3935,7 @@ init();
       <button class="btn-add" id="report-submit-btn" onclick="submitReport()">Meldung senden</button>
     </div>
     <div class="msg" id="report-msg" style="margin-top:.75rem"></div>
+  </div>
   </div>
 </body>
 </html>
