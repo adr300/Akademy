@@ -1311,7 +1311,22 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       </div>
     </div>
 
-        <!-- AI IMPORT -->
+        <!-- REPORTS -->
+    <div class="admin-section" id="atab-reports">
+      <div class="sec-head">
+        <div class="sec-title">⚑ Inhaltsmeldungen</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn-sec rp-filter active" data-status="open" onclick="filterReports('open')">Offen</button>
+          <button class="btn-sec rp-filter" data-status="in_progress" onclick="filterReports('in_progress')">In Bearbeitung</button>
+          <button class="btn-sec rp-filter" data-status="resolved" onclick="filterReports('resolved')">Gelöst</button>
+          <button class="btn-sec rp-filter" data-status="dismissed" onclick="filterReports('dismissed')">Abgelehnt</button>
+          <button class="btn-sec rp-filter" data-status="all" onclick="filterReports('all')">Alle</button>
+        </div>
+      </div>
+      <div id="reports-list" style="display:flex;flex-direction:column;gap:10px;margin-top:1rem"></div>
+    </div>
+
+    <!-- AI IMPORT -->
     <div class="admin-section" id="atab-ai-import">
       <div class="sec-head">
         <div class="sec-title">🤖 KI-Kurs aus PDF erstellen</div>
@@ -2562,17 +2577,19 @@ async function loadLeaderboard(){
   try{
     const{data}=await sb.from('leaderboard').select('*').limit(20);
     leaderboardData=data||[];
-    const list=document.getElementById('leaderboard-list');if(!list)return;list.innerHTML='';
+    const tbody=document.getElementById('lb-tbody');if(!tbody)return;tbody.innerHTML='';
     leaderboardData.forEach((row,i)=>{
       const medals=['🥇','🥈','🥉'];
       const name=(row.email||'').split('@')[0]||'Anonym';
-      const div=document.createElement('div');div.className='admin-course-row';
-      div.innerHTML='<div style="font-size:20px;width:32px">'+(medals[i]||i+1+'.')+'</div>'+
-        '<div class="admin-course-info"><div class="admin-course-name">'+name+'</div>'+
-        '<div class="admin-course-meta">'+(row.total_xp||0)+' XP · Lv.'+(row.level||1)+'</div></div>';
-      list.appendChild(div);
+      const tr=document.createElement('tr');
+      tr.innerHTML='<td>'+(medals[i]||i+1+'.')+'</td>'+
+        '<td>'+name+'</td>'+
+        '<td>Lv.'+(row.level||1)+'</td>'+
+        '<td>'+(row.total_xp||0)+'</td>'+
+        '<td>–</td>';
+      tbody.appendChild(tr);
     });
-  }catch(e){}
+  }catch(e){console.error('leaderboard:',e);}
 }
 
 // ── ANALYTICS ──
@@ -2583,12 +2600,36 @@ async function loadAnalytics(){
       sb.from('learning_sessions').select('*'),
       sb.from('profiles').select('user_id')
     ]);
-    document.getElementById('an-completions').textContent=(prog||[]).length;
-    document.getElementById('an-sessions').textContent=(sess||[]).length;
-    document.getElementById('an-users').textContent=(users||[]).length;
+    const completions=(prog||[]).length;
+    const sessions=(sess||[]).length;
+    const totalUsers=(users||[]).length;
     const avgTime=sess?.length?Math.round(sess.reduce((a,s)=>a+(s.duration_seconds||0),0)/sess.length/60):0;
-    document.getElementById('an-avg-time').textContent=avgTime+' Min';
-  }catch(e){}
+    // KPI grid
+    const kpis=document.getElementById('analytics-kpis');
+    if(kpis){
+      kpis.innerHTML=[
+        {n:totalUsers,l:'Nutzer gesamt'},
+        {n:completions,l:'Abschlüsse'},
+        {n:sessions,l:'Lernsessions'},
+        {n:avgTime+' Min',l:'Ø Lernzeit'}
+      ].map(k=>'<div class="kpi-card"><div class="kpi-num">'+k.n+'</div><div class="kpi-lbl">'+k.l+'</div></div>').join('');
+    }
+    // Course completion chart
+    const chart=document.getElementById('chart-completion');
+    if(chart&&courses.length){
+      chart.innerHTML='';
+      courses.forEach(c=>{
+        const done=(prog||[]).filter(p=>p.course_id===c.id).length;
+        const total=Math.max(totalUsers,1);
+        const pct=Math.round((done/total)*100);
+        const bar=document.createElement('div');bar.className='bar-row';
+        bar.innerHTML='<div class="bar-label">'+c.title+'</div>'+
+          '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+(c.btn_color||'var(--green)')+'"></div></div>'+
+          '<div class="bar-val">'+pct+'%</div>';
+        chart.appendChild(bar);
+      });
+    }
+  }catch(e){console.error('analytics:',e);}
 }
 
 // ── PROGRESS ──
@@ -2612,7 +2653,7 @@ async function loadAdminProgress(){
 
 // ── PATHS ADMIN ──
 function renderPaths(){
-  const list=document.getElementById('path-list');if(!list)return;list.innerHTML='';
+  const list=document.getElementById('admin-path-list')||document.getElementById('path-list');if(!list)return;list.innerHTML='';
   learningPaths.forEach(p=>{
     const pcs=pathCourses.filter(pc=>pc.path_id===p.id).sort((a,b)=>a.position-b.position);
     const courseNames=pcs.map(pc=>{const c=courses.find(x=>x.id===pc.course_id);return c?c.icon+' '+c.title:'?';});
