@@ -1548,12 +1548,113 @@ let allUsersData=[], allAdminsData=[], allManagersData=[];
 let allOrgs=[], allOrgMembers=[], currentOrgEdit=null, orgMembersEdit=[];
 
 async function loadSuperAdmin(){
-  // Update section title based on role
   const title=document.querySelector('#atab-superadmin .sec-title');
-  if(title) title.textContent=isAdmin?'👑 EnergyAcademy – Plattformverwaltung':'👥 Nutzerverwaltung';
+  const orgWrap=document.getElementById('sa-orgs-wrap');
+  const statsGrid=document.getElementById('sa-stats-grid');
 
+  if(isAdmin){
+    if(title) title.textContent='👑 EnergyAcademy – Plattformverwaltung';
+    if(orgWrap) orgWrap.style.display='block';
+    if(statsGrid) statsGrid.style.display='grid';
+    await loadAdminView();
+  } else {
+    if(title) title.textContent='👥 Meine Organisation';
+    if(orgWrap) orgWrap.style.display='none';
+    if(statsGrid) statsGrid.style.display='none';
+    await loadManagerView();
+  }
+}
+
+async function loadManagerView(){
   try{
-    // Load roles + stats in parallel — user list built from role tables + user_emails join
+    // Step 1: load orgs + org members first
+    const[{data:orgs},{data:orgMembers},{data:mgr}]=await Promise.all([
+      sb.from('organisations').select('*').order('name'),
+      sb.from('organisation_members').select('*'),
+      sb.from('managers').select('user_id')
+    ]);
+    allOrgs=orgs||[];
+    allOrgMembers=orgMembers||[];
+    allManagersData=(mgr||[]).map(m=>m.user_id);
+
+    // Find manager's own org
+    const myMembership=(allOrgMembers||[]).find(m=>m.user_id===currentUser.id);
+    const myOrg=myMembership?allOrgs.find(o=>o.id===myMembership.organisation_id):null;
+
+    const list=document.getElementById('sa-user-list');
+    if(!list) return;
+
+    if(!myOrg){
+      list.innerHTML=
+        '<div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:2rem;text-align:center">'+
+        '<div style="font-size:32px;margin-bottom:10px">🏢</div>'+
+        '<div style="font-weight:700;font-size:15px;color:var(--text);margin-bottom:6px">Keiner Organisation zugewiesen</div>'+
+        '<div style="font-size:13px;color:var(--text3)">Ein Admin muss dir eine Organisation zuweisen.</div>'+
+        '</div>';
+      return;
+    }
+
+    // Get all members of my org
+    const memberIds=(allOrgMembers||[])
+      .filter(m=>m.organisation_id===myOrg.id)
+      .map(m=>m.user_id);
+
+    // Step 2: fetch org_members with profiles joined (single query, uses org membership RLS)
+    const{data:membersWithProfiles}=await sb.from('organisation_members')
+      .select('user_id, profiles(user_id,email)')
+      .eq('organisation_id', myOrg.id);
+
+    // Build email map — seed with current user's own email first
+    const emailMap={};
+    if(currentUser?.id && currentUser?.email) emailMap[currentUser.id]=currentUser.email;
+    (membersWithProfiles||[]).forEach(m=>{
+      if(m.profiles?.email) emailMap[m.user_id]=m.profiles.email;
+    });
+    // Also try plain profiles query as fallback
+    if(Object.keys(emailMap).length<=1 && memberIds.length>0){
+      const{data:pf}=await sb.from('profiles').select('user_id,email').in('user_id',memberIds);
+      (pf||[]).forEach(u=>{if(u.email) emailMap[u.user_id]=u.email;});
+    }
+    console.log('[Manager] emailMap:',emailMap,'memberIds:',memberIds);
+
+    // Show/update org banner
+    let banner=document.getElementById('manager-org-banner');
+    if(!banner){
+      banner=document.createElement('div');
+      banner.id='manager-org-banner';
+      const secHead=document.querySelector('#atab-superadmin .sec-head');
+      if(secHead) secHead.parentNode.insertBefore(banner,secHead);
+    }
+    banner.style.cssText='background:var(--bg2);border:1px solid var(--border2);border-left:3px solid '+(myOrg.color||'var(--green)')+';border-radius:var(--rl);padding:1rem 1.25rem;display:flex;align-items:center;gap:12px;margin-bottom:1.5rem';
+    banner.innerHTML=
+      '<div style="font-size:28px">'+myOrg.icon+'</div>'+
+      '<div>'+
+        '<div style="font-weight:700;font-size:15px;color:var(--text)">'+myOrg.name+'</div>'+
+        '<div style="font-size:12px;color:var(--text3)">'+memberIds.length+' Mitglied'+(memberIds.length!==1?'er':'')+(myOrg.description?' · '+myOrg.description:'')+'</div>'+
+      '</div>';
+
+    // Set allUsersData to only org members
+    // Use short user_id as fallback if no profile email found
+    allUsersData=memberIds.map(id=>({
+      user_id:id,
+      email:emailMap[id]||(id===currentUser.id?currentUser.email:null)||'Nutzer '+id.substring(0,6)
+    }));
+    console.log('Manager view: memberIds=',memberIds,'emailMap keys=',Object.keys(emailMap),'profiles count=',(profiles||[]).length);
+
+    if(!allUsersData.length){
+      list.innerHTML='<div style="color:var(--text3);font-size:13px;padding:1rem;text-align:center">Noch keine Mitglieder in dieser Organisation.</div>';
+      return;
+    }
+    renderUserList(allUsersData);
+  }catch(err){
+    console.error('loadManagerView:',err);
+    const list=document.getElementById('sa-user-list');
+    if(list) list.innerHTML='<div style="color:var(--red);font-size:13px;padding:1rem">Fehler: '+err.message+'</div>';
+  }
+}
+
+async function loadAdminView(){
+  try{
     const[{data:adm},{data:mgr},{data:crs},{data:prog},{data:sessions},{data:profiles},{data:orgs},{data:orgMembers}]=await Promise.all([
       sb.from('admins').select('user_id'),
       sb.from('managers').select('user_id'),
@@ -1566,26 +1667,24 @@ async function loadSuperAdmin(){
     ]);
     allOrgs=orgs||[];
     allOrgMembers=orgMembers||[];
-
     allAdminsData=(adm||[]).map(a=>a.user_id);
     allManagersData=(mgr||[]).map(m=>m.user_id);
-
-    // Build from profiles table
     const emailMap={};
     (profiles||[]).forEach(u=>{emailMap[u.user_id]=u.email;});
-
-    // Also include admins/managers even if not in profiles yet
+    // Only use profiles as source — add admins/managers only if they have an email
     const knownIds=new Set([
       ...(profiles||[]).map(u=>u.user_id),
-      ...allAdminsData,
-      ...allManagersData
+      ...allAdminsData.filter(id=>emailMap[id]),
+      ...allManagersData.filter(id=>emailMap[id])
     ]);
-
-    allUsersData=[...knownIds].map(id=>({
-      user_id:id,
-      email:emailMap[id]||'(kein Profil)'
-    }));
-
+    // For any admin/manager without profile, try to get their email from current session
+    const missingIds=[...new Set([...allAdminsData,...allManagersData])].filter(id=>!emailMap[id]);
+    if(missingIds.length>0){
+      // Fetch missing profiles individually
+      const{data:missing}=await sb.from('profiles').select('user_id,email').in('user_id',missingIds);
+      (missing||[]).forEach(u=>{emailMap[u.user_id]=u.email;knownIds.add(u.user_id);});
+    }
+    allUsersData=[...knownIds].map(id=>({user_id:id,email:emailMap[id]||null})).filter(u=>u.email);
     // Stats
     document.getElementById('sa-total-users').textContent=allUsersData.length;
     document.getElementById('sa-total-managers').textContent=allManagersData.length;
@@ -1593,22 +1692,19 @@ async function loadSuperAdmin(){
     document.getElementById('sa-total-completions').textContent=(prog||[]).filter(p=>p.completed).length;
     document.getElementById('sa-active-today').textContent=new Set((sessions||[]).map(s=>s.user_id)).size;
     document.getElementById('sa-ai-imports').textContent=(crs||[]).length+' Kurse';
-
     renderOrgList();
     if(allUsersData.length===0){
-      // user_emails view might be empty — show helpful message
       document.getElementById('sa-user-list').innerHTML=
         '<div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1.5rem;text-align:center">'+
         '<div style="font-size:24px;margin-bottom:8px">👤</div>'+
         '<div style="font-weight:600;color:var(--text);margin-bottom:6px">Noch keine Nutzer in der profiles-Tabelle</div>'+
-        '<div style="font-size:13px;color:var(--text3);line-height:1.6">Führe das SQL aus dem Setup-Script aus um bestehende Nutzer zu importieren.</div>'+
+        '<div style="font-size:13px;color:var(--text3)">Führe das SQL-Setup-Script aus.</div>'+
         '</div>';
       return;
     }
-
     renderUserList(allUsersData);
   }catch(err){
-    console.error('loadSuperAdmin:',err);
+    console.error('loadAdminView:',err);
     document.getElementById('sa-user-list').innerHTML=
       '<div style="color:var(--red);font-size:13px;padding:1rem">Fehler: '+err.message+'</div>';
   }
