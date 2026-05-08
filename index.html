@@ -241,7 +241,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .admin-tab.active{color:var(--green);border-bottom-color:var(--green);}
 .admin-tab:hover{color:var(--text);}
 .admin-section{display:none;}
-.admin-section.active{display:block;animation:fadeUp .2s ease both;}
+.admin-section.active{display:block;animation:fadeUp .2s ease both;min-width:0;width:100%;}
 
 .admin-course-list{display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem;}
 .admin-course-row{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:1rem 1.25rem;display:flex;align-items:center;gap:14px;transition:border-color .15s;}
@@ -340,7 +340,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .pe-course-row.drag-over{background:var(--glow2);border-radius:var(--r);}
 .pe-course-row span[style*="grab"]:active{cursor:grabbing;}
 
-#drop-zone{border:2px dashed var(--border2);border-radius:var(--rx);padding:3.5rem 2rem;text-align:center;transition:all .2s;background:var(--bg2);cursor:pointer;}
+#drop-zone{border:2px dashed var(--border2);border-radius:var(--rx);padding:3.5rem 2rem;text-align:center;max-width:640px;transition:all .2s;background:var(--bg2);cursor:pointer;}
 #drop-zone.drag-over{border-color:var(--green);background:var(--glow2);box-shadow:0 0 40px rgba(16,185,129,0.08);}
 .drop-icon{font-size:48px;margin-bottom:1rem;}
 .drop-title{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:var(--text);margin-bottom:8px;}
@@ -715,7 +715,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .sidebar-icon{font-size:14px;flex-shrink:0;width:18px;text-align:center;opacity:.8;}
 .sidebar-item.active .sidebar-icon{opacity:1;}
 .sidebar-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;}
-.admin-content{min-width:0;padding-bottom:3rem;}
+.admin-content{min-width:0;overflow:hidden;padding-bottom:3rem;}
 
 /* Mobile: top dropdown-style nav */
 @media(max-width:768px){
@@ -942,11 +942,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <nav class="admin-sidebar" id="admin-sidebar">
 
         <!-- Admin-only group -->
-        <div class="sidebar-group" data-role="admin-only" id="sg-platform">
+        <div class="sidebar-group" data-role="manager-up" id="sg-platform">
           <div class="sidebar-group-label">Plattform</div>
           <div class="sidebar-items-row">
-          <button class="sidebar-item" data-tab="superadmin" onclick="adminTab('superadmin')">
-            <span class="sidebar-icon">👑</span><span class="sidebar-label">EnergyAcademy</span>
+          <button class="sidebar-item" data-tab="superadmin" data-role="manager-up" onclick="adminTab('superadmin')">
+            <span class="sidebar-icon" id="sidebar-platform-icon">👑</span><span class="sidebar-label" id="sidebar-platform-label">EnergyAcademy</span>
           </button>
           </div>
         </div>
@@ -1363,7 +1363,6 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
         <div class="msg" id="ai-msg" style="margin-top:1rem"></div>
       </div>
-    </div>
 
     <!-- IMPORT -->
     <div class="admin-section" id="atab-import">
@@ -1529,6 +1528,10 @@ let konamiSequence=[];
 let allUsersData=[], allAdminsData=[], allManagersData=[];
 
 async function loadSuperAdmin(){
+  // Update section title based on role
+  const title=document.querySelector('#atab-superadmin .sec-title');
+  if(title) title.textContent=isAdmin?'👑 EnergyAcademy – Plattformverwaltung':'👥 Nutzerverwaltung';
+
   try{
     // Load roles + stats in parallel — user list built from role tables + user_emails join
     const[{data:adm},{data:mgr},{data:crs},{data:prog},{data:sessions},{data:profiles}]=await Promise.all([
@@ -2620,12 +2623,20 @@ function switchView(v){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function adminTab(tab){
-  // Show/hide sidebar groups based on role
+function initSidebarVisibility(){
   document.querySelectorAll('.sidebar-group[data-role]').forEach(g=>{
     const role=g.dataset.role;
-    g.style.display=(role==='admin-only'&&!isAdmin)?'none':(role==='manager-up'&&!isAdmin&&!isManager)?'none':'block';
+    if(role==='admin-only') g.style.display=isAdmin?'block':'none';
+    else if(role==='manager-up') g.style.display=(isAdmin||isManager)?'block':'none';
   });
+  // Update platform label based on role
+  const icon=document.getElementById('sidebar-platform-icon');
+  const label=document.getElementById('sidebar-platform-label');
+  if(icon) icon.textContent=isAdmin?'👑':'👥';
+  if(label) label.textContent=isAdmin?'EnergyAcademy':'Nutzerverwaltung';
+}
+
+function adminTab(tab){
   // Active state on sidebar items
   document.querySelectorAll('.sidebar-item').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
   // Show active section
@@ -4352,7 +4363,7 @@ init();
     </div>
   </div>
 </div>
-
+  </div><!-- /view-admin -->
 
   <!-- REPORT MODAL -->
   <div class="modal-overlay" id="report-overlay" onclick="closeReportModal()" style="display:none;z-index:200">
