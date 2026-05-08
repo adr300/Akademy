@@ -730,6 +730,16 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   .admin-content{padding-bottom:2rem;}
 }
 
+
+/* ── ORGANISATIONS ── */
+.org-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1rem 1.25rem;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .15s;}
+.org-card:hover{border-color:var(--green);}
+.org-card-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.org-card-info{flex:1;min-width:0;}
+.org-card-name{font-size:14px;font-weight:700;color:var(--text);}
+.org-card-meta{font-size:12px;color:var(--text3);margin-top:2px;}
+.org-card-actions{flex-shrink:0;}
+.user-org-badge{font-size:10px;font-weight:600;padding:1px 8px;border-radius:20px;background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.2);margin-left:6px;vertical-align:middle;}
 </style>
 </head>
 <body>
@@ -1221,6 +1231,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <div class="sa-stat-card"><div class="sa-stat-num" id="sa-active-today">–</div><div class="sa-stat-lbl">Aktiv heute</div></div>
       </div>
 
+      <!-- Organisations -->
+      <div id="sa-orgs-wrap">
+        <div class="sec-head" style="margin-top:2rem">
+          <div class="sec-title">🏢 Organisationen</div>
+          <button class="btn-add" onclick="showOrgModal()">+ Organisation</button>
+        </div>
+        <div id="sa-org-list" style="display:flex;flex-direction:column;gap:10px;margin-top:1rem;margin-bottom:2rem"></div>
+      </div>
+
       <!-- User management -->
       <div class="sec-head" style="margin-top:2rem">
         <div class="sec-title">Nutzerverwaltung</div>
@@ -1526,6 +1545,7 @@ let konamiSequence=[];
 
 // ── SUPERADMIN ──
 let allUsersData=[], allAdminsData=[], allManagersData=[];
+let allOrgs=[], allOrgMembers=[], currentOrgEdit=null, orgMembersEdit=[];
 
 async function loadSuperAdmin(){
   // Update section title based on role
@@ -1534,14 +1554,18 @@ async function loadSuperAdmin(){
 
   try{
     // Load roles + stats in parallel — user list built from role tables + user_emails join
-    const[{data:adm},{data:mgr},{data:crs},{data:prog},{data:sessions},{data:profiles}]=await Promise.all([
+    const[{data:adm},{data:mgr},{data:crs},{data:prog},{data:sessions},{data:profiles},{data:orgs},{data:orgMembers}]=await Promise.all([
       sb.from('admins').select('user_id'),
       sb.from('managers').select('user_id'),
       sb.from('courses').select('id'),
       sb.from('user_progress').select('user_id,completed').eq('completed',true),
       sb.from('learning_sessions').select('user_id,started_at').gte('started_at',new Date(Date.now()-86400000).toISOString()),
-      sb.from('profiles').select('user_id,email,created_at').order('created_at',{ascending:false})
+      sb.from('profiles').select('user_id,email,created_at').order('created_at',{ascending:false}),
+      sb.from('organisations').select('*').order('name'),
+      sb.from('organisation_members').select('*')
     ]);
+    allOrgs=orgs||[];
+    allOrgMembers=orgMembers||[];
 
     allAdminsData=(adm||[]).map(a=>a.user_id);
     allManagersData=(mgr||[]).map(m=>m.user_id);
@@ -1570,6 +1594,7 @@ async function loadSuperAdmin(){
     document.getElementById('sa-active-today').textContent=new Set((sessions||[]).map(s=>s.user_id)).size;
     document.getElementById('sa-ai-imports').textContent=(crs||[]).length+' Kurse';
 
+    renderOrgList();
     if(allUsersData.length===0){
       // user_emails view might be empty — show helpful message
       document.getElementById('sa-user-list').innerHTML=
@@ -1622,15 +1647,25 @@ function renderUserList(users){
     const isSelf=u.user_id===currentUser?.id;
     const row=document.createElement('div');
     row.className='sa-user-row';
+    // Org info for this user
+    const userOrgId=(allOrgMembers.find(m=>m.user_id===u.user_id)||{}).organisation_id||null;
+    const userOrg=allOrgs.find(o=>o.id===userOrgId);
+    const orgBadge=userOrg?'<span class="user-org-badge">'+userOrg.icon+' '+userOrg.name+'</span>':'';
     row.innerHTML=
       '<div class="sa-user-avatar">'+initial+'</div>'+
       '<div class="sa-user-info">'+
-        '<div class="sa-user-email">'+email+(isSelf?' <span style="font-size:10px;color:var(--text3)">(Du)</span>':'')+'</div>'+
+        '<div class="sa-user-email">'+email+(isSelf?' <span style="font-size:10px;color:var(--text3)">(Du)</span>':'')+orgBadge+'</div>'+
         '<div class="sa-user-meta">ID: '+u.user_id.substring(0,8)+'...</div>'+
       '</div>'+
       '<span class="sa-role-badge '+roleClass+'">'+roleLabel+'</span>'+
       (!isSelf?
         '<div class="sa-actions">'+
+          (isAdmin&&allOrgs.length?
+            '<select class="form-input" style="font-size:11px;padding:4px 8px;max-width:130px" title="Organisation" onchange="changeUserOrg(this.dataset.uid,this.value)" data-uid="'+u.user_id+'">'+
+              '<option value="">Keine Org</option>'+
+              allOrgs.map(o=>'<option value="'+o.id+'"'+(userOrgId===o.id?' selected':'')+'>'+o.icon+' '+o.name+'</option>').join('')+
+            '</select>'
+          :'')+
           '<select class="form-input" style="font-size:11px;padding:4px 8px" onchange="changeRole(this.dataset.uid,this.value)" data-uid="'+u.user_id+'">'+
             '<option value="user"'+(role==='user'?' selected':'')+'>Nutzer</option>'+
             '<option value="manager"'+(role==='manager'?' selected':'')+'>Manager</option>'+
@@ -1938,6 +1973,177 @@ async function triggerSteckdoseBadge(){
     await awardXP(badge.xp_reward||0);
     setTimeout(()=>showXPToast(badge.xp_reward,[badge],0),600);
   }
+}
+
+
+// ── ORGANISATIONS ──
+function renderOrgList(){
+  const list=document.getElementById('sa-org-list');
+  if(!list) return;
+  list.innerHTML='';
+  if(!allOrgs.length){
+    list.innerHTML='<div style="color:var(--text3);font-size:13px;padding:1.25rem;text-align:center;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl)">Noch keine Organisationen. Klicke auf "+ Organisation" um zu beginnen.</div>';
+    return;
+  }
+  allOrgs.forEach(org=>{
+    const memberCount=allOrgMembers.filter(m=>m.organisation_id===org.id).length;
+    const card=document.createElement('div');
+    card.className='org-card';
+    card.style.borderLeft='3px solid '+(org.color||'var(--green)');
+    card.innerHTML=
+      '<div class="org-card-icon" style="background:'+(org.color||'#10b981')+'22;color:'+(org.color||'var(--green)')+'">'+( org.icon||'🏢')+'</div>'+
+      '<div class="org-card-info">'+
+        '<div class="org-card-name">'+org.name+'</div>'+
+        '<div class="org-card-meta">'+(org.description?org.description+' · ':'')+memberCount+' Mitglied'+(memberCount!==1?'er':'')+'</div>'+
+      '</div>'+
+      '<div class="org-card-actions">'+
+        '<button class="btn-sm btn-edit" onclick="event.stopPropagation();showOrgModal('+org.id+')">✏️ Bearbeiten</button>'+
+      '</div>';
+    card.onclick=()=>showOrgModal(org.id);
+    list.appendChild(card);
+  });
+}
+
+async function showOrgModal(orgId){
+  currentOrgEdit=orgId||null;
+  orgMembersEdit=[];
+  const org=orgId?allOrgs.find(o=>o.id===orgId):null;
+  document.getElementById('org-modal-title').textContent=org?'Organisation bearbeiten':'Organisation erstellen';
+  document.getElementById('org-name').value=org?.name||'';
+  document.getElementById('org-desc').value=org?.description||'';
+  document.getElementById('org-icon').value=org?.icon||'🏢';
+  document.getElementById('org-color').value=org?.color||'#10b981';
+  document.getElementById('org-color-prev').style.background=org?.color||'#10b981';
+  document.getElementById('org-delete-btn').style.display=org?'flex':'none';
+  document.getElementById('org-msg').className='msg';
+  if(orgId) orgMembersEdit=allOrgMembers.filter(m=>m.organisation_id===orgId).map(m=>m.user_id);
+  const sel=document.getElementById('org-add-user');
+  sel.innerHTML='<option value="">— Nutzer hinzufügen —</option>'+
+    allUsersData.filter(u=>!orgMembersEdit.includes(u.user_id))
+      .map(u=>'<option value="'+u.user_id+'">'+(u.email||u.user_id.substring(0,8))+'</option>').join('');
+  renderOrgMembersList();
+  document.getElementById('org-modal-overlay').style.display='flex';
+}
+
+function closeOrgModal(){
+  document.getElementById('org-modal-overlay').style.display='none';
+  currentOrgEdit=null;orgMembersEdit=[];
+}
+
+function renderOrgMembersList(){
+  const list=document.getElementById('org-members-list');
+  list.innerHTML='';
+  if(!orgMembersEdit.length){
+    list.innerHTML='<div style="font-size:12px;color:var(--text3);padding:.5rem">Noch keine Mitglieder.</div>';
+    return;
+  }
+  orgMembersEdit.forEach(uid=>{
+    const u=allUsersData.find(x=>x.user_id===uid);
+    const email=u?.email||uid.substring(0,8)+'...';
+    const div=document.createElement('div');
+    div.style.cssText='display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border)';
+    div.innerHTML='<span style="flex:1">'+email+'</span>'+
+      '<button type="button" style="font-size:11px;padding:2px 8px;border-radius:6px;border:1px solid var(--border2);background:var(--bg3);color:var(--red);cursor:pointer" data-uid="'+uid+'" onclick="removeOrgMember(this.dataset.uid)">✕</button>';
+    list.appendChild(div);
+  });
+}
+
+function addOrgMember(){
+  const sel=document.getElementById('org-add-user');
+  const uid=sel.value;
+  if(!uid||orgMembersEdit.includes(uid)) return;
+  orgMembersEdit.push(uid);
+  // Remove from select
+  sel.querySelector('[value="'+uid+'"]')?.remove();
+  sel.value='';
+  renderOrgMembersList();
+}
+
+function removeOrgMember(uid){
+  orgMembersEdit=orgMembersEdit.filter(id=>id!==uid);
+  const u=allUsersData.find(x=>x.user_id===uid);
+  const sel=document.getElementById('org-add-user');
+  const opt=document.createElement('option');
+  opt.value=uid;opt.textContent=u?.email||uid.substring(0,8);
+  sel.appendChild(opt);
+  renderOrgMembersList();
+}
+
+async function saveOrg(){
+  const name=document.getElementById('org-name').value.trim();
+  if(!name){
+    const m=document.getElementById('org-msg');m.textContent='Name ist Pflichtfeld.';m.className='msg show err';return;
+  }
+  const orgData={
+    name,
+    description:document.getElementById('org-desc').value.trim()||null,
+    icon:document.getElementById('org-icon').value.trim()||'🏢',
+    color:document.getElementById('org-color').value.trim()||'#10b981',
+    created_by:currentUser.id
+  };
+  const btn=document.getElementById('org-save-btn');
+  btn.disabled=true;btn.textContent='Speichern...';
+  try{
+    let orgId=currentOrgEdit;
+    if(orgId){
+      await sb.from('organisations').update(orgData).eq('id',orgId);
+    } else {
+      const{data,error}=await sb.from('organisations').insert(orgData).select().single();
+      if(error) throw error;
+      orgId=data.id;
+    }
+    // Sync members
+    await sb.from('organisation_members').delete().eq('organisation_id',orgId);
+    if(orgMembersEdit.length){
+      await sb.from('organisation_members').insert(orgMembersEdit.map(uid=>({organisation_id:orgId,user_id:uid})));
+    }
+    // Refresh
+    const{data:orgs}=await sb.from('organisations').select('*').order('name');
+    const{data:oms}=await sb.from('organisation_members').select('*');
+    allOrgs=orgs||[];allOrgMembers=oms||[];
+    closeOrgModal();
+    renderOrgList();
+    renderUserList(allUsersData);
+    const toast=document.createElement('div');toast.className='xp-toast';
+    toast.innerHTML='✓ Organisation gespeichert';
+    document.body.appendChild(toast);
+    setTimeout(()=>toast.classList.add('show'),50);
+    setTimeout(()=>{toast.classList.remove('show');setTimeout(()=>toast.remove(),400);},2500);
+  }catch(err){
+    const m=document.getElementById('org-msg');m.textContent='Fehler: '+err.message;m.className='msg show err';
+  }finally{btn.disabled=false;btn.textContent='Speichern';}
+}
+
+async function deleteOrg(){
+  const org=allOrgs.find(o=>o.id===currentOrgEdit);
+  if(!org||!confirm('Organisation "'+org.name+'" wirklich löschen? Alle Mitgliedschaften werden entfernt.')) return;
+  try{
+    await sb.from('organisations').delete().eq('id',currentOrgEdit);
+    allOrgs=allOrgs.filter(o=>o.id!==currentOrgEdit);
+    allOrgMembers=allOrgMembers.filter(m=>m.organisation_id!==currentOrgEdit);
+    closeOrgModal();
+    renderOrgList();
+    renderUserList(allUsersData);
+  }catch(err){alert('Fehler: '+err.message);}
+}
+
+async function changeUserOrg(userId, orgId){
+  try{
+    await sb.from('organisation_members').delete().eq('user_id',userId);
+    allOrgMembers=allOrgMembers.filter(m=>m.user_id!==userId);
+    if(orgId){
+      const{data,error}=await sb.from('organisation_members')
+        .insert({organisation_id:parseInt(orgId),user_id:userId}).select().single();
+      if(error) throw error;
+      allOrgMembers.push(data);
+    }
+    renderUserList(allUsersData);
+    const toast=document.createElement('div');toast.className='xp-toast';
+    toast.innerHTML=orgId?'✓ Organisation zugewiesen':'✓ Aus Organisation entfernt';
+    document.body.appendChild(toast);
+    setTimeout(()=>toast.classList.add('show'),50);
+    setTimeout(()=>{toast.classList.remove('show');setTimeout(()=>toast.remove(),400);},2500);
+  }catch(err){alert('Fehler: '+err.message);}
 }
 
 // ── INIT ──
@@ -4395,6 +4601,59 @@ init();
     </div>
     <div class="msg" id="report-msg" style="margin-top:.75rem"></div>
   </div>
+  </div>
+
+  <!-- ORG MODAL -->
+  <div class="modal-overlay" id="org-modal-overlay" onclick="closeOrgModal()" style="display:none;z-index:200">
+    <div class="modal" style="max-width:520px" onclick="event.stopPropagation()">
+      <div class="modal-head">
+        <div class="modal-title" id="org-modal-title">Organisation erstellen</div>
+        <button class="modal-close" onclick="closeOrgModal()">✕</button>
+      </div>
+      <div class="form-grid">
+        <div>
+          <label class="form-label">Name *</label>
+          <input class="form-input" id="org-name" placeholder="z.B. Stadtwerke GmbH">
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <div style="flex:1">
+            <label class="form-label">Icon</label>
+            <input class="form-input" id="org-icon" placeholder="🏢" style="font-size:18px">
+          </div>
+          <div style="flex:1">
+            <label class="form-label">Farbe</label>
+            <div style="display:flex;gap:6px;align-items:center">
+              <input class="form-input" id="org-color" value="#10b981" style="flex:1"
+                oninput="document.getElementById('org-color-prev').style.background=this.value">
+              <div id="org-color-prev" style="width:32px;height:32px;border-radius:8px;background:#10b981;border:1px solid var(--border2);flex-shrink:0"></div>
+            </div>
+          </div>
+        </div>
+        <div class="form-full">
+          <label class="form-label">Beschreibung</label>
+          <input class="form-input" id="org-desc" placeholder="Optional">
+        </div>
+      </div>
+
+      <!-- Members -->
+      <div style="margin-top:1.25rem">
+        <label class="form-label">Mitglieder</label>
+        <div id="org-members-list" style="margin:8px 0;max-height:160px;overflow-y:auto"></div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <select class="form-input" id="org-add-user" style="flex:1;font-size:13px">
+            <option value="">— Nutzer hinzufügen —</option>
+          </select>
+          <button class="btn-add" type="button" onclick="addOrgMember()">+ Hinzufügen</button>
+        </div>
+      </div>
+
+      <div class="modal-actions" style="margin-top:1.5rem">
+        <button class="btn-sec" id="org-delete-btn" style="color:var(--red);display:none" onclick="deleteOrg()">🗑 Löschen</button>
+        <button class="btn-sec" onclick="closeOrgModal()">Abbrechen</button>
+        <button class="btn-add" id="org-save-btn" onclick="saveOrg()">Speichern</button>
+      </div>
+      <div class="msg" id="org-msg" style="margin-top:.75rem"></div>
+    </div>
   </div>
 </body>
 </html>
