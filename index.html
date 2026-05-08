@@ -241,7 +241,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .admin-tab.active{color:var(--green);border-bottom-color:var(--green);}
 .admin-tab:hover{color:var(--text);}
 .admin-section{display:none;}
-.admin-section.active{display:block;}
+.admin-section.active{display:block;animation:fadeUp .2s ease both;}
 
 .admin-course-list{display:flex;flex-direction:column;gap:10px;margin-bottom:1.5rem;}
 .admin-course-row{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:1rem 1.25rem;display:flex;align-items:center;gap:14px;transition:border-color .15s;}
@@ -907,19 +907,75 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
   <!-- ADMIN VIEW -->
   <div id="view-admin" style="display:none">
-    <div class="admin-tabs">
-      <button class="admin-tab" data-tab="superadmin" data-role="admin-only" onclick="adminTab('superadmin')">👑 EnergyAcademy</button>
-      <button class="admin-tab active" data-tab="courses" data-role="manager-up" onclick="adminTab('courses')">Kurse</button>
-      <button class="admin-tab" data-tab="paths" data-role="manager-up" onclick="adminTab('paths')">Lernpfade</button>
-      <button class="admin-tab" data-tab="teams" data-role="manager-up" onclick="adminTab('teams')">Teams</button>
-      <button class="admin-tab" data-tab="assignments" data-role="manager-up" onclick="adminTab('assignments')">Pflicht-Kurse</button>
-      <button class="admin-tab" data-tab="analytics" data-role="manager-up" onclick="adminTab('analytics')">Analytics</button>
-      <button class="admin-tab" data-tab="progress" data-role="manager-up" onclick="adminTab('progress')">Fortschritt</button>
-      <button class="admin-tab" data-tab="leaderboard" data-role="manager-up" onclick="adminTab('leaderboard')">Leaderboard</button>
-      <button class="admin-tab" data-tab="ai-import" data-role="manager-up" onclick="adminTab('ai-import')">🤖 KI-Import</button>
-      <button class="admin-tab" data-tab="reports" data-role="manager-up" onclick="adminTab('reports')">⚑ Meldungen <span class="report-badge" id="report-badge" style="display:none"></span></button>
-      <button class="admin-tab" data-tab="import" data-role="manager-up" onclick="adminTab('import')">Import</button>
-    </div>
+    <div class="admin-layout">
+
+      <!-- SIDEBAR -->
+      <nav class="admin-sidebar" id="admin-sidebar">
+
+        <!-- Admin-only group -->
+        <div class="sidebar-group" data-role="admin-only" id="sg-platform">
+          <div class="sidebar-group-label">Plattform</div>
+          <button class="sidebar-item" data-tab="superadmin" onclick="adminTab('superadmin')">
+            <span class="sidebar-icon">👑</span><span class="sidebar-label">EnergyAcademy</span>
+          </button>
+        </div>
+
+        <!-- Inhalte group -->
+        <div class="sidebar-group" data-role="manager-up" id="sg-content">
+          <div class="sidebar-group-label">Inhalte</div>
+          <button class="sidebar-item" data-tab="courses" onclick="adminTab('courses')">
+            <span class="sidebar-icon">📚</span><span class="sidebar-label">Kurse</span>
+          </button>
+          <button class="sidebar-item" data-tab="paths" onclick="adminTab('paths')">
+            <span class="sidebar-icon">🗺</span><span class="sidebar-label">Lernpfade</span>
+          </button>
+          <button class="sidebar-item" data-tab="assignments" onclick="adminTab('assignments')">
+            <span class="sidebar-icon">📌</span><span class="sidebar-label">Pflicht-Kurse</span>
+          </button>
+        </div>
+
+        <!-- Team group -->
+        <div class="sidebar-group" data-role="manager-up" id="sg-team">
+          <div class="sidebar-group-label">Team</div>
+          <button class="sidebar-item" data-tab="teams" onclick="adminTab('teams')">
+            <span class="sidebar-icon">👥</span><span class="sidebar-label">Teams</span>
+          </button>
+          <button class="sidebar-item" data-tab="progress" onclick="adminTab('progress')">
+            <span class="sidebar-icon">📈</span><span class="sidebar-label">Fortschritt</span>
+          </button>
+          <button class="sidebar-item" data-tab="leaderboard" onclick="adminTab('leaderboard')">
+            <span class="sidebar-icon">🏆</span><span class="sidebar-label">Leaderboard</span>
+          </button>
+        </div>
+
+        <!-- Analyse group -->
+        <div class="sidebar-group" data-role="manager-up" id="sg-analyse">
+          <div class="sidebar-group-label">Analyse</div>
+          <button class="sidebar-item" data-tab="analytics" onclick="adminTab('analytics')">
+            <span class="sidebar-icon">📊</span><span class="sidebar-label">Analytics</span>
+          </button>
+          <button class="sidebar-item" data-tab="reports" onclick="adminTab('reports')">
+            <span class="sidebar-icon">⚑</span>
+            <span class="sidebar-label">Meldungen</span>
+            <span class="report-badge" id="report-badge" style="display:none"></span>
+          </button>
+        </div>
+
+        <!-- Import group -->
+        <div class="sidebar-group" data-role="manager-up" id="sg-import">
+          <div class="sidebar-group-label">Import</div>
+          <button class="sidebar-item" data-tab="ai-import" onclick="adminTab('ai-import')">
+            <span class="sidebar-icon">🤖</span><span class="sidebar-label">KI-Import</span>
+          </button>
+          <button class="sidebar-item" data-tab="import" onclick="adminTab('import')">
+            <span class="sidebar-icon">📂</span><span class="sidebar-label">HTML Import</span>
+          </button>
+        </div>
+
+      </nav>
+
+      <!-- CONTENT -->
+      <div class="admin-content" id="admin-content">
 
     <!-- COURSES -->
     <div class="admin-section active" id="atab-courses">
@@ -2364,53 +2420,60 @@ function downloadPathCert(pathId, pathTitle, pathIcon){
   doc.setLineWidth(0.3);
   doc.line(w/2-40,47,w/2+40,47);
 
-  // Path title — auto-wrap if too long
-  doc.setFontSize(26);
+  // Path title — strip emojis (jsPDF renders them as garbage), auto font-size
+  const cleanTitle=pathTitle.replace(/[^\x00-\x7F\u00C0-\u024F\u1E00-\u1EFF]/g,'').trim();
+  const margin=20;
+  const contentW=w-(margin*2);
+  let titleSize=26;
   doc.setFont('helvetica','bold');
   doc.setTextColor(245,158,11);
-  const titleStr=pathIcon+' '+pathTitle;
-  const maxWidth=240; // max mm within borders
-  const titleWidth=doc.getTextWidth(titleStr);
-  if(titleWidth>maxWidth){
-    // Scale down font size to fit
-    const scale=maxWidth/titleWidth;
-    doc.setFontSize(Math.max(14, Math.floor(26*scale)));
+  while(titleSize>13){
+    doc.setFontSize(titleSize);
+    if(doc.getTextWidth(cleanTitle)<=contentW) break;
+    titleSize--;
   }
-  // Use splitTextToSize for automatic line wrapping
-  const titleLines=doc.splitTextToSize(titleStr, maxWidth);
-  const lineH=titleLines.length>1?10:0;
-  doc.text(titleLines, w/2, 65-(lineH*(titleLines.length-1)/2), {align:'center'});
+  const titleLines=doc.splitTextToSize(cleanTitle,contentW);
+  const titleLineH=titleSize*0.45;
+  const titleStartY=titleLines.length>1?60:66;
+  titleLines.slice(0,2).forEach((line,i)=>{
+    doc.text(line,w/2,titleStartY+(i*titleLineH),{align:'center'});
+  });
+  const afterTitle=titleStartY+(Math.min(titleLines.length,2)-1)*titleLineH+12;
 
   // Awarded to
   doc.setFontSize(11);
   doc.setFont('helvetica','normal');
   doc.setTextColor(122,181,160);
-  doc.text('wurde erfolgreich abgeschlossen von',w/2,80,{align:'center'});
+  doc.text('wurde erfolgreich abgeschlossen von',w/2,afterTitle,{align:'center'});
 
   // Name
   const name=currentUser.email?.split('@')[0]||'Teilnehmer';
   doc.setFontSize(22);
   doc.setFont('helvetica','bold');
   doc.setTextColor(232,245,240);
-  doc.text(name,w/2,96,{align:'center'});
+  const nameY=afterTitle+13;
+  doc.text(name,w/2,nameY,{align:'center'});
 
   // Underline name
   doc.setDrawColor(16,185,129);
   doc.setLineWidth(0.5);
   const nameWidth=doc.getTextWidth(name);
-  doc.line(w/2-nameWidth/2,99,w/2+nameWidth/2,99);
+  doc.line(w/2-nameWidth/2,nameY+3,w/2+nameWidth/2,nameY+3);
 
   // Completed courses list
   doc.setFontSize(9);
   doc.setFont('helvetica','normal');
   doc.setTextColor(80,140,110);
-  doc.text('Absolvierte Kurse: '+courseNames.join(' · '),w/2,110,{align:'center',maxWidth:240});
+  const coursesY=nameY+12;
+  const coursesStr='Absolvierte Kurse: '+courseNames.join(' - ');
+  const courseLines=doc.splitTextToSize(coursesStr,contentW);
+  courseLines.slice(0,2).forEach((line,i)=>{doc.text(line,w/2,coursesY+(i*5),{align:'center'});});
 
   // Date
   const dateStr=new Date().toLocaleDateString('de-DE',{day:'2-digit',month:'long',year:'numeric'});
   doc.setFontSize(10);
   doc.setTextColor(122,181,160);
-  doc.text('Ausgestellt am '+dateStr,w/2,125,{align:'center'});
+  doc.text('Ausgestellt am '+dateStr,w/2,coursesY+14,{align:'center'});
 
   // Bottom seal area
   doc.setFillColor(16,30,22);
@@ -2430,7 +2493,7 @@ function downloadPathCert(pathId, pathTitle, pathIcon){
   doc.setTextColor(80,140,110);
   doc.text('academy.energy',w/2,162,{align:'center'});
 
-  doc.save('Zertifikat-'+pathTitle.replace(/[^a-zA-Z0-9]/g,'-')+'.pdf');
+  doc.save('Zertifikat-'+(cleanTitle||pathTitle).replace(/[^a-zA-Z0-9]/g,'-')+'.pdf');
 }
 
 function downloadCert(){
@@ -2515,16 +2578,18 @@ function switchView(v){
 }
 
 function adminTab(tab){
-  // Hide admin-only tabs for managers
-  document.querySelectorAll('.admin-tab[data-role]').forEach(t=>{
-    const role=t.dataset.role;
-    if(role==='admin-only') t.style.display=isAdmin?'':'none';
-    if(role==='manager-up') t.style.display=(isAdmin||isManager)?'':'none';
+  // Show/hide sidebar groups based on role
+  document.querySelectorAll('.sidebar-group[data-role]').forEach(g=>{
+    const role=g.dataset.role;
+    g.style.display=(role==='admin-only'&&!isAdmin)?'none':(role==='manager-up'&&!isAdmin&&!isManager)?'none':'block';
   });
-  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  // Active state on sidebar items
+  document.querySelectorAll('.sidebar-item').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  // Show active section
   document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
   const sec=document.getElementById('atab-'+tab);
   if(sec)sec.classList.add('active');
+  // Load data for tab
   if(tab==='progress') loadAdminProgress();
   if(tab==='analytics') loadAnalytics();
   if(tab==='teams') renderTeams();
