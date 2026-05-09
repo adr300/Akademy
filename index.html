@@ -41,7 +41,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .screen.active{display:flex;}
 
 /* LOADING */
-.loading-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+.loading-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;background:var(--bg);z-index:9999;}
 .spinner{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:spin .6s linear infinite;}
 .loading-text{font-size:13px;color:var(--text3);}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -2329,7 +2329,7 @@ async function setUser(user){
     }
     // Load all data — each function has its own try/catch so failures are safe
     await Promise.allSettled([loadCourses(),loadProgress(),loadTeams(),loadAssignments(),loadPaths(),loadXP()]);
-    document.getElementById('loading').style.display='none';
+    const l=document.getElementById('loading');l.style.display='none';l.style.visibility='hidden';
     document.getElementById('screen-login').style.display='none';
     document.getElementById('main-app').style.display='block';
     updateXPBar();
@@ -2349,7 +2349,7 @@ async function setUser(user){
 }
 
 function showLogin(){
-  document.getElementById('loading').style.display='none';
+  const l=document.getElementById('loading');l.style.display='none';l.style.visibility='hidden';
   document.getElementById('screen-login').style.display='block';
   document.getElementById('main-app').style.display='none';
 }
@@ -3495,16 +3495,16 @@ function renderAdmin(){
   const list=document.getElementById('admin-course-list');list.innerHTML='';
   courses.forEach(c=>{
     const div=document.createElement('div');div.className='admin-course-row';
-    div.innerHTML=`
-      <div class="admin-course-icon">${c.icon||'📚'}</div>
-      <div class="admin-course-info">
-        <div class="admin-course-name">${c.title}</div>
-        <div class="admin-course-meta">${c.slides.length} Slides · ${c.questions.length} Fragen</div>
-      </div>
-      <div class="admin-course-actions">
-        <button class="btn-sm btn-edit" onclick="openCourseModal(${c.id})">Bearbeiten</button>
-        <button class="btn-sm btn-del" onclick="deleteCourse(${c.id})">Löschen</button>
-      </div>`;
+    div.innerHTML=
+      '<div class="admin-course-icon">'+(c.icon||'📚')+'</div>'+
+      '<div class="admin-course-info">'+
+        '<div class="admin-course-name">'+c.title+'</div>'+
+        '<div class="admin-course-meta">'+c.slides.length+' Slides · '+c.questions.length+' Fragen</div>'+
+      '</div>'+
+      '<div class="admin-course-actions">'+
+        '<button class="btn-sm btn-edit" onclick="openCourseModal('+c.id+')">Bearbeiten</button>'+
+        '<button class="btn-sm btn-del" onclick="deleteCourse('+c.id+')">Löschen</button>'+
+      '</div>';
     list.appendChild(div);
   });
 }
@@ -3820,19 +3820,19 @@ function renderTeams(){
       const email=t.memberEmails&&t.memberEmails[m.user_id]||m.user_id.slice(0,8)+'…';
       return '<div class="member-pill">'+email+'<button onclick="removeMember('+t.id+',\''+m.user_id+'\')">✕</button></div>';
     }).join('');
-    div.innerHTML=`
-      <div class="team-row-top">
-        <div class="team-name">${t.name} <span style="font-size:11px;color:var(--text3);font-weight:400">(${t.members.length} Mitglieder)</span></div>
-        <div style="display:flex;gap:8px">
-          <button class="btn-sm btn-edit" onclick="openTeamModal(${t.id})">Bearbeiten</button>
-          <button class="btn-sm btn-del" onclick="deleteTeam(${t.id})">Löschen</button>
-        </div>
-      </div>
-      <div class="team-members">${membersHTML||'<span style="font-size:12px;color:var(--text3)">Noch keine Mitglieder</span>'}</div>
-      <div class="add-member-row">
-        <input class="add-member-input" id="member-input-${t.id}" placeholder="E-Mail-Adresse des Nutzers">
-        <button class="btn-sm btn-edit" onclick="addMember(${t.id})">+ Hinzufügen</button>
-      </div>`;
+    div.innerHTML=
+      '<div class="team-row-top">'+
+        '<div class="team-name">'+t.name+' <span style="font-size:11px;color:var(--text3);font-weight:400">('+t.members.length+' Mitglieder)</span></div>'+
+        '<div style="display:flex;gap:8px">'+
+          '<button class="btn-sm btn-edit" onclick="openTeamModal('+t.id+')">Bearbeiten</button>'+
+          '<button class="btn-sm btn-del" onclick="deleteTeam('+t.id+')">Löschen</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="team-members">'+(membersHTML||'<span style="font-size:12px;color:var(--text3)">Noch keine Mitglieder</span>')+'</div>'+
+      '<div class="add-member-row">'+
+        '<input class="add-member-input" id="member-input-'+t.id+'" placeholder="E-Mail-Adresse des Nutzers">'+
+        '<button class="btn-sm btn-edit" onclick="addMember('+t.id+')">+ Hinzufügen</button>'+
+      '</div>';
     list.appendChild(div);
   });
 }
@@ -3891,13 +3891,13 @@ function renderAssignments(){
     const t=teams.find(x=>x.id===a.team_id);
     const dl=new Date(a.deadline);
     const div=document.createElement('div');div.className='assign-card';
-    div.innerHTML=`
-      <div class="assign-card-title">${c?.title||'Unbekannt'}</div>
-      <div class="assign-card-meta">Team: ${t?.name||'Unbekannt'}</div>
-      <div class="assign-card-meta" style="color:var(--amber);margin-top:4px">Deadline: ${dl.toLocaleDateString('de-DE')}</div>
-      <div class="assign-card-actions">
-        <button class="btn-sm btn-del" onclick="deleteAssignment(${a.id})">Löschen</button>
-      </div>`;
+    div.innerHTML=
+      '<div class="assign-card-title">'+(c?.title||'Unbekannt')+'</div>'+
+      '<div class="assign-card-meta">Team: '+(t?.name||'Unbekannt')+'</div>'+
+      '<div class="assign-card-meta" style="color:var(--amber);margin-top:4px">Deadline: '+dl.toLocaleDateString('de-DE')+'</div>'+
+      '<div class="assign-card-actions">'+
+        '<button class="btn-sm btn-del" onclick="deleteAssignment('+a.id+')">Löschen</button>'+
+      '</div>';
     grid.appendChild(div);
   });
 }
@@ -4815,7 +4815,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .screen.active{display:flex;}
 
 /* LOADING */
-.loading-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+.loading-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;background:var(--bg);z-index:9999;}
 .spinner{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:spin .6s linear infinite;}
 .loading-text{font-size:13px;color:var(--text3);}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -7097,7 +7097,7 @@ async function setUser(user){
     }
     // Load all data — each function has its own try/catch so failures are safe
     await Promise.allSettled([loadCourses(),loadProgress(),loadTeams(),loadAssignments(),loadPaths(),loadXP()]);
-    document.getElementById('loading').style.display='none';
+    const l=document.getElementById('loading');l.style.display='none';l.style.visibility='hidden';
     document.getElementById('screen-login').style.display='none';
     document.getElementById('main-app').style.display='block';
     updateXPBar();
@@ -7117,7 +7117,7 @@ async function setUser(user){
 }
 
 function showLogin(){
-  document.getElementById('loading').style.display='none';
+  const l=document.getElementById('loading');l.style.display='none';l.style.visibility='hidden';
   document.getElementById('screen-login').style.display='block';
   document.getElementById('main-app').style.display='none';
 }
@@ -8263,16 +8263,16 @@ function renderAdmin(){
   const list=document.getElementById('admin-course-list');list.innerHTML='';
   courses.forEach(c=>{
     const div=document.createElement('div');div.className='admin-course-row';
-    div.innerHTML=`
-      <div class="admin-course-icon">${c.icon||'📚'}</div>
-      <div class="admin-course-info">
-        <div class="admin-course-name">${c.title}</div>
-        <div class="admin-course-meta">${c.slides.length} Slides · ${c.questions.length} Fragen</div>
-      </div>
-      <div class="admin-course-actions">
-        <button class="btn-sm btn-edit" onclick="openCourseModal(${c.id})">Bearbeiten</button>
-        <button class="btn-sm btn-del" onclick="deleteCourse(${c.id})">Löschen</button>
-      </div>`;
+    div.innerHTML=
+      '<div class="admin-course-icon">'+(c.icon||'📚')+'</div>'+
+      '<div class="admin-course-info">'+
+        '<div class="admin-course-name">'+c.title+'</div>'+
+        '<div class="admin-course-meta">'+c.slides.length+' Slides · '+c.questions.length+' Fragen</div>'+
+      '</div>'+
+      '<div class="admin-course-actions">'+
+        '<button class="btn-sm btn-edit" onclick="openCourseModal('+c.id+')">Bearbeiten</button>'+
+        '<button class="btn-sm btn-del" onclick="deleteCourse('+c.id+')">Löschen</button>'+
+      '</div>';
     list.appendChild(div);
   });
 }
@@ -8588,19 +8588,19 @@ function renderTeams(){
       const email=t.memberEmails&&t.memberEmails[m.user_id]||m.user_id.slice(0,8)+'…';
       return '<div class="member-pill">'+email+'<button onclick="removeMember('+t.id+',\''+m.user_id+'\')">✕</button></div>';
     }).join('');
-    div.innerHTML=`
-      <div class="team-row-top">
-        <div class="team-name">${t.name} <span style="font-size:11px;color:var(--text3);font-weight:400">(${t.members.length} Mitglieder)</span></div>
-        <div style="display:flex;gap:8px">
-          <button class="btn-sm btn-edit" onclick="openTeamModal(${t.id})">Bearbeiten</button>
-          <button class="btn-sm btn-del" onclick="deleteTeam(${t.id})">Löschen</button>
-        </div>
-      </div>
-      <div class="team-members">${membersHTML||'<span style="font-size:12px;color:var(--text3)">Noch keine Mitglieder</span>'}</div>
-      <div class="add-member-row">
-        <input class="add-member-input" id="member-input-${t.id}" placeholder="E-Mail-Adresse des Nutzers">
-        <button class="btn-sm btn-edit" onclick="addMember(${t.id})">+ Hinzufügen</button>
-      </div>`;
+    div.innerHTML=
+      '<div class="team-row-top">'+
+        '<div class="team-name">'+t.name+' <span style="font-size:11px;color:var(--text3);font-weight:400">('+t.members.length+' Mitglieder)</span></div>'+
+        '<div style="display:flex;gap:8px">'+
+          '<button class="btn-sm btn-edit" onclick="openTeamModal('+t.id+')">Bearbeiten</button>'+
+          '<button class="btn-sm btn-del" onclick="deleteTeam('+t.id+')">Löschen</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="team-members">'+(membersHTML||'<span style="font-size:12px;color:var(--text3)">Noch keine Mitglieder</span>')+'</div>'+
+      '<div class="add-member-row">'+
+        '<input class="add-member-input" id="member-input-'+t.id+'" placeholder="E-Mail-Adresse des Nutzers">'+
+        '<button class="btn-sm btn-edit" onclick="addMember('+t.id+')">+ Hinzufügen</button>'+
+      '</div>';
     list.appendChild(div);
   });
 }
@@ -8659,13 +8659,13 @@ function renderAssignments(){
     const t=teams.find(x=>x.id===a.team_id);
     const dl=new Date(a.deadline);
     const div=document.createElement('div');div.className='assign-card';
-    div.innerHTML=`
-      <div class="assign-card-title">${c?.title||'Unbekannt'}</div>
-      <div class="assign-card-meta">Team: ${t?.name||'Unbekannt'}</div>
-      <div class="assign-card-meta" style="color:var(--amber);margin-top:4px">Deadline: ${dl.toLocaleDateString('de-DE')}</div>
-      <div class="assign-card-actions">
-        <button class="btn-sm btn-del" onclick="deleteAssignment(${a.id})">Löschen</button>
-      </div>`;
+    div.innerHTML=
+      '<div class="assign-card-title">'+(c?.title||'Unbekannt')+'</div>'+
+      '<div class="assign-card-meta">Team: '+(t?.name||'Unbekannt')+'</div>'+
+      '<div class="assign-card-meta" style="color:var(--amber);margin-top:4px">Deadline: '+dl.toLocaleDateString('de-DE')+'</div>'+
+      '<div class="assign-card-actions">'+
+        '<button class="btn-sm btn-del" onclick="deleteAssignment('+a.id+')">Löschen</button>'+
+      '</div>';
     grid.appendChild(div);
   });
 }
@@ -9583,7 +9583,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .screen.active{display:flex;}
 
 /* LOADING */
-.loading-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+.loading-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;background:var(--bg);z-index:9999;}
 .spinner{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:spin .6s linear infinite;}
 .loading-text{font-size:13px;color:var(--text3);}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -11861,7 +11861,7 @@ async function setUser(user){
     }
     // Load all data — each function has its own try/catch so failures are safe
     await Promise.allSettled([loadCourses(),loadProgress(),loadTeams(),loadAssignments(),loadPaths(),loadXP()]);
-    document.getElementById('loading').style.display='none';
+    const l=document.getElementById('loading');l.style.display='none';l.style.visibility='hidden';
     document.getElementById('screen-login').style.display='none';
     document.getElementById('main-app').style.display='block';
     updateXPBar();
@@ -11881,7 +11881,7 @@ async function setUser(user){
 }
 
 function showLogin(){
-  document.getElementById('loading').style.display='none';
+  const l=document.getElementById('loading');l.style.display='none';l.style.visibility='hidden';
   document.getElementById('screen-login').style.display='block';
   document.getElementById('main-app').style.display='none';
 }
@@ -13024,16 +13024,16 @@ function renderAdmin(){
   const list=document.getElementById('admin-course-list');list.innerHTML='';
   courses.forEach(c=>{
     const div=document.createElement('div');div.className='admin-course-row';
-    div.innerHTML=`
-      <div class="admin-course-icon">${c.icon||'📚'}</div>
-      <div class="admin-course-info">
-        <div class="admin-course-name">${c.title}</div>
-        <div class="admin-course-meta">${c.slides.length} Slides · ${c.questions.length} Fragen</div>
-      </div>
-      <div class="admin-course-actions">
-        <button class="btn-sm btn-edit" onclick="openCourseModal(${c.id})">Bearbeiten</button>
-        <button class="btn-sm btn-del" onclick="deleteCourse(${c.id})">Löschen</button>
-      </div>`;
+    div.innerHTML=
+      '<div class="admin-course-icon">'+(c.icon||'📚')+'</div>'+
+      '<div class="admin-course-info">'+
+        '<div class="admin-course-name">'+c.title+'</div>'+
+        '<div class="admin-course-meta">'+c.slides.length+' Slides · '+c.questions.length+' Fragen</div>'+
+      '</div>'+
+      '<div class="admin-course-actions">'+
+        '<button class="btn-sm btn-edit" onclick="openCourseModal('+c.id+')">Bearbeiten</button>'+
+        '<button class="btn-sm btn-del" onclick="deleteCourse('+c.id+')">Löschen</button>'+
+      '</div>';
     list.appendChild(div);
   });
 }
@@ -13349,19 +13349,19 @@ function renderTeams(){
       const email=t.memberEmails&&t.memberEmails[m.user_id]||m.user_id.slice(0,8)+'…';
       return '<div class="member-pill">'+email+'<button onclick="removeMember('+t.id+',\''+m.user_id+'\')">✕</button></div>';
     }).join('');
-    div.innerHTML=`
-      <div class="team-row-top">
-        <div class="team-name">${t.name} <span style="font-size:11px;color:var(--text3);font-weight:400">(${t.members.length} Mitglieder)</span></div>
-        <div style="display:flex;gap:8px">
-          <button class="btn-sm btn-edit" onclick="openTeamModal(${t.id})">Bearbeiten</button>
-          <button class="btn-sm btn-del" onclick="deleteTeam(${t.id})">Löschen</button>
-        </div>
-      </div>
-      <div class="team-members">${membersHTML||'<span style="font-size:12px;color:var(--text3)">Noch keine Mitglieder</span>'}</div>
-      <div class="add-member-row">
-        <input class="add-member-input" id="member-input-${t.id}" placeholder="E-Mail-Adresse des Nutzers">
-        <button class="btn-sm btn-edit" onclick="addMember(${t.id})">+ Hinzufügen</button>
-      </div>`;
+    div.innerHTML=
+      '<div class="team-row-top">'+
+        '<div class="team-name">'+t.name+' <span style="font-size:11px;color:var(--text3);font-weight:400">('+t.members.length+' Mitglieder)</span></div>'+
+        '<div style="display:flex;gap:8px">'+
+          '<button class="btn-sm btn-edit" onclick="openTeamModal('+t.id+')">Bearbeiten</button>'+
+          '<button class="btn-sm btn-del" onclick="deleteTeam('+t.id+')">Löschen</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="team-members">'+(membersHTML||'<span style="font-size:12px;color:var(--text3)">Noch keine Mitglieder</span>')+'</div>'+
+      '<div class="add-member-row">'+
+        '<input class="add-member-input" id="member-input-'+t.id+'" placeholder="E-Mail-Adresse des Nutzers">'+
+        '<button class="btn-sm btn-edit" onclick="addMember('+t.id+')">+ Hinzufügen</button>'+
+      '</div>';
     list.appendChild(div);
   });
 }
@@ -13420,13 +13420,13 @@ function renderAssignments(){
     const t=teams.find(x=>x.id===a.team_id);
     const dl=new Date(a.deadline);
     const div=document.createElement('div');div.className='assign-card';
-    div.innerHTML=`
-      <div class="assign-card-title">${c?.title||'Unbekannt'}</div>
-      <div class="assign-card-meta">Team: ${t?.name||'Unbekannt'}</div>
-      <div class="assign-card-meta" style="color:var(--amber);margin-top:4px">Deadline: ${dl.toLocaleDateString('de-DE')}</div>
-      <div class="assign-card-actions">
-        <button class="btn-sm btn-del" onclick="deleteAssignment(${a.id})">Löschen</button>
-      </div>`;
+    div.innerHTML=
+      '<div class="assign-card-title">'+(c?.title||'Unbekannt')+'</div>'+
+      '<div class="assign-card-meta">Team: '+(t?.name||'Unbekannt')+'</div>'+
+      '<div class="assign-card-meta" style="color:var(--amber);margin-top:4px">Deadline: '+dl.toLocaleDateString('de-DE')+'</div>'+
+      '<div class="assign-card-actions">'+
+        '<button class="btn-sm btn-del" onclick="deleteAssignment('+a.id+')">Löschen</button>'+
+      '</div>';
     grid.appendChild(div);
   });
 }
@@ -14344,7 +14344,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .screen.active{display:flex;}
 
 /* LOADING */
-.loading-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+.loading-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;background:var(--bg);z-index:9999;}
 .spinner{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--green);border-radius:50%;animation:spin .6s linear infinite;}
 .loading-text{font-size:13px;color:var(--text3);}
 @keyframes spin{to{transform:rotate(360deg);}}
@@ -16615,7 +16615,7 @@ async function setUser(user){
     }
     // Load all data — each function has its own try/catch so failures are safe
     await Promise.allSettled([loadCourses(),loadProgress(),loadTeams(),loadAssignments(),loadPaths(),loadXP()]);
-    document.getElementById('loading').style.display='none';
+    const l=document.getElementById('loading');l.style.display='none';l.style.visibility='hidden';
     document.getElementById('screen-login').style.display='none';
     document.getElementById('main-app').style.display='block';
     updateXPBar();
@@ -16635,7 +16635,7 @@ async function setUser(user){
 }
 
 function showLogin(){
-  document.getElementById('loading').style.display='none';
+  const l=document.getElementById('loading');l.style.display='none';l.style.visibility='hidden';
   document.getElementById('screen-login').style.display='block';
   document.getElementById('main-app').style.display='none';
 }
@@ -17778,16 +17778,16 @@ function renderAdmin(){
   const list=document.getElementById('admin-course-list');list.innerHTML='';
   courses.forEach(c=>{
     const div=document.createElement('div');div.className='admin-course-row';
-    div.innerHTML=`
-      <div class="admin-course-icon">${c.icon||'📚'}</div>
-      <div class="admin-course-info">
-        <div class="admin-course-name">${c.title}</div>
-        <div class="admin-course-meta">${c.slides.length} Slides · ${c.questions.length} Fragen</div>
-      </div>
-      <div class="admin-course-actions">
-        <button class="btn-sm btn-edit" onclick="openCourseModal(${c.id})">Bearbeiten</button>
-        <button class="btn-sm btn-del" onclick="deleteCourse(${c.id})">Löschen</button>
-      </div>`;
+    div.innerHTML=
+      '<div class="admin-course-icon">'+(c.icon||'📚')+'</div>'+
+      '<div class="admin-course-info">'+
+        '<div class="admin-course-name">'+c.title+'</div>'+
+        '<div class="admin-course-meta">'+c.slides.length+' Slides · '+c.questions.length+' Fragen</div>'+
+      '</div>'+
+      '<div class="admin-course-actions">'+
+        '<button class="btn-sm btn-edit" onclick="openCourseModal('+c.id+')">Bearbeiten</button>'+
+        '<button class="btn-sm btn-del" onclick="deleteCourse('+c.id+')">Löschen</button>'+
+      '</div>';
     list.appendChild(div);
   });
 }
@@ -18103,19 +18103,19 @@ function renderTeams(){
       const email=t.memberEmails&&t.memberEmails[m.user_id]||m.user_id.slice(0,8)+'…';
       return '<div class="member-pill">'+email+'<button onclick="removeMember('+t.id+',\''+m.user_id+'\')">✕</button></div>';
     }).join('');
-    div.innerHTML=`
-      <div class="team-row-top">
-        <div class="team-name">${t.name} <span style="font-size:11px;color:var(--text3);font-weight:400">(${t.members.length} Mitglieder)</span></div>
-        <div style="display:flex;gap:8px">
-          <button class="btn-sm btn-edit" onclick="openTeamModal(${t.id})">Bearbeiten</button>
-          <button class="btn-sm btn-del" onclick="deleteTeam(${t.id})">Löschen</button>
-        </div>
-      </div>
-      <div class="team-members">${membersHTML||'<span style="font-size:12px;color:var(--text3)">Noch keine Mitglieder</span>'}</div>
-      <div class="add-member-row">
-        <input class="add-member-input" id="member-input-${t.id}" placeholder="E-Mail-Adresse des Nutzers">
-        <button class="btn-sm btn-edit" onclick="addMember(${t.id})">+ Hinzufügen</button>
-      </div>`;
+    div.innerHTML=
+      '<div class="team-row-top">'+
+        '<div class="team-name">'+t.name+' <span style="font-size:11px;color:var(--text3);font-weight:400">('+t.members.length+' Mitglieder)</span></div>'+
+        '<div style="display:flex;gap:8px">'+
+          '<button class="btn-sm btn-edit" onclick="openTeamModal('+t.id+')">Bearbeiten</button>'+
+          '<button class="btn-sm btn-del" onclick="deleteTeam('+t.id+')">Löschen</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="team-members">'+(membersHTML||'<span style="font-size:12px;color:var(--text3)">Noch keine Mitglieder</span>')+'</div>'+
+      '<div class="add-member-row">'+
+        '<input class="add-member-input" id="member-input-'+t.id+'" placeholder="E-Mail-Adresse des Nutzers">'+
+        '<button class="btn-sm btn-edit" onclick="addMember('+t.id+')">+ Hinzufügen</button>'+
+      '</div>';
     list.appendChild(div);
   });
 }
@@ -18174,13 +18174,13 @@ function renderAssignments(){
     const t=teams.find(x=>x.id===a.team_id);
     const dl=new Date(a.deadline);
     const div=document.createElement('div');div.className='assign-card';
-    div.innerHTML=`
-      <div class="assign-card-title">${c?.title||'Unbekannt'}</div>
-      <div class="assign-card-meta">Team: ${t?.name||'Unbekannt'}</div>
-      <div class="assign-card-meta" style="color:var(--amber);margin-top:4px">Deadline: ${dl.toLocaleDateString('de-DE')}</div>
-      <div class="assign-card-actions">
-        <button class="btn-sm btn-del" onclick="deleteAssignment(${a.id})">Löschen</button>
-      </div>`;
+    div.innerHTML=
+      '<div class="assign-card-title">'+(c?.title||'Unbekannt')+'</div>'+
+      '<div class="assign-card-meta">Team: '+(t?.name||'Unbekannt')+'</div>'+
+      '<div class="assign-card-meta" style="color:var(--amber);margin-top:4px">Deadline: '+dl.toLocaleDateString('de-DE')+'</div>'+
+      '<div class="assign-card-actions">'+
+        '<button class="btn-sm btn-del" onclick="deleteAssignment('+a.id+')">Löschen</button>'+
+      '</div>';
     grid.appendChild(div);
   });
 }
