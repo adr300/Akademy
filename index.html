@@ -3750,10 +3750,10 @@ function renderProgressUserList(){
     const email=_progEmails[uid]||uid.slice(0,8)+'…';
     const userProg=_progData.filter(r=>r.user_id===uid);
     const completed=userProg.filter(r=>r.completed).length;
-    const total=userProg.length;
-    const avgScore=total?Math.round(userProg.reduce((a,r)=>a+(r.score||0),0)/total):0;
+    const totalCourses=courses.length; // all available courses, not just started ones
+    const avgScore=userProg.length?Math.round(userProg.reduce((a,r)=>a+(r.score||0),0)/userProg.length):0;
     const totalSecs=_progSessions.filter(s=>s.user_id===uid).reduce((a,s)=>a+(s.seconds_spent||0),0);
-    const pct=total>0?Math.round(completed/total*100):0;
+    const pct=totalCourses>0?Math.round(completed/totalCourses*100):0;
     const card=document.createElement('div');
     card.className='prog-user-card';
     card.onclick=()=>showProgressDetail(uid);
@@ -3769,7 +3769,7 @@ function renderProgressUserList(){
       '</div>'+
       '<div class="prog-user-bar-track"><div class="prog-user-bar-fill" style="width:'+pct+'%;background:'+(pct===100?'var(--amber)':'var(--green)')+'"></div></div>'+
       '<div class="prog-user-meta">'+
-        '<span>'+completed+'/'+total+' Kurse</span>'+
+        '<span>'+completed+'/'+totalCourses+' Kurse</span>'+
         '<span>Ø '+avgScore+'%</span>'+
         '<span>'+fmtTime(totalSecs)+'</span>'+
       '</div>';
@@ -3787,6 +3787,7 @@ function showProgressDetail(uid){
   const userProg=_progData.filter(r=>r.user_id===uid);
   const totalSecs=_progSessions.filter(s=>s.user_id===uid).reduce((a,s)=>a+(s.seconds_spent||0),0);
   const completed=userProg.filter(r=>r.completed).length;
+  const totalCourses=courses.length;
   const avgScore=userProg.length?Math.round(userProg.reduce((a,r)=>a+(r.score||0),0)/userProg.length):0;
   const best=userProg.length?Math.max(...userProg.map(r=>r.score||0)):0;
 
@@ -3798,7 +3799,7 @@ function showProgressDetail(uid){
   // Stats row
   const stats=document.getElementById('prog-detail-stats');
   stats.innerHTML=[
-    {n:completed+'/'+userProg.length, l:'Kurse abgeschlossen', c:'var(--green)'},
+    {n:completed+'/'+totalCourses, l:'Kurse abgeschlossen', c:'var(--green)'},
     {n:avgScore+'%', l:'Durchschnittsscore', c:avgScore>=70?'var(--green)':'var(--amber)'},
     {n:best+'%', l:'Bester Score', c:'var(--teal)'},
     {n:fmtTime(totalSecs)||'–', l:'Gesamte Lernzeit', c:'var(--purple)'}
