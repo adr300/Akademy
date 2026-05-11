@@ -1320,6 +1320,12 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
               <input class="form-input" id="ai-course-color" value="#10b981" placeholder="#10b981">
             </div>
           </div>
+          <!-- KI Spezifikationen -->
+          <div style="margin-top:1rem">
+            <label class="form-label">Anweisungen für die KI <span style="color:var(--text3);font-weight:400">(optional)</span></label>
+            <textarea class="form-input" id="ai-spec-input" rows="4" placeholder="z.B. Fokus auf Fristen und Prozessschritte · Zielgruppe sind Einsteiger · Verwende konkrete Beispiele · Betone Unterschiede zwischen NB und MSB · Erstelle Fragen zu §14a · Verwende einfache Sprache ohne Fachjargon" style="resize:vertical;font-size:13px;line-height:1.5"></textarea>
+            <div style="font-size:11px;color:var(--text3);margin-top:4px">💡 Die KI berücksichtigt diese Anweisungen mit höchster Priorität beim Erstellen von Slides und Fragen.</div>
+          </div>
           <div style="display:flex;gap:10px;margin-top:1rem">
             <button class="btn-sec" onclick="resetAiUpload()">Abbrechen</button>
             <button class="btn-add" id="ai-generate-btn" onclick="generateCourseFromPdf()">🤖 Kurs generieren</button>
@@ -4243,6 +4249,8 @@ function resetAiUpload(){
   document.getElementById('ai-preview').style.display='none';
   document.getElementById('ai-msg').className='msg';
   document.getElementById('ai-file-input').value='';
+  const specField=document.getElementById('ai-spec-input');
+  if(specField) specField.value='';
 }
 
 async function generateCourseFromPdf(){
@@ -4252,6 +4260,7 @@ async function generateCourseFromPdf(){
   const questionsCount=document.getElementById('ai-questions-count').value;
   const questionTypes=document.getElementById('ai-question-types').value;
   const courseColor=document.getElementById('ai-course-color').value||'#10b981';
+  const userSpec=(document.getElementById('ai-spec-input')?.value||'').trim();
   document.getElementById('ai-options').style.display='none';
   document.getElementById('ai-progress').style.display='block';
   document.getElementById('ai-progress-text').textContent='Claude liest das PDF...';
@@ -4264,6 +4273,7 @@ async function generateCourseFromPdf(){
     'Analysiere das PDF und erstelle einen Lernkurs.',
     'Antworte NUR mit einem JSON-Objekt ohne Markdown-Backticks.',
     slidesCount+' Slides, '+questionsCount+' Fragen.',
+    userSpec?'BESONDERE ANWEISUNGEN (hoechste Prioritaet, unbedingt beachten): '+userSpec+' ---':'',
     typeInstructions,
     'Format: {"title":"Titel","icon":"Emoji","icon_bg":"#0c1a2e","tag_bg":"#0c1a2e","tag_color":"'+courseColor+'","btn_color":"'+courseColor+'",',
     '"slides":[{"tag":"Tag","title":"Titel","content":"HTML","stat1_num":null,"stat1_lbl":null,"stat2_num":null,"stat2_lbl":null,"stat3_num":null,"stat3_lbl":null}],',
