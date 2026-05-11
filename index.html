@@ -431,6 +431,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .xp-bar-inner{flex:1;min-width:200px;}
 .xp-bar-track{height:6px;background:var(--border2);border-radius:3px;overflow:hidden;margin-bottom:4px;}
 .xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--teal));border-radius:3px;transition:width .6s ease;width:0%;}
+.xp-title{font-size:11px;color:var(--green);font-weight:600;margin-top:2px;letter-spacing:.01em;}
 .xp-label{font-size:11px;color:var(--text3);}
 .xp-profile-btn{padding:6px 14px;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:var(--green);border-radius:20px;cursor:pointer;white-space:nowrap;transition:all .15s;}
 .xp-profile-btn:hover{background:rgba(16,185,129,0.2);}
@@ -824,6 +825,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div class="xp-bar-inner">
       <div class="xp-bar-track"><div class="xp-bar-fill" id="xp-bar-fill"></div></div>
       <div class="xp-label" id="xp-label">Level 1 · 0 XP</div>
+      <div class="xp-title" id="xp-title">🔌 Steckdosen-Azubi</div>
     </div>
     <button class="xp-profile-btn" onclick="showProfile()">🏅 Meine Erfolge</button>
   </div>
@@ -2303,25 +2305,57 @@ async function checkAndAwardBadges(courseId,score,sessionSecs){
   return earned;
 }
 
+// ── LEVEL TITLES ──
+function getLevelTitle(lvl){
+  const titles=[
+    [1,  '🔌 Steckdosen-Azubi'],
+    [2,  '💡 Glühbirnen-Flüsterer'],
+    [3,  '📋 Formular-Lehrling'],
+    [4,  '⚡ Zählerstand-Detektiv'],
+    [5,  '🔧 Schraubenzieher-Stratege'],
+    [6,  '📊 Excel-Schamane'],
+    [7,  '🗺️ Netzplan-Navigator'],
+    [8,  '📡 Messdaten-Mystiker'],
+    [9,  '⚖️ Paragraph-Jongleur'],
+    [10, '🏛️ GPKE-Gelehrter'],
+    [12, '🔮 Bilanzkreis-Seher'],
+    [15, '🧙 Marktpartner-Magier'],
+    [18, '🌩️ Hochspannungs-Helden'],
+    [20, '👑 Energiewirtschafts-Kaiser'],
+    [25, '🤖 KI-importierter Gott'],
+  ];
+  let title=titles[0][1];
+  for(const[minLvl,name] of titles){
+    if(lvl>=minLvl) title=name;
+  }
+  return title;
+}
+
 function updateXPBar(){
   const cur=userXP.total_xp||0;
   const lvl=userXP.level||1;
   const thisLvlXP=xpForLevel(lvl);
   const nextLvlXP=xpForLevel(lvl+1);
   const pct=Math.min(100,Math.round(((cur-thisLvlXP)/(nextLvlXP-thisLvlXP))*100));
+  const title=getLevelTitle(lvl);
   // nav level pill
   const lvlEl=document.getElementById('nav-level');
   if(lvlEl) lvlEl.textContent='Lv.'+lvl;
-  // old xp bar (keep for backward compat)
+  // nav level title tooltip
+  const navLvlWrap=document.getElementById('nav-level-wrap');
+  if(navLvlWrap) navLvlWrap.title=title;
+  // xp bar label
   const bar=document.getElementById('xp-bar-fill');
   const label=document.getElementById('xp-label');
   if(bar) bar.style.width=pct+'%';
   if(label) label.textContent='Level '+lvl+' · '+cur+' XP · '+pct+'% bis Level '+(lvl+1);
+  const titleEl=document.getElementById('xp-title');
+  if(titleEl) titleEl.textContent=title;
   // new ring widget
-  updateXPRing(lvl,cur,pct);
+  updateXPRing(lvl,cur,pct,title);
 }
 
-function updateXPRing(lvl,cur,pct){
+function updateXPRing(lvl,cur,pct,title){
   const ring=document.getElementById('xp-ring-circle');
   if(!ring)return;
   const r=42,circ=2*Math.PI*r;
@@ -2331,9 +2365,11 @@ function updateXPRing(lvl,cur,pct){
   const lvlNum=document.getElementById('xp-ring-level');
   const xpNum=document.getElementById('xp-ring-xp');
   const xpPct=document.getElementById('xp-ring-pct');
+  const lvlTitle=document.getElementById('xp-ring-title');
   if(lvlNum) lvlNum.textContent=lvl;
   if(xpNum) xpNum.textContent=cur.toLocaleString('de-DE')+' XP';
   if(xpPct) xpPct.textContent=pct+'% bis Lv.'+(lvl+1);
+  if(lvlTitle) lvlTitle.textContent=title||getLevelTitle(lvl);
 }
 
 function animateXPCounter(el, from, to, duration){
