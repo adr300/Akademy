@@ -2129,7 +2129,9 @@ async function loadProgress(){
 function isCourseCompleted(courseId){
   const idx = courses.findIndex(c=>c.id===courseId);
   if(idx<0) return false;
-  return !!userProgress[idx]?.completed;
+  const prog=userProgress[idx];
+  // Must be marked completed AND have a passing score (>= 70)
+  return !!(prog?.completed && (prog?.score||0)>=70);
 }
 
 async function loadTeams(){
@@ -2449,8 +2451,13 @@ function showXPToast(amount,badges,dailyBonus){
 
 async function saveProgress(courseId,score){
   const idx=courses.findIndex(c=>c.id===courseId);
-  await sb.from('user_progress').upsert({user_id:currentUser.id,course_index:idx,completed:true,score,updated_at:new Date().toISOString()},{onConflict:'user_id,course_index'});
-  userProgress[idx]={completed:true,score};
+  const passed=score>=70;
+  // Only mark completed:true if the quiz was passed (score >= 70)
+  // A previous pass should not be overwritten by a new fail
+  const prevPassed=userProgress[idx]?.completed||false;
+  const completed=passed||prevPassed;
+  await sb.from('user_progress').upsert({user_id:currentUser.id,course_index:idx,completed,score,updated_at:new Date().toISOString()},{onConflict:'user_id,course_index'});
+  userProgress[idx]={completed,score};
 }
 
 // ── SESSION TRACKING ──
