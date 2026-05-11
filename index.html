@@ -730,6 +730,34 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
   .admin-content{padding-bottom:2rem;}
 }
 
+
+/* ── PROGRESS REDESIGN ── */
+.prog-user-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1.1rem 1.25rem;cursor:pointer;transition:border-color .15s,transform .15s;}
+.prog-user-card:hover{border-color:var(--green);transform:translateY(-2px);}
+.prog-user-card-top{display:flex;align-items:center;gap:10px;margin-bottom:.75rem;}
+.prog-user-avatar{width:38px;height:38px;border-radius:50%;background:var(--bg3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--green);flex-shrink:0;}
+.prog-user-info{flex:1;min-width:0;}
+.prog-user-email{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.prog-user-pct{font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;flex-shrink:0;}
+.prog-user-bar-track{height:4px;background:var(--border2);border-radius:2px;margin-bottom:.75rem;overflow:hidden;}
+.prog-user-bar-fill{height:100%;border-radius:2px;transition:width .4s;}
+.prog-user-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);}
+
+/* Detail view */
+.prog-stat-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1.1rem;text-align:center;}
+.prog-stat-num{font-family:'Bricolage Grotesque',sans-serif;font-size:26px;font-weight:800;line-height:1;}
+.prog-stat-lbl{font-size:11px;color:var(--text3);margin-top:4px;}
+.prog-course-row{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:.9rem 1.1rem;display:flex;align-items:center;gap:12px;transition:border-color .15s;}
+.prog-course-row:hover{border-color:var(--border2);}
+.prog-course-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.prog-course-info{flex:1;min-width:0;}
+.prog-course-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;}
+.prog-course-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:5px;}
+.prog-course-bar-track{height:3px;background:var(--border2);border-radius:2px;overflow:hidden;}
+.prog-course-bar-fill{height:100%;border-radius:2px;}
+@media(max-width:640px){
+  #prog-detail-stats{grid-template-columns:repeat(2,1fr)!important;}
+}
 </style>
 </head>
 <body>
@@ -1184,15 +1212,24 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
     <!-- PROGRESS -->
     <div class="admin-section" id="atab-progress">
-      <div class="sec-head">
-        <div class="sec-title">Nutzer-Fortschritt</div>
-        <div id="reset-all-btns" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+      <!-- View A: User list -->
+      <div id="prog-user-list-view">
+        <div class="sec-head">
+          <div class="sec-title">Nutzer-Fortschritt</div>
+        </div>
+        <div id="prog-user-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:1rem"></div>
       </div>
-      <div class="chrome" style="min-height:auto">
-        <table class="progress-table">
-          <thead><tr><th>Nutzer</th><th>Kurs</th><th>Score</th><th>Lernzeit</th><th>Datum</th><th>Aktionen</th></tr></thead>
-          <tbody id="progress-tbody"></tbody>
-        </table>
+      <!-- View B: Single user detail -->
+      <div id="prog-detail-view" style="display:none">
+        <div class="sec-head">
+          <button class="btn-sec" style="font-size:12px;padding:6px 12px" onclick="showProgressUserList()">← Zurück</button>
+          <div class="sec-title" id="prog-detail-name" style="margin:0"></div>
+          <button class="btn-sm btn-del" id="prog-reset-all-btn">↺ Alles zurücksetzen</button>
+        </div>
+        <!-- Stats row -->
+        <div id="prog-detail-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:1.25rem 0"></div>
+        <!-- Course progress -->
+        <div id="prog-detail-courses" style="display:flex;flex-direction:column;gap:10px"></div>
       </div>
     </div>
 
@@ -3679,55 +3716,126 @@ async function loadAnalytics(){
 }
 
 // ── PROGRESS TABLE ──
+// ── PROGRESS: global data ──
+let _progData=[], _progEmails={}, _progSessions=[];
+
 async function loadAdminProgress(){
-  const tbody=document.getElementById('progress-tbody');
-  tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:2rem">Wird geladen…</td></tr>';
+  const grid=document.getElementById('prog-user-grid');
+  if(!grid) return;
+  grid.innerHTML='<div style="color:var(--text3);font-size:13px;padding:1rem">Wird geladen…</div>';
+  showProgressUserList();
   const[{data:progData,error},{data:emailData},{data:sessionData}]=await Promise.all([
     sb.from('user_progress').select('*').order('updated_at',{ascending:false}),
     sb.from('user_emails').select('id,email'),
     sb.from('learning_sessions').select('user_id,course_id,seconds_spent')
   ]);
-  if(error){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--red);padding:2rem">Fehler beim Laden.</td></tr>';return;}
-  tbody.innerHTML='';
-  if(!progData?.length){tbody.innerHTML='<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:2rem">Noch keine Abschlüsse</td></tr>';return;}
-  const emailMap={};(emailData||[]).forEach(u=>{emailMap[u.id]=u.email;});
-  // Build per-user "reset all" buttons
-  const uniqueUsers=[...new Set((progData||[]).map(r=>r.user_id))];
-  const resetBtns=document.getElementById('reset-all-btns');
-  if(resetBtns){
-    resetBtns.innerHTML='';
-    uniqueUsers.forEach(uid=>{
-      const em=emailMap[uid]||uid.slice(0,8)+'…';
-      const btn=document.createElement('button');
-      btn.className='btn-sm btn-del';
-      btn.style.fontSize='11px';
-      btn.textContent='↺ '+em.split('@')[0]+' komplett';
-      btn.onclick=()=>resetAllProgress(uid,em);
-      resetBtns.appendChild(btn);
-    });
+  if(error){grid.innerHTML='<div style="color:var(--red);padding:1rem">Fehler beim Laden.</div>';return;}
+  _progData=progData||[];
+  _progSessions=sessionData||[];
+  _progEmails={};
+  (emailData||[]).forEach(u=>{_progEmails[u.id]=u.email;});
+  renderProgressUserList();
+}
+
+function renderProgressUserList(){
+  const grid=document.getElementById('prog-user-grid');
+  if(!grid) return;
+  grid.innerHTML='';
+  const uniqueUsers=[...new Set(_progData.map(r=>r.user_id))];
+  if(!uniqueUsers.length){
+    grid.innerHTML='<div style="color:var(--text3);font-size:13px;padding:1rem;grid-column:1/-1">Noch keine Abschlüsse vorhanden.</div>';
+    return;
   }
-  progData.forEach(r=>{
-    const c=courses[r.course_index];
-    const email=emailMap[r.user_id]||r.user_id.slice(0,8)+'…';
-    const date=new Date(r.updated_at).toLocaleDateString('de-DE');
-    const sess=(sessionData||[]).filter(s=>s.user_id===r.user_id&&s.course_id===c?.id);
-    const totalSecs=sess.reduce((a,s)=>a+(s.seconds_spent||0),0);
-    const scoreClass=r.score>=70?'score-pass':r.score>0?'score-fail':'score-none';
-    const tr=document.createElement('tr');
-    tr.innerHTML=
-      '<td style="font-size:13px">'+email+'</td>'+
-      '<td>'+(c?.title||'Unbekannt')+'</td>'+
-      '<td><span class="score-pill '+scoreClass+'">'+(r.score||0)+'%</span></td>'+
-      '<td style="color:var(--teal)">'+(fmtTime(totalSecs)||'–')+'</td>'+
-      '<td style="color:var(--text3)">'+date+'</td>'+
-      '<td></td>';
-    const resetBtn=document.createElement('button');
-    resetBtn.className='btn-sm btn-del';
-    resetBtn.style.cssText='font-size:11px;padding:4px 9px';
-    resetBtn.textContent='↺ Zurücksetzen';
-    resetBtn.onclick=()=>resetProgress(r.user_id, email, r.course_index);
-    tr.lastElementChild.appendChild(resetBtn);
-    tbody.appendChild(tr);
+  uniqueUsers.forEach(uid=>{
+    const email=_progEmails[uid]||uid.slice(0,8)+'…';
+    const userProg=_progData.filter(r=>r.user_id===uid);
+    const completed=userProg.filter(r=>r.completed).length;
+    const total=userProg.length;
+    const avgScore=total?Math.round(userProg.reduce((a,r)=>a+(r.score||0),0)/total):0;
+    const totalSecs=_progSessions.filter(s=>s.user_id===uid).reduce((a,s)=>a+(s.seconds_spent||0),0);
+    const pct=total>0?Math.round(completed/total*100):0;
+    const card=document.createElement('div');
+    card.className='prog-user-card';
+    card.onclick=()=>showProgressDetail(uid);
+    const initial=(email[0]||'?').toUpperCase();
+    card.innerHTML=
+      '<div class="prog-user-card-top">'+
+        '<div class="prog-user-avatar">'+initial+'</div>'+
+        '<div class="prog-user-info">'+
+          '<div class="prog-user-email">'+email.split('@')[0]+'</div>'+
+          '<div class="prog-user-domain" style="font-size:11px;color:var(--text3)">'+email.split('@')[1]+'</div>'+
+        '</div>'+
+        '<div class="prog-user-pct" style="color:'+(pct===100?'var(--amber)':'var(--green)')+'">'+pct+'%</div>'+
+      '</div>'+
+      '<div class="prog-user-bar-track"><div class="prog-user-bar-fill" style="width:'+pct+'%;background:'+(pct===100?'var(--amber)':'var(--green)')+'"></div></div>'+
+      '<div class="prog-user-meta">'+
+        '<span>'+completed+'/'+total+' Kurse</span>'+
+        '<span>Ø '+avgScore+'%</span>'+
+        '<span>'+fmtTime(totalSecs)+'</span>'+
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function showProgressUserList(){
+  document.getElementById('prog-user-list-view').style.display='block';
+  document.getElementById('prog-detail-view').style.display='none';
+}
+
+function showProgressDetail(uid){
+  const email=_progEmails[uid]||uid.slice(0,8)+'…';
+  const userProg=_progData.filter(r=>r.user_id===uid);
+  const totalSecs=_progSessions.filter(s=>s.user_id===uid).reduce((a,s)=>a+(s.seconds_spent||0),0);
+  const completed=userProg.filter(r=>r.completed).length;
+  const avgScore=userProg.length?Math.round(userProg.reduce((a,r)=>a+(r.score||0),0)/userProg.length):0;
+  const best=userProg.length?Math.max(...userProg.map(r=>r.score||0)):0;
+
+  document.getElementById('prog-user-list-view').style.display='none';
+  document.getElementById('prog-detail-view').style.display='block';
+  document.getElementById('prog-detail-name').textContent=email;
+  document.getElementById('prog-reset-all-btn').onclick=()=>resetAllProgress(uid,email);
+
+  // Stats row
+  const stats=document.getElementById('prog-detail-stats');
+  stats.innerHTML=[
+    {n:completed+'/'+userProg.length, l:'Kurse abgeschlossen', c:'var(--green)'},
+    {n:avgScore+'%', l:'Durchschnittsscore', c:avgScore>=70?'var(--green)':'var(--amber)'},
+    {n:best+'%', l:'Bester Score', c:'var(--teal)'},
+    {n:fmtTime(totalSecs)||'–', l:'Gesamte Lernzeit', c:'var(--purple)'}
+  ].map(s=>
+    '<div class="prog-stat-card">'+
+      '<div class="prog-stat-num" style="color:'+s.c+'">'+s.n+'</div>'+
+      '<div class="prog-stat-lbl">'+s.l+'</div>'+
+    '</div>'
+  ).join('');
+
+  // Course list
+  const list=document.getElementById('prog-detail-courses');
+  list.innerHTML='';
+  courses.forEach((c,idx)=>{
+    const r=userProg.find(x=>x.course_index===idx);
+    const sess=_progSessions.filter(s=>s.user_id===uid&&s.course_id===c.id);
+    const secs=sess.reduce((a,s)=>a+(s.seconds_spent||0),0);
+    const score=r?.score||0;
+    const done=r?.completed||false;
+    const date=r?new Date(r.updated_at).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}):'–';
+    const scoreClass=score>=70?'score-pass':score>0?'score-fail':'score-none';
+    const div=document.createElement('div');
+    div.className='prog-course-row';
+    div.innerHTML=
+      '<div class="prog-course-icon" style="background:'+(c.icon_bg||'var(--bg3)')+'">'+( c.icon||'📚')+'</div>'+
+      '<div class="prog-course-info">'+
+        '<div class="prog-course-title">'+c.title+'</div>'+
+        '<div class="prog-course-meta">'+
+          (done?'<span style="color:var(--green);font-size:11px">✓ Abgeschlossen</span>':'<span style="color:var(--text3);font-size:11px">Nicht abgeschlossen</span>')+
+          (secs?' · <span style="color:var(--teal);font-size:11px">'+fmtTime(secs)+'</span>':'')+
+          (date!=='–'?' · <span style="font-size:11px;color:var(--text3)">'+date+'</span>':'')+
+        '</div>'+
+        (done?'<div class="prog-course-bar-track"><div class="prog-course-bar-fill" style="width:'+score+'%;background:'+(score>=70?'var(--green)':'var(--amber)')+'"></div></div>':'<div class="prog-course-bar-track"></div>')+
+      '</div>'+
+      '<span class="score-pill '+scoreClass+'">'+(done?score+'%':'–')+'</span>'+
+      (r?'<button class="btn-sm btn-del" style="font-size:11px" data-uid="'+uid+'" data-email="'+email+'" data-idx="'+idx+'" onclick="resetProgress(this.dataset.uid,this.dataset.email,parseInt(this.dataset.idx))">↺</button>':'<span style="width:48px"></span>');
+    list.appendChild(div);
   });
 }
 
