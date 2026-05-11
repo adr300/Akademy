@@ -801,6 +801,31 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .an-side-stat{display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);}
 .an-side-lbl{font-size:12px;color:var(--text3);}
 .an-side-val{font-size:13px;font-weight:700;}
+
+/* ── COURSE COMPLETION ANIMATION ── */
+.completion-overlay{position:fixed;inset:0;z-index:500;pointer-events:none;overflow:hidden;}
+.completion-overlay.active{pointer-events:none;}
+/* Confetti */
+@keyframes conf-fall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+.conf-piece{position:absolute;top:-10px;border-radius:2px;animation:conf-fall linear forwards;}
+/* Trophy popup */
+@keyframes trophy-pop{0%{transform:translate(-50%,-50%) scale(0) rotate(-20deg);opacity:0}50%{transform:translate(-50%,-50%) scale(1.2) rotate(5deg);opacity:1}70%{transform:translate(-50%,-50%) scale(0.95) rotate(-2deg)}100%{transform:translate(-50%,-50%) scale(1) rotate(0deg);opacity:1}}
+@keyframes trophy-out{0%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-50%) scale(0.8);opacity:0}}
+.trophy-popup{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%);z-index:501;text-align:center;pointer-events:none;}
+.trophy-popup.in{animation:trophy-pop .5s cubic-bezier(.4,0,.2,1) forwards;}
+.trophy-popup.out{animation:trophy-out .3s ease forwards;}
+.trophy-emoji{font-size:72px;line-height:1;display:block;}
+.trophy-label{font-size:22px;font-weight:800;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.4);margin-top:8px;font-family:'Bricolage Grotesque',sans-serif;}
+.trophy-score{font-size:15px;color:rgba(255,255,255,.85);margin-top:4px;}
+/* XP float */
+@keyframes xp-float-up{0%{transform:translate(-50%,0);opacity:1}100%{transform:translate(-50%,-80px);opacity:0}}
+.xp-float{position:fixed;left:50%;bottom:30%;z-index:502;pointer-events:none;font-size:28px;font-weight:800;color:var(--green);font-family:'Bricolage Grotesque',sans-serif;text-shadow:0 0 20px rgba(16,185,129,.5);animation:xp-float-up 1.2s ease forwards;}
+/* Checkmark ring */
+@keyframes ring-pop{0%{transform:translate(-50%,-50%) scale(0)}60%{transform:translate(-50%,-50%) scale(1.1)}100%{transform:translate(-50%,-50%) scale(1)}}
+@keyframes check-draw{0%{stroke-dashoffset:200}100%{stroke-dashoffset:0}}
+.check-ring-wrap{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%);z-index:501;pointer-events:none;}
+.check-ring-wrap svg{animation:ring-pop .4s cubic-bezier(.4,0,.2,1) forwards;}
+.check-ring-path{stroke-dasharray:200;stroke-dashoffset:200;animation:check-draw .5s ease .35s forwards;}
 </style>
 </head>
 <body>
@@ -2049,6 +2074,74 @@ async function triggerSteckdoseBadge(){
   }
 }
 
+
+// ── COURSE COMPLETION ANIMATION ──
+function launchCourseCompleteAnimation(score, xpGained, courseColor){
+  const colors=['#10b981','#f59e0b','#3b82f6','#a78bfa','#f87171','#34d399','#fbbf24','#60a5fa','#fb7185'];
+
+  // Phase 1: Checkmark ring (0ms)
+  const ringWrap=document.createElement('div');
+  ringWrap.className='check-ring-wrap';
+  ringWrap.innerHTML=
+    '<svg width="140" height="140" viewBox="0 0 140 140">'+
+      '<circle cx="70" cy="70" r="54" fill="none" stroke="'+(courseColor||'#10b981')+'" stroke-width="4" opacity="0.2"/>'+
+      '<circle cx="70" cy="70" r="54" fill="none" stroke="'+(courseColor||'#10b981')+'" stroke-width="4" '+
+        'stroke-dasharray="339" stroke-dashoffset="339" style="animation:check-draw .5s ease .1s forwards"/>'+
+      '<path class="check-ring-path" d="M46 70 L62 88 L94 52" fill="none" stroke="'+(courseColor||'#10b981')+'" '+
+        'stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>'+
+    '</svg>';
+  document.body.appendChild(ringWrap);
+
+  // Phase 2: Trophy popup (300ms)
+  setTimeout(()=>{
+    ringWrap.remove();
+    const trophy=document.createElement('div');
+    trophy.className='trophy-popup in';
+    trophy.innerHTML=
+      '<span class="trophy-emoji">🏆</span>'+
+      '<div class="trophy-label">Bestanden!</div>'+
+      '<div class="trophy-score">'+score+' % · +'+xpGained+' XP</div>';
+    document.body.appendChild(trophy);
+
+    // Phase 3: Confetti burst (400ms)
+    setTimeout(()=>{
+      const overlay=document.createElement('div');
+      overlay.className='completion-overlay active';
+      document.body.appendChild(overlay);
+      for(let i=0;i<60;i++){
+        const p=document.createElement('div');
+        p.className='conf-piece';
+        const size=(4+Math.random()*8)+'px';
+        p.style.cssText=
+          'left:'+(Math.random()*100)+'%;'+
+          'width:'+size+';height:'+size+';'+
+          'background:'+colors[Math.floor(Math.random()*colors.length)]+';'+
+          'animation-duration:'+(1.5+Math.random()*1.5)+'s;'+
+          'animation-delay:'+(Math.random()*0.5)+'s;'+
+          'transform:rotate('+(Math.random()*360)+'deg)';
+        overlay.appendChild(p);
+      }
+      setTimeout(()=>overlay.remove(), 3000);
+    }, 100);
+
+    // Phase 4: XP float (800ms)
+    setTimeout(()=>{
+      const xpf=document.createElement('div');
+      xpf.className='xp-float';
+      xpf.textContent='+'+xpGained+' XP ⚡';
+      document.body.appendChild(xpf);
+      setTimeout(()=>xpf.remove(), 1300);
+    }, 500);
+
+    // Phase 5: Trophy out (1800ms)
+    setTimeout(()=>{
+      trophy.className='trophy-popup out';
+      setTimeout(()=>trophy.remove(), 350);
+    }, 1600);
+
+  }, 300);
+}
+
 // ── INIT ──
 // ── THEME ──
 function toggleTheme(){
@@ -3275,8 +3368,11 @@ async function showResult(){
   if(pass&&xpEl) xpEl.textContent='+'+xpGained+' XP';
 
   showScreen('screen-result');
-  // Check if any learning path is now complete
-  if(pass) setTimeout(()=>checkPathCompletion(c.id),800);
+  // Launch completion animation for passing
+  if(pass){
+    setTimeout(()=>launchCourseCompleteAnimation(pct, xpGained, c.btn_color||c.tag_color||'#10b981'), 200);
+    setTimeout(()=>checkPathCompletion(c.id), 2200);
+  }
 }
 
 async function goBack(){await endSession();showDash();}
