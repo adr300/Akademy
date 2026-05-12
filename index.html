@@ -3121,18 +3121,34 @@ function renderDailyChallenge(){
   const el=document.getElementById('daily-challenge');
   if(!el||!courses.length)return;
 
-  // Pick today's course deterministically (changes daily)
   const dayOfYear=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/(1000*60*60*24));
-  const availableCourses=courses.filter((c,i)=>!userProgress[i]?.completed);
-  const pool=availableCourses.length?availableCourses:courses;
+  const todayKey='daily_'+new Date().toDateString();
+
+  // Filter: only unlocked courses (not locked in learning path, not already completed today)
+  const unlockedCourses=courses.filter((c,i)=>{
+    // Skip if locked in a path (not next available)
+    const inPath=learningPaths.some(p=>{
+      const pcs=pathCourses.filter(pc=>pc.path_id===p.id).sort((a,b)=>a.position-b.position);
+      if(!pcs.some(pc=>pc.course_id===c.id)) return false;
+      // Check if this course is locked (previous not completed)
+      const coursePos=pcs.findIndex(pc=>pc.course_id===c.id);
+      if(coursePos===0) return false; // first course always unlocked
+      const prevCourse=courses.find(x=>x.id===pcs[coursePos-1].course_id);
+      const prevIdx=courses.findIndex(x=>x.id===pcs[coursePos-1].course_id);
+      return !isCourseCompleted(prevCourse?.id); // locked if prev not completed
+    });
+    return !inPath; // only suggest unlocked courses
+  });
+
+  const pool=unlockedCourses.length?unlockedCourses:courses;
   const todayCourse=pool[dayOfYear%pool.length];
   const courseIdx=courses.findIndex(c=>c.id===todayCourse.id);
-  const isDone=!!userProgress[courseIdx]?.completed;
   const fill=todayCourse.btn_color||'#10b981';
 
-  // Check if already done today
-  const todayKey='daily_'+new Date().toDateString()+'_'+todayCourse.id;
-  const doneTodayXP=localStorage.getItem(todayKey);
+  // Check if already started today (once per day limit)
+  const startedTodayKey=todayKey+'_started_'+todayCourse.id;
+  const doneTodayXP=localStorage.getItem(todayKey+'_'+todayCourse.id);
+  const startedToday=localStorage.getItem(startedTodayKey);
 
   el.innerHTML=
     '<div class="dc-eyebrow">⚡ Tagesaufgabe</div>'+
@@ -3144,12 +3160,14 @@ function renderDailyChallenge(){
         '<div class="dc-bonus">'+
           (doneTodayXP
             ? '<span class="dc-done-badge">✓ Heute erledigt · +'+doneTodayXP+' XP</span>'
+            : startedToday
+            ? '<span class="dc-done-badge" style="background:rgba(245,158,11,0.15);color:var(--amber)">⏳ Heute bereits gestartet – komm morgen wieder</span>'
             : '<span class="dc-xp-badge">+25 Bonus-XP heute</span>'
           )+
         '</div>'+
       '</div>'+
-      (doneTodayXP
-        ? '<div class="dc-check">✓</div>'
+      (doneTodayXP||startedToday
+        ? '<div class="dc-check">'+(doneTodayXP?'✓':'⏳')+'</div>'
         : '<button class="dc-btn" style="background:'+fill+'" onclick="startDailyChallenge('+courseIdx+')">Jetzt starten →</button>'
       )+
     '</div>'+
@@ -3157,8 +3175,12 @@ function renderDailyChallenge(){
 }
 
 function startDailyChallenge(courseIdx){
-  // Mark that we started the daily challenge — bonus XP awarded on completion
-  sessionStorage.setItem('daily_challenge_course', courses[courseIdx].id);
+  const course=courses[courseIdx];
+  // Mark as started today — prevents starting again same day
+  const startedKey='daily_'+new Date().toDateString()+'_started_'+course.id;
+  localStorage.setItem(startedKey,'1');
+  // Mark course for bonus XP tracking
+  sessionStorage.setItem('daily_challenge_course', course.id);
   startCourse(courseIdx);
 }
 
@@ -3166,7 +3188,7 @@ async function checkDailyBonus(courseId, score){
   try{
     const stored=sessionStorage.getItem('daily_challenge_course');
     if(!stored||parseInt(stored)!==courseId||score<70)return 0;
-    const todayKey='daily_'+new Date().toDateString()+'_'+courseId;
+    const todayKey='daily_'+new Date().toDateString()+'_'+courseId;  // XP awarded
     if(localStorage.getItem(todayKey))return 0;
     const bonus=25;
     localStorage.setItem(todayKey,bonus);
@@ -4086,16 +4108,20 @@ async function loadAdminProgress(){
   if(!grid) return;
   grid.innerHTML='<div style="color:var(--text3);font-size:13px;padding:1rem">Wird geladen…</div>';
   showProgressUserList();
-  const[{data:progData,error},{data:emailData},{data:sessionData}]=await Promise.all([
+  const[{data:progData,error},{data:emailData},{data:sessionData},{data:profileData}]=await Promise.all([
     sb.from('user_progress').select('*').order('updated_at',{ascending:false}),
     sb.from('user_emails').select('id,email'),
-    sb.from('learning_sessions').select('user_id,course_id,seconds_spent')
+    sb.from('learning_sessions').select('user_id,course_id,seconds_spent'),
+    sb.from('profiles').select('user_id,email')
   ]);
   if(error){grid.innerHTML='<div style="color:var(--red);padding:1rem">Fehler beim Laden.</div>';return;}
   _progData=progData||[];
   _progSessions=sessionData||[];
   _progEmails={};
+  // Try user_emails first, fall back to profiles
   (emailData||[]).forEach(u=>{_progEmails[u.id]=u.email;});
+  (profileData||[]).forEach(u=>{if(!_progEmails[u.user_id]&&u.email)_progEmails[u.user_id]=u.email;});
+  if(currentUser?.email) _progEmails[currentUser.id]=currentUser.email;
   renderProgressUserList();
 }
 
