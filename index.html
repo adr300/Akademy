@@ -3171,7 +3171,7 @@ function renderDailyChallenge(){
         : '<button class="dc-btn" style="background:'+fill+'" onclick="startDailyChallenge('+courseIdx+')">Jetzt starten →</button>'
       )+
     '</div>'+
-    '<div class="dc-progress-bar"><div class="dc-progress-fill" style="background:'+fill+';width:'+(isDone?100:0)+'%"></div></div>';
+    '<div class="dc-progress-bar"><div class="dc-progress-fill" style="background:'+fill+';width:'+(doneTodayXP?100:0)+'%"></div></div>';
 }
 
 function startDailyChallenge(courseIdx){
