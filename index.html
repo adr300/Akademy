@@ -513,7 +513,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .q-type-mc{background:var(--glow2);color:var(--green);border:1px solid rgba(16,185,129,0.2);}
 
 /* ── LIGHT/DARK TOGGLE ── */
-.theme-toggle{width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;flex-shrink:0;}
+.theme-toggle{width:36px;height:36px;border-radius:50%;border:1px solid var(--border2);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;flex-shrink:0;color:var(--text);}
 .theme-toggle:hover{border-color:var(--green);background:var(--glow2);}
 
 /* ── MOBILE RESPONSIVE ── */
@@ -832,7 +832,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 <div id="loading" class="loading-screen">
   <div class="spinner"></div>
-  <div class="loading-text">EnergyAcademy wird geladen…</div>
+  <div class="loading-text" data-i18n="misc.loading">EnergyAcademy wird geladen…</div>
 </div>
 
 <div id="screen-login" style="display:none;width:100%">
@@ -873,6 +873,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     </div>
     <div class="nav-right">
       <div class="nav-chip" id="nav-progress">0 / 0 abgeschlossen</div>
+      <button class="theme-toggle" id="lang-toggle" onclick="toggleLang()" title="Sprache / Language" style="font-size:13px;font-weight:600">EN</button>
       <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Hell/Dunkel umschalten">🌙</button>
       <div id="admin-tab-switch" style="display:none">
         <div class="tab-switch">
@@ -884,7 +885,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <div class="nav-avatar" id="nav-avatar">?</div><span class="nav-level-pill" id="nav-level">Lv.1</span>
         <span id="nav-email"></span>
       </div>
-      <button class="btn-logout" onclick="logout()">Abmelden</button>
+      <button class="btn-logout" onclick="logout()" data-i18n="nav.logout">Abmelden</button>
     </div>
   </nav>
   <!-- XP BAR -->
@@ -894,7 +895,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div class="xp-label" id="xp-label">Level 1 · 0 XP</div>
       <div class="xp-title" id="xp-title">🔌 Steckdosen-Azubi</div>
     </div>
-    <button class="xp-profile-btn" onclick="showProfile()">🏅 Meine Erfolge</button>
+    <button class="xp-profile-btn" onclick="showProfile()" data-i18n="nav.achievements">🏅 Meine Erfolge</button>
   </div>
 
   <!-- USER VIEW -->
@@ -1000,7 +1001,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
           </div>
           <div class="xp-gained-badge" id="res-xp" style="display:none"></div>
           <div class="res-btns">
-            <button class="btn-cta" id="res-cta" onclick="showDash()">Zur Kursübersicht</button>
+            <button class="btn-cta" id="res-cta" onclick="showDash()" data-i18n="result.back">Zur Kursübersicht</button>
             <!-- cert button moved to learning path -->
             <button class="btn-sec" onclick="retry()">Test wiederholen</button>
           </div>
@@ -1390,8 +1391,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <!-- API Key Setup -->
       <div class="ai-setup-card" id="ai-setup-card">
         <div class="ai-setup-icon">🔑</div>
-        <div class="ai-setup-title">Anthropic API Key eingeben</div>
-        <div class="ai-setup-sub">Der Key wird verschlüsselt in Supabase gespeichert. Nur Admins können ihn sehen. Er geht direkt von deinem Browser an Anthropic.</div>
+        <div class="ai-setup-title">Anthropic API Key hinterlegen</div>
+        <div style="font-size:11px;background:var(--amber-dim);color:var(--amber);border:1px solid rgba(245,158,11,0.25);border-radius:20px;padding:2px 10px;display:inline-block;margin-bottom:8px">👑 Nur für Admins</div>
+        <div class="ai-setup-sub">Der Key wird sicher in Supabase gespeichert und steht allen Managern zur Verfügung. Er geht direkt von deinem Browser an Anthropic.</div>
         <div style="display:flex;gap:8px;margin-top:12px;max-width:500px">
           <input type="password" class="form-input" id="ai-api-key" placeholder="sk-ant-api03-..." style="flex:1">
           <button class="btn-add" onclick="saveApiKey()">Speichern</button>
@@ -1401,9 +1403,9 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
       <!-- PDF Upload -->
       <div id="ai-upload-area" style="display:none">
-        <div class="ai-key-status">
-          <span style="color:var(--green)">✓ API Key gespeichert</span>
-          <button class="btn-sec" style="font-size:11px;padding:4px 10px" onclick="clearApiKey()">Ändern</button>
+        <div class="ai-key-status" id="ai-key-status-bar">
+          <span style="color:var(--green)">✓ API Key hinterlegt</span>
+          <button class="btn-sec" style="font-size:11px;padding:4px 10px" id="ai-key-change-btn" onclick="clearApiKey()">Ändern</button>
         </div>
 
         <div id="ai-drop-zone" class="ai-drop-zone">
@@ -2143,6 +2145,101 @@ function launchCourseCompleteAnimation(score, xpGained, courseColor){
 }
 
 // ── INIT ──
+
+// ── I18N MULTILANGUAGE ──
+let currentLang=localStorage.getItem('ea-lang')||'de';
+
+const TRANSLATIONS={
+de:{
+  'nav.logout':'Abmelden','nav.achievements':'🏅 Meine Erfolge','nav.progress':'abgeschlossen',
+  'misc.loading':'EnergyAcademy wird geladen…','misc.error':'Fehler beim Laden.',
+  'quiz.next':'Nächste →','quiz.finish':'Ergebnis →',
+  'result.passed':'Kurs abgeschlossen!','result.failed':'Nicht bestanden',
+  'result.passed_msg_course':'Herzlichen Glückwunsch! Du hast &bdquo;{title}&rdquo; mit {pct} % abgeschlossen.',
+  'result.failed_msg':'Leider nicht bestanden. Du benötigst mindestens 70 %.',
+  'result.back':'Zur Kursübersicht','result.retry':'Nochmal versuchen',
+  'report.title':'⚑ Inhalt melden','btn.send_report':'Meldung senden',
+  'course.back':'← Zurück','course.next':'Weiter →',
+  'sidebar.platform':'Plattform','sidebar.content':'Inhalte',
+  'sidebar.team':'Team','sidebar.analyse':'Analyse','sidebar.import':'Import',
+  'sidebar.courses':'Kurse','sidebar.paths':'Lernpfade',
+  'sidebar.assignments':'Pflicht-Kurse','sidebar.teams':'Teams',
+  'sidebar.progress':'Fortschritt','sidebar.leaderboard':'Leaderboard',
+  'sidebar.analytics':'Analytics','sidebar.reports':'Meldungen',
+  'sidebar.ai_import':'KI-Import','sidebar.html_import':'HTML Import',
+  'btn.save':'Speichern','btn.cancel':'Abbrechen','btn.delete':'Löschen',
+  'dash.paths':'Lernpfade','dash.courses':'Alle Kurse','dash.start':'Kurs starten',
+  'dash.completed':'Abgeschlossen','dash.locked':'Gesperrt',
+  'prog.completed':'Abgeschlossen','prog.not_completed':'Nicht abgeschlossen',
+  'prog.retry':'Nicht bestanden – erneut versuchen',
+},
+en:{
+  'nav.logout':'Sign out','nav.achievements':'🏅 My Achievements','nav.progress':'completed',
+  'misc.loading':'Loading EnergyAcademy…','misc.error':'Error loading.',
+  'quiz.next':'Next →','quiz.finish':'Finish →',
+  'result.passed':'Course completed!','result.failed':'Not passed',
+  'result.passed_msg_course':'Congratulations! You completed &ldquo;{title}&rdquo; with {pct}%.',
+  'result.failed_msg':'Not passed. You need at least 70%.',
+  'result.back':'Back to courses','result.retry':'Try again',
+  'report.title':'⚑ Report content','btn.send_report':'Send report',
+  'course.back':'← Back','course.next':'Next →',
+  'sidebar.platform':'Platform','sidebar.content':'Content',
+  'sidebar.team':'Team','sidebar.analyse':'Analytics','sidebar.import':'Import',
+  'sidebar.courses':'Courses','sidebar.paths':'Learning Paths',
+  'sidebar.assignments':'Mandatory Courses','sidebar.teams':'Teams',
+  'sidebar.progress':'Progress','sidebar.leaderboard':'Leaderboard',
+  'sidebar.analytics':'Analytics','sidebar.reports':'Reports',
+  'sidebar.ai_import':'AI Import','sidebar.html_import':'HTML Import',
+  'btn.save':'Save','btn.cancel':'Cancel','btn.delete':'Delete',
+  'dash.paths':'Learning Paths','dash.courses':'All Courses','dash.start':'Start course',
+  'dash.completed':'Completed','dash.locked':'Locked',
+  'prog.completed':'Completed','prog.not_completed':'Not completed',
+  'prog.retry':'Not passed – try again',
+}};
+
+function t(key){return(TRANSLATIONS[currentLang]||TRANSLATIONS.de)[key]||(TRANSLATIONS.de)[key]||key;}
+
+function toggleLang(){
+  currentLang=currentLang==='de'?'en':'de';
+  localStorage.setItem('ea-lang',currentLang);
+  const btn=document.getElementById('lang-toggle');
+  if(btn)btn.textContent=currentLang==='de'?'EN':'DE';
+  applyTranslations();
+}
+
+function applyTranslations(){
+  // Static elements with data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.dataset.i18n;
+    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA') el.placeholder=t(k);
+    else el.innerHTML=t(k);
+  });
+  // Nav progress chip
+  const chip=document.getElementById('nav-progress');
+  if(chip){const m=chip.textContent.match(/\d+/g);if(m&&m.length>=2)chip.textContent=m[0]+' / '+m[1]+' '+t('nav.progress');}
+  // Sidebar group labels
+  const labelMap={'Plattform':'sidebar.platform','Platform':'sidebar.platform',
+    'Inhalte':'sidebar.content','Content':'sidebar.content',
+    'Team':'sidebar.team','Analyse':'sidebar.analyse','Analytics':'sidebar.analyse',
+    'Import':'sidebar.import'};
+  document.querySelectorAll('.sidebar-group-label').forEach(el=>{
+    const key=labelMap[el.textContent.trim()];
+    if(key)el.textContent=t(key);
+  });
+  // Sidebar items
+  const itemMap={'Kurse':'sidebar.courses','Courses':'sidebar.courses',
+    'Lernpfade':'sidebar.paths','Learning Paths':'sidebar.paths',
+    'Pflicht-Kurse':'sidebar.assignments','Mandatory Courses':'sidebar.assignments',
+    'Teams':'sidebar.teams','Fortschritt':'sidebar.progress','Progress':'sidebar.progress',
+    'Leaderboard':'sidebar.leaderboard','Meldungen':'sidebar.reports','Reports':'sidebar.reports',
+    'KI-Import':'sidebar.ai_import','AI Import':'sidebar.ai_import',
+    'HTML Import':'sidebar.html_import'};
+  document.querySelectorAll('.sidebar-label').forEach(el=>{
+    const key=itemMap[el.textContent.trim()];
+    if(key)el.textContent=t(key);
+  });
+}
+
 // ── THEME ──
 function toggleTheme(){
   const isLight=document.documentElement.getAttribute('data-theme')==='light';
@@ -2218,6 +2315,7 @@ async function setUser(user){
     updateXPBar();
     showDash();
     loadReportBadge();
+    setTimeout(applyTranslations,50);
   } catch(err){
     console.error('setUser failed:',err);
     // Show a friendly retry message instead of infinite loading
@@ -3141,7 +3239,7 @@ function renderQ(){
   document.getElementById('qz-score').innerHTML='Richtig: <strong>'+correct+'</strong>';
   document.getElementById('q-segs').innerHTML=c.questions.map((_,i)=>'<div class="q-seg '+(i<qi?'done':i===qi?'cur':'')+'"></div>').join('');
   const nb=document.getElementById('qz-next');nb.disabled=true;nb.style.background=c.btn_color||'#10b981';
-  nb.textContent=qi===total-1?'Ergebnis →':'Nächste →';
+  nb.textContent=qi===total-1?t('quiz.finish'):t('quiz.next');
   const container=document.getElementById('q-opts');container.innerHTML='';
   const type=q.question_type||'multiple_choice';
   if(type==='sort') renderSortQ(q,container);
@@ -3352,9 +3450,9 @@ async function showResult(){
   document.getElementById('res-course').textContent=c.title;
   document.getElementById('res-icon').textContent=pass?'✓':'✗';
   document.getElementById('res-icon').className='res-icon '+(pass?'r-pass':'r-fail');
-  document.getElementById('res-title').textContent=pass?'Kurs abgeschlossen!':'Nicht bestanden';
+  document.getElementById('res-title').textContent=pass?t('result.passed'):t('result.failed');
   document.getElementById('res-sub').textContent=pass
-    ?'Herzlichen Glückwunsch! Du hast &bdquo;'+c.title+'&rdquo; mit '+pct+' % abgeschlossen.'
+    ?t('result.passed_msg_course').replace('{title}',c.title).replace('{pct}',pct)
     :'Du hast '+pct+' % erreicht. Zum Bestehen sind mindestens 70 % nötig.';
   document.getElementById('res-c').textContent=correct;
   document.getElementById('res-t').textContent=total;
@@ -4587,8 +4685,35 @@ async function clearApiKey(){
 
 async function initAiImport(){
   const key=await loadApiKey();
-  if(key){document.getElementById('ai-setup-card').style.display='none';document.getElementById('ai-upload-area').style.display='block';}
-  else{document.getElementById('ai-setup-card').style.display='block';document.getElementById('ai-upload-area').style.display='none';}
+
+  if(isAdmin){
+    // Admin: can set/change the API key
+    if(key){
+      document.getElementById('ai-setup-card').style.display='none';
+      document.getElementById('ai-upload-area').style.display='block';
+    } else {
+      document.getElementById('ai-setup-card').style.display='block';
+      document.getElementById('ai-upload-area').style.display='none';
+    }
+  } else {
+    // Manager: never sees key input — just check if admin set a key
+    document.getElementById('ai-setup-card').style.display='none';
+    if(key){
+      document.getElementById('ai-upload-area').style.display='block';
+      // Show/hide change button based on role
+      const changeBtn=document.getElementById('ai-key-change-btn');
+      if(changeBtn) changeBtn.style.display=isAdmin?'':'none';
+    } else {
+      // No key set by admin yet
+      document.getElementById('ai-upload-area').style.display='none';
+      const msg=document.getElementById('ai-msg');
+      if(msg){
+        msg.textContent='Kein API Key hinterlegt. Bitte einen Admin bitten, den Anthropic API Key in den Einstellungen zu hinterlegen.';
+        msg.className='msg show err';
+      }
+    }
+  }
+
   const zone=document.getElementById('ai-drop-zone');
   if(zone&&!zone._inited){
     zone._inited=true;
@@ -4752,7 +4877,7 @@ init();
   <div class="modal-overlay" id="report-overlay" onclick="closeReportModal()" style="display:none;z-index:200">
   <div class="modal" id="report-modal" style="max-width:480px" onclick="event.stopPropagation()">
     <div class="modal-head">
-      <div class="modal-title">⚑ Inhalt melden</div>
+      <div class="modal-title" data-i18n="report.title">⚑ Inhalt melden</div>
       
     </div>
     <div id="report-context" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:.75rem 1rem;font-size:13px;color:var(--text2);margin-bottom:1rem;"></div>
@@ -4774,7 +4899,7 @@ init();
     </div>
     <div class="modal-actions" style="margin-top:1.25rem">
       <button class="btn-sec" onclick="closeReportModal()">Abbrechen</button>
-      <button class="btn-add" id="report-submit-btn" onclick="submitReport()">Meldung senden</button>
+      <button class="btn-add" id="report-submit-btn" onclick="submitReport()" data-i18n="btn.send_report">Meldung senden</button>
     </div>
     <div class="msg" id="report-msg" style="margin-top:.75rem"></div>
   </div>
