@@ -838,6 +838,15 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .wiki-cat-btn{padding:5px 14px;font-size:12px;font-weight:500;border:1px solid var(--border2);border-radius:20px;background:var(--bg3);color:var(--text2);cursor:pointer;transition:all .12s;}
 .wiki-cat-btn:hover{color:var(--text);border-color:var(--green);}
 .wiki-cat-btn.active{background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.4);color:var(--green);font-weight:600;}
+
+/* ── WIKI TOOLTIP ── */
+.wiki-term{color:var(--green);border-bottom:1px dashed var(--green);cursor:pointer;font-weight:600;}
+.wiki-term:hover{background:rgba(16,185,129,0.08);border-radius:3px;}
+.wiki-tooltip{position:fixed;z-index:900;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:.9rem 1.1rem;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,0.3);pointer-events:none;animation:fadeUp .15s ease;}
+.wiki-tooltip-abbr{font-size:16px;font-weight:800;color:var(--green);font-family:'Bricolage Grotesque',sans-serif;}
+.wiki-tooltip-full{font-size:12px;font-weight:600;color:var(--text);margin:3px 0;}
+.wiki-tooltip-desc{font-size:12px;color:var(--text2);line-height:1.55;}
+.wiki-tooltip-cat{font-size:10px;color:var(--text3);margin-top:5px;}
 </style>
 </head>
 <body>
@@ -2373,6 +2382,85 @@ function renderWiki(){
   ).join('');
 }
 
+
+// ── WIKI TERM LINKING ──
+let _wikiTooltipEl = null;
+
+function linkifyWikiTerms(el){
+  if(!el) return;
+  // Walk text nodes only — safe, no regex on HTML
+  const sorted=[...WIKI_ENTRIES].sort((a,b)=>b.abbr.length-a.abbr.length);
+  const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null);
+  const nodes=[];
+  while(walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(node=>{
+    let text=node.textContent;
+    let matched=false;
+    const frag=document.createDocumentFragment();
+    let remaining=text;
+    let safety=0;
+    while(remaining.length>0&&safety++<1000){
+      let bestIdx=-1,bestEntry=null,bestLen=0;
+      sorted.forEach(entry=>{
+        const idx=remaining.indexOf(entry.abbr);
+        if(idx===-1) return;
+        // Check word boundaries
+        const before=idx>0?remaining[idx-1]:'';
+        const after=remaining[idx+entry.abbr.length]||'';
+        const bOk=!before.match(/[A-Za-z0-9äöüÄÖÜ]/);
+        const aOk=!after.match(/[A-Za-z0-9äöüÄÖÜ]/);
+        if(bOk&&aOk&&(bestIdx===-1||idx<bestIdx||(idx===bestIdx&&entry.abbr.length>bestLen))){
+          bestIdx=idx;bestEntry=entry;bestLen=entry.abbr.length;
+        }
+      });
+      if(bestIdx===-1){
+        frag.appendChild(document.createTextNode(remaining));
+        remaining='';
+      } else {
+        if(bestIdx>0) frag.appendChild(document.createTextNode(remaining.slice(0,bestIdx)));
+        const span=document.createElement('span');
+        span.className='wiki-term';
+        span.dataset.abbr=bestEntry.abbr;
+        span.textContent=bestEntry.abbr;
+        span.addEventListener('click',e=>{e.stopPropagation();showWikiTooltip(bestEntry.abbr,e);});
+        frag.appendChild(span);
+        remaining=remaining.slice(bestIdx+bestEntry.abbr.length);
+        matched=true;
+      }
+    }
+    if(matched) node.parentNode.replaceChild(frag,node);
+  });
+}
+
+function showWikiTooltip(abbr, e){
+  hideWikiTooltip();
+  const entry = WIKI_ENTRIES.find(x => x.abbr === abbr);
+  if(!entry) return;
+  const tip = document.createElement('div');
+  tip.className = 'wiki-tooltip';
+  tip.id = 'wiki-tooltip';
+  tip.innerHTML =
+    '<div class="wiki-tooltip-abbr">' + entry.abbr + '</div>' +
+    '<div class="wiki-tooltip-full">' + entry.full + '</div>' +
+    '<div class="wiki-tooltip-desc">' + entry.desc + '</div>' +
+    '<div class="wiki-tooltip-cat">' + entry.cat + ' · Im Wiki nachschlagen →</div>';
+  document.body.appendChild(tip);
+  _wikiTooltipEl = tip;
+  // Position near click, avoid edges
+  const x = Math.min(e.clientX + 12, window.innerWidth - 340);
+  const y = Math.min(e.clientY + 12, window.innerHeight - 200);
+  tip.style.left = x + 'px';
+  tip.style.top  = y + 'px';
+  // Click on tooltip opens wiki
+  tip.addEventListener('click', () => { hideWikiTooltip(); showWiki(); document.getElementById('wiki-search').value = abbr; filterWiki(abbr); });
+}
+
+function hideWikiTooltip(){
+  if(_wikiTooltipEl){ _wikiTooltipEl.remove(); _wikiTooltipEl = null; }
+}
+
+document.addEventListener('click', () => hideWikiTooltip());
+
 // ── INIT ──
 
 // ── I18N MULTILANGUAGE ──
@@ -3458,6 +3546,8 @@ function renderSlide(){
     <div class="slide-h">${s.title}</div>
     <div class="slide-text">${s.content||''}${vis}</div>`;
   document.getElementById('dots').innerHTML=c.slides.map((_,i)=>`<div class="dot ${i===si?'on':''}" ${i===si?`style="background:${c.btn_color||'#10b981'}"`:''}></div>`).join('');
+  // Linkify wiki terms in slide content
+  linkifyWikiTerms(document.querySelector('#slide-body .slide-text'));
   document.getElementById('btn-prev').style.visibility=si===0?'hidden':'visible';
   const nb=document.getElementById('btn-next');
   nb.textContent=si===total-1?'Zum Test →':'Weiter →';
@@ -3477,6 +3567,7 @@ function renderQ(){
   document.getElementById('qz-count').textContent=(qi+1)+' / '+total;
   document.getElementById('q-lbl').textContent='Frage '+(qi+1)+' von '+total;
   document.getElementById('q-text').textContent=q.question;
+  linkifyWikiTerms(document.getElementById('q-text'));
   // Show question type badge
   const lbl=document.getElementById('q-lbl');
   const type2=q.question_type||'multiple_choice';
