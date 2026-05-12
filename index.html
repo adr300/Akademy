@@ -1770,7 +1770,7 @@ function renderUserList(users){
           '<select class="form-input" style="font-size:11px;padding:4px 8px" onchange="changeRole(this.dataset.uid,this.value)" data-uid="'+u.user_id+'">'+
             '<option value="user"'+(role==='user'?' selected':'')+'>Nutzer</option>'+
             '<option value="manager"'+(role==='manager'?' selected':'')+'>Manager</option>'+
-            '<option value="admin"'+(role==='admin'?' selected':'')+'>Admin</option>'+
+            (isAdmin?'<option value="admin"'+(role==='admin'?' selected':'')+'>Admin</option>':'')+
           '</select>'+
         '</div>'
       :'');
