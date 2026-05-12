@@ -826,6 +826,18 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .check-ring-wrap{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%);z-index:501;pointer-events:none;}
 .check-ring-wrap svg{animation:ring-pop .4s cubic-bezier(.4,0,.2,1) forwards;}
 .check-ring-path{stroke-dasharray:200;stroke-dashoffset:200;animation:check-draw .5s ease .35s forwards;}
+
+/* ── WIKI ── */
+.wiki-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1rem 1.25rem;transition:border-color .15s;}
+.wiki-card:hover{border-color:var(--green);}
+.wiki-card-head{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+.wiki-abbr{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:800;color:var(--green);}
+.wiki-cat-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.2);margin-left:auto;}
+.wiki-full{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.wiki-desc{font-size:13px;color:var(--text2);line-height:1.6;}
+.wiki-cat-btn{padding:5px 14px;font-size:12px;font-weight:500;border:1px solid var(--border2);border-radius:20px;background:var(--bg3);color:var(--text2);cursor:pointer;transition:all .12s;}
+.wiki-cat-btn:hover{color:var(--text);border-color:var(--green);}
+.wiki-cat-btn.active{background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.4);color:var(--green);font-weight:600;}
 </style>
 </head>
 <body>
@@ -873,6 +885,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     </div>
     <div class="nav-right">
       <div class="nav-chip" id="nav-progress">0 / 0 abgeschlossen</div>
+      <button class="nav-chip" onclick="showWiki()" style="cursor:pointer;border:none;background:var(--bg3)" title="Wiki">📖 Wiki</button>
       <button class="theme-toggle" id="lang-toggle" onclick="toggleLang()" title="Sprache / Language" style="font-size:13px;font-weight:600">EN</button>
       <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Hell/Dunkel umschalten">🌙</button>
       <div id="admin-tab-switch" style="display:none">
@@ -1029,6 +1042,25 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         </div>
       </div>
       </div>
+    </div>
+  </div>
+
+  <!-- WIKI -->
+  <div id="screen-wiki" class="screen" style="display:none">
+    <div class="app">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;padding-top:1rem">
+        <button class="btn-ghost" onclick="hideWiki()" style="font-size:13px;padding:6px 14px">← Zurück</button>
+        <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin:0">📖 Fachbegriff-Wiki</h2>
+      </div>
+      <!-- Search -->
+      <div style="position:relative;margin-bottom:1.5rem">
+        <input class="form-input" id="wiki-search" placeholder="Begriff suchen… z.B. NB, Bilanzkreis, MSB" oninput="filterWiki(this.value)" style="padding-left:2.5rem;font-size:14px">
+        <span style="position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--text3);font-size:16px">🔍</span>
+      </div>
+      <!-- Category filter -->
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem" id="wiki-cats"></div>
+      <!-- Entries -->
+      <div id="wiki-list" style="display:flex;flex-direction:column;gap:8px"></div>
     </div>
   </div>
 
@@ -2142,6 +2174,203 @@ function launchCourseCompleteAnimation(score, xpGained, courseColor){
     }, 1600);
 
   }, 300);
+}
+
+
+// ── WIKI ──
+const WIKI_ENTRIES = [
+  // Rollen
+  {abbr:'NB',     full:'Netzbetreiber',               cat:'Rollen', desc:'Betreiber des Stromverteilnetzes. Zuständig für den Netzzugang, die Messung und die Netznutzungsabrechnung. Verantwortlich für viele Stammdaten der Markt- und Messlokationen.'},
+  {abbr:'VNB',    full:'Verteilnetzbetreiber',         cat:'Rollen', desc:'Synonym für Netzbetreiber auf Verteilnetzebene (Niederspannung/Mittelspannung). Abgrenzung zum ÜNB.'},
+  {abbr:'ÜNB',    full:'Übertragungsnetzbetreiber',    cat:'Rollen', desc:'Betreiber des Hochspannungs-Übertragungsnetzes (z.B. 50Hertz, TenneT). Verantwortlich für Bilanzkreisabrechnung und Regelenergie.'},
+  {abbr:'LF',     full:'Lieferant',                   cat:'Rollen', desc:'Energielieferant des Letztverbrauchers. Initiiert Lieferbeginn, Kündigung und Lieferende beim NB.'},
+  {abbr:'LFA',    full:'Alter Lieferant',              cat:'Rollen', desc:'Der bisherige Lieferant einer Marktlokation beim Lieferantenwechsel.'},
+  {abbr:'LFN',    full:'Neuer Lieferant',              cat:'Rollen', desc:'Der neue Lieferant einer Marktlokation beim Lieferantenwechsel.'},
+  {abbr:'MSB',    full:'Messstellenbetreiber',         cat:'Rollen', desc:'Verantwortlich für Einbau, Betrieb und Wartung der Messeinrichtung. Übermittelt Messwerte an NB und LF.'},
+  {abbr:'gMSB',   full:'Grundzuständiger Messstellenbetreiber', cat:'Rollen', desc:'Der NB in seiner Rolle als gesetzlich zuständiger MSB, wenn kein wettbewerblicher MSB beauftragt wurde.'},
+  {abbr:'BKV',    full:'Bilanzkreisverantwortlicher',  cat:'Rollen', desc:'Verantwortlich für den Ausgleich von Einspeisungen und Entnahmen in einem Bilanzkreis gegenüber dem ÜNB.'},
+  {abbr:'BIKO',   full:'Bilanzkoordinator',            cat:'Rollen', desc:'Koordiniert die Bilanzkreisabrechnung zwischen NB und ÜNB.'},
+  {abbr:'ESA',    full:'Einspeiseanlagenbetreiber',    cat:'Rollen', desc:'Betreiber einer Erzeugungsanlage (z.B. PV, Wind), die Strom ins Netz einspeist.'},
+
+  // Lokationen
+  {abbr:'MaLo',   full:'Marktlokation',                cat:'Lokationen', desc:'Eindeutig identifizierbarer Punkt im Energienetz, an dem Energie geliefert wird. Grundlage für Lieferantenzuordnung und Abrechnung. Identifiziert durch MaLo-ID.'},
+  {abbr:'MeLo',   full:'Messlokation',                 cat:'Lokationen', desc:'Punkt an dem eine Messung stattfindet. Einer Marktlokation können mehrere Messlokationen zugeordnet sein.'},
+  {abbr:'NeLo',   full:'Netzlokation',                 cat:'Lokationen', desc:'Punkt im Netz zur netztechnischen Identifikation von Ein- und Ausspeisungen.'},
+  {abbr:'MaLo-ID',full:'Marktlokations-Identifikator', cat:'Lokationen', desc:'Eindeutige 11-stellige Nummer zur Identifikation einer Marktlokation. Wird vom NB vergeben.'},
+
+  // Messeinrichtungen
+  {abbr:'kME',    full:'Konventionelle Messeinrichtung', cat:'Messeinrichtung', desc:'Klassischer Ferraris-Zähler oder elektronischer Zähler ohne Fernauslesung. Ablesung in der Regel jährlich.'},
+  {abbr:'mME',    full:'Moderne Messeinrichtung',       cat:'Messeinrichtung', desc:'Elektronischer Zähler mit Schnittstelle zur Visualisierung, aber ohne Kommunikationsmodul. Pflicht ab 6.000 kWh/a.'},
+  {abbr:'iMS',    full:'Intelligentes Messsystem',      cat:'Messeinrichtung', desc:'Moderne Messeinrichtung mit Smart Meter Gateway (SMGW). Ermöglicht Fernauslesung, Viertelstundenwerte und Steuerung. Pflicht ab 6.000 kWh/a ab 2025.'},
+  {abbr:'SMGW',   full:'Smart Meter Gateway',           cat:'Messeinrichtung', desc:'Kommunikationseinheit des intelligenten Messsystems. Überträgt Messdaten sicher und verschlüsselt.'},
+  {abbr:'RLM',    full:'Registrierende Leistungsmessung', cat:'Messeinrichtung', desc:'Messung mit 15-Minuten-Intervallen. Verpflichtend für Letztverbraucher mit Jahresverbrauch > 100.000 kWh.'},
+  {abbr:'SLP',    full:'Standardlastprofil',            cat:'Messeinrichtung', desc:'Synthetisches Lastprofil für Kleinverbraucher ohne RLM. Ersetzt die tatsächliche Messung für Bilanzierungszwecke.'},
+
+  // Prozesse
+  {abbr:'GPKE',   full:'Geschäftsprozesse zur Kundenbelieferung mit Elektrizität', cat:'Prozesse', desc:'Regelwerk der Bundesnetzagentur (BK6) für alle Marktkommunikationsprozesse im Strommarkt: Lieferbeginn, -ende, Neuanlage, Stammdaten etc.'},
+  {abbr:'WiM',    full:'Wechsel im Messstellenbetrieb', cat:'Prozesse', desc:'Regelwerk für den Wechsel des Messstellenbetreibers, Gerätewechsel und MSB-Prozesse.'},
+  {abbr:'MaBiS',  full:'Marktprozesse zur Bilanzierung im Strombereich', cat:'Prozesse', desc:'Regelwerk für Bilanzierungsprozesse zwischen NB, ÜNB und BKV.'},
+  {abbr:'MPES',   full:'Marktprozesse Einspeise-/Speicheranlagen Strom', cat:'Prozesse', desc:'Regelwerk für Prozesse rund um Erzeugungsanlagen und Stromspeicher.'},
+
+  // Zeitreihen & Daten
+  {abbr:'ZR',     full:'Zeitreihe',                    cat:'Zeitreihen & Daten', desc:'Sequenz von Messwerten über einen Zeitraum mit definiertem Intervall (z.B. 15-Minuten-Werte). Grundlage für Abrechnung und Bilanzierung.'},
+  {abbr:'TZR',    full:'Tageswertzeitreihe',            cat:'Zeitreihen & Daten', desc:'Zeitreihe mit täglichen Zählerstandsgängen, typisch für iMS.'},
+  {abbr:'VZSR',   full:'Viertelstundensummenzeitreihe', cat:'Zeitreihen & Daten', desc:'Aggregierte 15-Minuten-Energiemengen, abgeleitet aus Zählerstandsgängen.'},
+  {abbr:'BG-SZR', full:'Bezugsgrundlage Summenzeitreihe', cat:'Zeitreihen & Daten', desc:'Summenzeitreihe als Grundlage für die Bilanzkreisabrechnung zwischen NB und ÜNB.'},
+  {abbr:'ZSR',    full:'Zählerstandsgang (Zeitreihe)',  cat:'Zeitreihen & Daten', desc:'Zeitreihe der Zählerstände eines iMS, aus der Verbrauchswerte abgeleitet werden.'},
+  {abbr:'MSCONS', full:'Metered Services Consumption',  cat:'Zeitreihen & Daten', desc:'EDIFACT-Nachrichtenformat für die Übertragung von Messzeitreihen zwischen Marktpartnern.'},
+
+  // Abrechnung
+  {abbr:'BK',     full:'Bilanzkreis',                  cat:'Abrechnung', desc:'Virtuelles Gleichgewichtssystem zwischen Einspeisung und Entnahme. Jeder Letztverbraucher ist einem Bilanzkreis zugeordnet.'},
+  {abbr:'NNE',    full:'Netznutzungsentgelt',           cat:'Abrechnung', desc:'Entgelt für die Nutzung des Stromnetzes. Bestandteil der Stromrechnung, festgelegt durch Bundesnetzagentur.'},
+  {abbr:'INVOIC', full:'Invoice (EDIFACT)',              cat:'Abrechnung', desc:'EDIFACT-Nachrichtentyp für elektronische Rechnungen zwischen Marktpartnern.'},
+  {abbr:'REMADV', full:'Remittance Advice (EDIFACT)',    cat:'Abrechnung', desc:'EDIFACT-Nachrichtentyp für Zahlungsavise und Abrechnungsbelege.'},
+
+  // Kommunikation
+  {abbr:'EDIFACT',full:'Electronic Data Interchange For Administration, Commerce and Transport', cat:'Kommunikation', desc:'Internationaler Standard für elektronischen Datenaustausch zwischen Marktpartnern. Basis für alle Marktnachrichten in Deutschland.'},
+  {abbr:'EDI@Energy',full:'EDI@Energy',                cat:'Kommunikation', desc:'Branchenspezifische EDIFACT-Implementierungsanleitungen für die Energiewirtschaft, herausgegeben von DVGW/BDEW.'},
+  {abbr:'API',    full:'Application Programming Interface', cat:'Kommunikation', desc:'Technische Schnittstelle. Im Kontext GPKE: MaLo-ID-Anfragen müssen über API-Webdienste (nicht EDIFACT) abgewickelt werden.'},
+  {abbr:'ÜZ',     full:'Übertragungszeitpunkt',         cat:'Kommunikation', desc:'Zeitpunkt, zu dem eine Nachricht den Empfänger erreicht (nicht Sendezeitpunkt). Fristbeginn für Antwortfristen.'},
+  {abbr:'ÜT',     full:'Übertragungstag',               cat:'Kommunikation', desc:'Tag des Eingangs einer Nachricht. Relevant für Fristberechnung (Werktage ab ÜT).'},
+  {abbr:'WT',     full:'Werktag',                       cat:'Kommunikation', desc:'Montag bis Freitag, ausgenommen gesetzliche Feiertage. Grundlage für alle Fristberechnungen in GPKE und WiM.'},
+
+  // Regulierung
+  {abbr:'BNetzA', full:'Bundesnetzagentur',             cat:'Regulierung', desc:'Regulierungsbehörde für Strom, Gas, Telekommunikation, Post und Eisenbahn. Gibt Festlegungen wie GPKE und WiM heraus.'},
+  {abbr:'EnWG',   full:'Energiewirtschaftsgesetz',      cat:'Regulierung', desc:'Zentrales Gesetz für die Energiewirtschaft in Deutschland. Regelt Netznutzung, Lieferantenwechsel und Verbraucherschutz.'},
+  {abbr:'EnFG',   full:'Energiefinanzierungsgesetz',    cat:'Regulierung', desc:'Regelt die Finanzierung der Energiewende-Förderung. Enthält Privilegierungsregelungen für energieintensive Unternehmen.'},
+  {abbr:'EEG',    full:'Erneuerbare-Energien-Gesetz',   cat:'Regulierung', desc:'Fördert die Einspeisung von Strom aus erneuerbaren Energien. Definiert Einspeisevergütungen und Ausschreibungsverfahren.'},
+  {abbr:'§14a',   full:'§14a EnWG – Steuerbare Verbrauchseinrichtungen', cat:'Regulierung', desc:'Ermächtigt NB zur Steuerung von Ladepunkten, Wärmepumpen und Klimaanlagen bei Netzengpässen gegen reduzierte Netzentgelte.'},
+
+  // Summenzeitreihen
+  {abbr:'AUS',  full:'Ausfallarbeitssumme',              cat:'Summenzeitreihen', desc:'Summenzeitreihe der ¼-h-berechneten Ausfallarbeiten der Marktlokationen eines Lieferanten oder Bilanzkreises.'},
+  {abbr:'EGS',  full:'Einspeisegangsumme',               cat:'Summenzeitreihen', desc:'Summenzeitreihe der ¼-h-gemessenen erzeugenden Marktlokationen (EGS = ∑EGZ).'},
+  {abbr:'LGS',  full:'Lastgangsumme',                    cat:'Summenzeitreihen', desc:'Summenzeitreihe der ¼-h-gemessenen Lasten eines Lieferanten oder Bilanzkreises (LGS = ∑LGZ).'},
+  {abbr:'NZR',  full:'Netzzeitreihe',                    cat:'Summenzeitreihen', desc:'Übergabesumme zwischen Bilanzierungsgebieten (NGZ = Netzgangzeitreihe).'},
+  {abbr:'SES',  full:'Standardeinspeiseprofilsumme',     cat:'Summenzeitreihen', desc:'Summenzeitreihe der Einspeiseprofile (SES = ∑SEP).'},
+  {abbr:'SLS',  full:'Standardlastprofilsumme',          cat:'Summenzeitreihen', desc:'Summenzeitreihe der Lastprofile (SLS = ∑SLP oder ∑ALP).'},
+  {abbr:'TES',  full:'Tagesparameterabhängige Einspeiseprofilsumme', cat:'Summenzeitreihen', desc:'Summenzeitreihe tagesparameterabhängiger Einspeiseprofile (TES = ∑TEP).'},
+  {abbr:'TLS',  full:'Tagesparameterabhängige Lastprofilsumme', cat:'Summenzeitreihen', desc:'Summenzeitreihe tagesparameterabhängiger Lastprofile (TLS = ∑TLP).'},
+
+  // Weitere Zeitreihentypen
+  {abbr:'BAS',  full:'Bilanzkreisabweichungssaldo',      cat:'Weitere Zeitreihentypen', desc:'Überdeckung = Export, Unterdeckung = Import von Ausgleichsenergie.'},
+  {abbr:'DBA',  full:'Differenzzeitreihe Bilanzierungsgebiet', cat:'Weitere Zeitreihentypen', desc:'Differenzzeitreihe für ein Bilanzierungsgebiet.'},
+  {abbr:'DZR',  full:'Deltazeitreihe',                   cat:'Weitere Zeitreihentypen', desc:'Export/Import bei Über-/Unterdeckung im Bilanzierungsgebiet.'},
+  {abbr:'DZÜ',  full:'Deltazeitreihenübertrag',          cat:'Weitere Zeitreihentypen', desc:'Übertrag der Deltazeitreihe zwischen Perioden.'},
+  {abbr:'FPE',  full:'Fahrplanentnahmesumme',            cat:'Weitere Zeitreihentypen', desc:'Export aus Bilanzkreis gemäß Fahrplan.'},
+  {abbr:'FPI',  full:'Fahrplaneinspeisesumme',           cat:'Weitere Zeitreihentypen', desc:'Import in Bilanzkreis gemäß Fahrplan.'},
+  {abbr:'SRE',  full:'Überführungszeitreihe Sekundärregelleistung (Export)', cat:'Weitere Zeitreihentypen', desc:'Export aus Anbieter-BK an ÜNB-BK.'},
+  {abbr:'SRI',  full:'Überführungszeitreihe Sekundärregelleistung (Import)', cat:'Weitere Zeitreihentypen', desc:'Import in Anbieter-BK von ÜNB-BK.'},
+  {abbr:'VZR',  full:'Verlustzeitreihe',                 cat:'Weitere Zeitreihentypen', desc:'Zeitreihe der Netzverluste eines Bilanzierungsgebiets.'},
+
+  // EE-Einspeisezeitreihen
+  {abbr:'BIL',  full:'Biomasse/Biogas – ¼-h-gemessen',  cat:'EE-Einspeisezeitreihen', desc:'Viertelstündlich gemessene Einspeisung aus Biomasse/Biogas-Anlagen.'},
+  {abbr:'BIP',  full:'Biomasse/Biogas – Einspeiseprofil', cat:'EE-Einspeisezeitreihen', desc:'Standardeinspeiseprofil für Biomasse/Biogas-Anlagen.'},
+  {abbr:'BIT',  full:'Biomasse/Biogas – tagesparameterabhängig', cat:'EE-Einspeisezeitreihen', desc:'Tagesparameterabhängiges Einspeiseprofil für Biomasse/Biogas.'},
+  {abbr:'GAL',  full:'Deponie-/Klär-/Grubengas – ¼-h-gemessen', cat:'EE-Einspeisezeitreihen', desc:'Viertelstündlich gemessene Einspeisung aus Deponiegas, Klärgas oder Grubengas.'},
+  {abbr:'GAP',  full:'Deponie-/Klär-/Grubengas – Einspeiseprofil', cat:'EE-Einspeisezeitreihen', desc:'Standardeinspeiseprofil für Deponie-/Klär-/Grubengas.'},
+  {abbr:'GAT',  full:'Deponie-/Klär-/Grubengas – tagesparameterabhängig', cat:'EE-Einspeisezeitreihen', desc:'Tagesparameterabhängiges Einspeiseprofil für Deponie-/Klär-/Grubengas.'},
+  {abbr:'GEL',  full:'Geothermie – ¼-h-gemessen',       cat:'EE-Einspeisezeitreihen', desc:'Viertelstündlich gemessene Einspeisung aus Geothermie-Anlagen.'},
+  {abbr:'GEP',  full:'Geothermie – Einspeiseprofil',    cat:'EE-Einspeisezeitreihen', desc:'Standardeinspeiseprofil für Geothermie.'},
+  {abbr:'GET',  full:'Geothermie – tagesparameterabhängig', cat:'EE-Einspeisezeitreihen', desc:'Tagesparameterabhängiges Einspeiseprofil für Geothermie.'},
+  {abbr:'SOL',  full:'Solare Strahlungsenergie – ¼-h-gemessen', cat:'EE-Einspeisezeitreihen', desc:'Viertelstündlich gemessene Solareinspeisung (Photovoltaik).'},
+  {abbr:'SOP',  full:'Solare Strahlungsenergie – Einspeiseprofil', cat:'EE-Einspeisezeitreihen', desc:'Standardeinspeiseprofil für Solaranlagen.'},
+  {abbr:'SOT',  full:'Solare Strahlungsenergie – tagesparameterabhängig', cat:'EE-Einspeisezeitreihen', desc:'Tagesparameterabhängiges Einspeiseprofil für Solaranlagen.'},
+  {abbr:'WFL',  full:'Offshore-Windenergie – ¼-h-gemessen', cat:'EE-Einspeisezeitreihen', desc:'Viertelstündlich gemessene Einspeisung aus Offshore-Windparks.'},
+  {abbr:'WFP',  full:'Offshore-Windenergie – Einspeiseprofil', cat:'EE-Einspeisezeitreihen', desc:'Standardeinspeiseprofil für Offshore-Wind.'},
+  {abbr:'WFT',  full:'Offshore-Windenergie – tagesparameterabhängig', cat:'EE-Einspeisezeitreihen', desc:'Tagesparameterabhängiges Einspeiseprofil für Offshore-Wind.'},
+  {abbr:'WNL',  full:'Onshore-Windenergie – ¼-h-gemessen', cat:'EE-Einspeisezeitreihen', desc:'Viertelstündlich gemessene Einspeisung aus Onshore-Windkraftanlagen.'},
+  {abbr:'WNP',  full:'Onshore-Windenergie – Einspeiseprofil', cat:'EE-Einspeisezeitreihen', desc:'Standardeinspeiseprofil für Onshore-Wind.'},
+  {abbr:'WNT',  full:'Onshore-Windenergie – tagesparameterabhängig', cat:'EE-Einspeisezeitreihen', desc:'Tagesparameterabhängiges Einspeiseprofil für Onshore-Wind.'},
+  {abbr:'WAL',  full:'Wasserkraft – ¼-h-gemessen',      cat:'EE-Einspeisezeitreihen', desc:'Viertelstündlich gemessene Einspeisung aus Wasserkraftanlagen.'},
+  {abbr:'WAP',  full:'Wasserkraft – Einspeiseprofil',   cat:'EE-Einspeisezeitreihen', desc:'Standardeinspeiseprofil für Wasserkraft.'},
+  {abbr:'WAT',  full:'Wasserkraft – tagesparameterabhängig', cat:'EE-Einspeisezeitreihen', desc:'Tagesparameterabhängiges Einspeiseprofil für Wasserkraft.'},
+
+  // EEG-Überführungszeitreihen
+  {abbr:'AU1',  full:'Ausfallarbeiten (EEG)',            cat:'EEG-Überführungszeitreihen', desc:'Ausfallarbeiten unabhängig von der Prognosegrundlage.'},
+  {abbr:'BI1',  full:'Biomasse/Biogas § 27 EEG – Basis Werte', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Biomasse/Biogas auf Basis gemessener Werte.'},
+  {abbr:'BI2',  full:'Biomasse/Biogas § 27 EEG – Standardeinspeiseprofile', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Biomasse/Biogas auf Basis von Standardeinspeiseprofilen.'},
+  {abbr:'BI3',  full:'Biomasse/Biogas § 27 EEG – tagesparameterabhängig', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Biomasse/Biogas tagesparameterabhängig.'},
+  {abbr:'GAA',  full:'Deponie-/Klär-/Grubengas §§ 24–26 EEG – Basis Werte', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Deponiegas, Klärgas und Grubengas auf Basis von Werten.'},
+  {abbr:'GAB',  full:'Deponie-/Klär-/Grubengas §§ 24–26 EEG – Standardprofile', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Deponie-/Klär-/Grubengas auf Basis von Standardeinspeiseprofilen.'},
+  {abbr:'GAC',  full:'Deponie-/Klär-/Grubengas §§ 24–26 EEG – tagesparameterabhängig', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Deponie-/Klär-/Grubengas tagesparameterabhängig.'},
+  {abbr:'GE1',  full:'Geothermie § 28 EEG – Basis Werte', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Geothermie auf Basis gemessener Werte.'},
+  {abbr:'GE2',  full:'Geothermie § 28 EEG – Standardeinspeiseprofile', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Geothermie auf Basis von Standardeinspeiseprofilen.'},
+  {abbr:'GE3',  full:'Geothermie § 28 EEG – tagesparameterabhängig', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Geothermie tagesparameterabhängig.'},
+  {abbr:'SO1',  full:'Solare Strahlungsenergie §§ 32–33 EEG – Basis Werte', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Solarenergie auf Basis gemessener Werte.'},
+  {abbr:'SO2',  full:'Solare Strahlungsenergie §§ 32–33 EEG – Standardprofile', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Solarenergie auf Basis von Standardeinspeiseprofilen.'},
+  {abbr:'SO3',  full:'Solare Strahlungsenergie §§ 32–33 EEG – tagesparameterabhängig', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Solarenergie tagesparameterabhängig.'},
+  {abbr:'WF1',  full:'Offshore-Windenergie § 31 EEG – Basis Werte', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Offshore-Wind auf Basis gemessener Werte.'},
+  {abbr:'WF2',  full:'Offshore-Windenergie § 31 EEG – Standardprofile', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Offshore-Wind auf Basis von Standardeinspeiseprofilen.'},
+  {abbr:'WF3',  full:'Offshore-Windenergie § 31 EEG – tagesparameterabhängig', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Offshore-Wind tagesparameterabhängig.'},
+  {abbr:'WN1',  full:'Onshore-Windenergie §§ 29–30 EEG – Basis Werte', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Onshore-Wind auf Basis gemessener Werte.'},
+  {abbr:'WN2',  full:'Onshore-Windenergie §§ 29–30 EEG – Standardprofile', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Onshore-Wind auf Basis von Standardeinspeiseprofilen.'},
+  {abbr:'WN3',  full:'Onshore-Windenergie §§ 29–30 EEG – tagesparameterabhängig', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Onshore-Wind tagesparameterabhängig.'},
+  {abbr:'WAA',  full:'Wasserkraft § 23 EEG – Basis Werte', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Wasserkraft auf Basis gemessener Werte.'},
+  {abbr:'WAB',  full:'Wasserkraft § 23 EEG – Standardeinspeiseprofile', cat:'EEG-Überführungszeitreihen', desc:'EEG-Überführungszeitreihe für Wasserkraft auf Basis von Standardeinspeiseprofilen.'},
+];
+
+let wikiFilter='', wikiCat='all';
+
+function showWiki(){
+  document.querySelectorAll('.screen').forEach(s=>s.style.display='none');
+  document.getElementById('screen-wiki').style.display='block';
+  renderWikiCats();
+  renderWiki();
+}
+
+function hideWiki(){
+  document.getElementById('screen-wiki').style.display='none';
+  document.getElementById('screen-dashboard').style.display='block';
+}
+
+function renderWikiCats(){
+  const cats=['all',...new Set(WIKI_ENTRIES.map(e=>e.cat))];
+  const container=document.getElementById('wiki-cats');
+  container.innerHTML='';
+  cats.forEach(c=>{
+    const btn=document.createElement('button');
+    btn.className='wiki-cat-btn'+(wikiCat===c?' active':'');
+    btn.textContent=c==='all'?'Alle':c;
+    btn.onclick=()=>setWikiCat(c);
+    container.appendChild(btn);
+  });
+}
+
+function setWikiCat(cat){
+  wikiCat=cat;
+  renderWikiCats();
+  renderWiki();
+}
+
+function filterWiki(val){
+  wikiFilter=val.toLowerCase();
+  renderWiki();
+}
+
+function renderWiki(){
+  const list=document.getElementById('wiki-list');
+  const filtered=WIKI_ENTRIES.filter(e=>{
+    const matchCat=wikiCat==='all'||e.cat===wikiCat;
+    const matchSearch=!wikiFilter||
+      e.abbr.toLowerCase().includes(wikiFilter)||
+      e.full.toLowerCase().includes(wikiFilter)||
+      e.desc.toLowerCase().includes(wikiFilter);
+    return matchCat&&matchSearch;
+  });
+  if(!filtered.length){
+    list.innerHTML='<div style="color:var(--text3);font-size:13px;padding:1rem;text-align:center">Kein Eintrag gefunden.</div>';
+    return;
+  }
+  list.innerHTML=filtered.map(e=>
+    '<div class="wiki-card">'+
+      '<div class="wiki-card-head">'+
+        '<span class="wiki-abbr">'+e.abbr+'</span>'+
+        '<span class="wiki-cat-badge">'+e.cat+'</span>'+
+      '</div>'+
+      '<div class="wiki-full">'+e.full+'</div>'+
+      '<div class="wiki-desc">'+e.desc+'</div>'+
+    '</div>'
+  ).join('');
 }
 
 // ── INIT ──
@@ -4201,13 +4430,21 @@ function showProgressDetail(uid){
   // Course list
   const list=document.getElementById('prog-detail-courses');
   list.innerHTML='';
-  courses.forEach((c,idx)=>{
+  const sortedCourses=[...courses.map((c,idx)=>({c,idx}))].sort((a,b)=>{
+    const ra=userProg.find(x=>x.course_index===a.idx);
+    const rb=userProg.find(x=>x.course_index===b.idx);
+    if(!ra&&!rb) return 0;
+    if(!ra) return 1;
+    if(!rb) return -1;
+    return new Date(rb.updated_at)-new Date(ra.updated_at);
+  });
+  sortedCourses.forEach(({c,idx})=>{
     const r=userProg.find(x=>x.course_index===idx);
     const sess=_progSessions.filter(s=>s.user_id===uid&&s.course_id===c.id);
     const secs=sess.reduce((a,s)=>a+(s.seconds_spent||0),0);
     const score=r?.score||0;
     const done=r?.completed||false;
-    const date=r?new Date(r.updated_at).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}):'–';
+    const date=r?new Date(r.updated_at).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}):'–';
     const scoreClass=score>=70?'score-pass':score>0?'score-fail':'score-none';
     const div=document.createElement('div');
     div.className='prog-course-row';
