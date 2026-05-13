@@ -847,6 +847,36 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .wiki-tooltip-full{font-size:12px;font-weight:600;color:var(--text);margin:3px 0;}
 .wiki-tooltip-desc{font-size:12px;color:var(--text2);line-height:1.55;}
 .wiki-tooltip-cat{font-size:10px;color:var(--text3);margin-top:5px;}
+
+/* ── USER SIDEBAR LAYOUT ── */
+.user-layout{display:grid;grid-template-columns:200px 1fr;gap:0;min-height:calc(100vh - 120px);align-items:start;}
+.user-sidebar{position:sticky;top:76px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:.6rem .5rem;display:flex;flex-direction:column;gap:2px;margin:.5rem 0;}
+.user-sidebar-profile{display:flex;align-items:center;gap:10px;padding:.6rem .5rem .75rem;}
+.user-sidebar-avatar{width:38px;height:38px;border-radius:50%;background:var(--green);color:#020d08;font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.user-sidebar-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.2;}
+.user-sidebar-level{font-size:11px;color:var(--text3);margin-top:1px;}
+.user-sidebar-divider{height:1px;background:var(--border2);margin:4px 6px;}
+.user-nav-item{width:100%;display:flex;align-items:center;gap:9px;padding:8px 10px;border:none;background:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;font-family:'Inter',sans-serif;color:var(--text2);transition:all .12s;text-align:left;}
+.user-nav-item:hover{background:var(--bg3);color:var(--text);}
+.user-nav-item.active{background:rgba(16,185,129,0.1);color:var(--green);font-weight:600;}
+.user-nav-icon{font-size:15px;width:20px;text-align:center;flex-shrink:0;}
+.user-nav-label{flex:1;}
+.user-main{min-width:0;padding-left:1.5rem;}
+
+/* Settings */
+.settings-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:1.25rem;}
+.settings-card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:1rem;letter-spacing:-.01em;}
+
+/* Mobile */
+@media(max-width:768px){
+  .user-layout{grid-template-columns:1fr;}
+  .user-sidebar{position:static;flex-direction:row;flex-wrap:wrap;padding:.4rem;margin:.5rem 0 0;gap:4px;}
+  .user-sidebar-profile{display:none;}
+  .user-sidebar-divider{display:none;}
+  .user-nav-item{width:auto;padding:6px 10px;font-size:12px;border:1px solid var(--border2);border-radius:20px;background:var(--bg3);}
+  .user-nav-item.active{border-color:rgba(16,185,129,0.4);}
+  .user-main{padding-left:0;}
+}
 </style>
 </head>
 <body>
@@ -922,6 +952,37 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
   <!-- USER VIEW -->
   <div id="view-user">
+    <div class="user-layout">
+      <!-- USER SIDEBAR -->
+      <nav class="user-sidebar" id="user-sidebar">
+        <div class="user-sidebar-profile" id="user-sidebar-profile">
+          <div class="user-sidebar-avatar" id="user-sidebar-avatar">?</div>
+          <div class="user-sidebar-info">
+            <div class="user-sidebar-name" id="user-sidebar-name">–</div>
+            <div class="user-sidebar-level" id="user-sidebar-level">Lv. 1</div>
+          </div>
+        </div>
+        <div class="user-sidebar-divider"></div>
+        <button class="user-nav-item active" data-screen="dashboard" onclick="showUserScreen('dashboard')">
+          <span class="user-nav-icon">🏠</span><span class="user-nav-label">Dashboard</span>
+        </button>
+        <button class="user-nav-item" data-screen="courses" onclick="showUserScreen('courses')">
+          <span class="user-nav-icon">📚</span><span class="user-nav-label">Kurse</span>
+        </button>
+        <button class="user-nav-item" data-screen="paths" onclick="showUserScreen('paths')">
+          <span class="user-nav-icon">🗺</span><span class="user-nav-label">Lernpfade</span>
+        </button>
+        <button class="user-nav-item" data-screen="wiki" onclick="showUserScreen('wiki')">
+          <span class="user-nav-icon">📖</span><span class="user-nav-label">Wiki</span>
+        </button>
+        <div class="user-sidebar-divider"></div>
+        <button class="user-nav-item" data-screen="settings" onclick="showUserScreen('settings')">
+          <span class="user-nav-icon">⚙️</span><span class="user-nav-label">Einstellungen</span>
+        </button>
+      </nav>
+
+      <!-- USER MAIN CONTENT -->
+      <div class="user-main" id="user-main">
     <div class="screen active" id="screen-dashboard">
       <div class="hero">
         <div class="hero-eye">Energiewirtschaft · Fachwissen</div>
@@ -1051,27 +1112,78 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         </div>
       </div>
       </div>
-    </div>
-  </div>
 
-  <!-- WIKI -->
-  <div id="screen-wiki" class="screen" style="display:none">
-    <div class="app">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;padding-top:1rem">
-        <button class="btn-ghost" onclick="hideWiki()" style="font-size:13px;padding:6px 14px">← Zurück</button>
-        <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin:0">📖 Fachbegriff-Wiki</h2>
+
+      <!-- SETTINGS -->
+      <div class="screen" id="screen-settings" style="display:none">
+        <div class="app" style="max-width:600px">
+          <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;margin:1rem 0 1.5rem">⚙️ Einstellungen</h2>
+          <div class="settings-card">
+            <div class="settings-card-title">Profil</div>
+            <div class="form-group">
+              <label class="form-label">Anzeigename</label>
+              <input class="form-input" id="settings-displayname" placeholder="Wie sollen wir dich nennen?">
+            </div>
+            <div class="form-group" style="margin-top:.75rem">
+              <label class="form-label">Geburtsdatum</label>
+              <input class="form-input" id="settings-birthday" type="date">
+            </div>
+            <div class="form-group" style="margin-top:.75rem">
+              <label class="form-label">E-Mail</label>
+              <input class="form-input" id="settings-email" type="email">
+            </div>
+            <button class="btn-add" style="margin-top:1rem" onclick="saveProfileSettings()">Profil speichern</button>
+            <div class="msg" id="settings-profile-msg" style="margin-top:.75rem"></div>
+          </div>
+          <div class="settings-card" style="margin-top:1rem">
+            <div class="settings-card-title">Passwort ändern</div>
+            <div class="form-group">
+              <label class="form-label">Neues Passwort</label>
+              <input class="form-input" id="settings-pw1" type="password" placeholder="Mindestens 8 Zeichen">
+            </div>
+            <div class="form-group" style="margin-top:.75rem">
+              <label class="form-label">Passwort wiederholen</label>
+              <input class="form-input" id="settings-pw2" type="password" placeholder="Passwort bestätigen">
+            </div>
+            <button class="btn-add" style="margin-top:1rem" onclick="changePassword()">Passwort ändern</button>
+            <div class="msg" id="settings-pw-msg" style="margin-top:.75rem"></div>
+          </div>
+          <div class="settings-card" style="margin-top:1rem">
+            <div class="settings-card-title">Darstellung</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0">
+              <span style="font-size:14px;color:var(--text2)">Dark / Light Mode</span>
+              <button class="theme-toggle" onclick="toggleTheme()" id="settings-theme-btn">🌙</button>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:.5rem 0">
+              <span style="font-size:14px;color:var(--text2)">Sprache / Language</span>
+              <button class="theme-toggle" onclick="toggleLang()" id="settings-lang-btn" style="font-size:13px;font-weight:600">EN</button>
+            </div>
+          </div>
+          <div class="settings-card" style="margin-top:1rem;border-color:rgba(248,113,113,0.3)">
+            <div class="settings-card-title" style="color:var(--red)">Konto</div>
+            <button class="btn-sec" style="color:var(--red);border-color:rgba(248,113,113,0.3)" onclick="logout()">Abmelden</button>
+          </div>
+        </div>
       </div>
-      <!-- Search -->
-      <div style="position:relative;margin-bottom:1.5rem">
-        <input class="form-input" id="wiki-search" placeholder="Begriff suchen… z.B. NB, Bilanzkreis, MSB" oninput="filterWiki(this.value)" style="padding-left:2.5rem;font-size:14px">
-        <span style="position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--text3);font-size:16px">🔍</span>
-      </div>
-      <!-- Category filter -->
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem" id="wiki-cats"></div>
-      <!-- Entries -->
-      <div id="wiki-list" style="display:flex;flex-direction:column;gap:8px"></div>
-    </div>
-  </div>
+
+      <!-- WIKI -->
+      <div id="screen-wiki" class="screen" style="display:none">
+        <div class="app">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;padding-top:1rem">
+            <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;color:var(--text);margin:0">📖 Fachbegriff-Wiki</h2>
+          </div>
+          <div style="position:relative;margin-bottom:1.5rem">
+            <input class="form-input" id="wiki-search" placeholder="Begriff suchen… z.B. NB, Bilanzkreis, MSB" oninput="filterWiki(this.value)" style="padding-left:2.5rem;font-size:14px">
+            <span style="position:absolute;left:.85rem;top:50%;transform:translateY(-50%);color:var(--text3);font-size:16px">🔍</span>
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem" id="wiki-cats"></div>
+          <div id="wiki-list" style="display:flex;flex-direction:column;gap:8px"></div>
+        </div>
+      </div><!-- /screen-wiki -->
+      </div><!-- /user-main -->
+    </div><!-- /user-layout -->
+  </div><!-- /screen-wiki extra -->
+  </div><!-- /view-user -->
 
   <!-- ADMIN VIEW -->
   <div id="view-admin" style="display:none">
@@ -2321,15 +2433,15 @@ const WIKI_ENTRIES = [
 let wikiFilter='', wikiCat='all';
 
 function showWiki(){
-  document.querySelectorAll('.screen').forEach(s=>s.style.display='none');
-  document.getElementById('screen-wiki').style.display='block';
-  renderWikiCats();
-  renderWiki();
+  // Use user sidebar system if available
+  if(document.getElementById('screen-wiki')){
+    showUserScreen('wiki-internal');
+    return;
+  }
 }
 
 function hideWiki(){
-  document.getElementById('screen-wiki').style.display='none';
-  document.getElementById('screen-dashboard').style.display='block';
+  showUserScreen('dashboard');
 }
 
 function renderWikiCats(){
@@ -2460,6 +2572,136 @@ function hideWikiTooltip(){
 }
 
 document.addEventListener('click', () => hideWikiTooltip());
+
+
+// ── USER SIDEBAR NAVIGATION ──
+function showUserScreen(screen){
+  // Update active nav item
+  document.querySelectorAll('.user-nav-item').forEach(b=>b.classList.toggle('active', b.dataset.screen===screen));
+
+  if(screen==='wiki'||screen==='wiki-internal'){
+    // Hide all screens, show wiki
+    document.getElementById('screen-dashboard').style.display='none';
+    const settingsSec=document.getElementById('screen-settings');
+    if(settingsSec) settingsSec.style.display='none';
+    const wikiScreen=document.getElementById('screen-wiki');
+    if(wikiScreen){wikiScreen.style.display='block';}
+    renderWikiCats();
+    renderWiki();
+    return;
+  }
+  // Hide wiki screen if shown
+  const wikiScreen=document.getElementById('screen-wiki');
+  if(wikiScreen) wikiScreen.style.display='none';
+
+  // Show/hide dashboard sections
+  const dash=document.getElementById('screen-dashboard');
+  const pathSec=document.getElementById('path-section');
+  const courseSec=document.getElementById('course-section');
+  const settingsSec=document.getElementById('screen-settings');
+
+  if(dash) dash.style.display='none';
+  if(settingsSec) settingsSec.style.display='none';
+
+  if(screen==='dashboard'){
+    if(dash) dash.style.display='block';
+    if(pathSec) pathSec.style.display='none';
+    if(courseSec) courseSec.style.display='none';
+  } else if(screen==='courses'){
+    if(dash) dash.style.display='block';
+    if(pathSec) pathSec.style.display='none';
+    if(courseSec){courseSec.style.display='block';}
+    // Scroll to courses
+    setTimeout(()=>courseSec?.scrollIntoView({behavior:'smooth',block:'start'}),50);
+  } else if(screen==='paths'){
+    if(dash) dash.style.display='block';
+    if(pathSec){pathSec.style.display='block';}
+    if(courseSec) courseSec.style.display='none';
+    setTimeout(()=>pathSec?.scrollIntoView({behavior:'smooth',block:'start'}),50);
+  } else if(screen==='settings'){
+    if(settingsSec) settingsSec.style.display='block';
+    loadSettingsData();
+  }
+}
+
+async function loadSettingsData(){
+  if(!currentUser) return;
+  // Load profile from DB
+  try{
+    const{data}=await sb.from('profiles').select('*').eq('user_id',currentUser.id).single();
+    if(data){
+      const nameEl=document.getElementById('settings-displayname');
+      const bdEl=document.getElementById('settings-birthday');
+      const emailEl=document.getElementById('settings-email');
+      if(nameEl) nameEl.value=data.display_name||data.email?.split('@')[0]||'';
+      if(bdEl) bdEl.value=data.birthday||'';
+      if(emailEl) emailEl.value=data.email||currentUser.email||'';
+    }
+  }catch(e){}
+  // Sync theme/lang buttons
+  const themeBtn=document.getElementById('settings-theme-btn');
+  const langBtn=document.getElementById('settings-lang-btn');
+  if(themeBtn) themeBtn.textContent=document.documentElement.getAttribute('data-theme')==='light'?'☀️':'🌙';
+  if(langBtn) langBtn.textContent=currentLang==='de'?'EN':'DE';
+}
+
+async function saveProfileSettings(){
+  const name=document.getElementById('settings-displayname')?.value?.trim();
+  const birthday=document.getElementById('settings-birthday')?.value;
+  const email=document.getElementById('settings-email')?.value?.trim();
+  const msg=document.getElementById('settings-profile-msg');
+  try{
+    const updates={display_name:name||null, birthday:birthday||null};
+    if(email&&email!==currentUser.email) updates.email=email;
+    await sb.from('profiles').upsert({user_id:currentUser.id,...updates},{onConflict:'user_id'});
+    // Update email in auth if changed
+    if(email&&email!==currentUser.email){
+      await sb.auth.updateUser({email});
+      msg.textContent='✓ Gespeichert – bitte E-Mail bestätigen';
+    } else {
+      msg.textContent='✓ Profil gespeichert';
+    }
+    msg.className='msg show ok';
+    // Update sidebar avatar/name
+    updateUserSidebar();
+  }catch(err){
+    msg.textContent='Fehler: '+err.message;
+    msg.className='msg show err';
+  }
+}
+
+async function changePassword(){
+  const pw1=document.getElementById('settings-pw1')?.value;
+  const pw2=document.getElementById('settings-pw2')?.value;
+  const msg=document.getElementById('settings-pw-msg');
+  if(!pw1||pw1.length<8){msg.textContent='Mindestens 8 Zeichen.';msg.className='msg show err';return;}
+  if(pw1!==pw2){msg.textContent='Passwörter stimmen nicht überein.';msg.className='msg show err';return;}
+  try{
+    const{error}=await sb.auth.updateUser({password:pw1});
+    if(error) throw error;
+    msg.textContent='✓ Passwort erfolgreich geändert';
+    msg.className='msg show ok';
+    document.getElementById('settings-pw1').value='';
+    document.getElementById('settings-pw2').value='';
+  }catch(err){
+    msg.textContent='Fehler: '+err.message;
+    msg.className='msg show err';
+  }
+}
+
+function updateUserSidebar(){
+  if(!currentUser) return;
+  const email=currentUser.email||'';
+  const initial=email[0]?.toUpperCase()||'?';
+  const name=email.split('@')[0]||'Nutzer';
+  const lvl=userXP?.level||1;
+  const avatarEl=document.getElementById('user-sidebar-avatar');
+  const nameEl=document.getElementById('user-sidebar-name');
+  const levelEl=document.getElementById('user-sidebar-level');
+  if(avatarEl) avatarEl.textContent=initial;
+  if(nameEl) nameEl.textContent=name;
+  if(levelEl) levelEl.textContent='Lv. '+lvl+' · '+getLevelTitle(lvl);
+}
 
 // ── INIT ──
 
@@ -2632,6 +2874,7 @@ async function setUser(user){
     updateXPBar();
     showDash();
     loadReportBadge();
+    setTimeout(updateUserSidebar, 200);
     setTimeout(applyTranslations,50);
   } catch(err){
     console.error('setUser failed:',err);
