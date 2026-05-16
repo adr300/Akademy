@@ -5292,7 +5292,7 @@ async function generateCourse(){
   } catch(err){
     const isRateLimit=err.message&&err.message.includes('rate limit');
     if(isRateLimit){
-      showKiMsg('⚡ Rate-Limit erreicht — bitte 60 Sekunden warten und erneut versuchen.\n💳 Für höhere Limits: console.anthropic.com/settings/billing','err');
+      showKiMsg('⚡ Zu viele Anfragen — bitte 60 Sekunden warten und erneut versuchen. Hält das Problem an, bitte einen EnergyAcademy Admin kontaktieren.','err');
     } else {
       showKiMsg('Fehler: ' + err.message, 'err');
     }
@@ -5789,7 +5789,7 @@ async function generateCourseFromPdf(){
     document.getElementById('ai-options').style.display='block';
     const isRateLimit=err.message&&err.message.includes('rate limit');
     showAiMsg(isRateLimit
-      ?'⚡ Rate-Limit erreicht — bitte 60 Sekunden warten und erneut versuchen. Für höhere Limits: console.anthropic.com/settings/billing'
+      ?'⚡ Zu viele Anfragen — bitte 60 Sekunden warten und erneut versuchen. Hält das Problem an, bitte einen EnergyAcademy Admin kontaktieren.'
       :'Fehler: '+err.message,'err');
   }
 }
