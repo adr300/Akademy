@@ -5217,7 +5217,9 @@ async function generateCourse(){
     'Erstelle einen vollständigen Lernkurs zum Thema: "' + topic + '"\n' +
     'Schwierigkeitsgrad: ' + level + '\n' +
     'Niveau-Anweisung: ' + (levelDescriptions[level]||'') + '\n' +
-    'Anzahl Slides: ' + (isFinalExam ? '0 (kein Lerninhalt, nur Prüfung)' : numSlides) + '\n' +
+    (isFinalExam
+      ? 'ABSCHLUSSTEST-MODUS: NUR Fragen, KEINE Slides. slides-Array MUSS leer bleiben.\n'
+      : 'Anzahl Slides: ' + numSlides + '\n') +
     'Anzahl Testfragen: ' + numQuestions + '\n' +
     finalExamInstructions + '\n' +
     'Antworte NUR mit einem gültigen JSON-Objekt, ohne Markdown-Formatierung, ohne Backticks, ohne Kommentare.\n\n' +
@@ -5228,17 +5230,19 @@ async function generateCourse(){
     '  "difficulty": "' + level + '",\n' +
     '  "is_final_exam": ' + isFinalExam + ',\n' +
     '  "pass_threshold": ' + passThreshold + ',\n' +
-    '  "slides": [\n' +
-    '    {\n' +
-    '      "tag": "Kurzes Schlagwort (1-2 Wörter)",\n' +
-    '      "title": "Slide-Titel",\n' +
-    '      "content": "Erklärender Text mit 3-5 Sätzen. Fachlich korrekt und praxisnah.",\n' +
-    '      "stat1_num": "Zahl oder Kürzel (optional, sonst null)",\n' +
-    '      "stat1_lbl": "Beschriftung (optional, sonst null)",\n' +
-    '      "stat2_num": null, "stat2_lbl": null,\n' +
-    '      "stat3_num": null, "stat3_lbl": null\n' +
-    '    }\n' +
-    '  ],\n' +
+    (isFinalExam
+      ? '  "slides": [],\n'
+      : '  "slides": [\n' +
+        '    {\n' +
+        '      "tag": "Kurzes Schlagwort (1-2 Wörter)",\n' +
+        '      "title": "Slide-Titel",\n' +
+        '      "content": "Erklärender Text mit 3-5 Sätzen. Fachlich korrekt und praxisnah.",\n' +
+        '      "stat1_num": "Zahl oder Kürzel (optional, sonst null)",\n' +
+        '      "stat1_lbl": "Beschriftung (optional, sonst null)",\n' +
+        '      "stat2_num": null, "stat2_lbl": null,\n' +
+        '      "stat3_num": null, "stat3_lbl": null\n' +
+        '    }\n' +
+        '  ],\n') +
     '  "questions": [\n' +
     '    {\n' +
     '      "question": "Vollständige Frage?",\n' +
@@ -5252,8 +5256,9 @@ async function generateCourse(){
     '- Alle Texte auf Deutsch\n' +
     '- Fachlich korrekt für die deutsche Energiewirtschaft\n' +
     '- correct_index ist 0-basiert (0=A, 1=B, 2=C, 3=D)\n' +
-    '- Bei Slides ohne Statistik: stat-Felder auf null setzen\n' +
-    '- Mindestens 1-2 Slides mit sinnvollen Statistik-Kacheln\n' +
+    (isFinalExam
+      ? '- slides MUSS ein leeres Array [] sein — keine Slides generieren\n'
+      : '- Bei Slides ohne Statistik: stat-Felder auf null setzen\n- Mindestens 1-2 Slides mit sinnvollen Statistik-Kacheln\n') +
     '- Nur valides JSON zurückgeben';
 
   try {
@@ -5385,8 +5390,10 @@ async function saveGeneratedCourse(){
   if(error){ alert('Fehler: '+error.message); btn.disabled=false; btn.textContent='✓ Kurs speichern'; return; }
 
   const courseId = created.id;
-  if(generatedCourse.slides?.length){
-    await sb.from('slides').insert(generatedCourse.slides.map((s,i) => ({
+  // Final exam: never save slides even if AI accidentally generated some
+  const slidesToSave = generatedCourse.is_final_exam ? [] : (generatedCourse.slides||[]);
+  if(slidesToSave.length){
+    await sb.from('slides').insert(slidesToSave.map((s,i) => ({
       course_id:courseId, sort_order:i,
       tag:s.tag, title:s.title, content:s.content,
       stat1_num:s.stat1_num||null, stat1_lbl:s.stat1_lbl||null,
