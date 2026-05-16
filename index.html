@@ -3616,32 +3616,62 @@ async function renderDailyChallenge(){
   const el=document.getElementById('daily-challenge');
   if(!el||!courses.length)return;
 
-  const dayOfYear=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/(1000*60*60*24));
-
-  const unlockedCourses=courses.filter(c=>{
-    const inPath=learningPaths.some(p=>{
-      const pcs=pathCourses.filter(pc=>pc.path_id===p.id).sort((a,b)=>a.position-b.position);
-      if(!pcs.some(pc=>pc.course_id===c.id)) return false;
-      const coursePos=pcs.findIndex(pc=>pc.course_id===c.id);
-      if(coursePos===0) return false;
-      const prevCourse=courses.find(x=>x.id===pcs[coursePos-1].course_id);
-      return !isCourseCompleted(prevCourse?.id);
-    });
-    return !inPath;
-  });
-
-  const pool=unlockedCourses.length?unlockedCourses:courses;
-  const todayCourse=pool[dayOfYear%pool.length];
-  const courseIdx=courses.findIndex(c=>c.id===todayCourse.id);
-  const fill=todayCourse.btn_color||'#10b981';
-
-  // Show skeleton while loading
   el.innerHTML='<div class="dc-eyebrow">⚡ Tagesaufgabe</div><div style="color:var(--text3);font-size:13px;padding:.5rem 0">Wird geladen…</div>';
 
+  // ── Build locked course set (same logic as showDash) ──
+  const lockedIds=new Set();
+  learningPaths.forEach(lp=>{
+    const pcs=pathCourses.filter(pc=>pc.path_id===lp.id).sort((a,b)=>a.position-b.position);
+    pcs.forEach((pc,i)=>{
+      if(i===0) return;
+      const prevDone=isCourseCompleted(pcs[i-1].course_id);
+      if(!prevDone) lockedIds.add(pc.course_id);
+    });
+  });
+
+  // ── Categorise every path-course ──
+  // Only consider courses that are actually in a published learning path
+  const pathCourseIds=new Set();
+  learningPaths
+    .filter(lp=>lp.is_published!==false)
+    .forEach(lp=>pathCourses.filter(pc=>pc.path_id===lp.id).forEach(pc=>pathCourseIds.add(pc.course_id)));
+
+  const availableCourses=[];  // unlocked, not yet completed
+  const completedCourses=[];  // completed path courses (for repetition fallback)
+
+  courses.forEach(c=>{
+    if(!pathCourseIds.has(c.id)) return; // not in any published path → skip
+    if(lockedIds.has(c.id)) return;       // locked → skip
+    if(isCourseCompleted(c.id)) completedCourses.push(c);
+    else availableCourses.push(c);
+  });
+
+  // ── Pick today's course ──
+  const dayOfYear=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/(1000*60*60*24));
+  let todayCourse=null;
+  let isRepetition=false;
+
+  if(availableCourses.length){
+    // Normal mode: next unlocked, uncompleted course
+    todayCourse=availableCourses[dayOfYear%availableCourses.length];
+  } else if(completedCourses.length){
+    // All paths done → repetition mode
+    todayCourse=completedCourses[dayOfYear%completedCourses.length];
+    isRepetition=true;
+  } else if(courses.length){
+    // No paths assigned / edge case → any course
+    todayCourse=courses[dayOfYear%courses.length];
+  } else {
+    el.innerHTML='<div class="dc-eyebrow">⚡ Tagesaufgabe</div><div style="color:var(--text3);font-size:13px;padding:.5rem 0">Noch keine Kurse verfügbar.</div>';
+    return;
+  }
+
+  const courseIdx=courses.findIndex(c=>c.id===todayCourse.id);
+  const fill=todayCourse.btn_color||'#10b981';
   const status=await loadDailyStatus(todayCourse.id);
 
   el.innerHTML=
-    '<div class="dc-eyebrow">⚡ Tagesaufgabe</div>'+
+    '<div class="dc-eyebrow">⚡ Tagesaufgabe'+(isRepetition?' · 🔁 Wiederholung':'')+'</div>'+
     '<div class="dc-body">'+
       '<div class="dc-icon" style="background:'+(todayCourse.icon_bg||'#0a1f18')+'">'+todayCourse.icon+'</div>'+
       '<div class="dc-info">'+
@@ -3652,6 +3682,8 @@ async function renderDailyChallenge(){
             ? '<span class="dc-done-badge">✓ Heute erledigt · +'+status.bonus_xp+' XP</span>'
             : status.started
             ? '<span class="dc-done-badge" style="background:rgba(245,158,11,0.15);color:var(--amber)">⏳ Bereits gestartet – einmal pro Tag</span>'
+            : isRepetition
+            ? '<span class="dc-xp-badge">🔁 +25 Bonus-XP · Wiederholung</span>'
             : '<span class="dc-xp-badge">+25 Bonus-XP heute</span>'
           )+
         '</div>'+
@@ -5292,7 +5324,7 @@ async function generateCourse(){
   } catch(err){
     const isRateLimit=err.message&&err.message.includes('rate limit');
     if(isRateLimit){
-      showKiMsg('⚡ Zu viele Anfragen — bitte 60 Sekunden warten und erneut versuchen. Hält das Problem an, bitte einen EnergyAcademy Admin kontaktieren.','err');
+      showKiMsg('⚡ Zu viele Anfragen — bitte 60 Sekunden warten und erneut versuchen. Bitte einen EnergyAcademy Admin kontaktieren.','err');
     } else {
       showKiMsg('Fehler: ' + err.message, 'err');
     }
@@ -5789,7 +5821,7 @@ async function generateCourseFromPdf(){
     document.getElementById('ai-options').style.display='block';
     const isRateLimit=err.message&&err.message.includes('rate limit');
     showAiMsg(isRateLimit
-      ?'⚡ Zu viele Anfragen — bitte 60 Sekunden warten und erneut versuchen. Hält das Problem an, bitte einen EnergyAcademy Admin kontaktieren.'
+      ?'⚡ Zu viele Anfragen — bitte 60 Sekunden warten und erneut versuchen. Bitte einen EnergyAcademy Admin kontaktieren.'
       :'Fehler: '+err.message,'err');
   }
 }
