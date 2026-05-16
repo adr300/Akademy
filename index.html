@@ -1235,7 +1235,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
               <input type="checkbox" id="ki-final-exam" onchange="toggleFinalExamMode()" style="width:16px;height:16px;accent-color:var(--green);cursor:pointer">
               <div>
                 <div style="font-size:13px;font-weight:700;color:var(--text)">🏆 Abschlusstest-Modus</div>
-                <div style="font-size:11px;color:var(--text3);margin-top:2px">Generiert 50 Fragen für einen umfassenden Abschlusstest – ideal für Zertifizierungen</div>
+                <div style="font-size:11px;color:var(--text3);margin-top:2px">Generiert 25 Fragen für einen umfassenden Abschlusstest – ideal für Zertifizierungen</div>
               </div>
             </label>
             <div id="ki-final-exam-options" style="display:none;margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border2)">
@@ -1257,7 +1257,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
                 </div>
               </div>
               <div style="font-size:11px;color:var(--amber);margin-top:8px;display:flex;align-items:center;gap:5px">
-                ⚠️ Die Generierung von 50 Fragen dauert ca. 30–60 Sekunden länger.
+                ⚠️ Die Generierung von 25 Fragen dauert ca. 20–40 Sekunden länger.
               </div>
             </div>
           </div>
@@ -1502,18 +1502,31 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
           <button class="btn-sec" style="font-size:11px;padding:4px 10px" id="ai-key-change-btn" onclick="clearApiKey()">Ändern</button>
         </div>
 
-        <div id="ai-drop-zone" class="ai-drop-zone">
+        <!-- Daily limit meter -->
+        <div id="ai-daily-usage" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:.6rem 1rem;margin-bottom:.75rem"></div>
+
+        <div id="ai-drop-zone" class="ai-drop-zone" onclick="openAiFilePicker()">
           <div class="drop-icon">🤖</div>
-          <div class="drop-title">PDF hier ablegen</div>
-          <div class="drop-sub">EnergyAcademy KI analysiert das Dokument und erstellt automatisch Slides und Testfragen</div>
-          <button class="btn-add" style="margin-top:1.25rem" onclick="openAiFilePicker()">PDF auswählen</button>
-          <input type="file" id="ai-file-input" accept=".pdf" style="display:none" onchange="handleAiFileSelect(event)">
+          <div class="drop-title">PDFs hier ablegen</div>
+          <div class="drop-sub">Bis zu 4 PDF-Dateien – EnergyAcademy KI analysiert alle und erstellt einen kombinierten Kurs</div>
+          <button class="btn-add" style="margin-top:1.25rem" onclick="openAiFilePicker();event.stopPropagation()">PDF auswählen</button>
+          <input type="file" id="ai-file-input" accept=".pdf" multiple style="display:none" onchange="handleAiFileSelect(event)">
+        </div>
+
+        <!-- Multi-PDF file list (shown after upload) -->
+        <div id="ai-file-list" style="display:none">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem">
+            <div style="font-size:12px;font-weight:700;color:var(--text2)">📄 Ausgewählte PDFs</div>
+            <button class="btn-sec" style="font-size:11px;padding:3px 10px" onclick="openAiFilePicker()">+ Weitere hinzufügen</button>
           </div>
+          <div id="ai-pdf-chips" style="display:flex;flex-direction:column;gap:6px"></div>
+        </div>
+
         </div>
 
         <!-- Options -->
         <div class="ai-options" id="ai-options" style="display:none">
-          <div class="ai-file-info" id="ai-file-info"></div>
+          <div style="height:1px;background:var(--border2);margin-bottom:1rem"></div>
           <div class="form-grid" style="margin-top:1rem">
             <div>
               <label class="form-label">Anzahl Slides</label>
@@ -1540,8 +1553,42 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
               </select>
             </div>
             <div>
+              <label class="form-label">Schwierigkeitsgrad</label>
+              <select class="form-input" id="ai-difficulty" onchange="updateAiLevelHint()">
+                <option value="Einsteiger">🟢 Einsteiger</option>
+                <option value="Fortgeschritten" selected>🟡 Fortgeschritten</option>
+                <option value="Experte">🔴 Experte</option>
+                <option value="Zertifizierung">🏆 Zertifizierungsniveau</option>
+              </select>
+              <div id="ai-level-hint" style="font-size:11px;color:var(--text3);margin-top:5px">Praxiswissen mit Fachbegriffen, mittlere Komplexität</div>
+            </div>
+            <div>
               <label class="form-label">Kursfarbe</label>
               <input class="form-input" id="ai-course-color" value="#10b981" placeholder="#10b981">
+            </div>
+          </div>
+
+          <!-- Abschlusstest-Modus -->
+          <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--rl);padding:1rem 1.2rem;margin-top:1rem">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+              <input type="checkbox" id="ai-final-exam" onchange="toggleAiFinalExamMode()" style="width:16px;height:16px;accent-color:var(--green);cursor:pointer">
+              <div>
+                <div style="font-size:13px;font-weight:700;color:var(--text)">🏆 Abschlusstest-Modus</div>
+                <div style="font-size:11px;color:var(--text3);margin-top:2px">Generiert 25 Fragen für einen umfassenden Abschlusstest – ideal für Zertifizierungen</div>
+              </div>
+            </label>
+            <div id="ai-final-exam-options" style="display:none;margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border2)">
+              <div style="display:flex;gap:12px;flex-wrap:wrap">
+                <div style="flex:1;min-width:160px">
+                  <label class="form-label">Bestehensschwelle</label>
+                  <select class="form-input" id="ai-pass-threshold">
+                    <option value="70">70% (Standard)</option>
+                    <option value="80">80% (Streng)</option>
+                    <option value="90">90% (Zertifizierung)</option>
+                  </select>
+                </div>
+              </div>
+              <div style="font-size:11px;color:var(--amber);margin-top:8px">⚠️ Die Generierung von 25 Fragen dauert ca. 20–40 Sekunden länger.</div>
             </div>
           </div>
           <!-- KI Spezifikationen -->
@@ -2611,24 +2658,45 @@ function applyTranslations(){
 }
 
 // ── THEME ──
-function toggleTheme(){
+function applyTheme(theme){
+  const btn=document.getElementById('theme-toggle');
+  if(theme==='light'){
+    document.documentElement.setAttribute('data-theme','light');
+    if(btn) btn.textContent='🌙';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    if(btn) btn.textContent='☀️';
+  }
+}
+
+async function toggleTheme(){
   const isLight=document.documentElement.getAttribute('data-theme')==='light';
   const newTheme=isLight?'dark':'light';
-  document.documentElement.setAttribute('data-theme',newTheme==='dark'?'':newTheme);
+  applyTheme(newTheme);
   localStorage.setItem('ea-theme',newTheme);
-  document.getElementById('theme-toggle').textContent=newTheme==='light'?'🌙':'☀️';
+  // Persist to DB if logged in
+  if(currentUser){
+    try{
+      await sb.from('profiles').upsert({user_id:currentUser.id,theme:newTheme},{onConflict:'user_id'});
+    }catch(e){}
+  }
 }
 
 function initTheme(){
+  // Apply from localStorage immediately (no flash)
   const saved=localStorage.getItem('ea-theme')||'light';
-  const btn=document.getElementById('theme-toggle');
-  if(saved==='light'){
-    document.documentElement.setAttribute('data-theme','light');
-    if(btn)btn.textContent='🌙';
-  } else {
-    document.documentElement.removeAttribute('data-theme');
-    if(btn)btn.textContent='☀️';
-  }
+  applyTheme(saved);
+}
+
+async function loadThemeFromDb(){
+  if(!currentUser) return;
+  try{
+    const{data}=await sb.from('profiles').select('theme').eq('user_id',currentUser.id).single();
+    if(data?.theme){
+      applyTheme(data.theme);
+      localStorage.setItem('ea-theme',data.theme);
+    }
+  }catch(e){}
 }
 
 async function init(){
@@ -2682,6 +2750,7 @@ async function setUser(user){
     }
     // Load all data — each function has its own try/catch so failures are safe
     await Promise.allSettled([loadCourses(),loadProgress(),loadTeams(),loadAssignments(),loadPaths(),loadXP()]);
+    loadThemeFromDb(); // load user's saved theme preference (non-blocking)
     document.getElementById('loading').style.display='none';
     document.getElementById('screen-login').style.display='none';
     document.getElementById('main-app').style.display='block';
@@ -3699,6 +3768,7 @@ function renderQ(){
   nb.textContent=qi===total-1?t('quiz.finish'):t('quiz.next');
   const container=document.getElementById('q-opts');container.innerHTML='';
   const type=q.question_type||'multiple_choice';
+  _shuffledCorrectIndex=null; // reset for each question; renderMCQ sets it if MC
   if(type==='sort') renderSortQ(q,container);
   else if(type==='match') renderMatchQ(q,container);
   else if(type==='deadline') renderDeadlineQ(q,container);
@@ -3706,11 +3776,22 @@ function renderQ(){
 }
 
 // ── Standard Multiple Choice ──
+let _shuffledCorrectIndex=null; // tracks correct answer position after shuffle
+
 function renderMCQ(q,container){
   const opts=[q.opt_a,q.opt_b,q.opt_c,q.opt_d].filter(Boolean);
-  ['A','B','C','D'].slice(0,opts.length).forEach((l,i)=>{
-    const b=document.createElement('button');b.className='q-opt';b.setAttribute('data-l',l);b.textContent=opts[i];
-    b.onclick=()=>pick(i);container.appendChild(b);
+  // Fisher-Yates shuffle of indices
+  const indices=opts.map((_,i)=>i);
+  for(let i=indices.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [indices[i],indices[j]]=[indices[j],indices[i]];
+  }
+  _shuffledCorrectIndex=indices.indexOf(q.correct_index);
+  ['A','B','C','D'].slice(0,opts.length).forEach((l,pos)=>{
+    const b=document.createElement('button');b.className='q-opt';b.setAttribute('data-l',l);
+    b.textContent=opts[indices[pos]];
+    b.onclick=()=>pick(pos);
+    container.appendChild(b);
   });
 }
 
@@ -3871,11 +3952,13 @@ function renderDeadlineQ(q,container){
 
 function pick(idx){
   const c=courses[ci],q=c.questions[qi];
+  // MC questions use shuffled index; other types (sort/match/deadline) pass original index directly
+  const correctIdx=_shuffledCorrectIndex!==null?_shuffledCorrectIndex:q.correct_index;
   document.querySelectorAll('.q-opt').forEach(b=>b.disabled=true);
   const btns=document.querySelectorAll('.q-opt');
   const fb=document.getElementById('q-fb');
-  if(idx===q.correct_index){btns[idx].classList.add('correct');correct++;fb.innerHTML='✓ &nbsp;Richtig! Sehr gut.';fb.className='q-fb show ok';}
-  else{btns[idx].classList.add('wrong');btns[q.correct_index].classList.add('correct');fb.innerHTML='✗ &nbsp;Leider falsch. Die richtige Antwort ist grün markiert.';fb.className='q-fb show fail';}
+  if(idx===correctIdx){btns[idx].classList.add('correct');correct++;fb.innerHTML='✓ &nbsp;Richtig! Sehr gut.';fb.className='q-fb show ok';}
+  else{btns[idx].classList.add('wrong');btns[correctIdx].classList.add('correct');fb.innerHTML='✗ &nbsp;Leider falsch. Die richtige Antwort ist grün markiert.';fb.className='q-fb show fail';}
   document.getElementById('qz-score').innerHTML=`Richtig: <strong>${correct}</strong>`;
   document.getElementById('qz-next').disabled=false;
 }
@@ -5071,23 +5154,27 @@ function updateLevelHint(){
 function toggleFinalExamMode(){
   const checked=document.getElementById('ki-final-exam').checked;
   document.getElementById('ki-final-exam-options').style.display=checked?'block':'none';
-  // In final exam mode, lock question count to 50
   const qSel=document.getElementById('ki-questions');
+  const slidesSel=document.getElementById('ki-slides');
+  const slidesRow=slidesSel?.closest('div');
   if(checked){
+    // Lock questions to 50
     qSel.disabled=true;
-    // Add/select 50 option
-    if(!qSel.querySelector('[value="50"]')){
+    if(!qSel.querySelector('[value="25"]')){
       const opt=document.createElement('option');
-      opt.value='50';opt.textContent='50 Fragen (Abschlusstest)';
+      opt.value='25';opt.textContent='25 Fragen (Abschlusstest)';
       qSel.appendChild(opt);
     }
-    qSel.value='50';
+    qSel.value='25';
+    // Hide slides selector — no slides in final exam
+    if(slidesRow) slidesRow.style.display='none';
     document.getElementById('ki-btn-text').textContent='🏆 Abschlusstest generieren';
   } else {
     qSel.disabled=false;
-    const opt50=qSel.querySelector('[value="50"]');
+    const opt50=qSel.querySelector('[value="25"]');
     if(opt50) opt50.remove();
     qSel.value='3';
+    if(slidesRow) slidesRow.style.display='';
     document.getElementById('ki-btn-text').textContent='✨ Kurs generieren';
   }
 }
@@ -5123,14 +5210,14 @@ async function generateCourse(){
   showKiMsg(waitMsg, 'ok');
 
   const finalExamInstructions = isFinalExam
-    ? `\nDies ist ein ABSCHLUSSTEST-MODUS:\n- Generiere genau 50 Fragen\n- Fragen müssen das gesamte Themengebiet umfassend abdecken\n- Verteile die Schwierigkeit: 30% leicht, 50% mittel, 20% schwer\n- ${examTypes==='mixed'?'Mische Multiple Choice (70%) und Szenario-basierte Fragen (30%) wo opt_a/b/c/d konkrete Situationen beschreiben':'Nur Multiple Choice Fragen'}\n- Bestehensschwelle: ${passThreshold}%\n- Keine Wiederholungen, jede Frage prüft einen anderen Aspekt\n`
+    ? `\nDies ist ein ABSCHLUSSTEST-MODUS:\n- Generiere genau ${numQuestions} Fragen\n- KEINE Slides erstellen — das slides-Array muss leer sein: "slides": []\n- Fragen müssen das gesamte Themengebiet umfassend abdecken\n- Verteile die Schwierigkeit: 30% leicht, 50% mittel, 20% schwer\n- ${examTypes==='mixed'?'Mische Multiple Choice (70%) und Szenario-basierte Fragen (30%) wo opt_a/b/c/d konkrete Situationen beschreiben':'Nur Multiple Choice Fragen'}\n- Bestehensschwelle: ${passThreshold}%\n- Keine Wiederholungen, jede Frage prüft einen anderen Aspekt\n`
     : '';
 
   const prompt = 'Du bist ein Experte für Energiewirtschaft und erstellst Lernkurse für Fachkräfte.\n\n' +
     'Erstelle einen vollständigen Lernkurs zum Thema: "' + topic + '"\n' +
     'Schwierigkeitsgrad: ' + level + '\n' +
     'Niveau-Anweisung: ' + (levelDescriptions[level]||'') + '\n' +
-    'Anzahl Slides: ' + numSlides + '\n' +
+    'Anzahl Slides: ' + (isFinalExam ? '0 (kein Lerninhalt, nur Prüfung)' : numSlides) + '\n' +
     'Anzahl Testfragen: ' + numQuestions + '\n' +
     finalExamInstructions + '\n' +
     'Antworte NUR mit einem gültigen JSON-Objekt, ohne Markdown-Formatierung, ohne Backticks, ohne Kommentare.\n\n' +
@@ -5343,11 +5430,112 @@ function showKiMsg(text, type){
 initTheme();
 
 // ── AI IMPORT ──
-let aiPdfBase64=null,aiPdfName=null,aiGeneratedData=null;
+let aiPdfFiles=[];
+let aiGeneratedData=null;
+const AI_MAX_FILES=4;
+
+// ── MULTI-PDF HANDLING ──
+function renderPdfChips(){
+  const list=document.getElementById('ai-pdf-chips');
+  list.innerHTML='';
+  aiPdfFiles.forEach((f,i)=>{
+    const chip=document.createElement('div');
+    chip.style.cssText='display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:.5rem .8rem;font-size:13px;';
+    chip.innerHTML=
+      '<span style="font-size:16px">📄</span>'+
+      '<span style="flex:1;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+f.name+'</span>'+
+      '<span style="font-size:11px;color:var(--text3);flex-shrink:0">'+Math.round(f.size/1024)+' KB</span>'+
+      '<button style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:16px;padding:0 2px;line-height:1" onclick="removePdfFile('+i+')" title="Entfernen">×</button>';
+    list.appendChild(chip);
+  });
+  // Show/hide zones
+  const hasFiles=aiPdfFiles.length>0;
+  document.getElementById('ai-drop-zone').style.display=hasFiles?'none':'block';
+  document.getElementById('ai-file-list').style.display=hasFiles?'block':'none';
+  document.getElementById('ai-options').style.display=hasFiles?'block':'none';
+  // Disable add button if max reached
+  const addBtn=document.querySelector('#ai-file-list .btn-sec');
+  if(addBtn){
+    addBtn.disabled=aiPdfFiles.length>=AI_MAX_FILES;
+    addBtn.textContent=aiPdfFiles.length>=AI_MAX_FILES?'Max. 4 PDFs erreicht':'+ Weitere hinzufügen';
+  }
+}
+
+function removePdfFile(i){
+  aiPdfFiles.splice(i,1);
+  if(aiPdfFiles.length===0) resetAiUpload();
+  else renderPdfChips();
+}
+
+function openAiFilePicker(){
+  if(aiPdfFiles.length>=AI_MAX_FILES){showAiMsg('Maximal '+AI_MAX_FILES+' PDFs erlaubt.','err');return;}
+  document.getElementById('ai-file-input').click();
+}
+
+function handleAiFileSelect(e){
+  const files=Array.from(e.target.files);
+  files.forEach(f=>handleAiFile(f));
+  e.target.value=''; // reset so same file can be re-added after removal
+}
+
+function handleAiFile(file){
+  if(!file.name.toLowerCase().endsWith('.pdf')){showAiMsg('Nur PDF-Dateien werden unterstützt.','err');return;}
+  if(aiPdfFiles.length>=AI_MAX_FILES){showAiMsg('Maximal '+AI_MAX_FILES+' PDFs erlaubt.','err');return;}
+  if(aiPdfFiles.some(f=>f.name===file.name)){showAiMsg('"'+file.name+'" wurde bereits hinzugefügt.','err');return;}
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    aiPdfFiles.push({name:file.name,base64:ev.target.result.split(',')[1],size:file.size});
+    document.getElementById('ai-msg').className='msg';
+    renderPdfChips();
+  };
+  reader.readAsDataURL(file);
+}
 
 async function loadApiKey(){
   try{const{data}=await sb.from('app_settings').select('value').eq('key','anthropic_api_key').single();return data?.value||null;}
   catch(e){return null;}
+}
+
+// ── DAILY GENERATION LIMIT (3/day global per API key) ──
+const AI_DAILY_LIMIT = 3;
+
+async function getTodayUsageCount(){
+  const todayStart = new Date();
+  todayStart.setHours(0,0,0,0);
+  try{
+    const{count}=await sb.from('ai_usage')
+      .select('*',{count:'exact',head:true})
+      .gte('created_at', todayStart.toISOString());
+    return count||0;
+  }catch(e){return 0;}
+}
+
+async function recordAiUsage(){
+  try{await sb.from('ai_usage').insert({user_id:currentUser.id,created_at:new Date().toISOString()});}
+  catch(e){}
+}
+
+async function checkDailyLimit(){
+  const used = await getTodayUsageCount();
+  return {allowed: used < AI_DAILY_LIMIT, used, remaining: Math.max(0, AI_DAILY_LIMIT - used)};
+}
+
+async function refreshDailyLimitDisplay(){
+  const el=document.getElementById('ai-daily-usage');
+  if(!el) return;
+  const {used,remaining}=await checkDailyLimit();
+  const pct=Math.round((used/AI_DAILY_LIMIT)*100);
+  const color=remaining===0?'var(--red)':remaining===1?'var(--amber)':'var(--green)';
+  el.innerHTML=
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">'+
+      '<span style="font-size:12px;font-weight:600;color:var(--text2)">⚡ Generierungen heute</span>'+
+      '<span style="font-size:12px;font-weight:700;color:'+color+'">'+used+' / '+AI_DAILY_LIMIT+'</span>'+
+    '</div>'+
+    '<div style="height:5px;background:var(--border2);border-radius:3px;overflow:hidden">'+
+      '<div style="height:100%;width:'+pct+'%;background:'+color+';border-radius:3px;transition:width .4s"></div>'+
+    '</div>'+
+    (remaining===0?'<div style="font-size:11px;color:var(--red);margin-top:5px">Tageslimit erreicht – morgen wieder verfügbar.</div>':
+     remaining===1?'<div style="font-size:11px;color:var(--amber);margin-top:5px">Noch 1 Generierung heute übrig.</div>':'');
 }
 
 async function saveApiKey(){
@@ -5405,29 +5593,71 @@ async function initAiImport(){
     zone._inited=true;
     zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
     zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
-    zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)handleAiFile(f);});
+    zone.addEventListener('drop',e=>{
+      e.preventDefault();zone.classList.remove('drag-over');
+      Array.from(e.dataTransfer.files).slice(0,AI_MAX_FILES).forEach(f=>handleAiFile(f));
+    });
   }
+  refreshDailyLimitDisplay();
 }
 
-function openAiFilePicker(){document.getElementById('ai-file-input').click();}
-function handleAiFileSelect(e){const f=e.target.files[0];if(f)handleAiFile(f);}
+function openAiFilePicker(){
+  if(aiPdfFiles.length>=AI_MAX_FILES){showAiMsg('Maximal '+AI_MAX_FILES+' PDFs erlaubt.','err');return;}
+  document.getElementById('ai-file-input').click();
+}
+function handleAiFileSelect(e){
+  Array.from(e.target.files).forEach(f=>handleAiFile(f));
+  e.target.value='';
+}
 
 function handleAiFile(file){
   if(!file.name.toLowerCase().endsWith('.pdf')){showAiMsg('Nur PDF-Dateien werden unterstützt.','err');return;}
+  if(aiPdfFiles.length>=AI_MAX_FILES){showAiMsg('Maximal '+AI_MAX_FILES+' PDFs erlaubt.','err');return;}
+  if(aiPdfFiles.some(f=>f.name===file.name)){showAiMsg('"'+file.name+'" wurde bereits hinzugefügt.','err');return;}
   const reader=new FileReader();
-  reader.onload=e=>{
-    aiPdfBase64=e.target.result.split(',')[1];aiPdfName=file.name;
-    document.getElementById('ai-drop-zone').style.display='none';
-    document.getElementById('ai-file-info').textContent='📄 '+file.name+' ('+Math.round(file.size/1024)+' KB)';
-    document.getElementById('ai-options').style.display='block';
+  reader.onload=ev=>{
+    aiPdfFiles.push({name:file.name,base64:ev.target.result.split(',')[1],size:file.size});
     document.getElementById('ai-msg').className='msg';
+    renderPdfChips();
   };
   reader.readAsDataURL(file);
 }
 
+function renderPdfChips(){
+  const list=document.getElementById('ai-pdf-chips');
+  if(!list) return;
+  list.innerHTML='';
+  aiPdfFiles.forEach((f,i)=>{
+    const chip=document.createElement('div');
+    chip.style.cssText='display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:.5rem .8rem;font-size:13px;';
+    chip.innerHTML=
+      '<span style="font-size:16px">📄</span>'+
+      '<span style="flex:1;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+f.name+'</span>'+
+      '<span style="font-size:11px;color:var(--text3);flex-shrink:0">'+Math.round(f.size/1024)+' KB</span>'+
+      '<button style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:18px;padding:0 2px;line-height:1" onclick="removePdfFile('+i+')" title="Entfernen">×</button>';
+    list.appendChild(chip);
+  });
+  const hasFiles=aiPdfFiles.length>0;
+  document.getElementById('ai-drop-zone').style.display=hasFiles?'none':'block';
+  document.getElementById('ai-file-list').style.display=hasFiles?'block':'none';
+  document.getElementById('ai-options').style.display=hasFiles?'block':'none';
+  const addBtn=document.querySelector('#ai-file-list .btn-sec');
+  if(addBtn){
+    addBtn.disabled=aiPdfFiles.length>=AI_MAX_FILES;
+    addBtn.textContent=aiPdfFiles.length>=AI_MAX_FILES?'Max. 4 PDFs erreicht':'+ Weitere hinzufügen';
+  }
+}
+
+function removePdfFile(i){
+  aiPdfFiles.splice(i,1);
+  if(aiPdfFiles.length===0) resetAiUpload();
+  else renderPdfChips();
+}
+
 function resetAiUpload(){
-  aiPdfBase64=null;aiPdfName=null;aiGeneratedData=null;
+  aiPdfFiles=[];aiGeneratedData=null;
   document.getElementById('ai-drop-zone').style.display='block';
+  document.getElementById('ai-file-list').style.display='none';
   document.getElementById('ai-options').style.display='none';
   document.getElementById('ai-progress').style.display='none';
   document.getElementById('ai-preview').style.display='none';
@@ -5435,55 +5665,136 @@ function resetAiUpload(){
   document.getElementById('ai-file-input').value='';
   const specField=document.getElementById('ai-spec-input');
   if(specField) specField.value='';
+  // Reset new fields
+  const examCb=document.getElementById('ai-final-exam');
+  if(examCb){examCb.checked=false;toggleAiFinalExamMode();}
+  const diff=document.getElementById('ai-difficulty');
+  if(diff){diff.value='Fortgeschritten';updateAiLevelHint();}
+}
+
+function updateAiLevelHint(){
+  const level=document.getElementById('ai-difficulty')?.value;
+  const hint=document.getElementById('ai-level-hint');
+  if(hint&&level) hint.textContent=LEVEL_HINTS[level]||'';
+}
+
+function toggleAiFinalExamMode(){
+  const checked=document.getElementById('ai-final-exam').checked;
+  document.getElementById('ai-final-exam-options').style.display=checked?'block':'none';
+  const qSel=document.getElementById('ai-questions-count');
+  const slidesSel=document.getElementById('ai-slides-count');
+  const slidesRow=slidesSel?.closest('div');
+  if(checked){
+    qSel.disabled=true;
+    if(!qSel.querySelector('[value="25"]')){
+      const opt=document.createElement('option');
+      opt.value='25';opt.textContent='25 Fragen (Abschlusstest)';
+      qSel.appendChild(opt);
+    }
+    qSel.value='25';
+    if(slidesRow) slidesRow.style.display='none';
+  } else {
+    qSel.disabled=false;
+    const opt50=qSel.querySelector('[value="25"]');
+    if(opt50) opt50.remove();
+    qSel.value='8';
+    if(slidesRow) slidesRow.style.display='';
+  }
 }
 
 async function generateCourseFromPdf(){
   const key=await loadApiKey();
-  if(!key||!aiPdfBase64){showAiMsg('KI-Generator nicht eingerichtet. Bitte einen Admin kontaktieren.','err');return;}
+  if(!key||!aiPdfFiles.length){showAiMsg('Bitte mindestens eine PDF-Datei hochladen.','err');return;}
+
+  // Daily limit check
+  const {allowed, remaining} = await checkDailyLimit();
+  if(!allowed){
+    showAiMsg('⚡ Tageslimit erreicht ('+AI_DAILY_LIMIT+' Generierungen/Tag). Morgen wieder verfügbar.','err');
+    refreshDailyLimitDisplay();
+    return;
+  }
+
   const slidesCount=document.getElementById('ai-slides-count').value;
   const questionsCount=document.getElementById('ai-questions-count').value;
   const questionTypes=document.getElementById('ai-question-types').value;
   const courseColor=document.getElementById('ai-course-color').value||'#10b981';
   const userSpec=(document.getElementById('ai-spec-input')?.value||'').trim();
+  const difficulty=document.getElementById('ai-difficulty')?.value||'Fortgeschritten';
+  const isFinalExam=document.getElementById('ai-final-exam')?.checked||false;
+  const passThreshold=isFinalExam?parseInt(document.getElementById('ai-pass-threshold')?.value||70):70;
+
+  const levelDescriptions={
+    'Einsteiger':'Einfache Sprache, Grundbegriffe erklaeren, keine Vorkenntnisse voraussetzen.',
+    'Fortgeschritten':'Fachbegriffe ohne lange Erklaerung verwenden, praktisches Anwendungswissen pruefen.',
+    'Experte':'Tiefes Fachwissen, komplexe Regelwerke und Berechnungen, Expertenniveau.',
+    'Zertifizierung':'Pruefungsrelevantes Niveau, alle Details, Fristen, Paragraphen und Ausnahmen abdecken.'
+  };
+
   document.getElementById('ai-options').style.display='none';
+  document.getElementById('ai-file-list').style.display='none';
   document.getElementById('ai-progress').style.display='block';
-  document.getElementById('ai-progress-text').textContent='EnergyAcademy KI liest das PDF...';
+  const progText=document.getElementById('ai-progress-text');
+  const progSub=document.getElementById('ai-progress-sub');
+  progText.textContent=aiPdfFiles.length>1?'EnergyAcademy KI liest '+aiPdfFiles.length+' PDFs…':'EnergyAcademy KI liest das PDF…';
+  if(progSub) progSub.textContent=isFinalExam?'Das kann 30–60 Sekunden dauern':'Das kann 15–30 Sekunden dauern';
+
   const typeInstructions=questionTypes==='mc'
     ?'Erstelle ausschliesslich Multiple Choice Fragen (question_type: "multiple_choice").'
     :questionTypes==='interactive'
     ?'Erstelle ausschliesslich interaktive Fragen: sort (Reihenfolge), match (Zuordnung).'
     :'Mische: multiple_choice (50%), sort Reihenfolge (25%), match Zuordnung (25%). sort: opt_a/b/c/d=4 Schritte, correct_order="[0,1,2,3]". match: opt_a/b/c/d=Begriffe, match_a/b/c/d=Definitionen, correct_order="[0,1,2,3]".';
+
+  const finalExamInstructions=isFinalExam
+    ?'ABSCHLUSSTEST-MODUS: Generiere genau '+questionsCount+' Fragen. Decke alle Dokumente lueckenlos ab. Verteile Schwierigkeit: 30% leicht, 50% mittel, 20% schwer. Bestehensschwelle: '+passThreshold+'%. Keine Wiederholungen.':'';
+
+  const multiDocNote=aiPdfFiles.length>1
+    ?'Es werden '+aiPdfFiles.length+' Dokumente gleichzeitig analysiert. Erstelle einen zusammenhaengenden Kurs der alle Dokumente abdeckt. Vergib einen passenden Gesamttitel.':'';
+
   const prompt=[
-    'Analysiere das PDF und erstelle einen Lernkurs.',
+    'Analysiere die Dokumente und erstelle einen Lernkurs.',
+    multiDocNote,
+    'Schwierigkeitsgrad: '+difficulty+'. Niveau: '+(levelDescriptions[difficulty]||''),
     'Antworte NUR mit einem JSON-Objekt ohne Markdown-Backticks.',
     slidesCount+' Slides, '+questionsCount+' Fragen.',
     userSpec?'BESONDERE ANWEISUNGEN (hoechste Prioritaet, unbedingt beachten): '+userSpec+' ---':'',
-    typeInstructions,
-    'Format: {"title":"Titel","icon":"Emoji","icon_bg":"#0c1a2e","tag_bg":"#0c1a2e","tag_color":"'+courseColor+'","btn_color":"'+courseColor+'",',
+    finalExamInstructions,typeInstructions,
+    'Format: {"title":"Titel","icon":"Emoji","icon_bg":"#0c1a2e","tag_bg":"#0c1a2e","tag_color":"'+courseColor+'","btn_color":"'+courseColor+'","difficulty":"'+difficulty+'","is_final_exam":'+isFinalExam+',"pass_threshold":'+passThreshold+',',
     '"slides":[{"tag":"Tag","title":"Titel","content":"HTML","stat1_num":null,"stat1_lbl":null,"stat2_num":null,"stat2_lbl":null,"stat3_num":null,"stat3_lbl":null}],',
     '"questions":[{"question_type":"multiple_choice","question":"Frage?","opt_a":"A","opt_b":"B","opt_c":"C","opt_d":"D","correct_index":0,"correct_order":null,"match_a":null,"match_b":null,"match_c":null,"match_d":null,"scenario":null}]}',
-    'Regeln: Keine Anfuehrungszeichen in Strings. Alle Felder angeben (null wenn leer). Fachlich praezise aus dem Dokument.'
-  ].join(' ')
+    'Regeln: Keine Anfuehrungszeichen in Strings. Alle Felder angeben (null wenn leer). Fachlich praezise aus den Dokumenten.'
+  ].join(' ');
+
+  const contentBlocks=[
+    ...aiPdfFiles.map(f=>({type:'document',source:{type:'base64',media_type:'application/pdf',data:f.base64}})),
+    {type:'text',text:prompt}
+  ];
+
   try{
-    document.getElementById('ai-progress-text').textContent='EnergyAcademy KI erstellt Slides und Fragen...';
+    progText.textContent='EnergyAcademy KI erstellt Slides und Fragen...';
     const response=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:8000,messages:[{role:'user',content:[{type:'document',source:{type:'base64',media_type:'application/pdf',data:aiPdfBase64}},{type:'text',text:prompt}]}]})
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:16000,messages:[{role:'user',content:contentBlocks}]})
     });
     if(!response.ok){const err=await response.json();throw new Error(err.error?.message||'API Fehler '+response.status);}
-    document.getElementById('ai-progress-text').textContent='Kurs wird aufbereitet...';
+    progText.textContent='Kurs wird aufbereitet...';
     const result=await response.json();
     const rawText=result.content.map(b=>b.type==='text'?b.text:'').join('');
     const cleaned=rawText.replace(/^```json?\s*/,'').replace(/\s*```$/,'').trim();
     let data;
     try{data=JSON.parse(cleaned);}
     catch(e){const m=cleaned.match(/\{[\s\S]*\}/);if(m)data=JSON.parse(m[0]);else throw new Error('JSON-Fehler: '+e.message);}
+    data.difficulty=data.difficulty||difficulty;
+    data.is_final_exam=data.is_final_exam??isFinalExam;
+    data.pass_threshold=data.pass_threshold||passThreshold;
+    await recordAiUsage();
+    refreshDailyLimitDisplay();
     aiGeneratedData=data;
     document.getElementById('ai-progress').style.display='none';
     showAiPreview(data);
   }catch(err){
     document.getElementById('ai-progress').style.display='none';
+    document.getElementById('ai-file-list').style.display='block';
     document.getElementById('ai-options').style.display='block';
     showAiMsg('Fehler: '+err.message,'err');
   }
