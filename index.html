@@ -3699,7 +3699,7 @@ function renderQ(){
   document.getElementById('qz-score').innerHTML='Richtig: <strong>'+correct+'</strong>';
   document.getElementById('q-segs').innerHTML=c.questions.map((_,i)=>'<div class="q-seg '+(i<qi?'done':i===qi?'cur':'')+'"></div>').join('');
   const nb=document.getElementById('qz-next');nb.disabled=true;nb.style.background=c.btn_color||'#10b981';
-  nb.textContent=qi===total-1?t('quiz.finish'):t('quiz.next');
+  nb.textContent=qi===total-1?'Ergebnis →':'Nächste →';
   const container=document.getElementById('q-opts');container.innerHTML='';
   const type=q.question_type||'multiple_choice';
   _shuffledCorrectIndex=null; // reset for each question; renderMCQ sets it if MC
