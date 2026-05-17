@@ -3924,9 +3924,9 @@ async function showResult(){
   document.getElementById('res-course').textContent=c.title;
   document.getElementById('res-icon').textContent=pass?'✓':'✗';
   document.getElementById('res-icon').className='res-icon '+(pass?'r-pass':'r-fail');
-  document.getElementById('res-title').textContent=pass?t('result.passed'):t('result.failed');
+  document.getElementById('res-title').textContent=pass?'Kurs abgeschlossen!':'Nicht bestanden';
   document.getElementById('res-sub').textContent=pass
-    ?t('result.passed_msg_course').replace('{title}',c.title).replace('{pct}',pct)
+    ?'Herzlichen Glückwunsch! Du hast „'+c.title+'" mit '+pct+' % abgeschlossen.'
     :'Du hast '+pct+' % erreicht. Zum Bestehen sind mindestens 70 % nötig.';
   document.getElementById('res-c').textContent=correct;
   document.getElementById('res-t').textContent=total;
