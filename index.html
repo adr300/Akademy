@@ -871,7 +871,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 <div id="loading" class="loading-screen">
   <div class="spinner"></div>
-  <div class="loading-text" data-i18n="misc.loading">EnergyAcademy wird geladen…</div>
+  <div class="loading-text">EnergyAcademy wird geladen…</div>
 </div>
 
 <div id="screen-login" style="display:none;width:100%">
@@ -904,7 +904,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
     <div class="nav-right">
       <div class="nav-chip" id="nav-progress">0 / 0 abgeschlossen</div>
       <button class="nav-chip" onclick="showWiki()" style="cursor:pointer;border:none;background:var(--bg3)" title="Wiki">📖 Wiki</button>
-      <button class="theme-toggle" id="lang-toggle" onclick="toggleLang()" title="Sprache / Language" style="font-size:13px;font-weight:600">EN</button>
+      
       <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Hell/Dunkel umschalten">🌙</button>
       <div id="admin-tab-switch" style="display:none">
         <div class="tab-switch">
@@ -916,7 +916,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <div class="nav-avatar" id="nav-avatar">?</div><span class="nav-level-pill" id="nav-level">Lv.1</span>
         <span id="nav-email"></span>
       </div>
-      <button class="btn-logout" onclick="logout()" data-i18n="nav.logout">Abmelden</button>
+      <button class="btn-logout" onclick="logout()">Abmelden</button>
     </div>
   </nav>
   <!-- XP BAR -->
@@ -926,7 +926,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <div class="xp-label" id="xp-label">Level 1 · 0 XP</div>
       <div class="xp-title" id="xp-title">🔌 Steckdosen-Azubi</div>
     </div>
-    <button class="xp-profile-btn" onclick="showProfile()" data-i18n="nav.achievements">🏅 Meine Erfolge</button>
+    <button class="xp-profile-btn" onclick="showProfile()">🏅 Meine Erfolge</button>
   </div>
 
   <!-- USER VIEW -->
@@ -1031,7 +1031,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
           </div>
           <div class="xp-gained-badge" id="res-xp" style="display:none"></div>
           <div class="res-btns">
-            <button class="btn-cta" id="res-cta" onclick="showDash()" data-i18n="result.back">Zur Kursübersicht</button>
+            <button class="btn-cta" id="res-cta" onclick="showDash()">Zur Kursübersicht</button>
             <!-- cert button moved to learning path -->
             <button class="btn-sec" onclick="retry()">Test wiederholen</button>
           </div>
@@ -1051,6 +1051,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <div style="padding:2rem;overflow-y:auto;flex:1">
           <!-- XP Progress -->
           <div class="profile-xp-card" id="profile-xp-card"></div>
+          <!-- Freigeschaltete Leveltitel -->
+          <div style="margin-top:1.5rem">
+            <div class="sec-title" style="margin-bottom:.75rem">🏷️ Freigeschaltete Titel</div>
+            <div id="level-titles-grid" style="display:flex;flex-direction:column;gap:8px"></div>
+          </div>
           <!-- Badges -->
           <div style="margin-top:2rem">
             <div class="sec-title" style="margin-bottom:1rem">Badges</div>
@@ -1431,7 +1436,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
         <div class="sa-stat-card"><div class="sa-stat-num" id="sa-total-managers">–</div><div class="sa-stat-lbl">Manager</div></div>
         <div class="sa-stat-card"><div class="sa-stat-num" id="sa-total-courses">–</div><div class="sa-stat-lbl">Kurse</div></div>
         <div class="sa-stat-card"><div class="sa-stat-num" id="sa-total-completions">–</div><div class="sa-stat-lbl">Abschlüsse</div></div>
-        <div class="sa-stat-card"><div class="sa-stat-num" id="sa-ai-imports">–</div><div class="sa-stat-lbl">KI-Imports</div></div>
+        <div class="sa-stat-card"><div class="sa-stat-num" id="sa-total-paths">–</div><div class="sa-stat-lbl">Lernpfade</div></div>
         <div class="sa-stat-card"><div class="sa-stat-num" id="sa-active-today">–</div><div class="sa-stat-lbl">Aktiv heute</div></div>
       </div>
 
@@ -1836,7 +1841,7 @@ async function loadSuperAdmin(){
     document.getElementById('sa-total-courses').textContent=(crs||[]).length;
     document.getElementById('sa-total-completions').textContent=(prog||[]).filter(p=>p.completed).length;
     document.getElementById('sa-active-today').textContent=new Set((sessions||[]).map(s=>s.user_id)).size;
-    document.getElementById('sa-ai-imports').textContent=(crs||[]).length+' Kurse';
+    document.getElementById('sa-total-paths').textContent=learningPaths.length;
 
     if(allUsersData.length===0){
       // user_emails view might be empty — show helpful message
@@ -2555,99 +2560,6 @@ document.addEventListener('click', () => hideWikiTooltip());
 // ── INIT ──
 
 // ── I18N MULTILANGUAGE ──
-let currentLang=localStorage.getItem('ea-lang')||'de';
-
-const TRANSLATIONS={
-de:{
-  'nav.logout':'Abmelden','nav.achievements':'🏅 Meine Erfolge','nav.progress':'abgeschlossen',
-  'misc.loading':'EnergyAcademy wird geladen…','misc.error':'Fehler beim Laden.',
-  'quiz.next':'Nächste →','quiz.finish':'Ergebnis →',
-  'result.passed':'Kurs abgeschlossen!','result.failed':'Nicht bestanden',
-  'result.passed_msg_course':'Herzlichen Glückwunsch! Du hast &bdquo;{title}&rdquo; mit {pct} % abgeschlossen.',
-  'result.failed_msg':'Leider nicht bestanden. Du benötigst mindestens 70 %.',
-  'result.back':'Zur Kursübersicht','result.retry':'Nochmal versuchen',
-  'report.title':'⚑ Inhalt melden','btn.send_report':'Meldung senden',
-  'course.back':'← Zurück','course.next':'Weiter →',
-  'sidebar.platform':'Plattform','sidebar.content':'Inhalte',
-  'sidebar.team':'Team','sidebar.analyse':'Analyse','sidebar.import':'Import',
-  'sidebar.courses':'Kurse','sidebar.paths':'Lernpfade',
-  'sidebar.assignments':'Pflicht-Kurse','sidebar.teams':'Teams',
-  'sidebar.progress':'Fortschritt','sidebar.leaderboard':'Leaderboard',
-  'sidebar.analytics':'Analytics','sidebar.reports':'Meldungen',
-  'sidebar.ai_import':'KI-Import','sidebar.html_import':'HTML Import',
-  'btn.save':'Speichern','btn.cancel':'Abbrechen','btn.delete':'Löschen',
-  'dash.paths':'Lernpfade','dash.courses':'Alle Kurse','dash.start':'Kurs starten',
-  'dash.completed':'Abgeschlossen','dash.locked':'Gesperrt',
-  'prog.completed':'Abgeschlossen','prog.not_completed':'Nicht abgeschlossen',
-  'prog.retry':'Nicht bestanden – erneut versuchen',
-},
-en:{
-  'nav.logout':'Sign out','nav.achievements':'🏅 My Achievements','nav.progress':'completed',
-  'misc.loading':'Loading EnergyAcademy…','misc.error':'Error loading.',
-  'quiz.next':'Next →','quiz.finish':'Finish →',
-  'result.passed':'Course completed!','result.failed':'Not passed',
-  'result.passed_msg_course':'Congratulations! You completed &ldquo;{title}&rdquo; with {pct}%.',
-  'result.failed_msg':'Not passed. You need at least 70%.',
-  'result.back':'Back to courses','result.retry':'Try again',
-  'report.title':'⚑ Report content','btn.send_report':'Send report',
-  'course.back':'← Back','course.next':'Next →',
-  'sidebar.platform':'Platform','sidebar.content':'Content',
-  'sidebar.team':'Team','sidebar.analyse':'Analytics','sidebar.import':'Import',
-  'sidebar.courses':'Courses','sidebar.paths':'Learning Paths',
-  'sidebar.assignments':'Mandatory Courses','sidebar.teams':'Teams',
-  'sidebar.progress':'Progress','sidebar.leaderboard':'Leaderboard',
-  'sidebar.analytics':'Analytics','sidebar.reports':'Reports',
-  'sidebar.ai_import':'AI Import','sidebar.html_import':'HTML Import',
-  'btn.save':'Save','btn.cancel':'Cancel','btn.delete':'Delete',
-  'dash.paths':'Learning Paths','dash.courses':'All Courses','dash.start':'Start course',
-  'dash.completed':'Completed','dash.locked':'Locked',
-  'prog.completed':'Completed','prog.not_completed':'Not completed',
-  'prog.retry':'Not passed – try again',
-}};
-
-function t(key){return(TRANSLATIONS[currentLang]||TRANSLATIONS.de)[key]||(TRANSLATIONS.de)[key]||key;}
-
-function toggleLang(){
-  currentLang=currentLang==='de'?'en':'de';
-  localStorage.setItem('ea-lang',currentLang);
-  const btn=document.getElementById('lang-toggle');
-  if(btn)btn.textContent=currentLang==='de'?'EN':'DE';
-  applyTranslations();
-}
-
-function applyTranslations(){
-  // Static elements with data-i18n
-  document.querySelectorAll('[data-i18n]').forEach(el=>{
-    const k=el.dataset.i18n;
-    if(el.tagName==='INPUT'||el.tagName==='TEXTAREA') el.placeholder=t(k);
-    else el.innerHTML=t(k);
-  });
-  // Nav progress chip
-  const chip=document.getElementById('nav-progress');
-  if(chip){const m=chip.textContent.match(/\d+/g);if(m&&m.length>=2)chip.textContent=m[0]+' / '+m[1]+' '+t('nav.progress');}
-  // Sidebar group labels
-  const labelMap={'Plattform':'sidebar.platform','Platform':'sidebar.platform',
-    'Inhalte':'sidebar.content','Content':'sidebar.content',
-    'Team':'sidebar.team','Analyse':'sidebar.analyse','Analytics':'sidebar.analyse',
-    'Import':'sidebar.import'};
-  document.querySelectorAll('.sidebar-group-label').forEach(el=>{
-    const key=labelMap[el.textContent.trim()];
-    if(key)el.textContent=t(key);
-  });
-  // Sidebar items
-  const itemMap={'Kurse':'sidebar.courses','Courses':'sidebar.courses',
-    'Lernpfade':'sidebar.paths','Learning Paths':'sidebar.paths',
-    'Pflicht-Kurse':'sidebar.assignments','Mandatory Courses':'sidebar.assignments',
-    'Teams':'sidebar.teams','Fortschritt':'sidebar.progress','Progress':'sidebar.progress',
-    'Leaderboard':'sidebar.leaderboard','Meldungen':'sidebar.reports','Reports':'sidebar.reports',
-    'KI-Import':'sidebar.ai_import','AI Import':'sidebar.ai_import',
-    'HTML Import':'sidebar.html_import'};
-  document.querySelectorAll('.sidebar-label').forEach(el=>{
-    const key=itemMap[el.textContent.trim()];
-    if(key)el.textContent=t(key);
-  });
-}
-
 // ── THEME ──
 function applyTheme(theme){
   const btn=document.getElementById('theme-toggle');
@@ -2748,7 +2660,6 @@ async function setUser(user){
     updateXPBar();
     showDash();
     loadReportBadge();
-    setTimeout(applyTranslations,50);
   } catch(err){
     console.error('setUser failed:',err);
     // Show a friendly retry message instead of infinite loading
@@ -3036,8 +2947,9 @@ function updateXPBar(){
   // xp bar label
   const bar=document.getElementById('xp-bar-fill');
   const label=document.getElementById('xp-label');
+  const remaining=100-pct;
   if(bar) bar.style.width=pct+'%';
-  if(label) label.textContent='Level '+lvl+' · '+cur+' XP · '+pct+'% bis Level '+(lvl+1);
+  if(label) label.textContent='Level '+lvl+' · '+cur+' XP · '+remaining+'% bis Level '+(lvl+1);
   const titleEl=document.getElementById('xp-title');
   if(titleEl) titleEl.textContent=title;
   // new ring widget
@@ -3057,7 +2969,7 @@ function updateXPRing(lvl,cur,pct,title){
   const lvlTitle=document.getElementById('xp-ring-title');
   if(lvlNum) lvlNum.textContent=lvl;
   if(xpNum) xpNum.textContent=cur.toLocaleString('de-DE')+' XP';
-  if(xpPct) xpPct.textContent=pct+'% bis Lv.'+(lvl+1);
+  if(xpPct) xpPct.textContent=(100-pct)+'% bis Lv.'+(lvl+1);
   if(lvlTitle) lvlTitle.textContent=title||getLevelTitle(lvl);
 }
 
@@ -4056,6 +3968,58 @@ function showProfile(){
       '</div>'+
     '</div>';
 
+  // Level Titles — show all unlocked titles, highlight current
+  const allTitles=[
+    [1,  '🔌 Steckdosen-Azubi'],
+    [2,  '💡 Glühbirnen-Flüsterer'],
+    [3,  '📋 Formular-Lehrling'],
+    [4,  '⚡ Zählerstand-Detektiv'],
+    [5,  '🔧 Schraubenzieher-Stratege'],
+    [6,  '📊 Excel-Schamane'],
+    [7,  '🗺️ Netzplan-Navigator'],
+    [8,  '📡 Messdaten-Mystiker'],
+    [9,  '⚖️ Paragraph-Jongleur'],
+    [10, '🏛️ GPKE-Gelehrter'],
+    [12, '🔮 Bilanzkreis-Seher'],
+    [15, '🧙 Marktpartner-Magier'],
+    [18, '🌩️ Hochspannungs-Helden'],
+    [20, '👑 Energiewirtschafts-Kaiser'],
+    [25, '🤖 KI-importierte Legende'],
+  ];
+  const currentTitle=getLevelTitle(lvl);
+  const unlockedTitles=allTitles.filter(([minLvl])=>lvl>=minLvl);
+  const nextTitle=allTitles.find(([minLvl])=>lvl<minLvl);
+
+  const titlesGrid=document.getElementById('level-titles-grid');
+  titlesGrid.innerHTML='';
+  // Show unlocked in reverse order (newest first)
+  [...unlockedTitles].reverse().forEach(([minLvl,name])=>{
+    const isCurrent=name===currentTitle;
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg2);border:1px solid '+(isCurrent?'var(--green)':'var(--border2)')+';border-radius:var(--rl);'+( isCurrent?'box-shadow:0 0 0 1px var(--green),0 0 12px rgba(16,185,129,0.1)':'');
+    row.innerHTML=
+      '<div style="font-size:22px;flex-shrink:0">'+name.split(' ')[0]+'</div>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-size:13px;font-weight:700;color:var(--text)">'+name.slice(name.indexOf(' ')+1)+'</div>'+
+        '<div style="font-size:11px;color:var(--text3);margin-top:2px">Freigeschaltet ab Level '+minLvl+'</div>'+
+      '</div>'+
+      (isCurrent?'<span style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;background:rgba(16,185,129,0.12);color:var(--green);border:1px solid rgba(16,185,129,0.3)">Aktiv</span>':'');
+    titlesGrid.appendChild(row);
+  });
+  // Show next locked title as teaser
+  if(nextTitle){
+    const[nextLvl,nextName]=nextTitle;
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);opacity:.5';
+    row.innerHTML=
+      '<div style="font-size:22px;flex-shrink:0">🔒</div>'+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-size:13px;font-weight:700;color:var(--text3)">??? (nächster Titel)</div>'+
+        '<div style="font-size:11px;color:var(--text3);margin-top:2px">Freischalten ab Level '+nextLvl+'</div>'+
+      '</div>';
+    titlesGrid.appendChild(row);
+  }
+
   // Badges grid
   const grid=document.getElementById('badge-grid');
   grid.innerHTML='';
@@ -4091,10 +4055,60 @@ function renderAdmin(){
       </div>
       <div class="admin-course-actions">
         <button class="btn-sm btn-edit" onclick="openCourseModal(${c.id})">Bearbeiten</button>
+        <button class="btn-sm" style="background:var(--bg3);color:var(--teal);border:1px solid var(--border2)" onclick="exportCourseAsHtml(${c.id})" title="Als HTML exportieren">⬇ HTML</button>
         <button class="btn-sm btn-del" onclick="deleteCourse(${c.id})">Löschen</button>
       </div>`;
     list.appendChild(div);
   });
+}
+
+function exportCourseAsHtml(courseId){
+  const c=courses.find(x=>x.id===courseId);
+  if(!c){alert('Kurs nicht gefunden.');return;}
+
+  const data={
+    title:c.title,
+    icon:c.icon||'📚',
+    icon_bg:c.icon_bg||'#0a1f18',
+    tag_bg:c.tag_bg||'#0a1f18',
+    tag_color:c.tag_color||'#10b981',
+    btn_color:c.btn_color||'#10b981',
+    slides:c.slides.map(s=>({
+      tag:s.tag,title:s.title,content:s.content,
+      stat1_num:s.stat1_num||null,stat1_lbl:s.stat1_lbl||null,
+      stat2_num:s.stat2_num||null,stat2_lbl:s.stat2_lbl||null,
+      stat3_num:s.stat3_num||null,stat3_lbl:s.stat3_lbl||null
+    })),
+    questions:c.questions.map(q=>({
+      question:q.question,
+      question_type:q.question_type||'multiple_choice',
+      opt_a:q.opt_a,opt_b:q.opt_b,opt_c:q.opt_c,opt_d:q.opt_d,
+      correct_index:q.correct_index,
+      correct_order:q.correct_order||null,
+      match_a:q.match_a||null,match_b:q.match_b||null,
+      match_c:q.match_c||null,match_d:q.match_d||null,
+      scenario:q.scenario||null
+    }))
+  };
+
+  const json=JSON.stringify(data,null,2);
+  const html=`<!--ENERGYACADEMY_COURSE-->\n${json}\n<!--/ENERGYACADEMY_COURSE-->`;
+  const blob=new Blob([html],{type:'text/html;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  // Safe filename: replace special chars
+  const safeName=c.title.replace(/[^a-zA-Z0-9äöüÄÖÜß\-_\s]/g,'').replace(/\s+/g,'_').slice(0,60);
+  a.href=url;a.download=`EnergyAcademy_${safeName}.html`;
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url);a.remove();},500);
+
+  // Toast confirmation
+  const msg=document.createElement('div');msg.className='xp-toast';
+  msg.style.cssText+='border-color:var(--teal);color:var(--teal)';
+  msg.innerHTML='⬇ Kurs exportiert';
+  document.body.appendChild(msg);
+  setTimeout(()=>msg.classList.add('show'),50);
+  setTimeout(()=>{msg.classList.remove('show');setTimeout(()=>msg.remove(),400);},2000);
 }
 
 async function toggleCoursePublish(courseId, currentlyPublished){
@@ -4903,36 +4917,56 @@ function showProgressDetail(uid){
 // ── RESET PROGRESS ──
 async function resetProgress(userId, userEmail, courseIndex){
   const course=courses[courseIndex];
-  if(!confirm('Fortschritt von "'+userEmail+'" für "'+(course?.title||'diesem Kurs')+'" wirklich zurücksetzen?\nDies löscht auch die Lernzeit-Daten.')) return;
+  if(!course){alert('Kurs nicht gefunden (Index '+courseIndex+').');return;}
+  if(!confirm('Fortschritt von "'+userEmail+'" für "'+course.title+'" wirklich zurücksetzen?\nDies löscht auch die Lernzeit-Daten.')) return;
   try{
-    const[{error:e1},{error:e2}]=await Promise.all([
-      sb.from('user_progress').delete().eq('user_id',userId).eq('course_index',courseIndex),
-      sb.from('learning_sessions').delete().eq('user_id',userId).eq('course_id',course?.id)
+    // Find all DB entries for this user that match either the current index or any index
+    // associated with this course (safeguard against index drift)
+    const userEntries=_progData.filter(r=>r.user_id===userId);
+    const matchingEntry=userEntries.find(r=>r.course_index===courseIndex);
+    const dbCourseIndex=matchingEntry?.course_index??courseIndex;
+
+    // Run all deletes in parallel
+    const[r1,r2,r3]=await Promise.all([
+      sb.from('user_progress').delete().eq('user_id',userId).eq('course_index',dbCourseIndex),
+      sb.from('learning_sessions').delete().eq('user_id',userId).eq('course_id',course.id),
+      sb.from('daily_completions').delete().eq('user_id',userId).eq('course_id',course.id)
     ]);
-    if(e1) throw e1;
-    if(e2) throw e2;
-    // Reload data, then re-render detail view for this user (not jump to list)
-    await loadAdminProgressData();
+
+    if(r1.error) throw r1.error;
+
+    // Directly update local cache — don't rely on DB reload (RLS may block reading other users' data)
+    _progData=_progData.filter(r=>!(r.user_id===userId&&r.course_index===dbCourseIndex));
+    _progSessions=_progSessions.filter(s=>!(s.user_id===userId&&s.course_id===course.id));
+
+    // Re-render with updated local cache
     showProgressDetail(userId);
+
     const msg=document.createElement('div');
     msg.className='xp-toast';msg.style.borderColor='var(--amber)';msg.style.color='var(--amber)';
     msg.innerHTML='↺ Fortschritt zurückgesetzt';
     document.body.appendChild(msg);
     setTimeout(()=>msg.classList.add('show'),50);
     setTimeout(()=>{msg.classList.remove('show');setTimeout(()=>msg.remove(),400);},2000);
-  }catch(err){alert('Fehler beim Zurücksetzen: '+err.message);}
+  }catch(err){
+    alert('Fehler beim Zurücksetzen: '+err.message);
+  }
 }
 
 async function resetAllProgress(userId, userEmail){
-  if(!confirm('GESAMTEN Fortschritt von "'+userEmail+'" zurücksetzen?\nAlle Kurse und Lernzeiten werden gelöscht.')) return;
+  if(!confirm('GESAMTEN Fortschritt von "'+userEmail+'" zurücksetzen?\nAlle Kurse, Lernzeiten und Tagesaufgaben werden gelöscht.')) return;
   try{
-    const[{error:e1},{error:e2}]=await Promise.all([
+    const[{error:e1},{error:e2},{error:e3}]=await Promise.all([
       sb.from('user_progress').delete().eq('user_id',userId),
-      sb.from('learning_sessions').delete().eq('user_id',userId)
+      sb.from('learning_sessions').delete().eq('user_id',userId),
+      sb.from('daily_completions').delete().eq('user_id',userId)
     ]);
     if(e1) throw e1;
-    if(e2) throw e2;
-    await loadAdminProgressData();
+
+    // Update local cache directly
+    _progData=_progData.filter(r=>r.user_id!==userId);
+    _progSessions=_progSessions.filter(s=>s.user_id!==userId);
+
     showProgressUserList();
     renderProgressUserList();
     const msg=document.createElement('div');
@@ -5890,7 +5924,7 @@ init();
   <div class="modal-overlay" id="report-overlay" onclick="closeReportModal()" style="display:none;z-index:200">
   <div class="modal" id="report-modal" style="max-width:480px" onclick="event.stopPropagation()">
     <div class="modal-head">
-      <div class="modal-title" data-i18n="report.title">⚑ Inhalt melden</div>
+      <div class="modal-title">⚑ Inhalt melden</div>
       
     </div>
     <div id="report-context" style="background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:.75rem 1rem;font-size:13px;color:var(--text2);margin-bottom:1rem;"></div>
@@ -5912,7 +5946,7 @@ init();
     </div>
     <div class="modal-actions" style="margin-top:1.25rem">
       <button class="btn-sec" onclick="closeReportModal()">Abbrechen</button>
-      <button class="btn-add" id="report-submit-btn" onclick="submitReport()" data-i18n="btn.send_report">Meldung senden</button>
+      <button class="btn-add" id="report-submit-btn" onclick="submitReport()">Meldung senden</button>
     </div>
     <div class="msg" id="report-msg" style="margin-top:.75rem"></div>
   </div>
