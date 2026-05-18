@@ -2609,7 +2609,9 @@ async function init(){
   const{data:{session},error}=await sb.auth.getSession();
 
   if(error){
-    console.error('Session error:',error);
+    console.warn('Session error:',error.message);
+    // Clear broken session data and show login
+    try{await sb.auth.signOut();}catch(e){}
     showLogin();
     return;
   }
@@ -2622,6 +2624,13 @@ async function init(){
 
   // Listen for future auth changes (login, logout, token refresh)
   sb.auth.onAuthStateChange(async(event,session)=>{
+    if(event==='TOKEN_REFRESH_ERROR'){
+      // Broken/expired refresh token — clear it and show login cleanly
+      await sb.auth.signOut();
+      currentUser=null;isAdmin=false;isManager=false;
+      showLogin();
+      return;
+    }
     if(loading) return; // prevent double calls
     if(event==='SIGNED_IN' && session && !currentUser){
       loading=true;
