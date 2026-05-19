@@ -2695,10 +2695,44 @@ async function loginEmail(){
   const pw=document.getElementById('pw-input').value;
   if(!email||!pw){showLoginMsg('Bitte E-Mail und Passwort eingeben.','err');return;}
   const btn=document.getElementById('email-btn');btn.disabled=true;btn.textContent='…';
-  const{error}=await(isRegister?sb.auth.signUp({email,password:pw}):sb.auth.signInWithPassword({email,password:pw}));
+
+  let error=null, session=null;
+  if(isRegister){
+    const{data,error:e}=await sb.auth.signUp({email,password:pw});
+    error=e; session=data?.session;
+  } else {
+    const{data,error:e}=await sb.auth.signInWithPassword({email,password:pw});
+    error=e; session=data?.session;
+  }
+
   btn.disabled=false;btn.textContent=isRegister?'Registrieren':'Anmelden';
-  if(error){showLoginMsg(error.message,'err');return;}
-  if(isRegister)showLoginMsg('Bestätigungsmail gesendet!','ok');
+  if(error){
+    let msg=error.message;
+    if(error.status===429||msg.toLowerCase().includes('rate limit')||msg.toLowerCase().includes('too many')||msg.toLowerCase().includes('email rate')){
+      msg='Zu viele Versuche – bitte einige Minuten warten und erneut versuchen.';
+    } else if(msg.includes('Invalid login credentials')){
+      msg='E-Mail oder Passwort falsch.';
+    } else if(msg.includes('Email not confirmed')){
+      msg='Bitte zuerst die Bestätigungs-E-Mail bestätigen.';
+    } else if(msg.includes('User already registered')){
+      msg='Diese E-Mail-Adresse ist bereits registriert.';
+    } else if(msg.includes('Password should be')){
+      msg='Passwort muss mindestens 6 Zeichen lang sein.';
+    }
+    showLoginMsg(msg,'err');return;
+  }
+
+  if(isRegister){
+    if(session){
+      // Confirm email disabled → user is immediately logged in
+      await setUser(session.user);
+    } else {
+      // Confirm email enabled → show success and switch to login
+      showLoginMsg('Konto erstellt! Bitte E-Mail bestätigen und anschließend anmelden.','ok');
+      toggleRegister();
+    }
+    return;
+  }
 }
 function toggleMode(){
   isRegister=!isRegister;
@@ -3652,7 +3686,14 @@ function showScreen(id){
 function startCourse(idx){
   ci=idx;si=0;
   startSession(courses[idx].id);
-  renderSlide();showScreen('screen-slides');
+  // Final exam courses have no slides — go directly to quiz
+  if(!courses[idx].slides||courses[idx].slides.length===0){
+    correct=0;qi=0;
+    showScreen('screen-slides');
+    startQuiz();
+  } else {
+    renderSlide();showScreen('screen-slides');
+  }
 }
 
 function renderSlide(){
