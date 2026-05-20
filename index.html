@@ -2790,6 +2790,7 @@ async function setUser(user){
     // Load all data — each function has its own try/catch so failures are safe
     await Promise.allSettled([loadCourses(),loadProgress(),loadTeams(),loadAssignments(),loadPaths(),loadXP()]);
     loadThemeFromDb(); // load user's saved theme preference (non-blocking)
+    flushPendingSessions(); // retry any sessions that failed to save
     document.getElementById('loading').style.display='none';
     document.getElementById('screen-login').style.display='none';
     document.getElementById('main-app').style.display='block';
@@ -3231,17 +3232,82 @@ async function saveProgress(courseId,score){
 
 // ── SESSION TRACKING ──
 function startSession(courseId){
+  // Save any existing session first (if user jumped between courses)
+  _flushSessionToStorage();
   sessionStart=Date.now();
   currentSessionCourseId=courseId;
+  // Backup to localStorage so we can recover if page closes unexpectedly
+  localStorage.setItem('ea_active_session',JSON.stringify({courseId,start:sessionStart,userId:currentUser?.id}));
+}
+
+function _flushSessionToStorage(){
+  // Write current elapsed time to localStorage as a safety backup
+  if(!sessionStart||!currentSessionCourseId) return;
+  const secs=Math.round((Date.now()-sessionStart)/1000);
+  if(secs<5) return;
+  localStorage.setItem('ea_active_session',JSON.stringify({
+    courseId:currentSessionCourseId,
+    start:sessionStart,
+    userId:currentUser?.id,
+    elapsed:secs
+  }));
 }
 
 async function endSession(){
   if(!sessionStart||!currentSessionCourseId) return;
   const secs=Math.round((Date.now()-sessionStart)/1000);
-  if(secs<5){sessionStart=null;currentSessionCourseId=null;return;}
-  await sb.from('learning_sessions').insert({user_id:currentUser.id,course_id:currentSessionCourseId,seconds_spent:secs});
+  const courseId=currentSessionCourseId; // save before nulling
   sessionStart=null;currentSessionCourseId=null;
+  localStorage.removeItem('ea_active_session');
+  if(secs<5) return;
+  try{
+    await sb.from('learning_sessions').insert({
+      user_id:currentUser.id,
+      course_id:courseId,
+      seconds_spent:secs,
+      started_at:new Date(Date.now()-secs*1000).toISOString()
+    });
+  }catch(e){
+    const pending=JSON.parse(localStorage.getItem('ea_pending_sessions')||'[]');
+    pending.push({user_id:currentUser.id,course_id:courseId,seconds_spent:secs,started_at:new Date(Date.now()-secs*1000).toISOString()});
+    localStorage.setItem('ea_pending_sessions',JSON.stringify(pending));
+  }
 }
+
+async function flushPendingSessions(){
+  // Retry any sessions that failed to save
+  const pending=JSON.parse(localStorage.getItem('ea_pending_sessions')||'[]');
+  if(!pending.length) return;
+  try{
+    await sb.from('learning_sessions').insert(pending);
+    localStorage.removeItem('ea_pending_sessions');
+  }catch(e){}
+}
+
+// Save session on page hide (tab switch, close, navigate away)
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden'&&sessionStart&&currentSessionCourseId){
+    // Use sendBeacon for reliable delivery on page close
+    const secs=Math.round((Date.now()-sessionStart)/1000);
+    if(secs>=5&&currentUser){
+      const body=JSON.stringify([{user_id:currentUser.id,course_id:currentSessionCourseId,seconds_spent:secs,started_at:new Date(Date.now()-secs*1000).toISOString()}]);
+      const url=`https://tpwfeqdljiyxfaeebvsm.supabase.co/rest/v1/learning_sessions`;
+      const sent=navigator.sendBeacon&&navigator.sendBeacon(url+'?apikey='+SB_KEY,new Blob([body],{type:'application/json'}));
+      if(!sent){
+        // Fallback: save to localStorage
+        const pending=JSON.parse(localStorage.getItem('ea_pending_sessions')||'[]');
+        pending.push({user_id:currentUser.id,course_id:currentSessionCourseId,seconds_spent:secs});
+        localStorage.setItem('ea_pending_sessions',JSON.stringify(pending));
+      }
+      // Reset so we don't double-count
+      sessionStart=Date.now(); // reset start so if tab comes back we track fresh
+    }
+  }
+  if(document.visibilityState==='visible'&&currentSessionCourseId){
+    // Tab came back into focus — reset start time
+    sessionStart=Date.now();
+  }
+});
 
 function fmtTime(secs){
   if(!secs||secs<60) return secs+'s';
