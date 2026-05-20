@@ -400,11 +400,11 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .path-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:2rem;}
 .path-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rx);padding:1.5rem;transition:border-color .2s,transform .18s;animation:fadeUp .4s ease both;}
 .path-card:hover{border-color:var(--border2);transform:translateY(-2px);}
-.path-card-head{display:flex;align-items:center;gap:12px;margin-bottom:1rem;}
+.path-card-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:1rem;}
 .path-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--bg3);border:1px solid var(--border2);flex-shrink:0;}
-.path-title{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.2px;}
+.path-title{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:800;color:var(--text);letter-spacing:-.2px;word-break:break-word;}
 .path-meta{font-size:12px;color:var(--text3);margin-top:2px;}
-.path-pct{margin-left:auto;font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:var(--path-color,var(--green));}
+.path-pct{margin-left:auto;flex-shrink:0;font-family:'Bricolage Grotesque',sans-serif;font-size:20px;font-weight:800;color:var(--path-color,var(--green));padding-left:8px;}
 .path-prog-track{height:3px;background:var(--border2);border-radius:2px;margin-bottom:1.25rem;overflow:hidden;}
 .path-prog-fill{height:100%;border-radius:2px;background:var(--path-color,var(--green));transition:width .5s ease;}
 .path-steps{display:flex;flex-direction:column;}
@@ -4686,7 +4686,7 @@ function renderUserPaths(){
     card.innerHTML=
       '<div class="path-card-head">'+
         '<div class="path-icon">'+p.icon+'</div>'+
-        '<div>'+
+        '<div style="flex:1;min-width:0">'+
           '<div class="path-title">'+p.title+'</div>'+
           '<div class="path-meta">'+done+' / '+total+' Kurse abgeschlossen</div>'+
         '</div>'+
