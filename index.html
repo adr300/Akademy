@@ -3719,23 +3719,34 @@ async function renderDailyChallenge(){
   });
 
   // ── Pick today's course ──
+  const todayStr=new Date().toISOString().slice(0,10);
+  const lockKey='daily_course_'+todayStr+'_'+currentUser.id;
   const dayOfYear=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/(1000*60*60*24));
   let todayCourse=null;
   let isRepetition=false;
 
-  if(availableCourses.length){
-    // Normal mode: next unlocked, uncompleted course
-    todayCourse=availableCourses[dayOfYear%availableCourses.length];
-  } else if(completedCourses.length){
-    // All paths done → repetition mode
-    todayCourse=completedCourses[dayOfYear%completedCourses.length];
-    isRepetition=true;
-  } else if(courses.length){
-    // No paths assigned / edge case → any course
-    todayCourse=courses[dayOfYear%courses.length];
-  } else {
-    el.innerHTML='<div class="dc-eyebrow">⚡ Tagesaufgabe</div><div style="color:var(--text3);font-size:13px;padding:.5rem 0">Noch keine Kurse verfügbar.</div>';
-    return;
+  // Check if today's course was already locked in (prevents switching after completion)
+  const lockedCourseId=localStorage.getItem(lockKey);
+  if(lockedCourseId){
+    todayCourse=courses.find(c=>c.id===parseInt(lockedCourseId));
+    isRepetition=completedCourses.some(c=>c.id===parseInt(lockedCourseId));
+  }
+
+  if(!todayCourse){
+    // First time today — pick and lock the course
+    if(availableCourses.length){
+      todayCourse=availableCourses[dayOfYear%availableCourses.length];
+    } else if(completedCourses.length){
+      todayCourse=completedCourses[dayOfYear%completedCourses.length];
+      isRepetition=true;
+    } else if(courses.length){
+      todayCourse=courses[dayOfYear%courses.length];
+    } else {
+      el.innerHTML='<div class="dc-eyebrow">⚡ Tagesaufgabe</div><div style="color:var(--text3);font-size:13px;padding:.5rem 0">Noch keine Kurse verfügbar.</div>';
+      return;
+    }
+    // Lock it for the rest of the day
+    localStorage.setItem(lockKey, String(todayCourse.id));
   }
 
   const courseIdx=courses.findIndex(c=>c.id===todayCourse.id);
