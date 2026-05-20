@@ -3504,6 +3504,7 @@ function adminTab(tab){
   if(tab==='teams') renderTeams();
   if(tab==='assignments') renderAssignments();
   if(tab==='import') initDropZone();
+  if(tab==='ai-import') initAiImport();
   if(tab==='zeitplan') initZeitplan();
   if(tab==='paths') renderPaths();
   if(tab==='leaderboard') loadLeaderboard();
@@ -5885,8 +5886,15 @@ function handleAiFile(file){
 }
 
 async function loadApiKey(){
-  try{const{data}=await sb.from('app_settings').select('value').eq('key','anthropic_api_key').single();return data?.value||null;}
-  catch(e){return null;}
+  // Session cache — avoids repeated DB round-trips within same session
+  const cached=sessionStorage.getItem('ea_api_key');
+  if(cached) return cached==='__null__'?null:cached;
+  try{
+    const{data}=await sb.from('app_settings').select('value').eq('key','anthropic_api_key').single();
+    const val=data?.value||null;
+    sessionStorage.setItem('ea_api_key', val||'__null__');
+    return val;
+  }catch(e){return null;}
 }
 
 // ── DAILY GENERATION LIMIT (3/day global per API key) ──
@@ -5938,6 +5946,7 @@ async function saveApiKey(){
   m.textContent='Wird gespeichert...';m.style.color='var(--text3)';
   try{
     await sb.from('app_settings').upsert({key:'anthropic_api_key',value:key,updated_at:new Date().toISOString()},{onConflict:'key'});
+    sessionStorage.removeItem('ea_api_key'); // invalidate cache
     m.textContent='✓ EnergyAcademy KI-Generator aktiviert';m.style.color='var(--green)';
     setTimeout(()=>{document.getElementById('ai-setup-card').style.display='none';document.getElementById('ai-upload-area').style.display='block';},800);
   }catch(err){m.textContent='Fehler: '+err.message;m.style.color='var(--red)';}
@@ -5945,6 +5954,7 @@ async function saveApiKey(){
 
 async function clearApiKey(){
   try{await sb.from('app_settings').delete().eq('key','anthropic_api_key');}catch(e){}
+  sessionStorage.removeItem('ea_api_key'); // invalidate cache
   document.getElementById('ai-api-key').value='';
   document.getElementById('ai-setup-card').style.display='block';
   document.getElementById('ai-upload-area').style.display='none';
