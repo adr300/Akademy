@@ -2982,7 +2982,14 @@ async function loadXP(){
   try{const{data}=await sb.from('badges').select('*').order('sort_order');allBadges=data||[];}
   catch(e){allBadges=[];}
 
-  try{const{data}=await sb.from('leaderboard').select('*').limit(5);leaderboardData=data||[];}
+  try{
+    const[{data:lbData},{data:admData}]=await Promise.all([
+      sb.from('leaderboard').select('*').limit(10),
+      sb.from('admins').select('user_id')
+    ]);
+    const adminIds=new Set((admData||[]).map(a=>a.user_id));
+    leaderboardData=(lbData||[]).filter(row=>isAdmin||!adminIds.has(row.user_id)).slice(0,5);
+  }
   catch(e){leaderboardData=[];console.warn('Leaderboard nicht verfuegbar:',e.message);}
 
   try{
@@ -5629,11 +5636,18 @@ async function loadLeaderboard(){
   const tbody=document.getElementById('lb-tbody');
   if(!tbody)return;
   tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:2rem">Wird geladen…</td></tr>';
-  const{data,error}=await sb.from('leaderboard').select('*').limit(50);
-  if(error||!data){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--red);padding:2rem">Fehler beim Laden.</td></tr>';return;}
+  const[{data},{data:admData}]=await Promise.all([
+    sb.from('leaderboard').select('*').limit(50),
+    sb.from('admins').select('user_id')
+  ]);
+  if(!data){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--red);padding:2rem">Fehler beim Laden.</td></tr>';return;}
+
+  const adminIds=new Set((admData||[]).map(a=>a.user_id));
+  const filtered=isAdmin?data:data.filter(row=>!adminIds.has(row.user_id));
+
   tbody.innerHTML='';
-  if(!data.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:2rem">Noch keine XP vergeben</td></tr>';return;}
-  data.forEach((row,i)=>{
+  if(!filtered.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:2rem">Noch keine XP vergeben</td></tr>';return;}
+  filtered.forEach((row,i)=>{
     const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
     const lvlBar=`<div style="display:flex;align-items:center;gap:6px"><span class="score-pill score-pass" style="font-size:10px">Lv.${row.level}</span><div style="width:60px;height:4px;background:var(--border2);border-radius:2px;overflow:hidden"><div style="height:100%;background:var(--green);width:${Math.min(100,Math.round(((row.total_xp-row.level*row.level*100)/((row.level+1)*(row.level+1)*100-row.level*row.level*100))*100))}%"></div></div></div>`;
     const tr=document.createElement('tr');
