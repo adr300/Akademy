@@ -3785,21 +3785,21 @@ async function renderDailyChallenge(){
     else availableCourses.push(c);
   });
 
-  // ── Pick today's course ──
+  // ── Pick today's course — deterministic first, then check DB status ──
   const todayStr=new Date().toISOString().slice(0,10);
   const lockKey='daily_course_'+todayStr+'_'+currentUser.id;
   const dayOfYear=Math.floor((Date.now()-new Date(new Date().getFullYear(),0,0))/(1000*60*60*24));
   let todayCourse=null;
   let isRepetition=false;
 
-  // 1. Check localStorage cache (same device, fast)
+  // Step 1: Check localStorage cache (fast, same device)
   const lockedCourseId=localStorage.getItem(lockKey);
   if(lockedCourseId){
     todayCourse=courses.find(c=>c.id===parseInt(lockedCourseId));
     isRepetition=completedCourses.some(c=>c.id===parseInt(lockedCourseId));
   }
 
-  // 2. Check DB — maybe user already started/completed on another device today
+  // Step 2: Check DB for today's entry (cross-device sync)
   if(!todayCourse){
     try{
       const{data}=await sb.from('daily_completions')
@@ -3810,13 +3810,12 @@ async function renderDailyChallenge(){
       if(data?.course_id){
         todayCourse=courses.find(c=>c.id===data.course_id);
         isRepetition=completedCourses.some(c=>c.id===data.course_id);
-        // Sync to localStorage so next render is fast
         if(todayCourse) localStorage.setItem(lockKey,String(todayCourse.id));
       }
     }catch(e){}
   }
 
-  // 3. First time today on any device — pick deterministically and lock
+  // Step 3: First time today — pick deterministically, lock in DB immediately
   if(!todayCourse){
     if(availableCourses.length){
       todayCourse=availableCourses[dayOfYear%availableCourses.length];
@@ -3830,6 +3829,13 @@ async function renderDailyChallenge(){
       return;
     }
     localStorage.setItem(lockKey,String(todayCourse.id));
+    // Lock course in DB immediately — so all other devices see the same course today
+    try{
+      await sb.from('daily_completions').upsert(
+        {user_id:currentUser.id,course_id:todayCourse.id,completed_date:todayStr,completed:false,bonus_xp:0},
+        {onConflict:'user_id,course_id,completed_date'}
+      );
+    }catch(e){}
   }
 
   const courseIdx=courses.findIndex(c=>c.id===todayCourse.id);
