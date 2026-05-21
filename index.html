@@ -1465,7 +1465,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
       <!-- Role filter -->
       <div style="display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap">
         <button class="btn-sec sa-filter active" data-filter="all" onclick="filterUsers('all')">Alle</button>
-        <button class="btn-sec sa-filter" data-filter="admin" onclick="filterUsers('admin')">Admins</button>
+        <button class="btn-sec sa-filter" data-filter="admin" onclick="filterUsers('admin')" id="filter-btn-admin">Admins</button>
         <button class="btn-sec sa-filter" data-filter="manager" onclick="filterUsers('manager')">Manager</button>
         <button class="btn-sec sa-filter" data-filter="user" onclick="filterUsers('user')">Nutzer</button>
       </div>
@@ -1901,6 +1901,9 @@ async function loadSuperAdmin(){
     }
 
     renderUserList(allUsersData);
+    // Hide "Admins" filter tab for managers
+    const adminFilterBtn=document.getElementById('filter-btn-admin');
+    if(adminFilterBtn) adminFilterBtn.style.display=isAdmin?'':'none';
   }catch(err){
     console.error('loadSuperAdmin:',err);
     document.getElementById('sa-user-list').innerHTML=
