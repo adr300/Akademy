@@ -3792,15 +3792,32 @@ async function renderDailyChallenge(){
   let todayCourse=null;
   let isRepetition=false;
 
-  // Check if today's course was already locked in (prevents switching after completion)
+  // 1. Check localStorage cache (same device, fast)
   const lockedCourseId=localStorage.getItem(lockKey);
   if(lockedCourseId){
     todayCourse=courses.find(c=>c.id===parseInt(lockedCourseId));
     isRepetition=completedCourses.some(c=>c.id===parseInt(lockedCourseId));
   }
 
+  // 2. Check DB — maybe user already started/completed on another device today
   if(!todayCourse){
-    // First time today — pick and lock the course
+    try{
+      const{data}=await sb.from('daily_completions')
+        .select('course_id')
+        .eq('user_id',currentUser.id)
+        .eq('completed_date',todayStr)
+        .maybeSingle();
+      if(data?.course_id){
+        todayCourse=courses.find(c=>c.id===data.course_id);
+        isRepetition=completedCourses.some(c=>c.id===data.course_id);
+        // Sync to localStorage so next render is fast
+        if(todayCourse) localStorage.setItem(lockKey,String(todayCourse.id));
+      }
+    }catch(e){}
+  }
+
+  // 3. First time today on any device — pick deterministically and lock
+  if(!todayCourse){
     if(availableCourses.length){
       todayCourse=availableCourses[dayOfYear%availableCourses.length];
     } else if(completedCourses.length){
@@ -3812,8 +3829,7 @@ async function renderDailyChallenge(){
       el.innerHTML='<div class="dc-eyebrow">⚡ Tagesaufgabe</div><div style="color:var(--text3);font-size:13px;padding:.5rem 0">Noch keine Kurse verfügbar.</div>';
       return;
     }
-    // Lock it for the rest of the day
-    localStorage.setItem(lockKey, String(todayCourse.id));
+    localStorage.setItem(lockKey,String(todayCourse.id));
   }
 
   const courseIdx=courses.findIndex(c=>c.id===todayCourse.id);
