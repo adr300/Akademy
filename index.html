@@ -1822,10 +1822,13 @@ async function loadSuperAdmin(){
   if(title) title.textContent=isAdmin?'👑 EnergyAcademy – Plattformverwaltung':'👥 Nutzerverwaltung';
 
   try{
-    // Load roles + stats in parallel — user list built from role tables + user_emails join
+    // Load roles — managers can only read managers table, admins can read both
+    const rolePromises=isAdmin
+      ? [sb.from('admins').select('user_id'), sb.from('managers').select('user_id')]
+      : [Promise.resolve({data:[]}), sb.from('managers').select('user_id')];
+
     const[{data:adm},{data:mgr},{data:crs},{data:prog},{data:sessions},{data:profiles}]=await Promise.all([
-      sb.from('admins').select('user_id'),
-      sb.from('managers').select('user_id'),
+      ...rolePromises,
       sb.from('courses').select('id'),
       sb.from('user_progress').select('user_id,completed').eq('completed',true),
       sb.from('learning_sessions').select('user_id,started_at').gte('started_at',new Date(Date.now()-86400000).toISOString()),
@@ -1835,21 +1838,48 @@ async function loadSuperAdmin(){
     allAdminsData=(adm||[]).map(a=>a.user_id);
     allManagersData=(mgr||[]).map(m=>m.user_id);
 
+    // Ensure current user's own role is always correct (RLS may block reading others)
+    if(isAdmin&&!allAdminsData.includes(currentUser.id)) allAdminsData.push(currentUser.id);
+    if(isManager&&!allManagersData.includes(currentUser.id)) allManagersData.push(currentUser.id);
+
+    // For managers: fetch admin IDs separately so we can exclude them from the list
+    // (managers can't read admins table, but we need to know who NOT to show)
+    if(!isAdmin){
+      try{
+        // Use a public-readable view or RPC if available, else use profiles role field
+        // Fallback: mark any user not in managers and not current user as potentially admin
+        // Best approach: add is_admin flag to profiles or use a separate query
+        const{data:adminCheck}=await sb.from('admins').select('user_id');
+        if(adminCheck) allAdminsData=(adminCheck||[]).map(a=>a.user_id);
+      }catch(e){
+        // RLS blocked — mark users not in managers + not in profiles as likely admin → exclude
+        allAdminsData=[];
+      }
+    }
+
     // Build from profiles table
     const emailMap={};
     (profiles||[]).forEach(u=>{emailMap[u.user_id]=u.email;});
 
-    // Also include admins/managers even if not in profiles yet
+    // Build user list:
+    // Admins see everyone (profiles + admins + managers)
+    // Managers see only profiles + managers (not admins)
     const knownIds=new Set([
       ...(profiles||[]).map(u=>u.user_id),
-      ...allAdminsData,
+      ...(isAdmin?allAdminsData:[]),
       ...allManagersData
     ]);
 
-    allUsersData=[...knownIds].map(id=>({
-      user_id:id,
-      email:emailMap[id]||'(kein Profil)'
-    }));
+    allUsersData=[...knownIds]
+      .map(id=>({user_id:id,email:emailMap[id]||null}))
+      // Managers: exclude admins and users with no profile who aren't managers
+      .filter(u=>{
+        if(isAdmin) return true; // admins see everyone
+        if(allAdminsData.includes(u.user_id)) return false; // hide admins
+        if(!u.email) return false; // hide profileless users (likely admins or system accounts)
+        return true;
+      })
+      .map(u=>({...u,email:u.email||'(kein Profil)'}));
 
     // Stats
     document.getElementById('sa-total-users').textContent=allUsersData.length;
