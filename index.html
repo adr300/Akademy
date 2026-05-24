@@ -7484,10 +7484,13 @@ function closeWelcome(){
     document.body.style.overflow='';
     if(currentUser){
       localStorage.setItem('bluuak_welcomed_'+currentUser.id,'1');
-      sb.from('profiles').upsert(
-        {user_id:currentUser.id, welcomed_at:new Date().toISOString()},
-        {onConflict:'user_id'}
-      ).catch(()=>{});
+      sb.from('profiles')
+        .upsert(
+          {user_id:currentUser.id, email:currentUser.email, welcomed_at:new Date().toISOString()},
+          {onConflict:'user_id'}
+        )
+        .then(({error})=>{ if(error) console.warn('welcomed_at save failed:',error.message); })
+        .catch(e=>console.warn('welcomed_at save error:',e));
     }
   },500);
 }
