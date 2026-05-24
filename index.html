@@ -1350,6 +1350,7 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
       <div class="login-title" id="login-title">Willkommen zurück</div>
       <div class="login-sub" id="login-sub">Melde dich an, um auf alle Kurse zuzugreifen.</div>
       <div class="login-email-form">
+        <input class="login-input" type="text" id="display-name-input" placeholder="Dein Name" style="display:none">
         <input class="login-input" type="email" id="email-input" placeholder="E-Mail-Adresse">
         <input class="login-input" type="password" id="pw-input" placeholder="Passwort">
         <button class="btn-email-login" id="email-btn" onclick="loginEmail()">Anmelden</button>
@@ -2394,7 +2395,7 @@ const SB_URL='https://tpwfeqdljiyxfaeebvsm.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwd2ZlcWRsaml5eGZhZWVidnNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MTY1MjQsImV4cCI6MjA5MzE5MjUyNH0.PdONNnswgVaoihmZvFlg_epv8M-QFQyMhamwX6nYvtM';
 const sb=supabase.createClient(SB_URL,SB_KEY);
 
-let currentUser=null,isAdmin=false,isManager=false,isRegister=false;
+let currentUser=null,isAdmin=false,isManager=false,isRegister=false,userDisplayName='';
 let courses=[],userProgress={},teams=[],assignments=[];
 let ci=0,si=0,qi=0,correct=0;
 let editCourseId=null,draftSlides=[],draftQuestions=[];
@@ -3368,12 +3369,29 @@ function initTheme(){
 async function loadThemeFromDb(){
   if(!currentUser) return;
   try{
-    const{data}=await sb.from('profiles').select('theme').eq('user_id',currentUser.id).single();
+    const{data}=await sb.from('profiles').select('theme,display_name').eq('user_id',currentUser.id).maybeSingle();
     if(data?.theme){
       applyTheme(data.theme);
       localStorage.setItem('ea-theme',data.theme);
     }
+    if(data?.display_name){
+      userDisplayName=data.display_name;
+      applyDisplayName(data.display_name);
+    }
   }catch(e){}
+}
+
+function applyDisplayName(name){
+  if(!name) return;
+  const parts=name.trim().split(/\s+/);
+  const first=parts[0];
+  const initials=(name[0]||'?').toUpperCase();
+  const dispEl=document.getElementById('nav-display-name');
+  if(dispEl) dispEl.textContent=first;
+  const avatarEl=document.getElementById('nav-avatar');
+  if(avatarEl) avatarEl.textContent=initials;
+  const ddName=document.getElementById('dropdown-name');
+  if(ddName) ddName.textContent=name;
 }
 
 async function init(){
@@ -3439,9 +3457,7 @@ async function setUser(user){
     const namePart=email.split('@')[0]||'?';
     // Avatar: first two chars (first+last initial if underscore/dot, else first two)
     const parts=namePart.split(/[._-]/);
-    const initials=parts.length>=2
-      ?(parts[0][0]+(parts[1][0]||'')).toUpperCase()
-      :namePart.slice(0,2).toUpperCase();
+    const initials=(namePart[0]||'?').toUpperCase();
     const displayName=parts.map(p=>p.charAt(0).toUpperCase()+p.slice(1)).join(' ');
 
     document.getElementById('nav-avatar').textContent=initials;
@@ -3544,8 +3560,15 @@ async function loginEmail(){
   }
 
   if(isRegister){
+    const displayNameVal=(document.getElementById('display-name-input')?.value||'').trim();
     if(session){
       // Confirm email disabled → user is immediately logged in
+      if(displayNameVal){
+        await sb.from('profiles').upsert(
+          {user_id:session.user.id, email, display_name:displayNameVal},
+          {onConflict:'user_id'}
+        ).catch(()=>{});
+      }
       await setUser(session.user);
     } else {
       // Confirm email enabled → show success and switch to login
@@ -3562,6 +3585,8 @@ function toggleMode(){
   document.getElementById('toggle-text').textContent=isRegister?'Bereits ein Konto?':'Noch kein Konto?';
   document.getElementById('toggle-link').textContent=isRegister?'Anmelden':'Registrieren';
   document.getElementById('email-btn').textContent=isRegister?'Registrieren':'Anmelden';
+  const nameInput=document.getElementById('display-name-input');
+  if(nameInput) nameInput.style.display=isRegister?'':'none';
 }
 function showLoginMsg(t,type){const el=document.getElementById('login-msg');el.textContent=t;el.className=`msg show ${type}`;}
 async function logout(){await sb.auth.signOut();}
@@ -5082,7 +5107,7 @@ function showProfile(){
   document.getElementById('profile-xp-chip').textContent=cur+' XP';
 
   // Profil-Avatar und Name (neue Elemente)
-  const initials=(currentUser?.email||'?').slice(0,2).toUpperCase();
+  const initials=((userDisplayName||currentUser?.email||'?')[0]).toUpperCase();
   const avatarEl=document.getElementById('profile-avatar-lg');
   const nameEl=document.getElementById('profile-name-lg');
   const emailEl=document.getElementById('profile-email-lg');
@@ -7461,14 +7486,14 @@ async function checkAndShowWelcome(){
 function openWelcome(){
   const w=document.getElementById('welcome');
   if(!w) return;
-  // Personalisierung: Vorname aus E-Mail ableiten
-  const email=currentUser?.email||'';
-  const firstName=email.split('@')[0].split(/[._-]/)[0];
-  const name=firstName?firstName.charAt(0).toUpperCase()+firstName.slice(1):'';
+  // Personalisierung: display_name bevorzugen, Fallback auf E-Mail
+  const rawName=userDisplayName||(currentUser?.email||'').split('@')[0].split(/[._-]/)[0];
+  const name=rawName?rawName.trim().split(/\s+/)[0]:'';
+  const capitalized=name?name.charAt(0).toUpperCase()+name.slice(1):'';
   const n1=document.getElementById('w-user-name');
   const n2=document.getElementById('w-user-name2');
-  if(n1&&name) n1.textContent=name+',';
-  if(n2&&name){ n2.textContent=name+'.'; n2.style.fontStyle='italic'; }
+  if(n1&&capitalized) n1.textContent=capitalized;
+  if(n2&&capitalized){ n2.textContent=capitalized+'.'; n2.style.fontStyle='italic'; }
   _welcomeStep=0;
   _updateWelcomeStep();
   w.classList.add('show');
