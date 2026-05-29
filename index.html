@@ -4019,24 +4019,25 @@ async function flushPendingSessions(){
 // Save session on page hide (tab switch, close, navigate away)
 document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='hidden'&&sessionStart&&currentSessionCourseId){
-    // Use sendBeacon for reliable delivery on page close
     const secs=Math.round((Date.now()-sessionStart)/1000);
     if(secs>=5&&currentUser){
-      const body=JSON.stringify([{user_id:currentUser.id,course_id:currentSessionCourseId,seconds_spent:secs,started_at:new Date(Date.now()-secs*1000).toISOString()}]);
-      const url=`https://tpwfeqdljiyxfaeebvsm.supabase.co/rest/v1/learning_sessions`;
-      const sent=navigator.sendBeacon&&navigator.sendBeacon(url+'?apikey='+SB_KEY,new Blob([body],{type:'application/json'}));
-      if(!sent){
-        // Fallback: save to localStorage
-        const pending=JSON.parse(localStorage.getItem('ea_pending_sessions')||'[]');
-        pending.push({user_id:currentUser.id,course_id:currentSessionCourseId,seconds_spent:secs});
-        localStorage.setItem('ea_pending_sessions',JSON.stringify(pending));
-      }
-      // Reset so we don't double-count
-      sessionStart=Date.now(); // reset start so if tab comes back we track fresh
+      const sessionData={user_id:currentUser.id,course_id:currentSessionCourseId,seconds_spent:secs,started_at:new Date(Date.now()-secs*1000).toISOString()};
+      // Always persist to localStorage first — guaranteed even on page close
+      const pending=JSON.parse(localStorage.getItem('ea_pending_sessions')||'[]');
+      pending.push(sessionData);
+      localStorage.setItem('ea_pending_sessions',JSON.stringify(pending));
+      // Try async DB save via authenticated Supabase client (works on tab switch, may not complete on close)
+      sb.from('learning_sessions').insert([sessionData]).then(({error})=>{
+        if(!error){
+          const p2=JSON.parse(localStorage.getItem('ea_pending_sessions')||'[]');
+          const idx=p2.findIndex(s=>s.user_id===sessionData.user_id&&s.course_id===sessionData.course_id&&s.started_at===sessionData.started_at);
+          if(idx>=0){p2.splice(idx,1);localStorage.setItem('ea_pending_sessions',JSON.stringify(p2));}
+        }
+      }).catch(()=>{});
+      sessionStart=Date.now();
     }
   }
   if(document.visibilityState==='visible'&&currentSessionCourseId){
-    // Tab came back into focus — reset start time
     sessionStart=Date.now();
   }
 });
@@ -6434,14 +6435,15 @@ async function resetProgress(userId, userEmail, courseIndex){
     const matchingEntry=userEntries.find(r=>r.course_index===courseIndex);
     const dbCourseIndex=matchingEntry?.course_index??courseIndex;
 
-    // Run all deletes in parallel
+    // Run all deletes in parallel — use .select() to detect silent RLS blocks (0 rows deleted)
     const[r1,r2,r3]=await Promise.all([
-      sb.from('user_progress').delete().eq('user_id',userId).eq('course_index',dbCourseIndex),
-      sb.from('learning_sessions').delete().eq('user_id',userId).eq('course_id',course.id),
-      sb.from('daily_completions').delete().eq('user_id',userId).eq('course_id',course.id)
+      sb.from('user_progress').delete().eq('user_id',userId).eq('course_index',dbCourseIndex).select(),
+      sb.from('learning_sessions').delete().eq('user_id',userId).eq('course_id',course.id).select(),
+      sb.from('daily_completions').delete().eq('user_id',userId).eq('course_id',course.id).select()
     ]);
 
     if(r1.error) throw r1.error;
+    if(!r1.data?.length) throw new Error('Keine Berechtigung: Bitte Admin-DELETE-Policy in Supabase hinzufügen (user_progress).');
 
     // Directly update local cache — don't rely on DB reload (RLS may block reading other users' data)
     _progData=_progData.filter(r=>!(r.user_id===userId&&r.course_index===dbCourseIndex));
@@ -6464,12 +6466,13 @@ async function resetProgress(userId, userEmail, courseIndex){
 async function resetAllProgress(userId, userEmail){
   if(!confirm('GESAMTEN Fortschritt von "'+userEmail+'" zurücksetzen?\nAlle Kurse, Lernzeiten und Tagesaufgaben werden gelöscht.')) return;
   try{
-    const[{error:e1},{error:e2},{error:e3}]=await Promise.all([
-      sb.from('user_progress').delete().eq('user_id',userId),
-      sb.from('learning_sessions').delete().eq('user_id',userId),
-      sb.from('daily_completions').delete().eq('user_id',userId)
+    const[r1,r2,r3]=await Promise.all([
+      sb.from('user_progress').delete().eq('user_id',userId).select(),
+      sb.from('learning_sessions').delete().eq('user_id',userId).select(),
+      sb.from('daily_completions').delete().eq('user_id',userId).select()
     ]);
-    if(e1) throw e1;
+    if(r1.error) throw r1.error;
+    if(r1.data!==null&&!r1.data.length) throw new Error('Keine Berechtigung: Bitte Admin-DELETE-Policy in Supabase hinzufügen (user_progress).');
 
     // Update local cache directly
     _progData=_progData.filter(r=>r.user_id!==userId);
