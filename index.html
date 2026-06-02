@@ -4827,12 +4827,14 @@ function nextSlide(){
 function startQuiz(){
   const c=courses[ci];
   if(!c.questions||!c.questions.length){finishWithoutQuiz();return;}
+  stopEmbeddedVideo();
   qi=0;correct=0;renderQ();showScreen('screen-quiz');
 }
 function retry(){startQuiz();}
 
 async function finishWithoutQuiz(){
   const c=courses[ci];
+  stopEmbeddedVideo();
   await endSession();
   await saveProgress(c.id,100);
   await awardXP(50);
@@ -5119,7 +5121,8 @@ async function showResult(){
   }
 }
 
-async function goBack(){await endSession();showDash();}
+function stopEmbeddedVideo(){const f=document.querySelector('#slide-body iframe');if(f)f.src='';}
+async function goBack(){stopEmbeddedVideo();await endSession();showDash();}
 
 function showProfile(){
   const lvl=userXP.level||1;
