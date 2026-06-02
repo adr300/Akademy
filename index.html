@@ -184,6 +184,8 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
 .slide-text strong{color:var(--text);font-weight:600;}
 .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:1.75rem;}
 .info-tile{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:1.1rem;text-align:center;}
+.slide-video{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:var(--rx);margin-bottom:1.5rem;}
+.slide-video iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0;border-radius:var(--rx);}
 .info-num{font-family:'Geist',system-ui,sans-serif;font-size:19px;font-weight:800;color:var(--green);}
 .info-lbl{font-size:11px;color:var(--text3);margin-top:5px;}
 .slide-foot{padding:1.1rem 1.5rem;border-top:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;background:var(--bg3);}
@@ -2289,6 +2291,7 @@ CREATE POLICY "admin_all" ON onboarding_plans USING (true) WITH CHECK (true);</p
       <div><label class="form-label">Tag-Farbe (Hintergrund)</label><input class="form-input" id="m-tag-bg" placeholder="#0a1f18"></div>
       <div><label class="form-label">Tag-Farbe (Text)</label><input class="form-input" id="m-tag-color" placeholder="#10b981"></div>
       <div class="form-full"><label class="form-label">Button-Farbe</label><input class="form-input" id="m-btn-color" placeholder="#10b981"></div>
+      <div class="form-full"><label class="form-label">Video-URL (optional, YouTube oder Vimeo)</label><input class="form-input" id="m-video-url" placeholder="https://www.youtube.com/watch?v=…"></div>
     </div>
     <div class="form-section">Slides</div>
     <div class="slide-list" id="slide-list"></div>
@@ -4743,14 +4746,25 @@ function showScreen(id){
 function startCourse(idx){
   ci=idx;si=0;
   startSession(courses[idx].id);
-  // Final exam courses have no slides — go directly to quiz
-  if(!courses[idx].slides||courses[idx].slides.length===0){
-    correct=0;qi=0;
-    showScreen('screen-slides');
-    startQuiz();
+  const c=courses[idx];
+  const hasSlides=c.slides&&c.slides.length>0;
+  const hasQuestions=c.questions&&c.questions.length>0;
+  if(!hasSlides){
+    if(hasQuestions){correct=0;qi=0;showScreen('screen-slides');startQuiz();}
+    else if(c.video_url){renderVideoOnlySlide();showScreen('screen-slides');}
+    else finishWithoutQuiz();
   } else {
     renderSlide();showScreen('screen-slides');
   }
+}
+
+function getEmbedUrl(url){
+  if(!url) return null;
+  const yt=url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  if(yt) return `https://www.youtube.com/embed/${yt[1]}`;
+  const vm=url.match(/vimeo\.com\/(\d+)/);
+  if(vm) return `https://player.vimeo.com/video/${vm[1]}`;
+  return url;
 }
 
 function renderSlide(){
@@ -4766,7 +4780,10 @@ function renderSlide(){
     const stats=[[s.stat1_num,s.stat1_lbl],[s.stat2_num,s.stat2_lbl],[s.stat3_num,s.stat3_lbl]].filter(x=>x[0]);
     vis=`<div class="info-grid">${stats.map(([n,l])=>`<div class="info-tile"><div class="info-num">${n}</div><div class="info-lbl">${l||''}</div></div>`).join('')}</div>`;
   }
+  const embedUrl=si===0?getEmbedUrl(c.video_url):null;
+  const videoHtml=embedUrl?`<div class="slide-video"><iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`:'';
   document.getElementById('slide-body').innerHTML=`
+    ${videoHtml}
     <div class="slide-tag" style="background:${s.tag_bg||c.tag_bg||'#141925'};color:${s.tag_color||c.tag_color||'#4f7cff'}">${s.tag||''}</div>
     <div class="slide-h">${s.title}</div>
     <div class="slide-text">${s.content||''}${vis}</div>`;
@@ -4775,16 +4792,62 @@ function renderSlide(){
   linkifyWikiTerms(document.querySelector('#slide-body .slide-text'));
   document.getElementById('btn-prev').style.visibility=si===0?'hidden':'visible';
   const nb=document.getElementById('btn-next');
-  nb.textContent=si===total-1?'Zum Test →':'Weiter →';
+  nb.onclick=nextSlide;
   nb.style.background=c.btn_color||'#4f7cff';
+  if(si===total-1) nb.textContent=(c.questions&&c.questions.length>0)?'Zum Test →':'Fertig →';
+  else nb.textContent='Weiter →';
+}
+
+function renderVideoOnlySlide(){
+  const c=courses[ci];
+  document.getElementById('sl-title').textContent=c.title;
+  document.getElementById('sl-sub').textContent='Video';
+  document.getElementById('sl-count').textContent='';
+  document.getElementById('sl-prog').style.width='0%';
+  document.getElementById('sl-prog').style.background=c.btn_color||'#4f7cff';
+  const embedUrl=getEmbedUrl(c.video_url);
+  document.getElementById('slide-body').innerHTML=embedUrl?`<div class="slide-video"><iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`:'';
+  document.getElementById('dots').innerHTML='';
+  document.getElementById('btn-prev').style.visibility='hidden';
+  const nb=document.getElementById('btn-next');
+  nb.textContent='Fertig →';
+  nb.style.background=c.btn_color||'#4f7cff';
+  nb.onclick=finishWithoutQuiz;
 }
 
 function prevSlide(){if(si>0){si--;renderSlide();}}
-function nextSlide(){const c=courses[ci];if(si<c.slides.length-1){si++;renderSlide();}else startQuiz();}
+function nextSlide(){
+  const c=courses[ci];
+  if(c.slides&&c.slides.length>0&&si<c.slides.length-1){si++;renderSlide();return;}
+  if(c.questions&&c.questions.length>0) startQuiz();
+  else finishWithoutQuiz();
+}
 
 // ── QUIZ ──
-function startQuiz(){qi=0;correct=0;renderQ();showScreen('screen-quiz');}
+function startQuiz(){
+  const c=courses[ci];
+  if(!c.questions||!c.questions.length){finishWithoutQuiz();return;}
+  qi=0;correct=0;renderQ();showScreen('screen-quiz');
+}
 function retry(){startQuiz();}
+
+async function finishWithoutQuiz(){
+  const c=courses[ci];
+  await endSession();
+  await saveProgress(c.id,100);
+  await awardXP(50);
+  document.getElementById('res-course').textContent=c.title;
+  document.getElementById('res-icon').textContent='✅';
+  document.getElementById('res-title').textContent='Kurs abgeschlossen!';
+  document.getElementById('res-sub').textContent='Du hast diesen Kurs erfolgreich abgeschlossen.';
+  document.getElementById('res-c').textContent='–';
+  document.getElementById('res-t').textContent='–';
+  document.getElementById('res-p').textContent='100%';
+  const xpEl=document.getElementById('res-xp');xpEl.style.display='block';xpEl.textContent='+50 XP';
+  document.getElementById('res-cta').onclick=showDash;
+  document.querySelector('#screen-result .btn-sec').style.display='none';
+  showScreen('screen-result');
+}
 
 function renderQ(){
   const c=courses[ci],q=c.questions[qi],total=c.questions.length;
@@ -5045,6 +5108,8 @@ async function showResult(){
   const xpEl=document.getElementById('res-xp');
   if(xpEl) xpEl.style.display=pass?'flex':'none';
   if(pass&&xpEl) xpEl.textContent='+'+xpGained+' XP';
+  const retryBtn=document.querySelector('#screen-result .btn-sec');
+  if(retryBtn) retryBtn.style.display='';
 
   showScreen('screen-result');
   // Launch completion animation for passing
@@ -6502,12 +6567,13 @@ function openCourseModal(courseId){
     document.getElementById('m-tag-bg').value=c.tag_bg||'';
     document.getElementById('m-tag-color').value=c.tag_color||'';
     document.getElementById('m-btn-color').value=c.btn_color||'';
+    document.getElementById('m-video-url').value=c.video_url||'';
     draftSlides=c.slides.map(s=>({...s}));
     draftQuestions=c.questions.map(q=>({...q}));
   } else {
     document.getElementById('modal-title').textContent='Kurs erstellen';
     document.getElementById('m-course-id').value='';
-    ['m-title','m-icon','m-icon-bg','m-tag-bg','m-tag-color','m-btn-color'].forEach(id=>document.getElementById(id).value='');
+    ['m-title','m-icon','m-icon-bg','m-tag-bg','m-tag-color','m-btn-color','m-video-url'].forEach(id=>document.getElementById(id).value='');
     draftSlides=[];draftQuestions=[];
   }
   renderDraftSlides();renderDraftQuestions();
@@ -6542,7 +6608,7 @@ function removeQ(i){draftQuestions.splice(i,1);renderDraftQuestions();}
 async function saveCourse(){
   const title=document.getElementById('m-title').value.trim();
   if(!title){alert('Bitte Kursname eingeben.');return;}
-  const courseData={title,icon:document.getElementById('m-icon').value||'📚',icon_bg:document.getElementById('m-icon-bg').value||'#141925',tag_bg:document.getElementById('m-tag-bg').value||'#141925',tag_color:document.getElementById('m-tag-color').value||'#4f7cff',btn_color:document.getElementById('m-btn-color').value||'#4f7cff',sort_order:courses.length};
+  const courseData={title,icon:document.getElementById('m-icon').value||'📚',icon_bg:document.getElementById('m-icon-bg').value||'#141925',tag_bg:document.getElementById('m-tag-bg').value||'#141925',tag_color:document.getElementById('m-tag-color').value||'#4f7cff',btn_color:document.getElementById('m-btn-color').value||'#4f7cff',video_url:document.getElementById('m-video-url').value.trim()||null,sort_order:courses.length};
   let courseId=editCourseId;
   if(courseId){
     await sb.from('courses').update(courseData).eq('id',courseId);
