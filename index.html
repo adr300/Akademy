@@ -1591,8 +1591,8 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
           <div class="xp-gained-badge" id="res-xp" style="display:none"></div>
           <div class="res-btns">
             <button class="btn-cta" id="res-cta" onclick="showDash()">Zur Kursübersicht</button>
-            <!-- cert button moved to learning path -->
-            <button class="btn-sec" onclick="retry()">Test wiederholen</button>
+            <button class="btn-sec" id="res-retry" onclick="retry()">Test wiederholen</button>
+            <button class="btn-sec" id="res-repeat" onclick="startCourse(ci)">Kurs wiederholen</button>
           </div>
         </div>
       </div>
@@ -2352,6 +2352,17 @@ CREATE POLICY "admin_all" ON onboarding_plans USING (true) WITH CHECK (true);</p
     <div class="modal-actions">
       <button class="btn-sec" onclick="closeModal('q-modal')">Abbrechen</button>
       <button class="btn-cta" style="background:var(--green)" onclick="saveQ()">Übernehmen</button>
+    </div>
+  </div>
+</div>
+
+<!-- REFLECTIONS MODAL -->
+<div class="modal-overlay" id="refl-modal">
+  <div class="modal" style="max-width:640px">
+    <div class="modal-title" id="refl-modal-title">Reflexionen</div>
+    <div id="refl-list" style="max-height:480px;overflow-y:auto;margin-top:1rem"></div>
+    <div class="modal-actions">
+      <button class="btn-cta" onclick="closeModal('refl-modal')">Schließen</button>
     </div>
   </div>
 </div>
@@ -4835,19 +4846,58 @@ function retry(){startQuiz();}
 async function finishWithoutQuiz(){
   const c=courses[ci];
   stopEmbeddedVideo();
+  if(c.video_url){
+    document.getElementById('sl-sub').textContent='Reflexion';
+    document.getElementById('sl-count').textContent='';
+    document.getElementById('sl-prog').style.width='100%';
+    document.getElementById('sl-prog').style.background=c.btn_color||'#4f7cff';
+    document.getElementById('slide-body').innerHTML=`
+      <div>
+        <div class="slide-h">Was hast du mitgenommen?</div>
+        <div class="slide-text" style="margin-bottom:1.5rem">Schreib kurz auf, was du aus diesem Video gelernt hast. Deine Antwort ist für den Manager einsehbar.</div>
+        <textarea id="reflection-input" class="form-textarea" placeholder="Meine wichtigsten Erkenntnisse aus diesem Video …" style="min-height:150px;width:100%;font-size:14px;line-height:1.7;resize:vertical;"></textarea>
+      </div>`;
+    document.getElementById('btn-prev').style.visibility='hidden';
+    document.getElementById('dots').innerHTML='';
+    const nb=document.getElementById('btn-next');
+    nb.textContent='Abschließen →';
+    nb.style.background=c.btn_color||'#4f7cff';
+    nb.onclick=submitVideoReflection;
+  } else {
+    await _completeCourseFinish();
+  }
+}
+
+async function submitVideoReflection(){
+  const text=(document.getElementById('reflection-input')?.value||'').trim();
+  if(!text){
+    const ta=document.getElementById('reflection-input');
+    if(ta){ta.style.borderColor='var(--red)';ta.focus();}
+    return;
+  }
+  const nb=document.getElementById('btn-next');
+  nb.disabled=true;nb.textContent='Wird gespeichert…';
+  try{await sb.from('video_reflections').insert({user_id:currentUser.id,course_id:courses[ci].id,reflection:text});}catch(e){}
+  nb.disabled=false;
+  await _completeCourseFinish();
+}
+
+async function _completeCourseFinish(){
+  const c=courses[ci];
   await endSession();
   await saveProgress(c.id,100);
   await awardXP(50);
   document.getElementById('res-course').textContent=c.title;
   document.getElementById('res-icon').textContent='✅';
   document.getElementById('res-title').textContent='Kurs abgeschlossen!';
-  document.getElementById('res-sub').textContent='Du hast diesen Kurs erfolgreich abgeschlossen.';
+  document.getElementById('res-sub').textContent=c.video_url?'Deine Reflexion wurde gespeichert.':'Du hast diesen Kurs erfolgreich abgeschlossen.';
   document.getElementById('res-c').textContent='–';
   document.getElementById('res-t').textContent='–';
   document.getElementById('res-p').textContent='100%';
   const xpEl=document.getElementById('res-xp');xpEl.style.display='block';xpEl.textContent='+50 XP';
   document.getElementById('res-cta').onclick=showDash;
-  document.querySelector('#screen-result .btn-sec').style.display='none';
+  document.getElementById('res-retry').style.display='none';
+  document.getElementById('res-repeat').style.display='';
   showScreen('screen-result');
 }
 
@@ -5110,8 +5160,8 @@ async function showResult(){
   const xpEl=document.getElementById('res-xp');
   if(xpEl) xpEl.style.display=pass?'flex':'none';
   if(pass&&xpEl) xpEl.textContent='+'+xpGained+' XP';
-  const retryBtn=document.querySelector('#screen-result .btn-sec');
-  if(retryBtn) retryBtn.style.display='';
+  document.getElementById('res-retry').style.display='';
+  document.getElementById('res-repeat').style.display='';
 
   showScreen('screen-result');
   // Launch completion animation for passing
@@ -5250,10 +5300,34 @@ function renderAdmin(){
       <div class="admin-course-actions">
         <button class="btn-sm btn-edit" onclick="openCourseModal(${c.id})">Bearbeiten</button>
         <button class="btn-sm" style="background:var(--bg3);color:var(--teal);border:1px solid var(--border2)" onclick="exportCourseAsHtml(${c.id})" title="Als HTML exportieren">⬇ HTML</button>
+        ${c.video_url?`<button class="btn-sm" style="background:var(--bg3);color:var(--green);border:1px solid var(--border2)" onclick="openReflectionsModal(${c.id})">💬 Reflexionen</button>`:''}
         <button class="btn-sm btn-del" onclick="deleteCourse(${c.id})">Löschen</button>
       </div>`;
     list.appendChild(div);
   });
+}
+
+async function openReflectionsModal(courseId){
+  const c=courses.find(x=>x.id===courseId);
+  document.getElementById('refl-modal-title').textContent='Reflexionen: '+c.title;
+  document.getElementById('refl-list').innerHTML='<div style="color:var(--text3);padding:1rem 0">Wird geladen…</div>';
+  openModal('refl-modal');
+  const{data:reflections}=await sb.from('video_reflections').select('user_id,reflection,created_at').eq('course_id',courseId).order('created_at',{ascending:false});
+  if(!reflections||!reflections.length){
+    document.getElementById('refl-list').innerHTML='<div style="color:var(--text3);padding:1rem 0">Noch keine Reflexionen vorhanden.</div>';
+    return;
+  }
+  const userIds=[...new Set(reflections.map(r=>r.user_id))];
+  let emailMap={};
+  try{const{data:em}=await sb.from('user_emails').select('id,email').in('id',userIds);if(em)em.forEach(u=>{emailMap[u.id]=u.email;});}catch(e){}
+  document.getElementById('refl-list').innerHTML=reflections.map(r=>`
+    <div style="border:1px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:10px;background:var(--bg3)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:13px;font-weight:600;color:var(--text)">${emailMap[r.user_id]||r.user_id}</div>
+        <div style="font-size:11px;color:var(--text3)">${new Date(r.created_at).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+      <div style="font-size:14px;color:var(--text2);line-height:1.6;white-space:pre-wrap">${r.reflection.replace(/</g,'&lt;')}</div>
+    </div>`).join('');
 }
 
 function exportCourseAsHtml(courseId){
