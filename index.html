@@ -1738,6 +1738,9 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
             <span class="sidebar-label">Meldungen</span>
             <span class="report-badge" id="report-badge" style="display:none"></span>
           </button>
+          <button class="sidebar-item" data-tab="reflections" onclick="adminTab('reflections')">
+            <span class="sidebar-icon">💬</span><span class="sidebar-label">Reflexionen</span>
+          </button>
           </div>
         </div>
 
@@ -2084,6 +2087,19 @@ CREATE POLICY "admin_all" ON onboarding_plans USING (true) WITH CHECK (true);</p
         </div>
       </div>
       <div id="reports-list" style="display:flex;flex-direction:column;gap:10px;margin-top:1rem"></div>
+    </div>
+
+    <!-- REFLECTIONS -->
+    <div class="admin-section" id="atab-reflections">
+      <div class="sec-head">
+        <div class="sec-title">💬 Reflexionen</div>
+      </div>
+      <div style="margin-bottom:1.25rem">
+        <select class="form-input" id="refl-course-filter" onchange="filterReflections()" style="max-width:340px">
+          <option value="">Alle Video-Kurse</option>
+        </select>
+      </div>
+      <div id="refl-tab-list"></div>
     </div>
 
     <!-- AI IMPORT -->
@@ -2739,6 +2755,7 @@ function openReportModal(type){
   const c=courses[ci];
   const isSlide=type==='slide';
   const item=isSlide?c.slides[si]:c.questions[qi];
+  if(!item)return;
   const title=isSlide?item.title:item.question;
   const label=isSlide?'Slide '+(si+1)+': ':'Frage '+(qi+1)+': ';
   document.getElementById('report-context').innerHTML=
@@ -4382,6 +4399,7 @@ function adminTab(tab){
   if(tab==='leaderboard') loadLeaderboard();
   if(tab==='superadmin') loadSuperAdmin();
   if(tab==='reports') loadReports();
+  if(tab==='reflections') loadReflections();
 }
 
 // ── DEADLINE BANNER ──
@@ -4754,7 +4772,7 @@ function showScreen(id){
 }
 
 // ── SLIDES ──
-function startCourse(idx){
+async function startCourse(idx){
   ci=idx;si=0;
   startSession(courses[idx].id);
   const c=courses[idx];
@@ -4763,7 +4781,7 @@ function startCourse(idx){
   if(!hasSlides){
     if(hasQuestions){correct=0;qi=0;showScreen('screen-slides');startQuiz();}
     else if(c.video_url){renderVideoOnlySlide();showScreen('screen-slides');}
-    else finishWithoutQuiz();
+    else await finishWithoutQuiz();
   } else {
     renderSlide();showScreen('screen-slides');
   }
@@ -4802,6 +4820,7 @@ function renderSlide(){
   // Linkify wiki terms in slide content
   linkifyWikiTerms(document.querySelector('#slide-body .slide-text'));
   document.getElementById('btn-prev').style.visibility=si===0?'hidden':'visible';
+  const rb=document.querySelector('.btn-report');if(rb)rb.style.display='';
   const nb=document.getElementById('btn-next');
   nb.onclick=nextSlide;
   nb.style.background=c.btn_color||'#4f7cff';
@@ -4820,6 +4839,7 @@ function renderVideoOnlySlide(){
   document.getElementById('slide-body').innerHTML=embedUrl?`<div class="slide-video"><iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`:'';
   document.getElementById('dots').innerHTML='';
   document.getElementById('btn-prev').style.visibility='hidden';
+  const rb=document.querySelector('.btn-report');if(rb)rb.style.display='none';
   const nb=document.getElementById('btn-next');
   nb.textContent='Fertig →';
   nb.style.background=c.btn_color||'#4f7cff';
@@ -4846,7 +4866,7 @@ function retry(){startQuiz();}
 async function finishWithoutQuiz(){
   const c=courses[ci];
   stopEmbeddedVideo();
-  if(c.video_url){
+  if(c.video_url&&!(c.slides&&c.slides.length>0)){
     document.getElementById('sl-sub').textContent='Reflexion';
     document.getElementById('sl-count').textContent='';
     document.getElementById('sl-prog').style.width='100%';
@@ -4864,7 +4884,7 @@ async function finishWithoutQuiz(){
     nb.style.background=c.btn_color||'#4f7cff';
     nb.onclick=submitVideoReflection;
   } else {
-    await _completeCourseFinish();
+    await _completeCourseFinish(false);
   }
 }
 
@@ -4877,28 +4897,42 @@ async function submitVideoReflection(){
   }
   const nb=document.getElementById('btn-next');
   nb.disabled=true;nb.textContent='Wird gespeichert…';
-  try{await sb.from('video_reflections').insert({user_id:currentUser.id,course_id:courses[ci].id,reflection:text});}catch(e){}
-  nb.disabled=false;
-  await _completeCourseFinish();
+  const{error:reflErr}=await sb.from('video_reflections').insert({user_id:currentUser.id,course_id:courses[ci].id,reflection:text});
+  if(reflErr){
+    nb.disabled=false;nb.textContent='Abschließen →';
+    const ta=document.getElementById('reflection-input');
+    if(ta)ta.style.borderColor='var(--red)';
+    alert('Speichern fehlgeschlagen – bitte nochmals versuchen.');
+    return;
+  }
+  await _completeCourseFinish(true);
 }
 
-async function _completeCourseFinish(){
+async function _completeCourseFinish(reflectionSaved){
   const c=courses[ci];
+  const sessSecs=sessionStart?Math.round((Date.now()-sessionStart)/1000):0;
   await endSession();
   await saveProgress(c.id,100);
-  await awardXP(50);
+  let xpGained=50;
+  await awardXP(xpGained);
+  const newBadges=await checkAndAwardBadges(c.id,100,sessSecs);
+  const dailyBonus=await checkDailyBonus(c.id,100);
+  if(dailyBonus>0) xpGained+=dailyBonus;
+  setTimeout(()=>showXPToast(xpGained,newBadges,dailyBonus),600);
   document.getElementById('res-course').textContent=c.title;
   document.getElementById('res-icon').textContent='✅';
   document.getElementById('res-title').textContent='Kurs abgeschlossen!';
-  document.getElementById('res-sub').textContent=c.video_url?'Deine Reflexion wurde gespeichert.':'Du hast diesen Kurs erfolgreich abgeschlossen.';
+  document.getElementById('res-sub').textContent=reflectionSaved?'Deine Reflexion wurde gespeichert.':'Du hast diesen Kurs erfolgreich abgeschlossen.';
   document.getElementById('res-c').textContent='–';
   document.getElementById('res-t').textContent='–';
   document.getElementById('res-p').textContent='100%';
-  const xpEl=document.getElementById('res-xp');xpEl.style.display='block';xpEl.textContent='+50 XP';
+  const xpEl=document.getElementById('res-xp');xpEl.style.display='block';xpEl.textContent='+'+xpGained+' XP';
   document.getElementById('res-cta').onclick=showDash;
   document.getElementById('res-retry').style.display='none';
   document.getElementById('res-repeat').style.display='';
   showScreen('screen-result');
+  setTimeout(()=>launchCourseCompleteAnimation(100,xpGained,c.btn_color||c.tag_color||'#4f7cff'),200);
+  setTimeout(()=>checkPathCompletion(c.id),2200);
 }
 
 function renderQ(){
@@ -5300,15 +5334,59 @@ function renderAdmin(){
       <div class="admin-course-actions">
         <button class="btn-sm btn-edit" onclick="openCourseModal(${c.id})">Bearbeiten</button>
         <button class="btn-sm" style="background:var(--bg3);color:var(--teal);border:1px solid var(--border2)" onclick="exportCourseAsHtml(${c.id})" title="Als HTML exportieren">⬇ HTML</button>
-        ${c.video_url?`<button class="btn-sm" style="background:var(--bg3);color:var(--green);border:1px solid var(--border2)" onclick="openReflectionsModal(${c.id})">💬 Reflexionen</button>`:''}
         <button class="btn-sm btn-del" onclick="deleteCourse(${c.id})">Löschen</button>
       </div>`;
     list.appendChild(div);
   });
 }
 
+async function loadReflections(){
+  const sel=document.getElementById('refl-course-filter');
+  const prev=sel.value;
+  sel.innerHTML='<option value="">Alle Video-Kurse</option>';
+  courses.filter(c=>c.video_url).forEach(c=>{
+    const o=document.createElement('option');o.value=c.id;o.textContent=c.title;sel.appendChild(o);
+  });
+  if(prev) sel.value=prev;
+  await filterReflections();
+}
+
+async function filterReflections(){
+  const courseId=document.getElementById('refl-course-filter').value;
+  const list=document.getElementById('refl-tab-list');
+  list.innerHTML='<div style="color:var(--text3);padding:1rem 0">Wird geladen…</div>';
+  let q=sb.from('video_reflections').select('user_id,course_id,reflection,created_at').order('created_at',{ascending:false});
+  if(courseId) q=q.eq('course_id',parseInt(courseId));
+  const{data:rows,error:reflErr}=await q;
+  if(reflErr){
+    list.innerHTML=`<div style="color:var(--red);padding:2rem 0">Fehler beim Laden: ${reflErr.message}</div>`;
+    return;
+  }
+  if(!rows||!rows.length){
+    list.innerHTML='<div style="color:var(--text3);padding:2rem 0">Noch keine Reflexionen vorhanden.</div>';
+    return;
+  }
+  const userIds=[...new Set(rows.map(r=>r.user_id))];
+  let emailMap={};
+  const{data:em}=await sb.from('user_emails').select('id,email').in('id',userIds);
+  if(em)em.forEach(u=>{emailMap[u.id]=u.email;});
+  const courseMap={};courses.forEach(c=>{courseMap[c.id]=c.title;});
+  list.innerHTML=rows.map(r=>`
+    <div style="border:1px solid var(--border);border-radius:var(--r);padding:1rem 1.25rem;margin-bottom:10px;background:var(--bg2)">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:8px">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">${emailMap[r.user_id]||r.user_id}</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:2px">${courseMap[r.course_id]||'Unbekannter Kurs'}</div>
+        </div>
+        <div style="font-size:11px;color:var(--text3);white-space:nowrap">${new Date(r.created_at).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
+      </div>
+      <div style="font-size:14px;color:var(--text2);line-height:1.6;white-space:pre-wrap;background:var(--bg3);border-radius:var(--r);padding:.75rem 1rem">${r.reflection.replace(/</g,'&lt;')}</div>
+    </div>`).join('');
+}
+
 async function openReflectionsModal(courseId){
   const c=courses.find(x=>x.id===courseId);
+  if(!c)return;
   document.getElementById('refl-modal-title').textContent='Reflexionen: '+c.title;
   document.getElementById('refl-list').innerHTML='<div style="color:var(--text3);padding:1rem 0">Wird geladen…</div>';
   openModal('refl-modal');
@@ -6685,14 +6763,15 @@ function removeQ(i){draftQuestions.splice(i,1);renderDraftQuestions();}
 async function saveCourse(){
   const title=document.getElementById('m-title').value.trim();
   if(!title){alert('Bitte Kursname eingeben.');return;}
-  const courseData={title,icon:document.getElementById('m-icon').value||'📚',icon_bg:document.getElementById('m-icon-bg').value||'#141925',tag_bg:document.getElementById('m-tag-bg').value||'#141925',tag_color:document.getElementById('m-tag-color').value||'#4f7cff',btn_color:document.getElementById('m-btn-color').value||'#4f7cff',video_url:document.getElementById('m-video-url').value.trim()||null,sort_order:courses.length};
+  const baseCourseData={title,icon:document.getElementById('m-icon').value||'📚',icon_bg:document.getElementById('m-icon-bg').value||'#141925',tag_bg:document.getElementById('m-tag-bg').value||'#141925',tag_color:document.getElementById('m-tag-color').value||'#4f7cff',btn_color:document.getElementById('m-btn-color').value||'#4f7cff',video_url:document.getElementById('m-video-url').value.trim()||null};
   let courseId=editCourseId;
   if(courseId){
-    await sb.from('courses').update(courseData).eq('id',courseId);
+    await sb.from('courses').update(baseCourseData).eq('id',courseId);
     await sb.from('slides').delete().eq('course_id',courseId);
     await sb.from('questions').delete().eq('course_id',courseId);
   } else {
-    const{data}=await sb.from('courses').insert(courseData).select().single();
+    const{data,error}=await sb.from('courses').insert({...baseCourseData,sort_order:courses.length}).select().single();
+    if(error||!data){alert('Fehler beim Erstellen des Kurses: '+(error?.message||'Unbekannter Fehler'));return;}
     courseId=data.id;
   }
   if(draftSlides.length) await sb.from('slides').insert(draftSlides.map((s,i)=>({course_id:courseId,sort_order:i,tag:s.tag,title:s.title,content:s.content,stat1_num:s.stat1_num,stat1_lbl:s.stat1_lbl,stat2_num:s.stat2_num,stat2_lbl:s.stat2_lbl,stat3_num:s.stat3_num,stat3_lbl:s.stat3_lbl})));
