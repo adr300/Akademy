@@ -1598,6 +1598,20 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
       </div>
     </div></div>
 
+    <!-- SIMULATOR SCREEN -->
+    <div class="screen" id="screen-simulator">
+      <div style="display:flex;flex-direction:column;height:100vh;padding-top:1.5rem;box-sizing:border-box">
+        <div class="chrome" style="flex:1;display:flex;flex-direction:column;min-height:0">
+          <div class="chrome-top">
+            <button class="btn-back" onclick="exitSimulator()">← Zurück</button>
+            <div class="tb-info"><div class="tb-title" id="sim-title"></div><div class="tb-sub">Simulator</div></div>
+            <button class="btn-nav btn-solid" onclick="finishSimulator()" style="white-space:nowrap">Abschließen →</button>
+          </div>
+          <iframe id="sim-frame" sandbox="allow-scripts allow-forms allow-modals" style="width:100%;flex:1;border:none;border-radius:0 0 var(--rl) var(--rl)" srcdoc=""></iframe>
+        </div>
+      </div>
+    </div>
+
     <!-- PROFILE / BADGES SCREEN (Bluuakademie 2-Spalten-Layout) -->
     <div class="screen" id="screen-profile">
       <div class="screen-profile-inner">
@@ -2307,14 +2321,36 @@ CREATE POLICY "admin_all" ON onboarding_plans USING (true) WITH CHECK (true);</p
       <div><label class="form-label">Tag-Farbe (Hintergrund)</label><input class="form-input" id="m-tag-bg" placeholder="#0a1f18"></div>
       <div><label class="form-label">Tag-Farbe (Text)</label><input class="form-input" id="m-tag-color" placeholder="#10b981"></div>
       <div class="form-full"><label class="form-label">Button-Farbe</label><input class="form-input" id="m-btn-color" placeholder="#10b981"></div>
-      <div class="form-full"><label class="form-label">Video-URL (optional, YouTube oder Vimeo)</label><input class="form-input" id="m-video-url" placeholder="https://www.youtube.com/watch?v=…"></div>
+      <div class="form-full"><label class="form-label">Kurstyp</label>
+        <div style="display:flex;gap:10px;margin-top:4px">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="course-type" value="standard" id="m-type-standard" onchange="toggleCourseType('standard')" checked> Standard</label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="course-type" value="simulator" id="m-type-simulator" onchange="toggleCourseType('simulator')"> Simulator</label>
+        </div>
+      </div>
     </div>
-    <div class="form-section">Slides</div>
-    <div class="slide-list" id="slide-list"></div>
-    <button class="add-sub-btn" onclick="openSlideForm(null)">+ Slide hinzufügen</button>
-    <div class="form-section">Testfragen</div>
-    <div class="q-list" id="q-list"></div>
-    <button class="add-sub-btn" onclick="openQForm(null)">+ Frage hinzufügen</button>
+    <!-- Standard fields -->
+    <div id="m-standard-section">
+      <div class="form-grid">
+        <div class="form-full"><label class="form-label">Video-URL (optional, YouTube oder Vimeo)</label><input class="form-input" id="m-video-url" placeholder="https://www.youtube.com/watch?v=…"></div>
+      </div>
+      <div class="form-section">Slides</div>
+      <div class="slide-list" id="slide-list"></div>
+      <button class="add-sub-btn" onclick="openSlideForm(null)">+ Slide hinzufügen</button>
+      <div class="form-section">Testfragen</div>
+      <div class="q-list" id="q-list"></div>
+      <button class="add-sub-btn" onclick="openQForm(null)">+ Frage hinzufügen</button>
+    </div>
+    <!-- Simulator fields -->
+    <div id="m-simulator-section" style="display:none">
+      <div class="form-section">HTML-Datei</div>
+      <div id="sim-upload-area" onclick="document.getElementById('sim-file-input').click()" style="border:2px dashed var(--border);border-radius:var(--rl);padding:2rem;text-align:center;cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--primary)'" onmouseleave="this.style.borderColor='var(--border)'">
+        <div style="font-size:24px;margin-bottom:8px">📁</div>
+        <div id="sim-upload-label" style="font-size:14px;color:var(--text2)">HTML-Datei auswählen oder hier ablegen</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px">.html / .htm</div>
+        <input type="file" id="sim-file-input" accept=".html,.htm" style="display:none" onchange="handleSimulatorFile(this)">
+      </div>
+      <div id="sim-file-info" style="font-size:12px;color:var(--text3);margin-top:8px;min-height:18px"></div>
+    </div>
     <div class="modal-actions">
       <button class="btn-sec" onclick="closeModal('course-modal')">Abbrechen</button>
       <button class="btn-cta" style="background:var(--green)" onclick="saveCourse()">Speichern</button>
@@ -3408,6 +3444,13 @@ async function loadThemeFromDb(){
     if(data?.display_name){
       userDisplayName=data.display_name;
       applyDisplayName(data.display_name);
+    } else {
+      const metaName=currentUser?.user_metadata?.full_name;
+      if(metaName){
+        userDisplayName=metaName;
+        applyDisplayName(metaName);
+        sb.from('profiles').upsert({user_id:currentUser.id,email:currentUser.email,display_name:metaName},{onConflict:'user_id'}).catch(()=>{});
+      }
     }
   }catch(e){}
 }
@@ -3566,7 +3609,8 @@ async function loginEmail(){
 
   let error=null, session=null;
   if(isRegister){
-    const{data,error:e}=await sb.auth.signUp({email,password:pw});
+    const displayNameEarly=(document.getElementById('display-name-input')?.value||'').trim();
+    const{data,error:e}=await sb.auth.signUp({email,password:pw,options:{data:{full_name:displayNameEarly}}});
     error=e; session=data?.session;
   } else {
     const{data,error:e}=await sb.auth.signInWithPassword({email,password:pw});
@@ -4507,7 +4551,7 @@ async function showDash(){
           '</span>'+
         '</div>'+
         '<div class="cc-name">'+c.title+'</div>'+
-        '<div class="cc-meta">'+c.slides.length+' Slides · '+c.questions.length+' Fragen'+metaExtra+'</div>'+
+        '<div class="cc-meta">'+(c.simulator_html?'🖥 Interaktiver Simulator':(c.slides.length+' Slides · '+c.questions.length+' Fragen'+metaExtra))+'</div>'+
         (isLocked?'<div style="font-size:11px;color:var(--text3);margin-top:4px">🔒 Im Lernpfad gesperrt</div>':deadlineRow)+
         '<div class="cc-progress">'+
           '<div class="cc-bar"><div class="cc-bar-fill" style="width:'+pct+'%;background:'+(c.btn_color||fill)+'"></div></div>'+
@@ -4776,6 +4820,7 @@ async function startCourse(idx){
   ci=idx;si=0;
   startSession(courses[idx].id);
   const c=courses[idx];
+  if(c.simulator_html){renderSimulatorScreen();showScreen('screen-simulator');return;}
   const hasSlides=c.slides&&c.slides.length>0;
   const hasQuestions=c.questions&&c.questions.length>0;
   if(!hasSlides){
@@ -4844,6 +4889,43 @@ function renderVideoOnlySlide(){
   nb.textContent='Fertig →';
   nb.style.background=c.btn_color||'#4f7cff';
   nb.onclick=finishWithoutQuiz;
+}
+
+// ── SIMULATOR ──
+let draftSimulatorHtml=null;
+
+function renderSimulatorScreen(){
+  const c=courses[ci];
+  document.getElementById('sim-title').textContent=c.title;
+  document.getElementById('sim-frame').srcdoc=c.simulator_html;
+}
+
+async function finishSimulator(){
+  document.getElementById('sim-frame').srcdoc='';
+  await _completeCourseFinish(false);
+}
+
+function exitSimulator(){
+  document.getElementById('sim-frame').srcdoc='';
+  goBack();
+}
+
+function toggleCourseType(type){
+  const isSim=type==='simulator';
+  document.getElementById('m-standard-section').style.display=isSim?'none':'';
+  document.getElementById('m-simulator-section').style.display=isSim?'':'none';
+}
+
+function handleSimulatorFile(input){
+  const file=input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=(e)=>{
+    draftSimulatorHtml=e.target.result;
+    document.getElementById('sim-upload-label').textContent='📄 '+file.name;
+    document.getElementById('sim-file-info').textContent='✅ Geladen ('+Math.round(file.size/1024)+' KB)';
+  };
+  reader.readAsText(file,'UTF-8');
 }
 
 function prevSlide(){if(si>0){si--;renderSlide();}}
@@ -5328,8 +5410,9 @@ function renderAdmin(){
         <div class="admin-course-name" style="display:flex;align-items:center;gap:8px">
           ${c.title}
           ${isAiDraft?'<span class="ai-draft-badge">🤖 KI</span>':''}
+          ${c.simulator_html?'<span class="ai-draft-badge" style="background:var(--teal);color:#fff">🖥 SIM</span>':''}
         </div>
-        <div class="admin-course-meta">${c.slides.length} Slides · ${c.questions.length} Fragen</div>
+        <div class="admin-course-meta">${c.simulator_html?'Simulator':(c.slides.length+' Slides · '+c.questions.length+' Fragen')}</div>
       </div>
       <div class="admin-course-actions">
         <button class="btn-sm btn-edit" onclick="openCourseModal(${c.id})">Bearbeiten</button>
@@ -6712,6 +6795,10 @@ async function resetAllProgress(userId, userEmail){
 // ── COURSE MODAL ──
 function openCourseModal(courseId){
   editCourseId=courseId;
+  draftSimulatorHtml=null;
+  document.getElementById('sim-file-info').textContent='';
+  document.getElementById('sim-upload-label').textContent='HTML-Datei auswählen oder hier ablegen';
+  document.getElementById('sim-file-input').value='';
   if(courseId){
     const c=courses.find(x=>x.id===courseId);
     document.getElementById('modal-title').textContent='Kurs bearbeiten';
@@ -6725,11 +6812,23 @@ function openCourseModal(courseId){
     document.getElementById('m-video-url').value=c.video_url||'';
     draftSlides=c.slides.map(s=>({...s}));
     draftQuestions=c.questions.map(q=>({...q}));
+    if(c.simulator_html){
+      draftSimulatorHtml=c.simulator_html;
+      document.getElementById('m-type-simulator').checked=true;
+      document.getElementById('sim-upload-label').textContent='📄 Simulator geladen ('+Math.round(c.simulator_html.length/1024)+' KB)';
+      document.getElementById('sim-file-info').textContent='Neue Datei auswählen, um zu ersetzen.';
+      toggleCourseType('simulator');
+    } else {
+      document.getElementById('m-type-standard').checked=true;
+      toggleCourseType('standard');
+    }
   } else {
     document.getElementById('modal-title').textContent='Kurs erstellen';
     document.getElementById('m-course-id').value='';
     ['m-title','m-icon','m-icon-bg','m-tag-bg','m-tag-color','m-btn-color','m-video-url'].forEach(id=>document.getElementById(id).value='');
     draftSlides=[];draftQuestions=[];
+    document.getElementById('m-type-standard').checked=true;
+    toggleCourseType('standard');
   }
   renderDraftSlides();renderDraftQuestions();
   openModal('course-modal');
@@ -6763,7 +6862,9 @@ function removeQ(i){draftQuestions.splice(i,1);renderDraftQuestions();}
 async function saveCourse(){
   const title=document.getElementById('m-title').value.trim();
   if(!title){alert('Bitte Kursname eingeben.');return;}
-  const baseCourseData={title,icon:document.getElementById('m-icon').value||'📚',icon_bg:document.getElementById('m-icon-bg').value||'#141925',tag_bg:document.getElementById('m-tag-bg').value||'#141925',tag_color:document.getElementById('m-tag-color').value||'#4f7cff',btn_color:document.getElementById('m-btn-color').value||'#4f7cff',video_url:document.getElementById('m-video-url').value.trim()||null};
+  const isSimulatorType=document.getElementById('m-type-simulator').checked;
+  if(isSimulatorType&&!draftSimulatorHtml){alert('Bitte eine HTML-Datei für den Simulator auswählen.');return;}
+  const baseCourseData={title,icon:document.getElementById('m-icon').value||'📚',icon_bg:document.getElementById('m-icon-bg').value||'#141925',tag_bg:document.getElementById('m-tag-bg').value||'#141925',tag_color:document.getElementById('m-tag-color').value||'#4f7cff',btn_color:document.getElementById('m-btn-color').value||'#4f7cff',video_url:isSimulatorType?null:(document.getElementById('m-video-url').value.trim()||null),simulator_html:isSimulatorType?(draftSimulatorHtml||null):null};
   let courseId=editCourseId;
   if(courseId){
     await sb.from('courses').update(baseCourseData).eq('id',courseId);
