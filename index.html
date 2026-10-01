@@ -1527,6 +1527,12 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
 
       <!-- KURSÜBERSICHT (nur Admin/Manager) — JS steuert Sichtbarkeit -->
       <div class="course-grid" id="course-grid" style="display:none;margin-top:2rem"></div>
+
+      <!-- SIMULATOREN -->
+      <div id="sim-dash-section" style="display:none;margin-top:2rem">
+        <div style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Simulatoren</div>
+        <div id="sim-dash-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px"></div>
+      </div>
     </div>
 
     <div class="screen" id="screen-slides"><div style="padding-top:1.5rem">
@@ -1710,6 +1716,9 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
           <button class="sidebar-item" data-tab="courses" onclick="adminTab('courses')">
             <span class="sidebar-icon">📚</span><span class="sidebar-label">Kurse</span>
           </button>
+          <button class="sidebar-item" data-tab="simulators" onclick="adminTab('simulators')">
+            <span class="sidebar-icon">🖥</span><span class="sidebar-label">Simulatoren</span>
+          </button>
           <button class="sidebar-item" data-tab="paths" onclick="adminTab('paths')">
             <span class="sidebar-icon">🗺</span><span class="sidebar-label">Lernpfade</span>
           </button>
@@ -1780,6 +1789,12 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
     <div class="admin-section active" id="atab-courses">
       <div class="sec-head"><div class="sec-title">Alle Kurse</div><button class="btn-add" onclick="openCourseModal(null)">+ Kurs hinzufügen</button></div>
       <div class="admin-course-list" id="admin-course-list"></div>
+    </div>
+
+    <!-- SIMULATOREN -->
+    <div class="admin-section" id="atab-simulators">
+      <div class="sec-head"><div class="sec-title">Simulatoren</div><button class="btn-add" onclick="openSimulatorModal(null)">+ Simulator hinzufügen</button></div>
+      <div id="admin-simulator-list"></div>
     </div>
 
     <!-- KI GENERATOR -->
@@ -2321,39 +2336,44 @@ CREATE POLICY "admin_all" ON onboarding_plans USING (true) WITH CHECK (true);</p
       <div><label class="form-label">Tag-Farbe (Hintergrund)</label><input class="form-input" id="m-tag-bg" placeholder="#0a1f18"></div>
       <div><label class="form-label">Tag-Farbe (Text)</label><input class="form-input" id="m-tag-color" placeholder="#10b981"></div>
       <div class="form-full"><label class="form-label">Button-Farbe</label><input class="form-input" id="m-btn-color" placeholder="#10b981"></div>
-      <div class="form-full"><label class="form-label">Kurstyp</label>
-        <div style="display:flex;gap:10px;margin-top:4px">
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="course-type" value="standard" id="m-type-standard" onchange="toggleCourseType('standard')" checked> Standard</label>
-          <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="radio" name="course-type" value="simulator" id="m-type-simulator" onchange="toggleCourseType('simulator')"> Simulator</label>
-        </div>
-      </div>
     </div>
-    <!-- Standard fields -->
-    <div id="m-standard-section">
-      <div class="form-grid">
-        <div class="form-full"><label class="form-label">Video-URL (optional, YouTube oder Vimeo)</label><input class="form-input" id="m-video-url" placeholder="https://www.youtube.com/watch?v=…"></div>
-      </div>
-      <div class="form-section">Slides</div>
-      <div class="slide-list" id="slide-list"></div>
-      <button class="add-sub-btn" onclick="openSlideForm(null)">+ Slide hinzufügen</button>
-      <div class="form-section">Testfragen</div>
-      <div class="q-list" id="q-list"></div>
-      <button class="add-sub-btn" onclick="openQForm(null)">+ Frage hinzufügen</button>
+    <div class="form-grid">
+      <div class="form-full"><label class="form-label">Video-URL (optional, YouTube oder Vimeo)</label><input class="form-input" id="m-video-url" placeholder="https://www.youtube.com/watch?v=…"></div>
     </div>
-    <!-- Simulator fields -->
-    <div id="m-simulator-section" style="display:none">
-      <div class="form-section">HTML-Datei</div>
-      <div id="sim-upload-area" onclick="document.getElementById('sim-file-input').click()" style="border:2px dashed var(--border);border-radius:var(--rl);padding:2rem;text-align:center;cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--primary)'" onmouseleave="this.style.borderColor='var(--border)'">
-        <div style="font-size:24px;margin-bottom:8px">📁</div>
-        <div id="sim-upload-label" style="font-size:14px;color:var(--text2)">HTML-Datei auswählen oder hier ablegen</div>
-        <div style="font-size:12px;color:var(--text3);margin-top:4px">.html / .htm</div>
-        <input type="file" id="sim-file-input" accept=".html,.htm" style="display:none" onchange="handleSimulatorFile(this)">
-      </div>
-      <div id="sim-file-info" style="font-size:12px;color:var(--text3);margin-top:8px;min-height:18px"></div>
-    </div>
+    <div class="form-section">Slides</div>
+    <div class="slide-list" id="slide-list"></div>
+    <button class="add-sub-btn" onclick="openSlideForm(null)">+ Slide hinzufügen</button>
+    <div class="form-section">Testfragen</div>
+    <div class="q-list" id="q-list"></div>
+    <button class="add-sub-btn" onclick="openQForm(null)">+ Frage hinzufügen</button>
     <div class="modal-actions">
       <button class="btn-sec" onclick="closeModal('course-modal')">Abbrechen</button>
       <button class="btn-cta" style="background:var(--green)" onclick="saveCourse()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- SIMULATOR MODAL -->
+<div class="modal-overlay" id="simulator-modal">
+  <div class="modal">
+    <div class="modal-title" id="sim-modal-title">Simulator hinzufügen</div>
+    <input type="hidden" id="simm-id">
+    <div class="form-grid">
+      <div class="form-full"><label class="form-label">Name</label><input class="form-input" id="simm-title" placeholder="z.B. Energiedaten-Simulator"></div>
+      <div><label class="form-label">Icon (Emoji)</label><input class="form-input" id="simm-icon" placeholder="🖥" maxlength="4"></div>
+      <div class="form-full"><label class="form-label">Kurzbeschreibung</label><input class="form-input" id="simm-desc" placeholder="z.B. Interaktiver Lastgang-Rechner"></div>
+    </div>
+    <div class="form-section">HTML-Datei</div>
+    <div id="simm-upload-area" onclick="document.getElementById('simm-file-input').click()" style="border:2px dashed var(--border);border-radius:var(--rl);padding:2rem;text-align:center;cursor:pointer;transition:border-color .15s" onmouseenter="this.style.borderColor='var(--primary)'" onmouseleave="this.style.borderColor='var(--border)'">
+      <div style="font-size:28px;margin-bottom:8px">📁</div>
+      <div id="simm-upload-label" style="font-size:14px;color:var(--text2)">HTML-Datei auswählen oder hier ablegen</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:4px">.html / .htm</div>
+      <input type="file" id="simm-file-input" accept=".html,.htm" style="display:none" onchange="handleSimulatorFile(this)">
+    </div>
+    <div id="simm-file-info" style="font-size:12px;color:var(--text3);margin-top:8px;min-height:18px"></div>
+    <div class="modal-actions">
+      <button class="btn-sec" onclick="closeModal('simulator-modal')">Abbrechen</button>
+      <button class="btn-cta" style="background:var(--green)" onclick="saveSimulator()">Speichern</button>
     </div>
   </div>
 </div>
@@ -3556,7 +3576,7 @@ async function setUser(user){
       }
     }
     // Load all data — each function has its own try/catch so failures are safe
-    await Promise.allSettled([loadCourses(),loadProgress(),loadTeams(),loadAssignments(),loadPaths(),loadXP(),loadOnboardingPlans()]);
+    await Promise.allSettled([loadCourses(),loadSimulators(),loadProgress(),loadTeams(),loadAssignments(),loadPaths(),loadXP(),loadOnboardingPlans()]);
     loadThemeFromDb(); // load user's saved theme preference (non-blocking)
     flushPendingSessions(); // retry any sessions that failed to save
     document.getElementById('loading').style.display='none';
@@ -3677,6 +3697,13 @@ async function loadCourses(){
     ]);
     courses=cs.map(c=>({...c,slides:(sl||[]).filter(s=>s.course_id===c.id),questions:(qs||[]).filter(q=>q.course_id===c.id)}));
   }catch(e){console.error('loadCourses:',e.message);courses=[];}
+}
+
+async function loadSimulators(){
+  try{
+    const{data}=await sb.from('simulators').select('*').order('sort_order');
+    simulators=data||[];
+  }catch(e){console.error('loadSimulators:',e.message);simulators=[];}
 }
 
 async function loadProgress(){
@@ -4444,6 +4471,7 @@ function adminTab(tab){
   if(tab==='superadmin') loadSuperAdmin();
   if(tab==='reports') loadReports();
   if(tab==='reflections') loadReflections();
+  if(tab==='simulators') renderSimulatorAdmin();
 }
 
 // ── DEADLINE BANNER ──
@@ -4551,7 +4579,7 @@ async function showDash(){
           '</span>'+
         '</div>'+
         '<div class="cc-name">'+c.title+'</div>'+
-        '<div class="cc-meta">'+(c.simulator_html?'🖥 Interaktiver Simulator':(c.slides.length+' Slides · '+c.questions.length+' Fragen'+metaExtra))+'</div>'+
+        '<div class="cc-meta">'+c.slides.length+' Slides · '+c.questions.length+' Fragen'+metaExtra+'</div>'+
         (isLocked?'<div style="font-size:11px;color:var(--text3);margin-top:4px">🔒 Im Lernpfad gesperrt</div>':deadlineRow)+
         '<div class="cc-progress">'+
           '<div class="cc-bar"><div class="cc-bar-fill" style="width:'+pct+'%;background:'+(c.btn_color||fill)+'"></div></div>'+
@@ -4609,6 +4637,9 @@ async function renderGamificationPanel(){
 
   // ── Hero Stats ──
   updateHeroStats();
+
+  // ── Simulatoren ──
+  renderSimulatorDash();
 
   // ── Daily Challenge ──
   await renderDailyChallenge();
@@ -4820,7 +4851,6 @@ async function startCourse(idx){
   ci=idx;si=0;
   startSession(courses[idx].id);
   const c=courses[idx];
-  if(c.simulator_html){renderSimulatorScreen();showScreen('screen-simulator');return;}
   const hasSlides=c.slides&&c.slides.length>0;
   const hasQuestions=c.questions&&c.questions.length>0;
   if(!hasSlides){
@@ -4892,28 +4922,97 @@ function renderVideoOnlySlide(){
 }
 
 // ── SIMULATOR ──
-let draftSimulatorHtml=null;
+let simulators=[];
+let currentSimIdx=null;
 
-function renderSimulatorScreen(){
-  const c=courses[ci];
-  document.getElementById('sim-title').textContent=c.title;
-  document.getElementById('sim-frame').srcdoc=c.simulator_html;
-}
-
-async function finishSimulator(){
-  document.getElementById('sim-frame').srcdoc='';
-  await _completeCourseFinish(false);
+function openSimulator(idx){
+  currentSimIdx=idx;
+  const s=simulators[idx];
+  document.getElementById('sim-title').textContent=s.title;
+  document.getElementById('sim-frame').srcdoc=s.simulator_html;
+  showScreen('screen-simulator');
 }
 
 function exitSimulator(){
   document.getElementById('sim-frame').srcdoc='';
-  goBack();
+  showDash();
 }
 
-function toggleCourseType(type){
-  const isSim=type==='simulator';
-  document.getElementById('m-standard-section').style.display=isSim?'none':'';
-  document.getElementById('m-simulator-section').style.display=isSim?'':'none';
+function renderSimulatorDash(){
+  const sec=document.getElementById('sim-dash-section');
+  const grid=document.getElementById('sim-dash-grid');
+  if(!simulators.length){sec.style.display='none';return;}
+  sec.style.display='';
+  grid.innerHTML='';
+  simulators.forEach((s,i)=>{
+    const card=document.createElement('div');
+    card.className='course-card';
+    card.style.cursor='pointer';
+    card.onclick=()=>openSimulator(i);
+    card.innerHTML=
+      '<div class="cc-top">'+
+        '<div class="cc-icon" style="background:#0d1f35;color:#4f7cff">'+(s.icon||'🖥')+'</div>'+
+        '<span class="cc-badge new" style="background:#0d2a3a;color:#38bdf8">Simulator</span>'+
+      '</div>'+
+      '<div class="cc-name">'+s.title+'</div>'+
+      '<div class="cc-meta">'+(s.description||'Interaktiver Simulator')+'</div>'+
+      '<div style="margin-top:auto;padding-top:12px">'+
+        '<button class="btn-cta" style="width:100%;background:#4f7cff">Starten →</button>'+
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+// ── SIMULATOR ADMIN ──
+let editSimulatorId=null;
+let draftSimulatorHtml=null;
+
+function renderSimulatorAdmin(){
+  const list=document.getElementById('admin-simulator-list');
+  if(!list)return;
+  list.innerHTML='';
+  if(!simulators.length){
+    list.innerHTML='<div style="color:var(--text3);padding:1rem 0">Noch keine Simulatoren vorhanden.</div>';
+    return;
+  }
+  simulators.forEach(s=>{
+    const div=document.createElement('div');div.className='admin-course-row';
+    div.innerHTML=`
+      <div class="admin-course-icon">${s.icon||'🖥'}</div>
+      <div class="admin-course-info">
+        <div class="admin-course-name">${s.title}</div>
+        <div class="admin-course-meta">${s.description||'–'} · ${Math.round((s.simulator_html||'').length/1024)} KB</div>
+      </div>
+      <div class="admin-course-actions">
+        <button class="btn-sm btn-edit" onclick="openSimulatorModal(${s.id})">Bearbeiten</button>
+        <button class="btn-sm btn-del" onclick="deleteSimulator(${s.id})">Löschen</button>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function openSimulatorModal(simId){
+  editSimulatorId=simId;
+  draftSimulatorHtml=null;
+  document.getElementById('simm-file-info').textContent='';
+  document.getElementById('simm-upload-label').textContent='HTML-Datei auswählen oder hier ablegen';
+  document.getElementById('simm-file-input').value='';
+  if(simId){
+    const s=simulators.find(x=>x.id===simId);
+    document.getElementById('sim-modal-title').textContent='Simulator bearbeiten';
+    document.getElementById('simm-id').value=s.id;
+    document.getElementById('simm-title').value=s.title;
+    document.getElementById('simm-icon').value=s.icon||'';
+    document.getElementById('simm-desc').value=s.description||'';
+    draftSimulatorHtml=s.simulator_html;
+    document.getElementById('simm-upload-label').textContent='📄 Simulator geladen ('+Math.round((s.simulator_html||'').length/1024)+' KB)';
+    document.getElementById('simm-file-info').textContent='Neue Datei auswählen, um zu ersetzen.';
+  } else {
+    document.getElementById('sim-modal-title').textContent='Simulator hinzufügen';
+    document.getElementById('simm-id').value='';
+    ['simm-title','simm-icon','simm-desc'].forEach(id=>document.getElementById(id).value='');
+  }
+  openModal('simulator-modal');
 }
 
 function handleSimulatorFile(input){
@@ -4922,10 +5021,40 @@ function handleSimulatorFile(input){
   const reader=new FileReader();
   reader.onload=(e)=>{
     draftSimulatorHtml=e.target.result;
-    document.getElementById('sim-upload-label').textContent='📄 '+file.name;
-    document.getElementById('sim-file-info').textContent='✅ Geladen ('+Math.round(file.size/1024)+' KB)';
+    document.getElementById('simm-upload-label').textContent='📄 '+file.name;
+    document.getElementById('simm-file-info').textContent='✅ Geladen ('+Math.round(file.size/1024)+' KB)';
   };
   reader.readAsText(file,'UTF-8');
+}
+
+async function saveSimulator(){
+  const title=document.getElementById('simm-title').value.trim();
+  if(!title){alert('Bitte einen Namen eingeben.');return;}
+  if(!draftSimulatorHtml){alert('Bitte eine HTML-Datei auswählen.');return;}
+  const simData={
+    title,
+    icon:document.getElementById('simm-icon').value||'🖥',
+    description:document.getElementById('simm-desc').value.trim()||null,
+    simulator_html:draftSimulatorHtml
+  };
+  const simId=editSimulatorId;
+  if(simId){
+    const{error}=await sb.from('simulators').update(simData).eq('id',simId);
+    if(error){alert('Fehler beim Speichern: '+error.message);return;}
+  } else {
+    const{error}=await sb.from('simulators').insert({...simData,sort_order:simulators.length});
+    if(error){alert('Fehler beim Erstellen: '+error.message);return;}
+  }
+  closeModal('simulator-modal');
+  await loadSimulators();
+  renderSimulatorAdmin();
+}
+
+async function deleteSimulator(id){
+  if(!confirm('Simulator wirklich löschen?'))return;
+  await sb.from('simulators').delete().eq('id',id);
+  await loadSimulators();
+  renderSimulatorAdmin();
 }
 
 function prevSlide(){if(si>0){si--;renderSlide();}}
@@ -5410,9 +5539,8 @@ function renderAdmin(){
         <div class="admin-course-name" style="display:flex;align-items:center;gap:8px">
           ${c.title}
           ${isAiDraft?'<span class="ai-draft-badge">🤖 KI</span>':''}
-          ${c.simulator_html?'<span class="ai-draft-badge" style="background:var(--teal);color:#fff">🖥 SIM</span>':''}
         </div>
-        <div class="admin-course-meta">${c.simulator_html?'Simulator':(c.slides.length+' Slides · '+c.questions.length+' Fragen')}</div>
+        <div class="admin-course-meta">${c.slides.length+' Slides · '+c.questions.length+' Fragen'}</div>
       </div>
       <div class="admin-course-actions">
         <button class="btn-sm btn-edit" onclick="openCourseModal(${c.id})">Bearbeiten</button>
@@ -6795,10 +6923,6 @@ async function resetAllProgress(userId, userEmail){
 // ── COURSE MODAL ──
 function openCourseModal(courseId){
   editCourseId=courseId;
-  draftSimulatorHtml=null;
-  document.getElementById('sim-file-info').textContent='';
-  document.getElementById('sim-upload-label').textContent='HTML-Datei auswählen oder hier ablegen';
-  document.getElementById('sim-file-input').value='';
   if(courseId){
     const c=courses.find(x=>x.id===courseId);
     document.getElementById('modal-title').textContent='Kurs bearbeiten';
@@ -6812,23 +6936,11 @@ function openCourseModal(courseId){
     document.getElementById('m-video-url').value=c.video_url||'';
     draftSlides=c.slides.map(s=>({...s}));
     draftQuestions=c.questions.map(q=>({...q}));
-    if(c.simulator_html){
-      draftSimulatorHtml=c.simulator_html;
-      document.getElementById('m-type-simulator').checked=true;
-      document.getElementById('sim-upload-label').textContent='📄 Simulator geladen ('+Math.round(c.simulator_html.length/1024)+' KB)';
-      document.getElementById('sim-file-info').textContent='Neue Datei auswählen, um zu ersetzen.';
-      toggleCourseType('simulator');
-    } else {
-      document.getElementById('m-type-standard').checked=true;
-      toggleCourseType('standard');
-    }
   } else {
     document.getElementById('modal-title').textContent='Kurs erstellen';
     document.getElementById('m-course-id').value='';
     ['m-title','m-icon','m-icon-bg','m-tag-bg','m-tag-color','m-btn-color','m-video-url'].forEach(id=>document.getElementById(id).value='');
     draftSlides=[];draftQuestions=[];
-    document.getElementById('m-type-standard').checked=true;
-    toggleCourseType('standard');
   }
   renderDraftSlides();renderDraftQuestions();
   openModal('course-modal');
@@ -6862,9 +6974,7 @@ function removeQ(i){draftQuestions.splice(i,1);renderDraftQuestions();}
 async function saveCourse(){
   const title=document.getElementById('m-title').value.trim();
   if(!title){alert('Bitte Kursname eingeben.');return;}
-  const isSimulatorType=document.getElementById('m-type-simulator').checked;
-  if(isSimulatorType&&!draftSimulatorHtml){alert('Bitte eine HTML-Datei für den Simulator auswählen.');return;}
-  const baseCourseData={title,icon:document.getElementById('m-icon').value||'📚',icon_bg:document.getElementById('m-icon-bg').value||'#141925',tag_bg:document.getElementById('m-tag-bg').value||'#141925',tag_color:document.getElementById('m-tag-color').value||'#4f7cff',btn_color:document.getElementById('m-btn-color').value||'#4f7cff',video_url:isSimulatorType?null:(document.getElementById('m-video-url').value.trim()||null),simulator_html:isSimulatorType?(draftSimulatorHtml||null):null};
+  const baseCourseData={title,icon:document.getElementById('m-icon').value||'📚',icon_bg:document.getElementById('m-icon-bg').value||'#141925',tag_bg:document.getElementById('m-tag-bg').value||'#141925',tag_color:document.getElementById('m-tag-color').value||'#4f7cff',btn_color:document.getElementById('m-btn-color').value||'#4f7cff',video_url:document.getElementById('m-video-url').value.trim()||null};
   let courseId=editCourseId;
   if(courseId){
     await sb.from('courses').update(baseCourseData).eq('id',courseId);
