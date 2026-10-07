@@ -4175,7 +4175,7 @@ function checkPathCompletion(completedCourseId){
   });
   // Refresh path grid if visible
   const ps=document.getElementById('path-section');
-  if(ps&&ps.style.display!=='none') renderPathGrid();
+  if(ps&&ps.style.display!=='none') renderPaths();
 }
 
 function downloadPathCert(pathId, pathTitle, pathIcon){
@@ -5155,24 +5155,32 @@ function renderQ(){
   linkifyWikiTerms(document.getElementById('q-text'));
   // Show question type badge
   const lbl=document.getElementById('q-lbl');
-  const type2=q.question_type||'multiple_choice';
-  const badges={'sort':'⠿ Reihenfolge','match':'⟷ Zuordnung','deadline':'🗓 Fristenrechner','multiple_choice':'◉ Multiple Choice'};
-  const cls={'sort':'q-type-sort','match':'q-type-match','deadline':'q-type-deadline','multiple_choice':'q-type-mc'};
+  // Normalize type aliases from newer course formats
+  const _tAlias={ordering:'sort',matching:'match',single_choice:'multiple_choice'};
+  const type=_tAlias[q.question_type]||q.question_type||'multiple_choice';
+  const badges={'sort':'⠿ Reihenfolge','match':'⟷ Zuordnung','deadline':'🗓 Fristenrechner','multiple_choice':'◉ Multiple Choice','true_false':'✓✗ Wahr / Falsch'};
+  const cls={'sort':'q-type-sort','match':'q-type-match','deadline':'q-type-deadline','multiple_choice':'q-type-mc','true_false':'q-type-sort'};
+  // Detect multi-select: MC with no correct_index but has correct_order (stored correct_multi)
+  const isMultiSelect=type==='multiple_choice'&&q.correct_index===null&&!!q.correct_order;
+  const displayType=isMultiSelect?'multi_select':type;
+  const displayBadges={...badges,multi_select:'☑ Mehrfachauswahl'};
+  const displayCls={...cls,multi_select:'q-type-mc'};
   let badge=document.getElementById('q-type-badge');
   if(!badge){badge=document.createElement('div');badge.id='q-type-badge';lbl.parentNode.insertBefore(badge,lbl);}
-  badge.className='q-type-badge '+(cls[type2]||'q-type-mc');
-  badge.textContent=badges[type2]||'◉ Multiple Choice';
+  badge.className='q-type-badge '+(displayCls[displayType]||'q-type-mc');
+  badge.textContent=displayBadges[displayType]||'◉ Multiple Choice';
   document.getElementById('q-fb').className='q-fb';
   document.getElementById('qz-score').innerHTML='Richtig: <strong>'+correct+'</strong>';
   document.getElementById('q-segs').innerHTML=c.questions.map((_,i)=>'<div class="q-seg '+(i<qi?'done':i===qi?'cur':'')+'"></div>').join('');
   const nb=document.getElementById('qz-next');nb.disabled=true;nb.style.background=c.btn_color||'#4f7cff';
   nb.textContent=qi===total-1?'Ergebnis →':'Nächste →';
   const container=document.getElementById('q-opts');container.innerHTML='';
-  const type=q.question_type||'multiple_choice';
-  _shuffledCorrectIndex=null; // reset for each question; renderMCQ sets it if MC
+  _shuffledCorrectIndex=null;
   if(type==='sort') renderSortQ(q,container);
   else if(type==='match') renderMatchQ(q,container);
   else if(type==='deadline') renderDeadlineQ(q,container);
+  else if(type==='true_false') renderTrueFalseQ(q,container);
+  else if(isMultiSelect) renderMultiSelectMCQ(q,container);
   else renderMCQ(q,container);
 }
 
@@ -5349,6 +5357,99 @@ function renderDeadlineQ(q,container){
     const b=document.createElement('button');b.className='q-opt';b.setAttribute('data-l',['A','B','C','D'][i]);
     b.textContent=opt;b.onclick=()=>pick(i);container.appendChild(b);
   });
+}
+
+// ── Wahr / Falsch ──
+function renderTrueFalseQ(q,container){
+  const opts=[q.opt_a,q.opt_b,q.opt_c,q.opt_d].filter(Boolean);
+  const correctAnswers=[q.match_a,q.match_b,q.match_c,q.match_d];
+  const userAnswers=new Array(opts.length).fill(null);
+  container.style.cssText='display:flex;flex-direction:column;gap:8px';
+  const hint=document.createElement('div');
+  hint.style.cssText='font-size:12px;color:var(--text3);margin-bottom:4px';
+  hint.textContent='Entscheide für jede Aussage:';
+  container.appendChild(hint);
+  const pairs=[];
+  opts.forEach((opt,i)=>{
+    const row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:10px';
+    const text=document.createElement('span');
+    text.style.cssText='flex:1;font-size:14px;color:var(--text);line-height:1.5';
+    text.textContent=opt;
+    const btnR=document.createElement('button');btnR.className='q-opt';btnR.style.cssText='flex:0 0 76px;padding:7px 0;font-size:12px;font-weight:700';btnR.textContent='Richtig';
+    const btnF=document.createElement('button');btnF.className='q-opt';btnF.style.cssText='flex:0 0 76px;padding:7px 0;font-size:12px;font-weight:700';btnF.textContent='Falsch';
+    const sel=(val,active,other)=>{
+      userAnswers[i]=val;
+      active.style.cssText+=';background:rgba(79,124,255,0.18);border-color:var(--primary)';
+      other.style.background='';other.style.borderColor='';
+      if(userAnswers.every(a=>a!==null))submitBtn.style.display='';
+    };
+    btnR.onclick=()=>sel('true',btnR,btnF);
+    btnF.onclick=()=>sel('false',btnF,btnR);
+    row.appendChild(text);row.appendChild(btnR);row.appendChild(btnF);
+    container.appendChild(row);
+    pairs.push({btnR,btnF,correct:correctAnswers[i]});
+  });
+  const submitBtn=document.createElement('button');
+  submitBtn.className='btn-nav btn-solid';
+  submitBtn.style.cssText='margin-top:12px;padding:10px 24px;border:none;font-weight:700;border-radius:10px;cursor:pointer;font-size:13px;display:none;background:var(--green);color:#fff;font-family:inherit';
+  submitBtn.textContent='Auswertung';
+  container.appendChild(submitBtn);
+  submitBtn.onclick=()=>{
+    const allOk=pairs.every((p,i)=>userAnswers[i]===p.correct);
+    pairs.forEach((p,i)=>{
+      const ok=userAnswers[i]===p.correct;
+      const activeBtn=userAnswers[i]==='true'?p.btnR:p.btnF;
+      activeBtn.classList.add(ok?'correct':'wrong');
+      if(!ok){(p.correct==='true'?p.btnR:p.btnF).classList.add('correct');}
+      p.btnR.disabled=true;p.btnF.disabled=true;p.btnR.style.background='';p.btnF.style.background='';
+    });
+    submitBtn.disabled=true;
+    if(allOk)correct++;
+    const fb=document.getElementById('q-fb');
+    fb.innerHTML=allOk?'✓ &nbsp;Alle Aussagen richtig bewertet!':'✗ &nbsp;Nicht alle Aussagen korrekt. Richtige Antworten sind grün.';
+    fb.className='q-fb show '+(allOk?'ok':'fail');
+    document.getElementById('qz-score').innerHTML='Richtig: <strong>'+correct+'</strong>';
+    document.getElementById('qz-next').disabled=false;
+  };
+}
+
+// ── Mehrfachauswahl ──
+function renderMultiSelectMCQ(q,container){
+  const opts=[q.opt_a,q.opt_b,q.opt_c,q.opt_d].filter(Boolean);
+  let correctSet=new Set();
+  try{correctSet=new Set(JSON.parse(q.correct_order||'[]'));}catch(e){}
+  const selected=new Set();
+  const hint=document.createElement('div');
+  hint.style.cssText='font-size:12px;color:var(--text3);margin-bottom:8px';
+  hint.textContent='Wähle alle richtigen Antworten aus:';
+  container.appendChild(hint);
+  const btns=opts.map((opt,i)=>{
+    const b=document.createElement('button');b.className='q-opt';b.textContent=opt;
+    b.onclick=()=>{
+      if(selected.has(i)){selected.delete(i);b.style.background='';}
+      else{selected.add(i);b.style.background='rgba(79,124,255,0.15)';}
+      submitBtn.disabled=selected.size===0;
+    };
+    container.appendChild(b);
+    return b;
+  });
+  const submitBtn=document.createElement('button');
+  submitBtn.className='btn-nav btn-solid';
+  submitBtn.style.cssText='margin-top:12px;padding:10px 24px;border:none;font-weight:700;border-radius:10px;cursor:pointer;font-size:13px;background:var(--green);color:#fff;font-family:inherit';
+  submitBtn.textContent='Antwort bestätigen';submitBtn.disabled=true;
+  submitBtn.onclick=()=>{
+    const isOk=selected.size===correctSet.size&&[...selected].every(i=>correctSet.has(i));
+    btns.forEach((b,i)=>{b.disabled=true;b.style.background='';if(correctSet.has(i))b.classList.add('correct');else if(selected.has(i))b.classList.add('wrong');});
+    submitBtn.disabled=true;
+    if(isOk)correct++;
+    const fb=document.getElementById('q-fb');
+    fb.innerHTML=isOk?'✓ &nbsp;Perfekt! Alle richtigen Antworten gewählt!':'✗ &nbsp;Nicht ganz. Die grünen Optionen sind korrekt.';
+    fb.className='q-fb show '+(isOk?'ok':'fail');
+    document.getElementById('qz-score').innerHTML='Richtig: <strong>'+correct+'</strong>';
+    document.getElementById('qz-next').disabled=false;
+  };
+  container.appendChild(submitBtn);
 }
 
 function pick(idx){
@@ -7097,7 +7198,20 @@ async function confirmImport(){
   if(error){showImportMsg('Fehler: '+error.message,'err');return;}
   const courseId=created.id;
   if(d.slides?.length) await sb.from('slides').insert(d.slides.map((s,i)=>({course_id:courseId,sort_order:i,tag:s.tag,title:s.title,content:s.content,stat1_num:s.stat1_num,stat1_lbl:s.stat1_lbl,stat2_num:s.stat2_num,stat2_lbl:s.stat2_lbl,stat3_num:s.stat3_num,stat3_lbl:s.stat3_lbl})));
-  if(d.questions?.length) await sb.from('questions').insert(d.questions.map((q,i)=>({course_id:courseId,sort_order:i,question:q.question,opt_a:q.opt_a,opt_b:q.opt_b,opt_c:q.opt_c,opt_d:q.opt_d,correct_index:q.correct_index,question_type:q.question_type||'multiple_choice',correct_order:q.correct_order||null,match_a:q.match_a||null,match_b:q.match_b||null,match_c:q.match_c||null,match_d:q.match_d||null,scenario:q.scenario||null})));
+  if(d.questions?.length){
+    const _typeMap={ordering:'sort',matching:'match',single_choice:'multiple_choice'};
+    const rows=d.questions.map((q,i)=>{
+      const normType=_typeMap[q.question_type]||q.question_type||'multiple_choice';
+      // Stringify array correct_order; fall back to correct_multi for multi-select MC
+      let co=q.correct_order;
+      if(Array.isArray(co)) co=JSON.stringify(co);
+      else if(!co&&q.correct_multi) co=JSON.stringify(q.correct_multi);
+      else co=co||null;
+      return {course_id:courseId,sort_order:i,question:q.question,opt_a:q.opt_a,opt_b:q.opt_b||null,opt_c:q.opt_c||null,opt_d:q.opt_d||null,correct_index:q.correct_index??null,question_type:normType,correct_order:co,match_a:q.match_a||null,match_b:q.match_b||null,match_c:q.match_c||null,match_d:q.match_d||null,scenario:q.scenario||null};
+    });
+    const{error:qErr}=await sb.from('questions').insert(rows);
+    if(qErr){showImportMsg('Kurs erstellt, aber Fehler bei Fragen: '+qErr.message,'err');return;}
+  }
   pendingImport=null;
   document.getElementById('import-preview').style.display='none';
   document.getElementById('drop-zone').style.display='block';
