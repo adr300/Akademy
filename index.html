@@ -5161,7 +5161,7 @@ function renderQ(){
   const badges={'sort':'⠿ Reihenfolge','match':'⟷ Zuordnung','deadline':'🗓 Fristenrechner','multiple_choice':'◉ Multiple Choice','true_false':'✓✗ Wahr / Falsch'};
   const cls={'sort':'q-type-sort','match':'q-type-match','deadline':'q-type-deadline','multiple_choice':'q-type-mc','true_false':'q-type-sort'};
   // Detect multi-select: MC with no correct_index but has correct_order (stored correct_multi)
-  const isMultiSelect=type==='multiple_choice'&&q.correct_index===null&&!!q.correct_order;
+  const isMultiSelect=type==='multiple_choice'&&(q.correct_index===null||q.correct_index<0)&&!!q.correct_order;
   const displayType=isMultiSelect?'multi_select':type;
   const displayBadges={...badges,multi_select:'☑ Mehrfachauswahl'};
   const displayCls={...cls,multi_select:'q-type-mc'};
@@ -7207,7 +7207,7 @@ async function confirmImport(){
       if(Array.isArray(co)) co=JSON.stringify(co);
       else if(!co&&q.correct_multi) co=JSON.stringify(q.correct_multi);
       else co=co||null;
-      return {course_id:courseId,sort_order:i,question:q.question,opt_a:q.opt_a,opt_b:q.opt_b||null,opt_c:q.opt_c||null,opt_d:q.opt_d||null,correct_index:q.correct_index??null,question_type:normType,correct_order:co,match_a:q.match_a||null,match_b:q.match_b||null,match_c:q.match_c||null,match_d:q.match_d||null,scenario:q.scenario||null};
+      return {course_id:courseId,sort_order:i,question:q.question,opt_a:q.opt_a,opt_b:q.opt_b||null,opt_c:q.opt_c||null,opt_d:q.opt_d||null,correct_index:q.correct_index??-1,question_type:normType,correct_order:co,match_a:q.match_a||null,match_b:q.match_b||null,match_c:q.match_c||null,match_d:q.match_d||null,scenario:q.scenario||null};
     });
     const{error:qErr}=await sb.from('questions').insert(rows);
     if(qErr){showImportMsg('Kurs erstellt, aber Fehler bei Fragen: '+qErr.message,'err');return;}
