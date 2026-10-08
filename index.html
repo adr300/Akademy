@@ -2477,8 +2477,8 @@ CREATE POLICY "admin_all" ON onboarding_plans USING (true) WITH CHECK (true);</p
 </div>
 
 <script>
-const SB_URL='https://tpwfeqdljiyxfaeebvsm.supabase.co';
-const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRwd2ZlcWRsaml5eGZhZWVidnNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MTY1MjQsImV4cCI6MjA5MzE5MjUyNH0.PdONNnswgVaoihmZvFlg_epv8M-QFQyMhamwX6nYvtM';
+const SB_URL='__SUPABASE_URL__';
+const SB_KEY='__SUPABASE_ANON_KEY__';
 const sb=supabase.createClient(SB_URL,SB_KEY);
 
 let currentUser=null,isAdmin=false,isManager=false,isRegister=false,userDisplayName='';
