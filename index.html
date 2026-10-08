@@ -215,6 +215,8 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
 .q-opt.correct::before{background:var(--green);border-color:var(--green);color:#fff;}
 .q-opt.wrong{background:var(--red-dim);border-color:rgba(248,113,113,0.4);color:var(--red);}
 .q-opt.wrong::before{background:var(--red);border-color:var(--red);color:#fff;}
+.q-opt.selected{border-color:rgba(79,124,255,0.5);background:rgba(79,124,255,0.1);color:var(--text);}
+.q-opt.selected::before{content:'✓';background:var(--primary);border-color:var(--primary);color:#fff;}
 .q-fb{margin-top:16px;padding:12px 16px;border-radius:var(--r);font-size:13px;font-weight:600;display:none;align-items:center;gap:10px;}
 .q-fb.show{display:flex;}
 .q-fb.ok{background:rgba(79,124,255,0.1);color:var(--green);border:1px solid rgba(79,124,255,0.25);}
@@ -5382,8 +5384,8 @@ function renderTrueFalseQ(q,container){
     const btnF=document.createElement('button');btnF.className='q-opt';btnF.style.cssText='flex:0 0 76px;padding:7px 0;font-size:12px;font-weight:700';btnF.textContent='Falsch';
     const sel=(val,active,other)=>{
       userAnswers[i]=val;
-      active.style.cssText+=';background:rgba(79,124,255,0.18);border-color:var(--primary)';
-      other.style.background='';other.style.borderColor='';
+      active.classList.add('selected');
+      other.classList.remove('selected');
       if(userAnswers.every(a=>a!==null))submitBtn.style.display='';
     };
     btnR.onclick=()=>sel('true',btnR,btnF);
@@ -5430,8 +5432,8 @@ function renderMultiSelectMCQ(q,container){
   const btns=opts.map((opt,i)=>{
     const b=document.createElement('button');b.className='q-opt';b.textContent=opt;
     b.onclick=()=>{
-      if(selected.has(i)){selected.delete(i);b.style.background='';}
-      else{selected.add(i);b.style.background='rgba(79,124,255,0.15)';}
+      if(selected.has(i)){selected.delete(i);b.classList.remove('selected');}
+      else{selected.add(i);b.classList.add('selected');}
       submitBtn.disabled=selected.size===0;
     };
     container.appendChild(b);
