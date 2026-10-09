@@ -248,7 +248,7 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
 .cert-btn:hover{background:rgba(245,158,11,0.18);}
 
 /* AI CHAT */
-.chat-fab{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:var(--green);border:none;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 24px var(--glow);z-index:900;transition:all .2s;color:#fff;}
+.chat-fab{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:var(--green);border:none;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 24px var(--glow);z-index:900;transition:all .2s;color:#fff;padding:0;overflow:hidden;}
 .chat-fab:hover{transform:scale(1.08);box-shadow:0 6px 32px var(--glow);}
 .chat-fab.visible{display:flex;}
 .chat-fab-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;border-radius:8px;font-size:10px;font-weight:700;padding:1px 5px;min-width:16px;text-align:center;display:none;}
@@ -8505,29 +8505,31 @@ window.replayWelcome=()=>{ if(currentUser) localStorage.removeItem('bluuak_welco
 
 <!-- ── AI CHAT FAB + PANEL ── -->
 <button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="KI-Assistent Energiewirtschaft">
-  <svg width="38" height="38" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <ellipse cx="35" cy="43" rx="13" ry="14" fill="white"/>
-    <ellipse cx="65" cy="43" rx="13" ry="14" fill="white"/>
-    <circle cx="38" cy="46" r="7" fill="#0d111a"/>
-    <circle cx="68" cy="46" r="7" fill="#0d111a"/>
-    <circle cx="35" cy="42" r="3" fill="white" opacity="0.7"/>
-    <circle cx="65" cy="42" r="3" fill="white" opacity="0.7"/>
-    <path d="M 28 66 Q 50 84 72 66" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+  <svg width="52" height="52" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="50" fill="var(--green)"/>
+    <circle cx="35" cy="44" r="16" fill="white"/>
+    <circle cx="65" cy="44" r="16" fill="white"/>
+    <circle cx="39" cy="48" r="8" fill="#0d111a"/>
+    <circle cx="69" cy="48" r="8" fill="#0d111a"/>
+    <circle cx="34" cy="41" r="4" fill="white" opacity="0.75"/>
+    <circle cx="64" cy="41" r="4" fill="white" opacity="0.75"/>
+    <path d="M28 66 Q50 84 72 66" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
   </svg>
   <span class="chat-fab-badge" id="chat-fab-badge"></span>
 </button>
 
 <div class="chat-panel" id="chat-panel">
   <div class="chat-head">
-    <div class="chat-head-icon" style="width:36px;height:36px;border-radius:50%;background:var(--green);padding:0;">
+    <div class="chat-head-icon" style="width:36px;height:36px;border-radius:50%;padding:0;overflow:hidden;background:var(--green);">
       <svg width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <ellipse cx="35" cy="43" rx="13" ry="14" fill="white"/>
-        <ellipse cx="65" cy="43" rx="13" ry="14" fill="white"/>
-        <circle cx="38" cy="46" r="7" fill="#0d111a"/>
-        <circle cx="68" cy="46" r="7" fill="#0d111a"/>
-        <circle cx="35" cy="42" r="3" fill="white" opacity="0.7"/>
-        <circle cx="65" cy="42" r="3" fill="white" opacity="0.7"/>
-        <path d="M 28 66 Q 50 84 72 66" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+        <circle cx="50" cy="50" r="50" fill="var(--green)"/>
+        <circle cx="35" cy="44" r="16" fill="white"/>
+        <circle cx="65" cy="44" r="16" fill="white"/>
+        <circle cx="39" cy="48" r="8" fill="#0d111a"/>
+        <circle cx="69" cy="48" r="8" fill="#0d111a"/>
+        <circle cx="34" cy="41" r="4" fill="white" opacity="0.75"/>
+        <circle cx="64" cy="41" r="4" fill="white" opacity="0.75"/>
+        <path d="M28 66 Q50 84 72 66" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
       </svg>
     </div>
     <div class="chat-head-info">
@@ -8602,7 +8604,7 @@ function chatMd(text) {
   return s;
 }
 
-const CHAT_FACE_SVG = `<svg width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><ellipse cx="35" cy="43" rx="13" ry="14" fill="white"/><ellipse cx="65" cy="43" rx="13" ry="14" fill="white"/><circle cx="38" cy="46" r="7" fill="#0d111a"/><circle cx="68" cy="46" r="7" fill="#0d111a"/><circle cx="35" cy="42" r="3" fill="white" opacity="0.7"/><circle cx="65" cy="42" r="3" fill="white" opacity="0.7"/><path d="M 28 66 Q 50 84 72 66" stroke="white" stroke-width="5.5" fill="none" stroke-linecap="round"/></svg>`;
+const CHAT_FACE_SVG = `<svg width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="var(--green)"/><circle cx="35" cy="44" r="16" fill="white"/><circle cx="65" cy="44" r="16" fill="white"/><circle cx="39" cy="48" r="8" fill="#0d111a"/><circle cx="69" cy="48" r="8" fill="#0d111a"/><circle cx="34" cy="41" r="4" fill="white" opacity="0.75"/><circle cx="64" cy="41" r="4" fill="white" opacity="0.75"/><path d="M28 66 Q50 84 72 66" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/></svg>`;
 
 function appendBubble(role, text, isTyping) {
   const msgs = document.getElementById('chat-msgs');
