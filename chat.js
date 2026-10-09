@@ -34,7 +34,7 @@ module.exports = async function handler(req, res) {
   // Check daily usage limit
   const today = new Date().toISOString().split('T')[0];
   const { data: usage } = await sbAuth.from('chat_usage')
-    .select('count').eq('user_id', user.id).eq('date', today).single();
+    .select('count').eq('user_id', user.id).eq('date', today).maybeSingle();
   const currentCount = usage?.count || 0;
   if (currentCount >= DAILY_LIMIT) {
     return res.status(429).json({ error: 'LIMIT_REACHED', remaining: 0, limit: DAILY_LIMIT });
