@@ -8637,10 +8637,14 @@ async function sendChatMsg() {
   _chatHistory.push({ role: 'user', content: message });
 
   try {
+    const wikiContext = typeof WIKI_ENTRIES !== 'undefined'
+      ? WIKI_ENTRIES.map(e => `${e.abbr} = ${e.full} [${e.cat}]: ${e.desc}`).join('\n')
+      : '';
+
     const resp = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
-      body: JSON.stringify({ message, history: _chatHistory.slice(-10, -1) })
+      body: JSON.stringify({ message, history: _chatHistory.slice(-10, -1), wikiContext })
     });
     const data = await resp.json();
     typingEl.remove();
