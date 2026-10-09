@@ -8454,7 +8454,7 @@ async function loadChatUsage() {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) return;
     const today = new Date().toISOString().split('T')[0];
-    const { data } = await sb.from('chat_usage').select('count').eq('user_id', session.user.id).eq('date', today).single();
+    const { data } = await sb.from('chat_usage').select('count').eq('user_id', session.user.id).eq('date', today).maybeSingle();
     _chatRemaining = CHAT_LIMIT - (data?.count || 0);
     updateChatUI();
   } catch(e) { /* table might not exist yet */ }
