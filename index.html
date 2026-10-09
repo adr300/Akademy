@@ -248,8 +248,8 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
 .cert-btn:hover{background:rgba(245,158,11,0.18);}
 
 /* AI CHAT */
-.chat-fab{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:var(--green);border:none;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 24px var(--glow);z-index:900;transition:all .2s;color:#fff;padding:0;overflow:hidden;}
-.chat-fab:hover{transform:scale(1.08);box-shadow:0 6px 32px var(--glow);}
+.chat-fab{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:#0e1e08;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(255,232,77,0.35);z-index:900;transition:all .2s;color:#fff;padding:0;overflow:hidden;}
+.chat-fab:hover{transform:scale(1.08);box-shadow:0 6px 32px rgba(255,232,77,0.5);}
 .chat-fab.visible{display:flex;}
 .chat-fab-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;border-radius:8px;font-size:10px;font-weight:700;padding:1px 5px;min-width:16px;text-align:center;display:none;}
 .chat-panel{position:fixed;bottom:86px;right:24px;width:370px;height:520px;background:var(--bg2);border:1px solid var(--border2);border-radius:16px;box-shadow:0 12px 48px rgba(0,0,0,0.2);z-index:900;display:none;flex-direction:column;overflow:hidden;transition:all .2s ease;}
@@ -8506,30 +8506,53 @@ window.replayWelcome=()=>{ if(currentUser) localStorage.removeItem('bluuak_welco
 <!-- ── AI CHAT FAB + PANEL ── -->
 <button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="KI-Assistent Energiewirtschaft">
   <svg width="52" height="52" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="50" fill="var(--green)"/>
-    <circle cx="35" cy="44" r="16" fill="white"/>
-    <circle cx="65" cy="44" r="16" fill="white"/>
-    <circle cx="39" cy="48" r="8" fill="#0d111a"/>
-    <circle cx="69" cy="48" r="8" fill="#0d111a"/>
-    <circle cx="34" cy="41" r="4" fill="white" opacity="0.75"/>
-    <circle cx="64" cy="41" r="4" fill="white" opacity="0.75"/>
-    <path d="M28 66 Q50 84 72 66" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <circle cx="50" cy="50" r="50" fill="#0e1e08"/>
+    <circle cx="50" cy="87" r="26" fill="#ffe84d" opacity="0.12"><animate attributeName="opacity" values="0.08;0.22;0.08" dur="2s" repeatCount="indefinite"/></circle>
+    <circle cx="50" cy="87" r="17" fill="#ffe84d" opacity="0.2"><animate attributeName="opacity" values="0.14;0.32;0.14" dur="2s" repeatCount="indefinite"/></circle>
+    <circle cx="50" cy="80" r="11" fill="#4a9020"/>
+    <circle cx="50" cy="67" r="14" fill="#56a828"/>
+    <circle cx="50" cy="45" r="24" fill="#68c034"/>
+    <circle cx="38" cy="39" r="10" fill="white"/>
+    <circle cx="62" cy="39" r="10" fill="white"/>
+    <circle cx="40" cy="41" r="5.5" fill="#0a1804"/>
+    <circle cx="64" cy="41" r="5.5" fill="#0a1804"/>
+    <circle cx="37" cy="37" r="2.5" fill="white" opacity="0.8"/>
+    <circle cx="61" cy="37" r="2.5" fill="white" opacity="0.8"/>
+    <path d="M40 55 Q50 64 60 55" stroke="#2a6010" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M43 23 Q36 12 30 7" stroke="#4a9020" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <circle cx="30" cy="7" r="4" fill="#68c034"/>
+    <path d="M57 23 Q64 12 70 7" stroke="#4a9020" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <circle cx="70" cy="7" r="4" fill="#68c034"/>
+    <circle cx="50" cy="87" r="10" fill="#ffe84d"/>
+    <circle cx="50" cy="87" r="7" fill="#fff59d"/>
+    <circle cx="50" cy="87" r="3.5" fill="white" opacity="0.9"/>
   </svg>
   <span class="chat-fab-badge" id="chat-fab-badge"></span>
 </button>
 
 <div class="chat-panel" id="chat-panel">
   <div class="chat-head">
-    <div class="chat-head-icon" style="width:36px;height:36px;border-radius:50%;padding:0;overflow:hidden;background:var(--green);">
+    <div class="chat-head-icon" style="width:36px;height:36px;border-radius:50%;padding:0;overflow:hidden;background:#0e1e08;">
       <svg width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="50" cy="50" r="50" fill="var(--green)"/>
-        <circle cx="35" cy="44" r="16" fill="white"/>
-        <circle cx="65" cy="44" r="16" fill="white"/>
-        <circle cx="39" cy="48" r="8" fill="#0d111a"/>
-        <circle cx="69" cy="48" r="8" fill="#0d111a"/>
-        <circle cx="34" cy="41" r="4" fill="white" opacity="0.75"/>
-        <circle cx="64" cy="41" r="4" fill="white" opacity="0.75"/>
-        <path d="M28 66 Q50 84 72 66" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/>
+        <circle cx="50" cy="50" r="50" fill="#0e1e08"/>
+        <circle cx="50" cy="87" r="17" fill="#ffe84d" opacity="0.2"/>
+        <circle cx="50" cy="80" r="11" fill="#4a9020"/>
+        <circle cx="50" cy="67" r="14" fill="#56a828"/>
+        <circle cx="50" cy="45" r="24" fill="#68c034"/>
+        <circle cx="38" cy="39" r="10" fill="white"/>
+        <circle cx="62" cy="39" r="10" fill="white"/>
+        <circle cx="40" cy="41" r="5.5" fill="#0a1804"/>
+        <circle cx="64" cy="41" r="5.5" fill="#0a1804"/>
+        <circle cx="37" cy="37" r="2.5" fill="white" opacity="0.8"/>
+        <circle cx="61" cy="37" r="2.5" fill="white" opacity="0.8"/>
+        <path d="M40 55 Q50 64 60 55" stroke="#2a6010" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M43 23 Q36 12 30 7" stroke="#4a9020" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <circle cx="30" cy="7" r="4" fill="#68c034"/>
+        <path d="M57 23 Q64 12 70 7" stroke="#4a9020" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <circle cx="70" cy="7" r="4" fill="#68c034"/>
+        <circle cx="50" cy="87" r="10" fill="#ffe84d"/>
+        <circle cx="50" cy="87" r="6" fill="#fff59d"/>
+        <circle cx="50" cy="87" r="3" fill="white" opacity="0.9"/>
       </svg>
     </div>
     <div class="chat-head-info">
@@ -8605,7 +8628,7 @@ function chatMd(text) {
   return s;
 }
 
-const CHAT_FACE_SVG = `<svg width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="var(--green)"/><circle cx="35" cy="44" r="16" fill="white"/><circle cx="65" cy="44" r="16" fill="white"/><circle cx="39" cy="48" r="8" fill="#0d111a"/><circle cx="69" cy="48" r="8" fill="#0d111a"/><circle cx="34" cy="41" r="4" fill="white" opacity="0.75"/><circle cx="64" cy="41" r="4" fill="white" opacity="0.75"/><path d="M28 66 Q50 84 72 66" stroke="white" stroke-width="6" fill="none" stroke-linecap="round"/></svg>`;
+const CHAT_FACE_SVG = `<svg width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#0e1e08"/><circle cx="50" cy="87" r="17" fill="#ffe84d" opacity="0.2"/><circle cx="50" cy="80" r="11" fill="#4a9020"/><circle cx="50" cy="67" r="14" fill="#56a828"/><circle cx="50" cy="45" r="24" fill="#68c034"/><circle cx="38" cy="39" r="10" fill="white"/><circle cx="62" cy="39" r="10" fill="white"/><circle cx="40" cy="41" r="5.5" fill="#0a1804"/><circle cx="64" cy="41" r="5.5" fill="#0a1804"/><circle cx="37" cy="37" r="2.5" fill="white" opacity="0.8"/><circle cx="61" cy="37" r="2.5" fill="white" opacity="0.8"/><path d="M40 55 Q50 64 60 55" stroke="#2a6010" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M43 23 Q36 12 30 7" stroke="#4a9020" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="30" cy="7" r="4" fill="#68c034"/><path d="M57 23 Q64 12 70 7" stroke="#4a9020" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="70" cy="7" r="4" fill="#68c034"/><circle cx="50" cy="87" r="10" fill="#ffe84d"/><circle cx="50" cy="87" r="6" fill="#fff59d"/><circle cx="50" cy="87" r="3" fill="white" opacity="0.9"/></svg>`;
 
 function appendBubble(role, text, isTyping) {
   const msgs = document.getElementById('chat-msgs');
