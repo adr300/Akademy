@@ -8555,7 +8555,7 @@ window.replayWelcome=()=>{ if(currentUser) localStorage.removeItem('bluuak_welco
 <script>
 // ── AI CHAT ──
 const CHAT_LIMIT = 20;
-let _chatOpen = false, _chatHistory = [], _chatRemaining = CHAT_LIMIT, _chatLoading = false;
+let _chatOpen = false, _chatHistory = [], _chatRemaining = CHAT_LIMIT, _chatLoading = false, _chatGreeted = false;
 
 function chatInit() {
   document.getElementById('chat-fab').classList.add('visible');
@@ -8578,7 +8578,8 @@ function toggleChat() {
   _chatOpen = !_chatOpen;
   document.getElementById('chat-panel').classList.toggle('open', _chatOpen);
   if (_chatOpen) {
-    if (_chatHistory.length === 0) {
+    if (!_chatGreeted) {
+      _chatGreeted = true;
       appendBubble('ai', 'Hallo! Ich bin dein KI-Assistent für Energiewirtschaft. Stell mir gerne Fragen zu den Kursinhalten oder zur Branche allgemein. 💡');
     }
     setTimeout(() => document.getElementById('chat-input').focus(), 80);
