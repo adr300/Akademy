@@ -247,6 +247,38 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
 .cert-btn{padding:10px 24px;font-size:13px;font-weight:600;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:var(--amber);border-radius:10px;cursor:pointer;transition:all .15s;font-family:'Geist',system-ui,sans-serif;display:flex;align-items:center;gap:8px;}
 .cert-btn:hover{background:rgba(245,158,11,0.18);}
 
+/* AI CHAT */
+.chat-fab{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:var(--primary);border:none;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(79,124,255,0.45);z-index:900;transition:all .2s;color:#fff;}
+.chat-fab:hover{transform:scale(1.08);box-shadow:0 6px 32px rgba(79,124,255,0.55);}
+.chat-fab.visible{display:flex;}
+.chat-fab-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;border-radius:8px;font-size:10px;font-weight:700;padding:1px 5px;min-width:16px;text-align:center;display:none;}
+.chat-panel{position:fixed;bottom:86px;right:24px;width:370px;height:520px;background:var(--bg2);border:1px solid var(--border2);border-radius:16px;box-shadow:0 12px 48px rgba(0,0,0,0.35);z-index:900;display:none;flex-direction:column;overflow:hidden;}
+.chat-panel.open{display:flex;}
+.chat-head{padding:14px 16px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.chat-head-icon{width:32px;height:32px;border-radius:10px;background:rgba(79,124,255,0.15);display:flex;align-items:center;justify-content:center;color:var(--primary);flex-shrink:0;}
+.chat-head-info{flex:1;min-width:0;}
+.chat-head-info strong{font-size:14px;font-weight:700;color:var(--text);display:block;}
+.chat-head-info span{font-size:11px;color:var(--text3);}
+.chat-close-btn{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px 6px;border-radius:6px;font-size:16px;line-height:1;flex-shrink:0;}
+.chat-close-btn:hover{color:var(--text);background:var(--bg3);}
+.chat-msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:10px;}
+.chat-bubble{max-width:85%;padding:10px 13px;border-radius:12px;font-size:13px;line-height:1.6;word-wrap:break-word;white-space:pre-wrap;}
+.chat-bubble.ai{background:var(--bg3);border:1px solid var(--border2);color:var(--text);align-self:flex-start;border-bottom-left-radius:4px;}
+.chat-bubble.user{background:var(--primary);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+.chat-bubble.typing{opacity:.6;}
+.chat-typing-dots{display:inline-flex;gap:3px;align-items:center;height:16px;}
+.chat-typing-dots span{width:6px;height:6px;border-radius:50%;background:var(--text3);display:inline-block;animation:ctdot 1.2s infinite;}
+.chat-typing-dots span:nth-child(2){animation-delay:.2s;}
+.chat-typing-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes ctdot{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+.chat-foot{padding:10px 12px;border-top:1px solid var(--border2);display:flex;gap:8px;background:var(--bg2);flex-shrink:0;}
+.chat-input{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:9px 13px;font-size:13px;color:var(--text);font-family:'Geist',system-ui,sans-serif;resize:none;outline:none;line-height:1.4;overflow-y:auto;}
+.chat-input:focus{border-color:var(--primary);}
+.chat-input::placeholder{color:var(--text3);}
+.chat-send-btn{background:var(--primary);border:none;color:#fff;border-radius:10px;padding:9px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;flex-shrink:0;}
+.chat-send-btn:hover{filter:brightness(1.1);}
+.chat-send-btn:disabled{opacity:.4;cursor:default;}
+
 /* ADMIN */
 .admin-tabs{display:flex;gap:0;border-bottom:1px solid var(--border2);margin-bottom:2rem;overflow-x:auto;}
 .admin-tab{padding:11px 18px;font-size:13px;font-weight:600;font-family:'Geist',system-ui,sans-serif;background:none;border:none;border-bottom:2px solid transparent;color:var(--text3);cursor:pointer;transition:all .15s;margin-bottom:-1px;white-space:nowrap;}
@@ -3526,6 +3558,7 @@ async function init(){
       loading=false;
     } else if(event==='SIGNED_OUT'){
       currentUser=null;isAdmin=false;isManager=false;
+      const fab=document.getElementById('chat-fab');if(fab)fab.classList.remove('visible');
       showLogin();
     } else if(event==='TOKEN_REFRESHED' && session && currentUser){
       // just update token, no full reload needed
@@ -3588,6 +3621,7 @@ async function setUser(user){
     showDash();
     loadReportBadge();
     checkAndShowWelcome();
+    if(typeof chatInit==='function') chatInit();
   } catch(err){
     console.error('setUser failed:',err);
     // Show a friendly retry message instead of infinite loading
@@ -8351,6 +8385,155 @@ window.replayWelcome=()=>{ if(currentUser) localStorage.removeItem('bluuak_welco
 
   </div>
 </div>
+
+<!-- ── AI CHAT FAB + PANEL ── -->
+<button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="KI-Assistent Energiewirtschaft">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+  <span class="chat-fab-badge" id="chat-fab-badge"></span>
+</button>
+
+<div class="chat-panel" id="chat-panel">
+  <div class="chat-head">
+    <div class="chat-head-icon">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--primary)"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    </div>
+    <div class="chat-head-info">
+      <strong>KI-Assistent</strong>
+      <span id="chat-credits-lbl">Energiewirtschaft</span>
+    </div>
+    <button class="chat-close-btn" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-msgs" id="chat-msgs"></div>
+  <div class="chat-foot">
+    <textarea class="chat-input" id="chat-input" rows="1" placeholder="Stell eine Frage zur Energiewirtschaft…"
+      onkeydown="chatKeydown(event)"
+      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,100)+'px'"></textarea>
+    <button class="chat-send-btn" id="chat-send-btn" onclick="sendChatMsg()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2" fill="currentColor" stroke="none"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+// ── AI CHAT ──
+const CHAT_LIMIT = 20;
+let _chatOpen = false, _chatHistory = [], _chatRemaining = CHAT_LIMIT, _chatLoading = false;
+
+function chatInit() {
+  document.getElementById('chat-fab').classList.add('visible');
+  loadChatUsage();
+}
+
+function toggleChat() {
+  _chatOpen = !_chatOpen;
+  document.getElementById('chat-panel').classList.toggle('open', _chatOpen);
+  if (_chatOpen) {
+    if (_chatHistory.length === 0) {
+      appendBubble('ai', 'Hallo! Ich bin dein KI-Assistent für Energiewirtschaft. Stell mir gerne Fragen zu den Kursinhalten oder zur Branche allgemein. 💡');
+    }
+    setTimeout(() => document.getElementById('chat-input').focus(), 80);
+  }
+}
+
+function appendBubble(role, text, isTyping) {
+  const msgs = document.getElementById('chat-msgs');
+  const div = document.createElement('div');
+  div.className = 'chat-bubble ' + role + (isTyping ? ' typing' : '');
+  if (isTyping) {
+    div.innerHTML = '<div class="chat-typing-dots"><span></span><span></span><span></span></div>';
+  } else {
+    div.textContent = text;
+  }
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+async function loadChatUsage() {
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return;
+    const today = new Date().toISOString().split('T')[0];
+    const { data } = await sb.from('chat_usage').select('count').eq('user_id', session.user.id).eq('date', today).single();
+    _chatRemaining = CHAT_LIMIT - (data?.count || 0);
+    updateChatUI();
+  } catch(e) { /* table might not exist yet */ }
+}
+
+function updateChatUI() {
+  const lbl = document.getElementById('chat-credits-lbl');
+  const badge = document.getElementById('chat-fab-badge');
+  const sendBtn = document.getElementById('chat-send-btn');
+  lbl.textContent = `Energiewirtschaft · ${_chatRemaining}/${CHAT_LIMIT} heute`;
+  if (_chatRemaining <= 5 && _chatRemaining > 0) {
+    badge.textContent = _chatRemaining;
+    badge.style.display = '';
+  } else {
+    badge.style.display = 'none';
+  }
+  sendBtn.disabled = _chatRemaining <= 0 || _chatLoading;
+}
+
+function chatKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMsg(); }
+}
+
+async function sendChatMsg() {
+  const input = document.getElementById('chat-input');
+  const message = input.value.trim();
+  if (!message || _chatLoading) return;
+
+  if (_chatRemaining <= 0) {
+    appendBubble('ai', `Du hast dein Tageslimit von ${CHAT_LIMIT} Nachrichten erreicht. Morgen steht dir das volle Kontingent wieder zur Verfügung.`);
+    return;
+  }
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { appendBubble('ai', 'Bitte melde dich an, um den KI-Assistenten zu nutzen.'); return; }
+
+  input.value = '';
+  input.style.height = 'auto';
+  _chatLoading = true;
+  updateChatUI();
+
+  appendBubble('user', message);
+  const typingEl = appendBubble('ai', '', true);
+
+  _chatHistory.push({ role: 'user', content: message });
+
+  try {
+    const resp = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
+      body: JSON.stringify({ message, history: _chatHistory.slice(-10, -1) })
+    });
+    const data = await resp.json();
+    typingEl.remove();
+
+    if (resp.status === 429 || data.error === 'LIMIT_REACHED') {
+      appendBubble('ai', `Du hast dein Tageslimit von ${CHAT_LIMIT} Nachrichten erreicht. Morgen steht dir das volle Kontingent wieder zur Verfügung.`);
+      _chatRemaining = 0;
+      _chatHistory.pop();
+    } else if (!resp.ok || data.error) {
+      appendBubble('ai', 'Entschuldigung, da ist etwas schiefgelaufen. Bitte versuche es erneut.');
+      _chatHistory.pop();
+    } else {
+      appendBubble('ai', data.answer);
+      _chatHistory.push({ role: 'assistant', content: data.answer });
+      _chatRemaining = data.remaining;
+    }
+  } catch(e) {
+    typingEl.remove();
+    appendBubble('ai', 'Verbindungsfehler. Bitte prüfe deine Internetverbindung und versuche es erneut.');
+    _chatHistory.pop();
+  }
+
+  _chatLoading = false;
+  updateChatUI();
+  const msgs = document.getElementById('chat-msgs');
+  msgs.scrollTop = msgs.scrollHeight;
+}
+</script>
 
 </body>
 </html>
