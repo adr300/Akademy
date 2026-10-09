@@ -40,6 +40,8 @@ module.exports = async function handler(req, res) {
     return res.status(429).json({ error: 'LIMIT_REACHED', remaining: 0, limit: DAILY_LIMIT });
   }
 
+  const { wikiContext = '' } = req.body;
+
   // Fetch course context
   const [{ data: slides }, { data: questions }] = await Promise.all([
     sbAuth.from('slides').select('tag, title, content').order('sort_order').limit(120),
@@ -66,14 +68,32 @@ module.exports = async function handler(req, res) {
       }
     });
   }
+  if (wikiContext) {
+    courseContext += '\n=== FACHBEGRIFF-WIKI ===\n' + wikiContext.substring(0, 20000);
+  }
 
-  const systemPrompt = `Du bist ein Lernassistent der Bluuakademie, spezialisiert auf Energiewirtschaft. Beantworte Fragen auf Deutsch, präzise und lernförderlich.
+  const systemPrompt = `Du bist ein Lernassistent der Bluuakademie, spezialisiert auf Energiewirtschaft und SAP IS-U. Beantworte Fragen auf Deutsch, präzise und lernförderlich.
 
 Vorgehen:
-1. Nutze zuerst die Kursmaterialien unten als Quelle
+1. Nutze zuerst die Kursmaterialien, Testfragen und das Fachbegriff-Wiki unten als Quelle
 2. Wenn die Antwort darin enthalten ist, erkläre sie klar und ausführlich
 3. Wenn nicht, nutze dein allgemeines Fachwissen und weise kurz darauf hin
 4. Beantworte NUR Fragen zur Energiewirtschaft und verwandten Themen — bei anderen Themen höflich ablehnen
+
+SAP-Unterscheidung — STRIKTE REGEL: Trenne Transaktionen und Tabellen IMMER vollständig.
+
+→ Frage nach einer TRANSAKTION (T-Code wie FPP1, ES20, IQ01):
+  - Erkläre nur, was die Transaktion tut (anlegen / ändern / anzeigen von was)
+  - Nenne KEINE Tabellen, es sei denn der Nutzer fragt explizit "welche Tabellen"
+
+→ Frage nach einer TABELLE (z.B. BUT000, EVER, EANL):
+  - Erkläre nur, welche Daten in der Tabelle gespeichert sind
+  - Nenne KEINE Transaktionen, es sei denn der Nutzer fragt explizit "welche Transaktionen"
+
+→ Nur wenn der Nutzer explizit nach BEIDEM fragt (z.B. "Transaktion und zugehörige Tabellen"):
+  - Trenne die Antwort klar mit den Überschriften **Transaktion:** und **Tabellen:**
+
+Halte dich strikt an diese Regel — vermische niemals beides unaufgefordert.
 
 ${courseContext}`;
 
