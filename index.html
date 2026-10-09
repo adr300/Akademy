@@ -252,8 +252,9 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
 .chat-fab:hover{transform:scale(1.08);box-shadow:0 6px 32px var(--glow);}
 .chat-fab.visible{display:flex;}
 .chat-fab-badge{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;border-radius:8px;font-size:10px;font-weight:700;padding:1px 5px;min-width:16px;text-align:center;display:none;}
-.chat-panel{position:fixed;bottom:86px;right:24px;width:370px;height:520px;background:var(--bg2);border:1px solid var(--border2);border-radius:16px;box-shadow:0 12px 48px rgba(0,0,0,0.2);z-index:900;display:none;flex-direction:column;overflow:hidden;}
+.chat-panel{position:fixed;bottom:86px;right:24px;width:370px;height:520px;background:var(--bg2);border:1px solid var(--border2);border-radius:16px;box-shadow:0 12px 48px rgba(0,0,0,0.2);z-index:900;display:none;flex-direction:column;overflow:hidden;transition:all .2s ease;}
 .chat-panel.open{display:flex;}
+.chat-panel.fullscreen{inset:0;width:100%;height:100%;border-radius:0;border:none;bottom:0;right:0;max-width:100%;}
 .chat-head{padding:14px 16px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:10px;flex-shrink:0;}
 .chat-head-icon{width:32px;height:32px;border-radius:10px;background:var(--glow);display:flex;align-items:center;justify-content:center;color:var(--green);flex-shrink:0;}
 .chat-head-info{flex:1;min-width:0;}
@@ -8515,6 +8516,9 @@ window.replayWelcome=()=>{ if(currentUser) localStorage.removeItem('bluuak_welco
       <strong>KI-Assistent</strong>
       <span id="chat-credits-lbl">Energiewirtschaft</span>
     </div>
+    <button class="chat-close-btn" onclick="toggleChatFullscreen()" id="chat-fs-btn" title="Vollbild">
+      <svg id="chat-fs-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+    </button>
     <button class="chat-close-btn" onclick="toggleChat()">✕</button>
   </div>
   <div class="chat-msgs" id="chat-msgs"></div>
@@ -8536,6 +8540,18 @@ let _chatOpen = false, _chatHistory = [], _chatRemaining = CHAT_LIMIT, _chatLoad
 function chatInit() {
   document.getElementById('chat-fab').classList.add('visible');
   loadChatUsage();
+}
+
+function toggleChatFullscreen() {
+  const panel = document.getElementById('chat-panel');
+  const icon = document.getElementById('chat-fs-icon');
+  const isFs = panel.classList.toggle('fullscreen');
+  // swap icon: expand ↔ compress
+  icon.innerHTML = isFs
+    ? '<polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="14" x2="3" y2="21"/><line x1="21" y1="3" x2="14" y2="10"/>'
+    : '<polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>';
+  const msgs = document.getElementById('chat-msgs');
+  msgs.scrollTop = msgs.scrollHeight;
 }
 
 function toggleChat() {
@@ -8611,6 +8627,7 @@ function updateChatUI() {
 
 function chatKeydown(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMsg(); }
+  if (e.key === 'Escape' && document.getElementById('chat-panel').classList.contains('fullscreen')) toggleChatFullscreen();
 }
 
 async function sendChatMsg() {
