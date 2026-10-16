@@ -2692,6 +2692,7 @@ function renderUserList(users){
             '<option value="manager"'+(role==='manager'?' selected':'')+'>Manager</option>'+
             (isAdmin?'<option value="admin"'+(role==='admin'?' selected':'')+'>Admin</option>':'')+
           '</select>'+
+          (isAdmin?'<button class="btn-sec" style="font-size:11px;padding:4px 10px;color:var(--red);border-color:var(--red)" onclick="deleteUser(this,\''+u.user_id+'\',\''+escHtml(email)+'\')">Löschen</button>':'')+
         '</div>'
       :'');
     list.appendChild(row);
@@ -2761,6 +2762,38 @@ async function changeRole(userId, newRole){
     setTimeout(()=>msg.classList.add('show'),50);
     setTimeout(()=>{msg.classList.remove('show');setTimeout(()=>msg.remove(),400);},2500);
   }catch(err){alert('Fehler: '+err.message);}
+}
+
+async function deleteUser(btn, userId, email){
+  if(!confirm('Nutzer "'+email+'" und ALLE zugehörigen Daten unwiderruflich löschen?\n\nDies kann nicht rückgängig gemacht werden.')) return;
+  btn.disabled=true;
+  btn.textContent='Lösche...';
+  try{
+    const{data:{session}}=await sb.auth.getSession();
+    const resp=await fetch('/api/delete-user',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+      body:JSON.stringify({targetUserId:userId})
+    });
+    const result=await resp.json();
+    if(!resp.ok) throw new Error(result.error||'Unbekannter Fehler');
+    // Remove from local data and re-render
+    allUsersData=allUsersData.filter(u=>u.user_id!==userId);
+    allAdminsData=allAdminsData.filter(id=>id!==userId);
+    allManagersData=allManagersData.filter(id=>id!==userId);
+    document.getElementById('sa-total-users').textContent=allUsersData.length;
+    document.getElementById('sa-total-managers').textContent=allManagersData.length;
+    renderUserList(allUsersData);
+    const msg=document.createElement('div');msg.className='xp-toast';
+    msg.innerHTML='✓ Nutzer gelöscht';
+    document.body.appendChild(msg);
+    setTimeout(()=>msg.classList.add('show'),50);
+    setTimeout(()=>{msg.classList.remove('show');setTimeout(()=>msg.remove(),400);},2500);
+  }catch(err){
+    btn.disabled=false;
+    btn.textContent='Löschen';
+    alert('Fehler beim Löschen: '+err.message);
+  }
 }
 
 async function showAddUserModal(){
