@@ -41,7 +41,8 @@ module.exports = async function handler(req, res) {
     'daily_completions',
     'video_reflections',
     'team_members',
-    'reports',
+    'organisation_members',
+    'ai_usage',
     'admins',
     'managers',
     'profiles',
@@ -50,6 +51,11 @@ module.exports = async function handler(req, res) {
   for (const table of userTables) {
     await sbService.from(table).delete().eq('user_id', targetUserId);
   }
+
+  // Tables with non-standard FK column names
+  await sbService.from('reports').delete().eq('user_id', targetUserId);
+  await sbService.from('reports').delete().eq('resolved_by', targetUserId);
+  await sbService.from('organisations').delete().eq('created_by', targetUserId);
 
   // Delete the auth user (requires service role)
   const { error: deleteErr } = await sbService.auth.admin.deleteUser(targetUserId);
