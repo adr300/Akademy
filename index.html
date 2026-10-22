@@ -247,6 +247,35 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
 .cert-btn{padding:10px 24px;font-size:13px;font-weight:600;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:var(--amber);border-radius:10px;cursor:pointer;transition:all .15s;font-family:'Geist',system-ui,sans-serif;display:flex;align-items:center;gap:8px;}
 .cert-btn:hover{background:rgba(245,158,11,0.18);}
 
+/* LERNKARTEN */
+.lk-set-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-top:1.5rem}
+.lk-set-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rx);padding:1.25rem;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.lk-set-card:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.15);border-color:var(--green)}
+.lk-set-card.done{border-color:var(--green);background:color-mix(in srgb,var(--green) 6%,var(--bg2))}
+.lk-set-letter{font-size:28px;font-weight:800;color:var(--green);margin-bottom:4px}
+.lk-set-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;line-height:1.35}
+.lk-set-meta{font-size:11px;color:var(--text3)}
+.lk-set-check{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff}
+.lk-card-wrap{perspective:1000px;width:100%;max-width:520px;height:280px;margin:0 auto}
+.lk-card{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.lk-card.flipped{transform:rotateY(180deg)}
+.lk-card-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--rx);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;text-align:center;border:2px solid var(--border2)}
+.lk-card-front{background:var(--bg2);border-color:var(--green)}
+.lk-card-back{background:color-mix(in srgb,var(--green) 8%,var(--bg2));transform:rotateY(180deg);border-color:var(--green)}
+.lk-card-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:.75rem}
+.lk-card-text{font-size:15px;font-weight:600;color:var(--text);line-height:1.5;max-width:380px}
+.lk-card-hint{font-size:11px;color:var(--text3);margin-top:1rem}
+.lk-nav{display:flex;align-items:center;justify-content:space-between;margin-top:1.25rem;gap:12px}
+.lk-prog{font-size:12px;color:var(--text3);text-align:center}
+.lk-dots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin-top:.5rem}
+.lk-dot{width:7px;height:7px;border-radius:50%;background:var(--border2);transition:background .2s}
+.lk-dot.seen{background:var(--green)}
+.lk-dot.current{background:var(--green);box-shadow:0 0 0 2px color-mix(in srgb,var(--green) 30%,transparent)}
+.lk-glow{width:48px;height:48px;margin-bottom:.5rem}
+.lk-badge-pop{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;z-index:3000;animation:fadeIn .3s}
+.lk-badge-box{background:var(--bg2);border:2px solid var(--green);border-radius:var(--rx);padding:2rem;text-align:center;max-width:320px;animation:scaleIn .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes scaleIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+
 /* AI CHAT */
 .chat-fab{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:#0e1e08;border:none;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 24px rgba(255,232,77,0.35);z-index:900;transition:all .2s;color:#fff;padding:0;overflow:hidden;}
 .chat-fab:hover{transform:scale(1.08);box-shadow:0 6px 32px rgba(255,232,77,0.5);}
@@ -1573,6 +1602,19 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
         <div style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Simulatoren</div>
         <div id="sim-dash-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px"></div>
       </div>
+
+      <!-- LERNKARTEN -->
+      <div id="lk-dash-section" style="margin-top:2rem">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <div style="font-size:13px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em">Lernkarten</div>
+          <button class="btn-sec" style="font-size:11px;padding:4px 12px" onclick="openLernkartenScreen()">Alle ansehen</button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="font-size:13px;color:var(--text3)">Modul 1.1.1 · 1x1 der Energiewirtschaft</div>
+          <div id="lk-dash-progress" style="font-size:11px;color:var(--text3)"></div>
+        </div>
+        <div id="lk-dash-grid" class="lk-set-grid"></div>
+      </div>
     </div>
 
     <div class="screen" id="screen-slides"><div style="padding-top:1.5rem">
@@ -1654,6 +1696,52 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
             <button class="btn-nav btn-solid" onclick="finishSimulator()" style="white-space:nowrap">Abschließen →</button>
           </div>
           <iframe id="sim-frame" sandbox="allow-scripts allow-forms allow-modals" style="width:100%;flex:1;border:none;border-radius:0 0 var(--rl) var(--rl)" srcdoc=""></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- LERNKARTEN SCREEN -->
+    <div class="screen" id="screen-lernkarten">
+      <div style="padding-top:1.5rem">
+        <div class="chrome">
+          <div class="chrome-top">
+            <button class="btn-back" onclick="exitLernkarten()">← Zurück</button>
+            <div class="tb-info"><div class="tb-title" id="lk-screen-title">Lernkarten</div><div class="tb-sub">Modul 1.1.1</div></div>
+            <div class="tb-chip" id="lk-screen-chip"></div>
+          </div>
+          <!-- Set selection -->
+          <div id="lk-set-view" style="padding:1.5rem">
+            <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px">Wähle ein Set</div>
+            <div style="font-size:13px;color:var(--text3);margin-bottom:0">Lerne jedes Untermodul mit Lernkarten und sammle Abzeichen.</div>
+            <div id="lk-sets-grid" class="lk-set-grid"></div>
+          </div>
+          <!-- Card view -->
+          <div id="lk-card-view" style="display:none;padding:1.5rem;display:none">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+              <button class="btn-sec" style="font-size:12px;padding:5px 12px" onclick="exitLernkartenSet()">← Sets</button>
+              <div class="lk-prog" id="lk-prog-label"></div>
+              <div style="width:80px"></div>
+            </div>
+            <div class="lk-card-wrap">
+              <div class="lk-card" id="lk-card" onclick="flipCard()">
+                <div class="lk-card-face lk-card-front">
+                  <div class="lk-card-label">Frage</div>
+                  <svg class="lk-glow" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0e1e08"/><circle cx="50" cy="87" r="26" fill="#ffe84d" opacity="0.12"><animate attributeName="opacity" values="0.08;0.22;0.08" dur="2s" repeatCount="indefinite"/></circle><circle cx="50" cy="87" r="17" fill="#ffe84d" opacity="0.2"><animate attributeName="opacity" values="0.14;0.32;0.14" dur="2s" repeatCount="indefinite"/></circle><circle cx="50" cy="80" r="11" fill="#4a9020"/><circle cx="50" cy="67" r="14" fill="#56a828"/><circle cx="50" cy="45" r="24" fill="#68c034"/><circle cx="38" cy="39" r="10" fill="white"/><circle cx="62" cy="39" r="10" fill="white"/><circle cx="40" cy="41" r="5.5" fill="#0a1804"/><circle cx="64" cy="41" r="5.5" fill="#0a1804"/><circle cx="37" cy="37" r="2.5" fill="white" opacity="0.8"/><circle cx="61" cy="37" r="2.5" fill="white" opacity="0.8"/><path d="M40 55 Q50 64 60 55" stroke="#2a6010" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M43 23 Q36 12 30 7" stroke="#4a9020" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="30" cy="7" r="4" fill="#68c034"/><path d="M57 23 Q64 12 70 7" stroke="#4a9020" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="70" cy="7" r="4" fill="#68c034"/><circle cx="50" cy="87" r="10" fill="#ffe84d"/><circle cx="50" cy="87" r="7" fill="#fff59d"/><circle cx="50" cy="87" r="3.5" fill="white" opacity="0.9"/></svg>
+                  <div class="lk-card-text" id="lk-front-text"></div>
+                  <div class="lk-card-hint">Tippe um umzudrehen</div>
+                </div>
+                <div class="lk-card-face lk-card-back">
+                  <div class="lk-card-label">Antwort</div>
+                  <div class="lk-card-text" id="lk-back-text"></div>
+                </div>
+              </div>
+            </div>
+            <div class="lk-dots" id="lk-dots"></div>
+            <div class="lk-nav">
+              <button class="btn-nav btn-ghost" id="lk-btn-prev" onclick="lkPrev()">← Zurück</button>
+              <button class="btn-nav btn-solid" id="lk-btn-next" onclick="lkNext()">Weiter →</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2775,7 +2863,9 @@ async function deleteUser(btn, userId, email){
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
       body:JSON.stringify({targetUserId:userId})
     });
-    const result=await resp.json();
+    const text=await resp.text();
+    let result;
+    try{result=JSON.parse(text);}catch(e){throw new Error('API nicht erreichbar ('+resp.status+') — wurde delete-user.js deployed?');}
     if(!resp.ok) throw new Error(result.error||'Unbekannter Fehler');
     // Remove from local data and re-render
     allUsersData=allUsersData.filter(u=>u.user_id!==userId);
@@ -3772,6 +3862,7 @@ async function setUser(user){
     loadReportBadge();
     checkAndShowWelcome();
     if(typeof chatInit==='function') chatInit();
+    if(typeof initLernkarten==='function') initLernkarten();
   } catch(err){
     console.error('setUser failed:',err);
     // Show a friendly retry message instead of infinite loading
@@ -8781,6 +8872,277 @@ async function sendChatMsg() {
   updateChatUI();
   const msgs = document.getElementById('chat-msgs');
   msgs.scrollTop = msgs.scrollHeight;
+}
+</script>
+
+<script>
+// ── LERNKARTEN ──
+const LERNKARTEN_SETS = [
+  { key:'A', letter:'A', title:'Der Weg des Stroms', badge:'stromlaeufer', badgeLabel:'Stromläufer', cards:[
+    {f:'Wie verläuft der Weg des Stroms?', b:'Von der Erzeugung über das Netz zum Verbrauch.'},
+    {f:'Warum ist das Stromnetz notwendig?', b:'Weil Erzeugung und Verbrauch räumlich getrennt sind.'},
+    {f:'Welche drei Aufgaben hat das Stromnetz?', b:'Transportieren, Verteilen und Steuern des Stroms.'},
+    {f:'Was macht ein Übertragungsnetz?', b:'Es transportiert Strom über weite Strecken zwischen Kraftwerken und Regionen.'},
+    {f:'Wo entsteht Strom?', b:'In Kraftwerken, Windparks oder Photovoltaikanlagen auf Dächern und Freiflächen.'},
+    {f:'Wer verbraucht Strom?', b:'Haushalte, Gewerbe und Industrie – für Licht, Maschinen, Wärme oder Mobilität.'},
+    {f:'Was verbindet die Stationen der Energiekette miteinander?', b:'Verträge und Daten – viele Rollen im Energiemarkt verbinden Erzeuger und Verbraucher indirekt.'},
+  ]},
+  { key:'B', letter:'B', title:'Stromnetz und Spannungsebenen', badge:'spannungsprofi', badgeLabel:'Spannungsprofi', cards:[
+    {f:'Wie viele Spannungsebenen hat das Stromnetz?', b:'Vier: Höchstspannung, Hochspannung, Mittelspannung, Niederspannung.'},
+    {f:'Welche Ebene ist das Übertragungsnetz?', b:'Nur die Höchstspannung (bis ca. 380 kV) – alle anderen Ebenen sind Verteilnetze.'},
+    {f:'Welche Spannung hat das Niederspannungsnetz?', b:'230/400 V – versorgt Haushalte und kleine Betriebe.'},
+    {f:'Warum wird Strom mit hoher Spannung transportiert?', b:'Hohe Spannung bedeutet geringe Transportverluste.'},
+    {f:'Was macht ein Umspannwerk?', b:'Es senkt die Spannung stufenweise ab, damit der Strom näher beim Kunden verwendet werden kann.'},
+    {f:'Was versorgt die Mittelspannung?', b:'Industrie und größere Gewerbebetriebe (ca. 10–20 kV).'},
+    {f:'Wie lang ist das Übertragungsnetz in Deutschland?', b:'Rund 38.400 km, betrieben von vier Übertragungsnetzbetreibern.'},
+    {f:'Welche Spannungsebene verwendet die regionale Verteilung?', b:'Die Hochspannung mit ca. 110 kV.'},
+  ]},
+  { key:'C', letter:'C', title:'Der Weg des Gases', badge:'gasdetektiv', badgeLabel:'Gasdetektiv', cards:[
+    {f:'Woher kommt Deutschlands Erdgas?', b:'Zu rund 95 % aus Importen, hauptsächlich aus Norwegen.'},
+    {f:'Was ist LNG?', b:'Verflüssigtes Erdgas (Liquefied Natural Gas), das per Schiff transportiert wird.'},
+    {f:'Wie lautet der Weg des Gases vom Import zum Kunden?', b:'Import → Fernleitungsnetz → Verteilernetz → Hausanschluss.'},
+    {f:'Was ist das Fernleitungsnetz?', b:'Das Gegenstück zum Übertragungsnetz beim Strom – transportiert Gas unter hohem Druck.'},
+    {f:'Wie lang ist das Fernleitungsnetz in Deutschland?', b:'Rund 45.800 km.'},
+    {f:'Was ist der große Vorteil von Gas gegenüber Strom?', b:'Gas lässt sich in großen Mengen speichern, z. B. in Untergrundspeichern.'},
+    {f:'In welcher Einheit wird Gas gemessen und abgerechnet?', b:'Gemessen in Kubikmetern (m³), umgerechnet und abgerechnet in Kilowattstunden (kWh).'},
+    {f:'Was machen Verdichterstationen?', b:'Sie halten den Druck im Fernleitungsnetz aufrecht.'},
+    {f:'Wie lang sind die Gasverteilernetze in Deutschland?', b:'Zusammen gut 557.000 km inklusive Hausanschlussleitungen.'},
+  ]},
+  { key:'D', letter:'D', title:'Primär-, End- und Nutzenergie', badge:'energiewandler', badgeLabel:'Energiewandler', cards:[
+    {f:'Was ist Primärenergie?', b:'Die ursprüngliche Energiequelle, z. B. Erdöl, Erdgas, Kohle, Wind, Sonne, Wasser, Biomasse.'},
+    {f:'Was ist Endenergie?', b:'Das, was beim Verbraucher ankommt: Strom aus der Steckdose, Heizöl, Gas am Hausanschluss, Fernwärme.'},
+    {f:'Was ist Nutzenergie?', b:'Der eigentliche Nutzen: Licht, Wärme, Kühlung, Bewegung.'},
+    {f:'Ist Strom Primär- oder Endenergie?', b:'Immer Endenergie – er wird aus Primärenergie erzeugt, auch wenn er aus Wind oder Sonne stammt.'},
+    {f:'Was passiert bei jeder Energieumwandlung?', b:'Ein Teil der Energie geht verloren, z. B. als Abwärme.'},
+    {f:'Nenne ein Beispiel für alle drei Energiestufen beim Gas.', b:'Erdgas in der Lagerstätte = Primär, am Hausanschluss = End, warmes Wasser unter der Dusche = Nutz.'},
+    {f:'Was sind erneuerbare Primärenergiequellen?', b:'Wind, Sonne, Wasser, Biomasse und Geothermie.'},
+  ]},
+  { key:'E', letter:'E', title:'Energiequellen und Energiemix', badge:'mix_meister', badgeLabel:'Mix-Meister', cards:[
+    {f:'Welcher Energieträger führt beim deutschen Primärenergieverbrauch 2025?', b:'Mineralöl mit 36,0 %.'},
+    {f:'Wie hoch war der Anteil der Erneuerbaren am Primärenergieverbrauch 2025?', b:'20,8 % (1990 waren es nur 1,3 %).'},
+    {f:'Wie hoch ist der Anteil der Erneuerbaren an der Stromerzeugung 2025?', b:'57,3 %.'},
+    {f:'Warum unterscheiden sich Energiemix und Strommix?', b:'Die Primärenergie umfasst auch Wärme und Verkehr, wo Mineralöl und Erdgas dominieren.'},
+    {f:'Wie groß ist der Primärenergieverbrauch Deutschlands 2025?', b:'Rund 10.530 Petajoule.'},
+    {f:'Welche vier Fragen helfen beim Lesen von Energiegrafiken?', b:'Welche Jahre? Welche Einheit? Anteile oder Mengen? Woher stammen die Zahlen (vorläufig/endgültig)?'},
+    {f:'Welche erneuerbaren Energien führen bei der deutschen Stromerzeugung 2025?', b:'Windenergie (26,3 %) und Photovoltaik (18,1 %).'},
+    {f:'Was ist ein Petajoule?', b:'10¹⁵ Joule – eine Billiarde Joule. Wird für Primärenergiemengen ganzer Länder verwendet.'},
+  ]},
+  { key:'F', letter:'F', title:'Energiedaten und EDM', badge:'datenlotse', badgeLabel:'Datenlotse', cards:[
+    {f:'Was bedeutet die Abkürzung EDM?', b:'Energiedatenmanagement.'},
+    {f:'Welche vier Schritte durchläuft ein Zählerstand?', b:'Messen – Prüfen – Zuordnen – Nutzen.'},
+    {f:'Wer misst den Energieverbrauch?', b:'Der Messstellenbetreiber (MSB) – häufig der Netzbetreiber als grundzuständiger MSB.'},
+    {f:'Warum ist der Prüfschritt so entscheidend?', b:'Unplausible Werte müssen erkannt werden, bevor sie für Abrechnung oder Bilanzierung genutzt werden.'},
+    {f:'Was ist eine Marktlokation?', b:'Die Abbildung des Kunden / Verbrauchsortes im Energiemarkt – der Kunde selbst ist keine eigene Marktrolle.'},
+    {f:'Welche Akteure brauchen dieselben Messwerte?', b:'Lieferant (für die Rechnung), Netzbetreiber (für Netzabrechnung und Bilanzierung) und Messstellenbetreiber.'},
+    {f:'Wann sind Messwerte nutzbar?', b:'Erst nach dem Prüfen und Zuordnen – nur geprüfte und zugeordnete Werte dürfen verwendet werden.'},
+  ]},
+  { key:'G', letter:'G', title:'Leistung, Energie und Einheiten', badge:'einheiten_ass', badgeLabel:'Einheiten-Ass', cards:[
+    {f:'Was ist der Unterschied zwischen Leistung und Energie?', b:'Leistung (kW) beschreibt den Moment; Energie (kWh) beschreibt die Menge über die Zeit.'},
+    {f:'Wie berechnet man Energie?', b:'Energie = Leistung × Zeit (z. B. 2 kW × 3 h = 6 kWh).'},
+    {f:'Was wird in der Energiewirtschaft abgerechnet?', b:'Immer die Energie (kWh), nicht die Leistung (kW).'},
+    {f:'Was bedeutet der Vorsatz „Mega"?', b:'10⁶ = eine Million. Typisch für Kraftwerke und Windparks (MW, MWh).'},
+    {f:'In welchen Schritten steigen die Einheitenvorsätze?', b:'In Tausenderschritten: kilo → Mega → Giga → Tera → Peta.'},
+    {f:'Was ist die Formel für elektrische Leistung?', b:'P = U × I (Leistung = Spannung × Stromstärke).'},
+    {f:'Wie viel kWh verbraucht ein 2-kW-Wasserkocher in 6 Minuten?', b:'2 kW × 0,1 h = 0,2 kWh.'},
+    {f:'Für welche Größenordnung steht Tera?', b:'10¹² = eine Billion. Typisch für Jahresmengen eines Landes (TWh).'},
+    {f:'Wie rechnet man Wh in kWh um?', b:'1.000 Wh = 1 kWh. Oder: geteilt durch 1.000.'},
+  ]},
+  { key:'H', letter:'H', title:'Gas: vom Kubikmeter zur Kilowattstunde', badge:'gasrechner', badgeLabel:'Gasrechner', cards:[
+    {f:'Wie rechnet man m³ Gas in kWh um?', b:'kWh = m³ × Brennwert × Zustandszahl.'},
+    {f:'Was ist der Brennwert (Hs,eff)?', b:'Die Energiemenge in einem Kubikmeter Gas im Normzustand, angegeben in kWh/m³.'},
+    {f:'Was ist die Zustandszahl?', b:'Sie rechnet das gemessene Betriebsvolumen auf den Normzustand um (0 °C, 1.013,25 mbar).'},
+    {f:'Warum ist die Zustandszahl nötig?', b:'Weil das Gasvolumen von Druck und Temperatur abhängt und diese Größen am Zähler vom Normzustand abweichen.'},
+    {f:'Was ist der Unterschied zwischen Brennwert und Heizwert?', b:'Der Brennwert liegt ca. 10 % über dem Heizwert. Abrechnungen verwenden den Brennwert.'},
+    {f:'Welche Werte für die Umrechnung stehen auf der Gasrechnung?', b:'Brennwert und Zustandszahl.'},
+    {f:'Berechne: 100 m³ × 11 kWh/m³ × 0,95 = ?', b:'1.045 kWh.'},
+    {f:'Welchen Wert verwenden Energiestatistiken oft – Brennwert oder Heizwert?', b:'Den Heizwert. Beim Vergleichen von Gasmengen immer prüfen, welcher Wert gemeint ist.'},
+  ]},
+  { key:'I', letter:'I', title:'Praxisfall: Die Energierechnung lesen', badge:'rechnungsprofi', badgeLabel:'Rechnungsprofi', cards:[
+    {f:'Wie berechnet man den Verbrauch auf einer Energierechnung?', b:'Verbrauch = Zählerstand neu − Zählerstand alt.'},
+    {f:'Wie berechnet man den Bruttobetrag einer Rechnung?', b:'(Energiekosten + Grundpreis) × 1,19 (inkl. 19 % Umsatzsteuer).'},
+    {f:'Was ist der erste Unterschied bei der Gasrechnung gegenüber der Stromrechnung?', b:'Erst die m³ mit Brennwert × Zustandszahl in kWh umrechnen, dann wie beim Strom rechnen.'},
+    {f:'Was ist eine Marktlokations-ID?', b:'Eine eindeutige Nummer, die den Ort der Belieferung im Energiemarkt bezeichnet (z. B. 51238609130).'},
+    {f:'Nenne die Prüfreihenfolge für eine Energierechnung.', b:'Verbrauch → Energiekosten → Grundpreis → Nettosumme → Umsatzsteuer → Brutto → Abschläge → Nachzahlung/Guthaben.'},
+    {f:'In welchem System werden Energiedaten und Abrechnung verarbeitet?', b:'Zum Beispiel in SAP IS-U – dort laufen Marktlokationen, Messwerte und Rechnungsstellung zusammen.'},
+    {f:'Beispiel: 3.500 kWh × 30 ct/kWh + 120 € Grundpreis × 1,19 = ?', b:'(1.050 + 120) × 1,19 = 1.392,30 € brutto.'},
+  ]},
+];
+
+let lkCurrentSet = null;
+let lkCardIndex = 0;
+let lkSeen = new Set();
+let lkFlipped = false;
+
+function lkStorageKey(setKey){ return (currentUser?.id||'guest')+'_lk_done_'+setKey; }
+
+function isDoneLK(setKey){
+  try{ return localStorage.getItem(lkStorageKey(setKey))==='1'; }catch(e){ return false; }
+}
+function markDoneLK(setKey){
+  try{ localStorage.setItem(lkStorageKey(setKey),'1'); }catch(e){}
+}
+
+function initLernkarten(){
+  renderLkDash();
+}
+
+function renderLkDash(){
+  const grid = document.getElementById('lk-dash-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  const done = LERNKARTEN_SETS.filter(s=>isDoneLK(s.key)).length;
+  const prog = document.getElementById('lk-dash-progress');
+  if(prog) prog.textContent = done+' / '+LERNKARTEN_SETS.length+' abgeschlossen';
+  LERNKARTEN_SETS.forEach(s=>{
+    const isDone = isDoneLK(s.key);
+    const card = document.createElement('div');
+    card.className = 'lk-set-card'+(isDone?' done':'');
+    card.onclick = ()=>openLernkarten(s.key);
+    card.innerHTML =
+      (isDone?'<div class="lk-set-check">✓</div>':'')+
+      '<div class="lk-set-letter">'+s.letter+'</div>'+
+      '<div class="lk-set-title">'+s.title+'</div>'+
+      '<div class="lk-set-meta">'+s.cards.length+' Karten'+
+        (isDone?' · <span style="color:var(--green)">Abgeschlossen</span>':'')+
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function openLernkarten(setKey){
+  const set = LERNKARTEN_SETS.find(s=>s.key===setKey);
+  if(!set) return;
+  lkCurrentSet = set;
+  lkCardIndex = 0;
+  lkSeen = new Set();
+  lkFlipped = false;
+  document.getElementById('lk-screen-title').textContent = 'Lernkarten · Set '+set.letter;
+  document.getElementById('lk-set-view').style.display = 'none';
+  document.getElementById('lk-card-view').style.display = 'block';
+  renderLkCard();
+  showScreen('screen-lernkarten');
+}
+
+function exitLernkarten(){
+  showScreen('screen-dashboard');
+}
+
+function openLernkartenScreen(){
+  lkCurrentSet = null;
+  document.getElementById('lk-screen-title').textContent = 'Lernkarten';
+  document.getElementById('lk-card-view').style.display = 'none';
+  document.getElementById('lk-set-view').style.display = 'block';
+  renderLkSetsGrid();
+  showScreen('screen-lernkarten');
+}
+
+function exitLernkartenSet(){
+  lkCurrentSet = null;
+  document.getElementById('lk-card-view').style.display = 'none';
+  document.getElementById('lk-set-view').style.display = 'block';
+  document.getElementById('lk-screen-title').textContent = 'Lernkarten';
+  renderLkSetsGrid();
+}
+
+function renderLkSetsGrid(){
+  const grid = document.getElementById('lk-sets-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  LERNKARTEN_SETS.forEach(s=>{
+    const isDone = isDoneLK(s.key);
+    const card = document.createElement('div');
+    card.className = 'lk-set-card'+(isDone?' done':'');
+    card.onclick = ()=>openLernkarten(s.key);
+    card.innerHTML =
+      (isDone?'<div class="lk-set-check">✓</div>':'')+
+      '<div class="lk-set-letter">'+s.letter+'</div>'+
+      '<div class="lk-set-title">'+s.title+'</div>'+
+      '<div class="lk-set-meta">'+s.cards.length+' Karten'+(isDone?' · <span style="color:var(--green)">Abgeschlossen</span>':'')+
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function renderLkCard(){
+  if(!lkCurrentSet) return;
+  const card = lkCurrentSet.cards[lkCardIndex];
+  const total = lkCurrentSet.cards.length;
+  lkFlipped = false;
+  const el = document.getElementById('lk-card');
+  el.classList.remove('flipped');
+  document.getElementById('lk-front-text').textContent = card.f;
+  document.getElementById('lk-back-text').textContent = card.b;
+  document.getElementById('lk-prog-label').textContent = (lkCardIndex+1)+' / '+total;
+  document.getElementById('lk-btn-prev').disabled = lkCardIndex === 0;
+  document.getElementById('lk-btn-next').textContent = lkCardIndex===total-1 ? 'Abschließen ✓' : 'Weiter →';
+  // dots
+  const dots = document.getElementById('lk-dots');
+  dots.innerHTML = '';
+  lkCurrentSet.cards.forEach((_,i)=>{
+    const d = document.createElement('div');
+    d.className = 'lk-dot'+(lkSeen.has(i)?' seen':'')+(i===lkCardIndex?' current':'');
+    dots.appendChild(d);
+  });
+  lkSeen.add(lkCardIndex);
+}
+
+function flipCard(){
+  lkFlipped = !lkFlipped;
+  document.getElementById('lk-card').classList.toggle('flipped', lkFlipped);
+}
+
+function lkNext(){
+  if(!lkCurrentSet) return;
+  if(lkCardIndex < lkCurrentSet.cards.length-1){
+    lkCardIndex++;
+    renderLkCard();
+  } else {
+    completeLernkartenSet();
+  }
+}
+
+function lkPrev(){
+  if(lkCardIndex > 0){ lkCardIndex--; renderLkCard(); }
+}
+
+async function completeLernkartenSet(){
+  if(!lkCurrentSet) return;
+  markDoneLK(lkCurrentSet.key);
+  renderLkDash();
+  // Try to award badge
+  const badgeKey = lkCurrentSet.badge;
+  const badgeLabel = lkCurrentSet.badgeLabel;
+  let badgeEarned = false;
+  try{
+    const badge = (typeof allBadges !== 'undefined') ? allBadges.find(b=>b.key===badgeKey) : null;
+    if(badge && currentUser && typeof userBadges !== 'undefined'){
+      const already = userBadges.some(ub=>ub.badge_id===badge.id);
+      if(!already){
+        await sb.from('user_badges').insert({user_id:currentUser.id, badge_id:badge.id});
+        userBadges.push({badge_id:badge.id, earned_at:new Date().toISOString()});
+        if(typeof awardXP==='function') await awardXP(badge.xp_reward||50);
+        badgeEarned = true;
+      }
+    }
+  }catch(e){ console.warn('Lernkarten badge:',e.message); }
+  // Completion popup
+  showLkCompletionPopup(lkCurrentSet.letter, lkCurrentSet.title, badgeLabel, badgeEarned);
+}
+
+function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned){
+  const overlay = document.createElement('div');
+  overlay.className = 'lk-badge-pop';
+  overlay.innerHTML =
+    '<div class="lk-badge-box">'+
+      '<svg width="64" height="64" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0e1e08"/><circle cx="50" cy="87" r="26" fill="#ffe84d" opacity="0.12"><animate attributeName="opacity" values="0.08;0.28;0.08" dur="1.5s" repeatCount="indefinite"/></circle><circle cx="50" cy="87" r="17" fill="#ffe84d" opacity="0.2"><animate attributeName="opacity" values="0.14;0.38;0.14" dur="1.5s" repeatCount="indefinite"/></circle><circle cx="50" cy="80" r="11" fill="#4a9020"/><circle cx="50" cy="67" r="14" fill="#56a828"/><circle cx="50" cy="45" r="24" fill="#68c034"/><circle cx="38" cy="39" r="10" fill="white"/><circle cx="62" cy="39" r="10" fill="white"/><circle cx="40" cy="41" r="5.5" fill="#0a1804"/><circle cx="64" cy="41" r="5.5" fill="#0a1804"/><circle cx="37" cy="37" r="2.5" fill="white" opacity="0.8"/><circle cx="61" cy="37" r="2.5" fill="white" opacity="0.8"/><path d="M40 55 Q50 64 60 55" stroke="#2a6010" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M43 23 Q36 12 30 7" stroke="#4a9020" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="30" cy="7" r="4" fill="#68c034"/><path d="M57 23 Q64 12 70 7" stroke="#4a9020" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="70" cy="7" r="4" fill="#68c034"/><circle cx="50" cy="87" r="10" fill="#ffe84d"/><circle cx="50" cy="87" r="7" fill="#fff59d"/><circle cx="50" cy="87" r="3.5" fill="white" opacity="0.9"/></svg>'+
+      '<div style="font-size:18px;font-weight:800;color:var(--text);margin-top:.75rem">Set '+letter+' abgeschlossen!</div>'+
+      '<div style="font-size:13px;color:var(--text3);margin-top:.25rem">'+title+'</div>'+
+      (badgeEarned?'<div style="margin-top:.75rem;padding:.5rem 1rem;background:color-mix(in srgb,var(--green) 12%,var(--bg2));border-radius:8px;font-size:13px;color:var(--green);font-weight:600">🏅 Abzeichen erhalten: '+badgeLabel+'</div>':
+        '<div style="margin-top:.75rem;font-size:12px;color:var(--text3)">Abzeichen „'+badgeLabel+'" – weiter so!</div>')+
+      '<button class="btn-cta" style="margin-top:1.25rem;width:100%" onclick="this.closest(\'.lk-badge-pop\').remove();exitLernkartenSet()">Weitere Sets →</button>'+
+    '</div>';
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e=>{ if(e.target===overlay){ overlay.remove(); exitLernkartenSet(); }});
 }
 </script>
 
