@@ -501,6 +501,8 @@ body{font-family:'Geist','Inter',system-ui,sans-serif;background:var(--bg);color
 .ps-next .ps-status{color:var(--path-color,var(--green));}
 .ps-btn{padding:5px 12px;font-size:12px;font-weight:700;font-family:'Geist',system-ui,sans-serif;background:var(--path-color,var(--green));color:#fff;border:none;border-radius:6px;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;}
 .ps-btn:hover{filter:brightness(1.1);}
+.ps-btn-repeat{background:transparent;color:var(--text3);border:1px solid var(--border2);font-weight:500;font-size:11px;padding:4px 9px;}
+.ps-btn-repeat:hover{color:var(--green);border-color:var(--green);filter:none;}
 .ps-connector{width:2px;height:16px;background:var(--border2);margin-left:13px;border-radius:1px;}
 .ps-conn-done{background:var(--path-color,var(--green));}
 /* admin path */
@@ -5423,22 +5425,30 @@ async function submitVideoReflection(){
 async function _completeCourseFinish(reflectionSaved){
   const c=courses[ci];
   const sessSecs=sessionStart?Math.round((Date.now()-sessionStart)/1000):0;
+  const wasAlreadyCompleted=!!userProgress[ci]?.completed;
   await endSession();
   await saveProgress(c.id,100);
-  let xpGained=50;
-  await awardXP(xpGained);
-  const newBadges=await checkAndAwardBadges(c.id,100,sessSecs);
-  const dailyBonus=await checkDailyBonus(c.id,100);
-  if(dailyBonus>0) xpGained+=dailyBonus;
-  setTimeout(()=>showXPToast(xpGained,newBadges,dailyBonus),600);
+  let xpGained=0;
+  if(!wasAlreadyCompleted){
+    xpGained=50;
+    await awardXP(xpGained);
+    const newBadges=await checkAndAwardBadges(c.id,100,sessSecs);
+    const dailyBonus=await checkDailyBonus(c.id,100);
+    if(dailyBonus>0) xpGained+=dailyBonus;
+    setTimeout(()=>showXPToast(xpGained,newBadges,dailyBonus),600);
+  }
   document.getElementById('res-course').textContent=c.title;
   document.getElementById('res-icon').textContent='✅';
   document.getElementById('res-title').textContent='Kurs abgeschlossen!';
-  document.getElementById('res-sub').textContent=reflectionSaved?'Deine Reflexion wurde gespeichert.':'Du hast diesen Kurs erfolgreich abgeschlossen.';
+  document.getElementById('res-sub').textContent=wasAlreadyCompleted
+    ?'Kurs wiederholt – du erhältst kein XP für bereits abgeschlossene Kurse.'
+    :(reflectionSaved?'Deine Reflexion wurde gespeichert.':'Du hast diesen Kurs erfolgreich abgeschlossen.');
   document.getElementById('res-c').textContent='–';
   document.getElementById('res-t').textContent='–';
   document.getElementById('res-p').textContent='100%';
-  const xpEl=document.getElementById('res-xp');xpEl.style.display='block';xpEl.textContent='+'+xpGained+' XP';
+  const xpEl=document.getElementById('res-xp');
+  xpEl.style.display=wasAlreadyCompleted?'none':'block';
+  if(!wasAlreadyCompleted) xpEl.textContent='+'+xpGained+' XP';
   document.getElementById('res-cta').onclick=showDash;
   document.getElementById('res-retry').style.display='none';
   document.getElementById('res-repeat').style.display='';
@@ -5776,15 +5786,16 @@ function nextQ(){const c=courses[ci];if(qi<c.questions.length-1){qi++;renderQ();
 async function showResult(){
   const c=courses[ci],total=c.questions.length,pct=Math.round((correct/total)*100),pass=pct>=70;
   const sessSecs=sessionStart?Math.round((Date.now()-sessionStart)/1000):0;
+  const wasAlreadyCompleted=!!userProgress[ci]?.completed;
   await endSession();
   await saveProgress(c.id,pct);
   lastPassedCourse=pass?c:null;
   lastPassedScore=pct;
 
-  // Award XP for passing
+  // Award XP only on first pass — no XP for replays of already-completed courses
   let xpGained=0;
   let newBadges=[];
-  if(pass){
+  if(pass&&!wasAlreadyCompleted){
     // Base XP: 50 + bonus for score
     xpGained=50+Math.round((pct-70)/30*50);
     await awardXP(xpGained);
@@ -5800,7 +5811,7 @@ async function showResult(){
   document.getElementById('res-icon').className='res-icon '+(pass?'r-pass':'r-fail');
   document.getElementById('res-title').textContent=pass?'Kurs abgeschlossen!':'Nicht bestanden';
   document.getElementById('res-sub').textContent=pass
-    ?'Herzlichen Glückwunsch! Du hast „'+c.title+'" mit '+pct+' % abgeschlossen.'
+    ?(wasAlreadyCompleted?'Kurs wiederholt – du erhältst kein XP für bereits abgeschlossene Kurse.':'Herzlichen Glückwunsch! Du hast „'+c.title+'" mit '+pct+' % abgeschlossen.')
     :'Du hast '+pct+' % erreicht. Zum Bestehen sind mindestens 70 % nötig.';
   document.getElementById('res-c').textContent=correct;
   document.getElementById('res-t').textContent=total;
@@ -5808,10 +5819,10 @@ async function showResult(){
   document.getElementById('res-cta').style.background=c.btn_color||'#4f7cff';
   // cert now shown on learning path completion
 
-  // Show XP gained on result screen
+  // Show XP gained on result screen (only for first completion)
   const xpEl=document.getElementById('res-xp');
-  if(xpEl) xpEl.style.display=pass?'flex':'none';
-  if(pass&&xpEl) xpEl.textContent='+'+xpGained+' XP';
+  if(xpEl) xpEl.style.display=(pass&&!wasAlreadyCompleted)?'flex':'none';
+  if(pass&&!wasAlreadyCompleted&&xpEl) xpEl.textContent='+'+xpGained+' XP';
   document.getElementById('res-retry').style.display='';
   document.getElementById('res-repeat').style.display='';
 
@@ -6390,7 +6401,8 @@ function renderUserPaths(){
             '<div class="ps-status">'+stepStatus+'</div>'+
           '</div>'+
           (isNext?'<button class="ps-btn" onclick="startCourseById('+pc.course_id+')">Starten →</button>':'')+
-          (isDone&&i===pcs.length-1?'<span style="font-size:11px;color:var(--green);font-weight:600">✓ Pfad abgeschlossen</span>':'')+ 
+          (isDone?'<button class="ps-btn ps-btn-repeat" onclick="startCourseById('+pc.course_id+')" title="Kein XP für Wiederholungen">↺ Wiederholen</button>':'')+
+          (isDone&&i===pcs.length-1?'<span style="font-size:11px;color:var(--green);font-weight:600;margin-left:4px">✓ Pfad</span>':'')+
         '</div>'+
         (i<pcs.length-1?'<div class="ps-connector'+(isDone?' ps-conn-done':'')+'"></div>':'');
     });
