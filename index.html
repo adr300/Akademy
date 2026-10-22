@@ -8972,17 +8972,27 @@ let lkCurrentSet = null;
 let lkCardIndex = 0;
 let lkSeen = new Set();
 let lkFlipped = false;
+let lkDoneKeys = new Set();
 
-function lkStorageKey(setKey){ return (currentUser?.id||'guest')+'_lk_done_'+setKey; }
+function isDoneLK(setKey){ return lkDoneKeys.has(setKey); }
 
-function isDoneLK(setKey){
-  try{ return localStorage.getItem(lkStorageKey(setKey))==='1'; }catch(e){ return false; }
+async function markDoneLK(setKey){
+  if(lkDoneKeys.has(setKey)) return;
+  lkDoneKeys.add(setKey);
+  try{
+    await sb.from('lernkarten_progress').upsert(
+      {user_id:currentUser.id, module:'1.1.1', set_key:setKey},
+      {onConflict:'user_id,module,set_key'}
+    );
+  }catch(e){ console.warn('lernkarten_progress save:',e.message); }
 }
-function markDoneLK(setKey){
-  try{ localStorage.setItem(lkStorageKey(setKey),'1'); }catch(e){}
-}
 
-function initLernkarten(){
+async function initLernkarten(){
+  try{
+    const{data}=await sb.from('lernkarten_progress')
+      .select('set_key').eq('user_id',currentUser.id).eq('module','1.1.1');
+    lkDoneKeys = new Set((data||[]).map(r=>r.set_key));
+  }catch(e){ lkDoneKeys = new Set(); }
   renderLkDash();
 }
 
@@ -9107,7 +9117,7 @@ function lkPrev(){
 
 async function completeLernkartenSet(){
   if(!lkCurrentSet) return;
-  markDoneLK(lkCurrentSet.key);
+  await markDoneLK(lkCurrentSet.key);
   renderLkDash();
   // Try to award badge
   const badgeKey = lkCurrentSet.badge;
