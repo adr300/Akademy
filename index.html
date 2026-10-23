@@ -1583,6 +1583,32 @@ html{overflow-x:clip;}
 #path-section .path-grid{margin-top:32px;}
 /* Adrians Pfadkarten bleiben im DOM (renderUserPaths, Zertifikat), die Übersicht zeigt stattdessen «Meine Module» */
 #path-section{display:none!important;}
+/* Adrians Lernkarten-Abschnitt am Seitenende bleibt im DOM (renderLkDash); die Sets erscheinen im Modul «1x1 der Energiewirtschaft» */
+#lk-dash-section{display:none!important;}
+/* Admin: Inhalte im Überblick */
+.inhalt-kpi{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:18px;}
+.inhalt-kpi div{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+.inhalt-kpi dd{margin:0;font-family:var(--disp);font-stretch:108%;font-size:26px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;line-height:1;}
+.inhalt-kpi dt{margin-top:4px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);}
+.inhalt-werkzeug{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;}
+.inhalt-werkzeug input{height:36px;min-width:220px;padding:0 12px;border:1px solid var(--border2);border-radius:999px;background:var(--bg2);color:var(--text);font:inherit;font-size:13px;}
+.inhalt-werkzeug button{height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);font:inherit;font-size:12px;cursor:pointer;}
+.inhalt-werkzeug button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#FFFFFF;}
+.inhalt-tabelle{width:100%;border-collapse:collapse;font-size:13px;}
+.inhalt-tabelle th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap;}
+.inhalt-tabelle td{padding:10px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text2);font-variant-numeric:tabular-nums;}
+.inhalt-tabelle td.titel{color:var(--text);font-weight:600;}
+.inhalt-tabelle td.titel .bluu-kachel{display:inline-flex;vertical-align:middle;margin-right:8px;}
+.inhalt-tabelle tr.detail td{background:var(--bg);padding:12px 10px 12px 58px;}
+.inhalt-tabelle .lektion-zeile{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px dashed var(--border);}
+.inhalt-tabelle .lektion-zeile:last-child{border-bottom:0;}
+.inhalt-tabelle .lektion-zeile .nr{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text3);width:16px;}
+.inhalt-tabelle .lektion-zeile .t{flex:1;min-width:0;color:var(--text);}
+.inhalt-tabelle .lektion-zeile .m{font-size:12px;color:var(--text3);white-space:nowrap;}
+.inhalt-tabelle .aktion{white-space:nowrap;}
+.inhalt-tabelle .aktion button{height:28px;padding:0 10px;border-radius:999px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);font:inherit;font-size:12px;cursor:pointer;margin-left:4px;}
+.inhalt-tabelle .aktion button:hover{border-color:var(--navy);}
+@media(max-width:900px){.inhalt-tabelle thead{display:none;}.inhalt-tabelle tr{display:block;border-bottom:1px solid var(--border);padding:8px 0;}.inhalt-tabelle td{display:inline-block;border:0;padding:4px 10px 4px 0;}.inhalt-tabelle tr.detail td{display:block;padding-left:10px;}}
 /* Marke: stiller Zusatz statt «· Energie» */
 .brand-kicker{display:inline-block;margin-left:10px;padding-left:10px;border-left:1px solid var(--border2);font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);vertical-align:2px;}
 /* Weiter lernen: nächste Lektion + Begleiter */
@@ -1967,7 +1993,39 @@ html{overflow-x:clip;}
 .lk-bewerten{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px;}
 .lk-bewerten .kachel-btn{min-height:60px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:8px!important;}
 .lk-bewerten .kachel-btn span{font-size:12px;font-weight:400;opacity:.8;}
-@media(max-width:640px){.ik-kurs{flex-wrap:wrap;}.ik-aktion{width:100%;}.ik-aktion .kachel-btn{width:100%;}}
+.stapel.fertig{border-color:var(--ok-line);}
+/* ── Lese-Vorlage für Lektionen (Slides «content», auch für aus PDF übertragene Texte): Überschriften, Tabellen,
+      Abbildungen, Merkkästen. Gilt im Lernskript (.ls-text) und in Adrians Folienansicht (.slide-text). ── */
+.ls-text,.slide-text{max-width:72ch;}
+.ls-text h2,.slide-text h2{margin:22px 0 8px;font-family:var(--disp);font-stretch:108%;font-size:21px;line-height:1.2;font-weight:700;letter-spacing:-.01em;color:var(--text);}
+.ls-text h3,.slide-text h3{margin:18px 0 6px;font-size:16px;font-weight:600;color:var(--text);}
+.ls-text h4,.slide-text h4{margin:14px 0 4px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);}
+.ls-text p,.slide-text p{margin:0 0 10px;}
+.ls-text ol,.slide-text ol{padding-left:1.3rem;margin:8px 0;}
+.ls-text a,.slide-text a{color:var(--teal);text-decoration:underline;text-underline-offset:3px;}
+.ls-text table,.slide-text table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px;display:block;overflow-x:auto;}
+.ls-text th,.slide-text th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);padding:8px 10px;border-bottom:1px solid var(--border2);white-space:nowrap;}
+.ls-text td,.slide-text td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--text2);}
+.ls-text figure,.slide-text figure{margin:14px 0;padding:0;}
+.ls-text figure img,.slide-text figure img,.ls-text img,.slide-text img{max-width:100%;height:auto;border-radius:8px;border:1px solid var(--border);display:block;}
+.ls-text figcaption,.slide-text figcaption{margin-top:6px;font-size:12px;color:var(--text3);}
+.ls-text blockquote,.slide-text blockquote{margin:12px 0;padding:10px 16px;border-left:3px solid var(--lime);background:var(--bg3);border-radius:0 8px 8px 0;color:var(--text2);}
+.ls-text code,.slide-text code{font-family:'IBM Plex Mono',monospace;font-size:.92em;background:var(--bg3);padding:1px 5px;border-radius:4px;}
+.ls-text dl,.slide-text dl{margin:10px 0;}
+.ls-text dt,.slide-text dt{font-weight:600;color:var(--text);}
+.ls-text dd,.slide-text dd{margin:0 0 8px;}
+/* Merkkästen: <aside class="kasten definition|beispiel|hinweis|warnung"><strong>Titel</strong> …</aside> */
+.ls-text .kasten,.slide-text .kasten{margin:14px 0;padding:12px 16px 12px 44px;border:1px solid var(--border);border-radius:10px;background:var(--bg2);position:relative;font-size:14px;line-height:1.6;}
+.ls-text .kasten::before,.slide-text .kasten::before{content:'';position:absolute;left:14px;top:14px;width:18px;height:18px;border-radius:999px;background:var(--navy);}
+.ls-text .kasten strong:first-child,.slide-text .kasten strong:first-child{display:block;margin-bottom:4px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);}
+.ls-text .kasten.definition::before,.slide-text .kasten.definition::before{background:#3F74A6;}
+.ls-text .kasten.beispiel::before,.slide-text .kasten.beispiel::before{background:#4A7A53;}
+.ls-text .kasten.hinweis,.slide-text .kasten.hinweis{border-color:var(--ok-line);background:var(--ok-bg);}
+.ls-text .kasten.hinweis::before,.slide-text .kasten.hinweis::before{background:var(--lime);}
+.ls-text .kasten.warnung,.slide-text .kasten.warnung{border-color:rgba(192,79,53,.35);}
+.ls-text .kasten.warnung::before,.slide-text .kasten.warnung::before{background:#C04F35;}
+.ls-text .quelle,.slide-text .quelle{font-size:12px;color:var(--text3);margin-top:10px;}
+@media(max-width:640px){.ik-kurs{flex-wrap:wrap;}.ik-aktion{width:100%;}.ik-aktion .kachel-btn{width:100%;}.ls-text .kasten,.slide-text .kasten{padding-left:16px;}.ls-text .kasten::before,.slide-text .kasten::before{display:none;}}
 @media print{.topnav,.hero,.modul-reiter,.chat-fab,.kachel-btn{display:none!important;}}
 /* BLUU-INHALT:ENDE */
 /* BLUU-SYSTEM:START — Tokens, Zustände, Hero-System, Bewegung (diseno/system.cjs, Spezifikation DESIGN-SYSTEM.md) */
@@ -2090,6 +2148,39 @@ html{overflow-x:clip;}
 .begleiter-figur.glueh-idle{--phase:-4.3s;}
 @keyframes gluehSchweben{0%,100%{transform:translate(0,0) rotate(0deg)}30%{transform:translate(1.2px,-3px) rotate(1.2deg)}65%{transform:translate(-1.5px,-1px) rotate(-.8deg)}}
 .chat-fab,.chat-fab .bluu-figur{overflow:visible;}
+/* ── Admin und Manager: dieselben Tokens wie der Rest (Adrians Aufbau und Logik bleiben) ── */
+.admin-sidebar{border-color:var(--ln);border-radius:var(--r-surface);background:var(--sf-1);box-shadow:var(--e-0);}
+.sidebar-group-label{font-family:'IBM Plex Mono',monospace;font-weight:500;letter-spacing:.08em;color:var(--fg-3);}
+.sidebar-item{border-radius:var(--r-field);color:var(--fg-2);transition:background var(--d-base),color var(--d-base);}
+.sidebar-item:hover{background:var(--sf-2);color:var(--fg);}
+.sidebar-item.active{background:var(--sel-bg);color:var(--fg);box-shadow:inset 3px 0 0 var(--lime);border-radius:0 var(--r-field) var(--r-field) 0;}
+.sidebar-icon{filter:grayscale(1);opacity:.7;}
+.sidebar-item.active .sidebar-icon{filter:none;opacity:1;}
+.sec-title{font-family:'IBM Plex Mono',monospace;font-weight:500;letter-spacing:.08em;color:var(--fg-3);}
+.admin-course-row,.admin-path-row,.team-card,.lb-row,.prog-row{border-radius:var(--r-surface);border-color:var(--ln);background:var(--sf-1);transition:border-color var(--d-base),box-shadow var(--d-slow) var(--ease-out);}
+.admin-course-row:hover{border-color:var(--ln-2);box-shadow:var(--e-1);}
+.btn-add{background:var(--ia-bg);color:var(--ia-fg);border-radius:var(--r-control);font-weight:600;transition:background var(--d-base),transform var(--d-base) var(--ease-out);}
+.btn-add:hover{background:var(--ia-hover);transform:translateY(-1px);}
+.btn-sm{border-radius:var(--r-control);font-weight:600;}
+.btn-edit{background:transparent;border:1px solid var(--ln-2);color:var(--fg);}
+.btn-edit:hover{border-color:var(--sel-ln);}
+.btn-del{background:transparent;border:1px solid rgba(192,79,53,.35);color:var(--red);}
+.form-input{border-radius:var(--r-field);background:var(--sf-1);border-color:var(--ln-2);}
+.form-input:focus{outline:none;border-color:var(--focus);box-shadow:0 0 0 3px rgba(63,116,166,.15);}
+.form-label{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-3);}
+.modal{border-radius:var(--r-surface);border-color:var(--ln);box-shadow:0 24px 64px -24px rgba(27,46,62,.45);}
+.modal-title{font-family:var(--disp);font-stretch:108%;font-weight:700;letter-spacing:-.015em;}
+/* ── Lernkarten-Lernansicht (Adrians Bildschirm) in den Tokens ── */
+#screen-lernkarten .lk-set-card{border-radius:var(--r-surface);border-color:var(--ln);background:var(--sf-1);transition:transform var(--d-slow) var(--ease-out),box-shadow var(--d-slow) var(--ease-out),border-color var(--d-base);}
+#screen-lernkarten .lk-set-card:hover{transform:translateY(-2px);box-shadow:var(--e-2);border-color:var(--ln-2);}
+#screen-lernkarten .lk-set-letter{font-family:var(--disp);font-stretch:108%;color:var(--navy);}
+:root:not([data-theme="light"]) #screen-lernkarten .lk-set-letter{color:var(--lime);}
+#screen-lernkarten .lk-set-check{background:var(--lime);color:var(--navy-2);}
+#screen-lernkarten .lk-card-face{border-radius:12px;border-width:1px;}
+#screen-lernkarten .lk-card-front{border-color:var(--ln-2);background:var(--sf-1);}
+#screen-lernkarten .lk-card-back{border-color:var(--ok-line);background:var(--ok-bg);}
+#screen-lernkarten .lk-dot.done,#screen-lernkarten .lk-dot.active{background:var(--lime);}
+#screen-lernkarten .btn-assess{border-radius:var(--r-control)!important;font-weight:600;min-height:40px;}
 /* ── Handy ── */
 @media(max-width:640px){
   .bluu-band{padding-top:var(--sp-6);padding-bottom:var(--sp-6);}
@@ -2151,6 +2242,234 @@ html{overflow-x:clip;}
 @media(max-width:900px){.wiki-kategorien{max-width:none;flex-direction:row;flex-wrap:wrap;border-top:0;gap:6px;}.wiki-kategorien>span{width:100%;padding-left:0;}.wiki-kat{border:1px solid var(--ln-2);border-radius:999px;min-height:34px;padding:0 12px;font-size:13px;}.wiki-kat .zahl{display:none;}}
 @media(max-width:640px){.hero.hero-band.hero-wiki .hero-band-inhalt{padding-top:36px;padding-bottom:36px;}.wiki-suche{height:48px;margin-top:22px;}.wiki-koerper{padding-top:28px;gap:24px;}.begriff{padding:18px 8px;}.begriff h2{font-size:28px;}}
 /* BLUU-WIKI:ENDE */
+/* BLUU-LERNSKRIPT:START — Lernskript 1.1.1 als Kapitelseiten (diseno/lernskript.cjs) */
+.ls{--ls-fs:18px;--ls-ice:#EEF3F6;--ls-glow:#F4F8C8;--ls-line:#C9D6E0;--ls-muted:#4F6B82;--ls-ink:#1F2F3D;--ls-navy:#243A4C;--ls-lime:#BEC60E;--ls-karte:#FFFFFF;--ls-seite:#F7F9FA;
+  display:grid;grid-template-columns:232px minmax(0,1fr);gap:28px;align-items:start;margin-top:22px;font-size:var(--ls-fs);line-height:1.6;color:var(--ls-ink);}
+:root:not([data-theme="light"]) .ls{--ls-ice:#223544;--ls-glow:#3A4414;--ls-line:#3B5062;--ls-muted:#AFC3D3;--ls-ink:#EAF1F7;--ls-navy:#EAF1F7;--ls-karte:#1B2E3E;--ls-seite:#152431;}
+.ls *{box-sizing:border-box;}
+.ls button,.ls input,.ls textarea,.ls output{font:inherit;color:inherit;}
+.ls h1,.ls h2,.ls h3{font-family:var(--disp);font-stretch:108%;color:var(--ls-navy);}
+.ls p{margin:0 0 12px;max-width:42em;}
+/* Leuchtpfad */
+.ls-rail{position:sticky;top:76px;padding:4px 0 0;}
+.ls-rh{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ls-muted);margin:0 0 12px 8px;}
+.ls-rail ol{list-style:none;margin:0;padding:0;position:relative;}
+.ls-rail ol::before{content:"";position:absolute;left:23px;top:18px;bottom:18px;width:4px;background:var(--ls-line);border-radius:2px;}
+.ls .ls-node{display:flex;align-items:center;gap:12px;width:100%;padding:5px 8px;background:none;border:0;border-radius:10px;text-align:left;color:var(--ls-muted);cursor:pointer;position:relative;transition:background .2s;}
+.ls-node:hover{background:var(--ls-ice);}
+.ls-node .dot{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px;background:var(--ls-karte);border:3px solid var(--ls-line);z-index:1;color:var(--ls-muted);transition:box-shadow .3s,background .2s;}
+.ls-node .lbl{font-size:13px;line-height:1.3;}
+.ls-node.cur .dot{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:0 0 0 6px var(--ls-glow),0 0 22px 8px rgba(190,198,14,.45);}
+.ls-node.cur .lbl{color:var(--ls-ink);font-weight:700;}
+.ls-node.done .dot{background:var(--lime);border-color:var(--lime);color:#243A4C;}
+.ls-node.cur.done .dot{box-shadow:0 0 0 6px var(--ls-glow),0 0 22px 8px rgba(190,198,14,.45);}
+.ls-rail-stand{font-size:12px;color:var(--ls-muted);margin:14px 0 0 8px;}
+/* Hauptspalte */
+.ls-main{min-width:0;max-width:820px;}
+.ls-werkzeug{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;font-size:13px;color:var(--ls-muted);}
+.ls-wo{display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;}
+.ls-schrift{display:inline-flex;gap:6px;}
+.ls .ls-ikon{min-width:36px;height:32px;padding:0 10px;border:1.5px solid var(--ls-line);border-radius:8px;background:var(--ls-karte);cursor:pointer;font-weight:700;font-size:13px;color:var(--ls-navy);}
+.ls-ikon:hover{border-color:var(--ls-navy);}
+.ls-hero svg{width:100%;height:auto;display:block;border-radius:18px;}
+:root:not([data-theme="light"]) .ls-hero svg{opacity:.92;}
+.ls-h1{font-size:2em;line-height:1.15;margin:16px 0 8px;letter-spacing:-.01em;}
+.ls-h1 .l{display:inline-grid;place-items:center;width:1.5em;height:1.5em;border-radius:50%;background:var(--navy);color:var(--lime);margin-right:12px;font-size:.8em;vertical-align:3px;}
+.ls-sec h2{font-size:1.2em;margin:26px 0 6px;display:flex;align-items:center;gap:10px;}
+.ls-sec h2 .no{display:inline-grid;place-items:center;width:1.4em;height:1.4em;border-radius:7px;background:var(--lime);color:#243A4C;font-size:.85em;}
+.ls h3{margin:0 0 6px;font-size:1.05em;display:flex;align-items:center;gap:8px;}
+.ls-lead{font-size:1.08em;color:var(--ls-muted);font-style:italic;margin:18px 0 6px;}
+.ls-meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px;}
+.ls-chip{display:inline-flex;gap:6px;align-items:center;background:var(--ls-ice);color:var(--ls-muted);border:1.5px solid transparent;border-radius:20px;padding:3px 12px;font-size:.78em;cursor:default;}
+.ls-wahl .ls-chip{cursor:pointer;color:var(--ls-navy);}
+.ls-wahl .ls-chip:hover{border-color:var(--ls-navy);}
+.ls-wahl .ls-chip[aria-pressed="true"]{background:var(--navy);color:#fff;border-color:var(--navy);}
+.ls-wahl{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0;}
+.ls-wahl.klein{display:inline-flex;margin:0;}
+.ls-ff{flex:none;display:inline-block;}
+.ls-bub{display:flex;gap:14px;align-items:center;background:var(--ls-glow);border-radius:16px;padding:10px 18px 10px 12px;margin:14px 0;}
+.ls-bub p{margin:0;max-width:none;}
+.ls-bub b{color:var(--ls-navy);}
+.ls-bub.sm{margin:14px 0 0;font-size:.92em;}
+.ls-card{background:var(--ls-karte);border:1.5px solid var(--ls-line);border-radius:18px;padding:16px 20px;margin:20px 0;}
+.ls-tag{display:inline-flex;gap:6px;align-items:center;background:var(--navy);color:var(--lime);font-weight:700;font-size:.78em;border-radius:12px;padding:3px 12px;margin-bottom:10px;}
+.ls-tag.soft{background:var(--ls-ice);color:var(--ls-navy);}
+.ls-denk,.ls-mach{border:2.4px dashed var(--lime);}
+.ls-row{display:flex;gap:16px;align-items:flex-start;}
+.ls-grow{flex:1;min-width:0;}
+.ls-hint{color:var(--ls-muted);font-size:.9em;}
+.ls textarea,.ls input[type=text]{width:100%;border:2px solid var(--ls-line);border-radius:10px;padding:10px 12px;background:var(--ls-karte);color:var(--ls-ink);}
+.ls textarea:focus,.ls input:focus{border-color:var(--ls-navy);outline:none;}
+.ls-sr{position:absolute;left:-9999px;}
+.ls-btns{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap;}
+.ls .ls-btn{display:inline-flex;gap:8px;align-items:center;background:var(--navy);color:#fff;border:2px solid var(--navy);border-radius:10px;padding:10px 18px;font-weight:700;cursor:pointer;transition:transform .2s var(--ease-out),box-shadow .2s;}
+.ls .ls-btn:hover{transform:translateY(-1px);box-shadow:0 8px 20px -12px rgba(36,58,76,.6);}
+.ls .ls-btn.ghost{background:var(--ls-karte);color:var(--ls-navy);border-color:var(--ls-navy);}
+:root:not([data-theme="light"]) .ls .ls-btn.ghost{border-color:var(--ls-line);}
+.ls .ls-btn[disabled]{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none;}
+.ls .ls-textlink{background:none;border:0;padding:8px 4px;color:var(--ls-muted);cursor:pointer;display:inline-flex;gap:6px;align-items:center;text-decoration:underline;text-underline-offset:3px;}
+.ls-ok{color:var(--ok);font-weight:700;font-size:.9em;}
+.ls-alltag-text{font-size:1.02em;}
+.ls-rueck p{max-width:none;}
+/* Interaktive Grafiken */
+.ls-ia{position:relative;background:var(--ls-ice);border-radius:16px;padding:14px 16px;margin:14px 0;}
+.ls-ia-nr{position:absolute;right:14px;top:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ls-muted);}
+.ls-ih{display:flex;gap:6px;align-items:center;font-weight:700;color:var(--ls-navy);margin-bottom:10px;}
+.stinfo{margin-top:12px;background:var(--ls-karte);border-radius:12px;padding:10px 14px;min-height:2.4em;color:var(--ls-ink);}
+.stinfo b{color:var(--ls-navy);}
+.ls-chain{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:46px;}
+.ls-chain .track{position:absolute;left:12%;right:12%;top:50%;height:6px;background:var(--ls-line);border-radius:3px;z-index:0;overflow:hidden;}
+.ls-chain .spark{position:absolute;top:-3px;left:-12px;width:12px;height:12px;border-radius:50%;background:var(--lime);box-shadow:0 0 10px 4px rgba(190,198,14,.6);opacity:0;}
+.ls-chain.flowing .spark{animation:ls-sp 2.4s linear infinite;opacity:1;}
+.ls-chain.flowing .spark:nth-child(2){animation-delay:.8s;}
+.ls-chain.flowing .spark:nth-child(3){animation-delay:1.6s;}
+@keyframes ls-sp{from{left:-12px}to{left:100%}}
+.ls .ls-chain .st{position:relative;z-index:1;background:var(--ls-karte);border:2.5px solid var(--ls-line);border-radius:14px;padding:12px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ls-navy);}
+.ls-chain .st:hover{border-color:var(--ls-navy);}
+.ls-chain .st b{color:var(--ls-navy);}
+.ls-chain .ci{display:flex;gap:8px;}
+.ls-chain .st[aria-expanded="true"]{border-color:var(--ls-navy);background:var(--ls-glow);}
+.ls-comic .panel{display:none;margin:0;border:2.4px solid var(--navy);border-radius:14px;padding:10px;position:relative;background:var(--ls-karte);}
+.ls-comic .panel.on{display:block;}
+.ls-comic .panel svg{width:100%;max-height:300px;display:block;}
+.ls-comic figcaption{background:var(--ls-ice);border-radius:10px;padding:8px 12px;margin-top:6px;font-size:1.02em;}
+.ls-comic .pn{position:absolute;top:10px;left:10px;width:28px;height:28px;border-radius:50%;background:var(--lime);color:#243A4C;font-weight:700;display:grid;place-items:center;}
+.ls-cnav{display:flex;align-items:center;justify-content:space-between;margin-top:10px;gap:10px;}
+.ls-cnav .dots{display:flex;gap:8px;}
+.ls-cnav .dots i{width:10px;height:10px;border-radius:50%;background:var(--ls-line);display:block;}
+.ls-cnav .dots i.on{background:var(--navy);}
+.ls-punch{display:flex;gap:8px;align-items:center;font-weight:700;color:var(--ls-navy);margin:12px 0 0;max-width:none;animation:ls-ein .4s var(--ease-out) both;}
+@keyframes ls-ein{from{opacity:0;transform:translateY(6px)}}
+.ls-treppe{display:flex;flex-direction:column;gap:6px;}
+.ls-stufe-zeile{display:flex;flex-direction:column;gap:4px;width:var(--w);}
+.ls-stufe{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 14px;background:var(--ls-karte);border:2.5px solid var(--ls-line);border-radius:12px;cursor:pointer;text-align:left;}
+.ls-stufe b{color:var(--ls-navy);}
+.ls-stufe span{font-family:'IBM Plex Mono',monospace;font-size:.8em;color:var(--ls-muted);}
+.ls-stufe:hover{border-color:var(--ls-navy);}
+.ls-stufe[aria-pressed="true"]{border-color:var(--ls-navy);background:var(--ls-glow);}
+.ls-pfeil{display:inline-block;margin-left:18px;font-size:.78em;color:var(--ls-muted);}
+.ls-pfeil.bewegt{animation:ls-ab .6s var(--ease-out);}
+@keyframes ls-ab{0%{transform:translateY(-6px);opacity:.3}100%{transform:none;opacity:1}}
+.ls-schritte{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.ls-schritt{display:flex;flex-direction:column;gap:4px;align-items:flex-start;padding:10px 12px;background:var(--ls-karte);border:2.5px solid var(--ls-line);border-radius:12px;cursor:pointer;text-align:left;}
+.ls-schritt .nr{width:24px;height:24px;border-radius:50%;background:var(--ls-line);color:var(--ls-navy);font-weight:700;font-size:13px;display:grid;place-items:center;}
+.ls-schritt b{color:var(--ls-navy);font-size:.95em;}
+.ls-schritt .kw{font-family:'IBM Plex Mono',monospace;font-size:.78em;color:var(--ls-muted);}
+.ls-schritt.war .nr{background:var(--lime);color:#243A4C;}
+.ls-schritt[aria-pressed="true"]{border-color:var(--ls-navy);background:var(--ls-glow);}
+.ls-schritt[aria-pressed="true"] .nr{background:var(--navy);color:#fff;}
+.ls-speicher{width:100%;height:auto;display:block;border-radius:12px;margin-top:8px;}
+.ls-speicher-pfeil path{animation:ls-pfeil-puls 1.6s ease-in-out infinite;}
+@keyframes ls-pfeil-puls{50%{opacity:.5}}
+.ls-stufen{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:8px;align-items:center;}
+.ls-stufe-k{display:flex;flex-direction:column;gap:2px;padding:12px;background:var(--ls-karte);border:2.5px solid var(--ls-line);border-radius:12px;cursor:pointer;text-align:center;align-items:center;}
+.ls-stufe-k b{color:var(--ls-navy);}
+.ls-stufe-k span{font-size:.82em;color:var(--ls-muted);}
+.ls-stufe-k:hover{border-color:var(--ls-navy);}
+.ls-stufe-k[aria-pressed="true"]{border-color:var(--ls-navy);background:var(--ls-glow);}
+.ls-welle{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.7em;color:var(--ls-muted);opacity:.45;width:64px;text-align:center;}
+.ls-welle svg{width:28px;height:42px;}
+.ls-welle.an{opacity:1;}
+.ls-welle.an svg path{animation:ls-welle 1.2s ease-in-out infinite;}
+@keyframes ls-welle{50%{transform:translateY(-4px)}}
+.ls-mix{display:grid;grid-template-columns:200px minmax(0,1fr);gap:20px;align-items:center;margin-top:8px;}
+.ls-ring{width:200px;height:200px;}
+.ls-ring circle{transition:stroke-dasharray .6s var(--ease-out),stroke-dashoffset .6s var(--ease-out);}
+.ls-legende{list-style:none;margin:0;padding:0;display:grid;gap:6px;}
+.ls-legende li{display:grid;grid-template-columns:14px 1fr auto;gap:10px;align-items:center;font-size:.9em;}
+.ls-legende i{width:14px;height:14px;border-radius:4px;display:block;border:1px solid rgba(36,58,76,.2);}
+.ls-legende b{font-variant-numeric:tabular-nums;color:var(--ls-navy);}
+.ls-merk{margin-top:12px;background:var(--ls-glow);border-left:6px solid var(--lime);border-radius:10px;padding:10px 14px;}
+.ls-merk strong{color:var(--ls-navy);font-size:1.1em;}
+.ls-edm{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;align-items:start;}
+.ls-edm-schritt{position:relative;display:flex;flex-direction:column;gap:4px;padding:10px 12px;background:var(--ls-karte);border:2.5px solid var(--ls-line);border-radius:12px;min-height:120px;transition:border-color .3s,background .3s;}
+.ls-edm-schritt b{color:var(--ls-navy);}
+.ls-edm-schritt span{font-size:.82em;color:var(--ls-muted);}
+.ls-edm-gruppe{font-family:'IBM Plex Mono',monospace;font-size:10px!important;letter-spacing:.08em;text-transform:uppercase;min-height:14px;}
+.ls-edm-schritt.an{border-color:var(--ls-navy);background:var(--ls-glow);}
+.ls-edm-schritt.war{border-color:var(--lime);}
+.ls-wert{display:inline-block;margin-top:6px;padding:3px 10px;border-radius:999px;background:var(--navy);color:var(--lime)!important;font-weight:700;font-size:.8em!important;font-variant-numeric:tabular-nums;animation:ls-ein .35s var(--ease-out) both;}
+.ls-wert.falsch{background:#C04F35;color:#fff!important;}
+.ls-drei{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.ls-drei.vier{grid-template-columns:repeat(4,1fr);}
+.ls-k{display:flex;flex-direction:column;gap:4px;padding:12px;background:var(--ls-karte);border:2px solid var(--ls-line);border-radius:12px;}
+.ls-k b{color:var(--ls-navy);font-size:1.2em;}
+.ls-k .kw{font-family:'IBM Plex Mono',monospace;font-size:.78em;color:var(--ls-muted);}
+.ls-k span{font-size:.85em;color:var(--ls-muted);}
+.ls-k.formel{background:var(--navy);border-color:var(--navy);}
+.ls-k.formel b,.ls-k.formel span,.ls-k.formel .kw,.ls-k.formel output{color:#fff;}
+.ls-k .ls-num{margin:4px 0;}
+.ls-regler{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;}
+.ls-regler label{display:flex;flex-direction:column;gap:6px;font-weight:700;color:var(--ls-navy);}
+.ls-regler input[type=range]{width:100%;accent-color:#243A4C;}
+.ls-leiter{display:flex;flex-direction:column;gap:6px;align-items:stretch;}
+.ls-sprosse{display:grid;grid-template-columns:44px 90px 1fr;gap:12px;align-items:center;padding:8px 12px;background:var(--ls-karte);border:2.5px solid var(--ls-line);border-radius:10px;cursor:pointer;text-align:left;}
+.ls-sprosse b{font-size:1.2em;color:var(--ls-navy);}
+.ls-sprosse .kw{font-family:'IBM Plex Mono',monospace;font-size:.78em;color:var(--ls-muted);}
+.ls-sprosse:hover{border-color:var(--ls-navy);}
+.ls-sprosse[aria-pressed="true"]{border-color:var(--ls-navy);background:var(--ls-glow);}
+.ls-num{width:100%;border:2px solid var(--ls-line);border-radius:10px;padding:8px 12px;background:var(--ls-karte);color:var(--ls-ink);font-variant-numeric:tabular-nums;}
+.ls-aus{display:block;font-family:var(--disp);font-stretch:108%;font-weight:700;font-size:1.3em;color:var(--ls-navy);font-variant-numeric:tabular-nums;}
+.ls-rechnung{background:var(--ls-karte);border:1.5px solid var(--ls-line);border-radius:12px;padding:12px 14px;}
+.ls-rechnung-kopf{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:8px;color:var(--ls-navy);}
+.ls-rechnung table{width:100%;border-collapse:collapse;font-size:.92em;}
+.ls-rechnung td{padding:6px 8px;border-bottom:1px solid var(--ls-line);vertical-align:middle;}
+.ls-rechnung td.nr{width:36px;}
+.ls-rechnung td.rechnung{color:var(--ls-muted);font-size:.9em;}
+.ls-rechnung td.wert{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:700;color:var(--ls-navy);}
+.ls-rechnung tr.an td{background:var(--ls-glow);}
+.ls .ls-nr{width:28px;height:28px;border-radius:50%;background:var(--lime);color:#243A4C;border:0;font-weight:700;cursor:pointer;}
+.ls .ls-nr[aria-pressed="true"]{background:var(--navy);color:#fff;}
+/* Mitmach, Tabellen, Rechner */
+.ls-fields{display:grid;gap:10px;}
+.ls-fl{display:grid;grid-template-columns:200px 1fr;gap:10px;align-items:center;font-weight:700;color:var(--ls-navy);margin:6px 0;}
+.ls-fl .ls-wahl{margin:0;}
+.ls-inline{display:flex;gap:8px;align-items:center;}
+.ls-tabelle{overflow-x:auto;margin:12px 0;}
+.ls-tabelle table{width:100%;border-collapse:collapse;font-size:.92em;}
+.ls-tabelle caption{text-align:left;font-weight:700;color:var(--ls-navy);padding:0 0 8px;}
+.ls-tabelle th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ls-muted);padding:8px 10px;border-bottom:1px solid var(--ls-line);}
+.ls-tabelle tbody th{font-family:inherit;font-size:inherit;letter-spacing:0;text-transform:none;color:var(--ls-navy);font-weight:600;}
+.ls-tabelle td{padding:8px 10px;border-bottom:1px solid var(--ls-line);vertical-align:top;}
+.ls-tabelle.ls-eingabe td{padding:6px;}
+.ls-tabelle tr.bsp td{color:var(--ls-muted);font-style:italic;}
+.ls-rechner{margin-top:10px;}
+.ls-geraet{padding:10px 0;border-top:1px dashed var(--ls-line);}
+.ls-ergebnis{display:flex;gap:24px;flex-wrap:wrap;margin:10px 0 4px;}
+.ls-ergebnis dt{font-size:.8em;color:var(--ls-muted);}
+.ls-duo{display:grid;grid-template-columns:1.1fr 1fr;gap:16px;}
+.ls-duo .ls-card{margin:0;}
+.ls-kurz{background:var(--ls-glow);border:0;border-left:7px solid var(--lime);}
+.ls-kurz ul{margin:0;padding-left:20px;}
+.ls-kann{border-left:7px solid var(--navy);}
+.ls-cb{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;cursor:pointer;font-weight:400;}
+.ls-cb input{width:20px;height:20px;margin-top:4px;accent-color:#243A4C;flex:none;}
+.ls-done{display:flex;gap:10px;align-items:center;margin-top:8px;color:var(--ok);animation:ls-ein .4s var(--ease-out) both;}
+.ls-done[hidden]{display:none;}
+.ls-und{border:2px solid var(--lime);}
+.ls-und-txt{font-style:italic;color:var(--ls-muted);}
+.ls-next{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:22px;}
+.ls-foot{font-size:.75em;color:var(--ls-muted);margin-top:30px;max-width:none;}
+.ls-schritte{counter-reset:none;}
+ol.ls-schritte{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;list-style:none;padding:0;margin:8px 0;}
+ol.ls-schritte li{display:flex;flex-direction:column;gap:4px;padding:12px;background:var(--ls-ice);border-radius:12px;font-size:.9em;}
+ol.ls-schritte b{color:var(--ls-navy);}
+.ls-liste{margin:0;padding-left:20px;}
+.ls-aufbau{display:grid;gap:8px;margin:8px 0;}
+.ls-aufbau div{display:grid;grid-template-columns:220px 1fr;gap:12px;padding:8px 0;border-bottom:1px solid var(--ls-line);}
+.ls-aufbau dt{font-weight:700;color:var(--ls-navy);}
+.ls-aufbau dd{margin:0;color:var(--ls-muted);}
+.ls-kapitelliste{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px;}
+.ls .ls-kap{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;width:100%;padding:6px 10px;background:none;border:1.5px solid transparent;border-radius:10px;text-align:left;cursor:pointer;color:var(--ls-ink);}
+.ls-kap:hover{border-color:var(--ls-line);background:var(--ls-ice);}
+.ls-kap .dot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;background:var(--ls-karte);border:2.5px solid var(--ls-line);color:var(--ls-muted);}
+.ls-kap.done .dot{background:var(--lime);border-color:var(--lime);color:#243A4C;}
+.ls-kap-meta{font-size:.8em;color:var(--ls-muted);}
+@media (prefers-reduced-motion:no-preference){.ls-spur{animation:ls-tr 6s linear infinite;}@keyframes ls-tr{to{stroke-dashoffset:-140}}}
+@media (prefers-reduced-motion:reduce){.ls *,.ls *::before,.ls *::after{animation:none!important;transition:none!important;}}
+@media (max-width:960px){.ls{grid-template-columns:minmax(0,1fr);}.ls-rail{display:none;}.ls-duo{grid-template-columns:1fr;}.ls-chain{gap:14px;}.ls-fl{grid-template-columns:1fr;}.ls-mix{grid-template-columns:1fr;justify-items:center;}.ls-schritte,.ls-edm,ol.ls-schritte{grid-template-columns:1fr 1fr;}.ls-drei,.ls-drei.vier{grid-template-columns:1fr 1fr;}.ls-aufbau div{grid-template-columns:1fr;}.ls-stufen{grid-template-columns:1fr;}.ls-welle{flex-direction:row;width:auto;}.ls-regler{grid-template-columns:1fr;}}
+@media (max-width:560px){.ls-schritte,.ls-edm,ol.ls-schritte,.ls-drei,.ls-drei.vier{grid-template-columns:1fr;}.ls-h1{font-size:1.5em;}.ls-stufe-zeile{width:100%!important;}}
+/* BLUU-LERNSKRIPT:ENDE */
 </style>
 <!-- BLUU-KOMPONENTEN:START — generiert aus dem Canvas (2026-10-22), nicht von Hand ändern: diseno/komponenten-bauen.cjs -->
 <script>
@@ -3171,6 +3490,10 @@ class Component extends DCLogic {
         <div class="sidebar-group" data-role="manager-up" id="sg-content">
           <div class="sidebar-group-label">Inhalte</div>
           <div class="sidebar-items-row">
+          <!-- BLUU-PLATTFORM: Inhalte im Überblick (Module, Lektionen, Lernkarten, Programme) -->
+          <button class="sidebar-item" data-tab="inhalte" onclick="adminTab('inhalte')">
+            <span class="sidebar-icon">▦</span><span class="sidebar-label">Überblick</span>
+          </button>
           <button class="sidebar-item" data-tab="courses" onclick="adminTab('courses')">
             <span class="sidebar-icon">📚</span><span class="sidebar-label">Kurse</span>
           </button>
@@ -3244,6 +3567,12 @@ class Component extends DCLogic {
       <div class="admin-content" id="admin-content">
 
     <!-- COURSES -->
+    <!-- BLUU-PLATTFORM: Inhalte im Überblick (gefüllt von bluuAdminInhalte) -->
+    <div class="admin-section" id="atab-inhalte">
+      <div class="sec-head"><div class="sec-title">Inhalte im Überblick</div><button class="btn-add" onclick="openCourseModal(null)">+ Lektion hinzufügen</button></div>
+      <p class="kachel-text" style="margin:0 0 18px;max-width:70ch">Welche Module es gibt, zu welchem Fachbereich sie gehören, welche Lektionen und Lernkarten sie enthalten und was noch leer ist. Bearbeitet wird weiterhin in «Kurse» und «Lernpfade».</p>
+      <div id="admin-inhalte"></div>
+    </div>
     <div class="admin-section active" id="atab-courses">
       <div class="sec-head"><div class="sec-title">Alle Kurse</div><button class="btn-add" onclick="openCourseModal(null)">+ Kurs hinzufügen</button></div>
       <div class="admin-course-list" id="admin-course-list"></div>
@@ -10556,7 +10885,8 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     { key: 'systeme', name: 'SAP & Systeme', kurz: 'SAP & Systeme', motiv: 'isu', text: 'SAP IS-U, S/4HANA Utilities und die Werkzeuge im Tagesgeschäft.' }
   ];
   window.BLUU_MODULE = window.BLUU_MODULE || [
-    { code: 'grundlagen-1x1', titel: '1x1 der Energiewirtschaft', bereich: 'grundlagen', motiv: 'energie', status: 'geplant', fest: true },
+    /* «lernkarten»: Schlüssel der Lernkarten-Sammlung in der App (Adrians LERNKARTEN_SETS, Modul «1.1.1») */
+    { code: 'grundlagen-1x1', titel: '1x1 der Energiewirtschaft', bereich: 'grundlagen', motiv: 'energie', status: 'geplant', fest: true, lernkarten: '1.1.1', lernskript: '1.1.1' },
     { code: 'energie-kurse', thema: 'Energiewirtschaft – Kurse', bereich: 'grundlagen', motiv: 'energie', status: 'geplant', nurMitInhalt: true },
     { code: 'datenschutz', thema: 'Datenschutz', bereich: 'grundlagen', motiv: 'dsgvo', status: 'geplant' },
     { code: 'podcasts', thema: 'Podcasts', bereich: 'grundlagen', motiv: 'podcast', status: 'geplant' },
@@ -10588,7 +10918,12 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
       if (st && st.n && st.alleFertig && ZUGANG[m.zugang].aktion === 'lernen') return 'fertig';
       return m.zugang;
     }
-    return m.status === 'geplant' || !st || !st.n ? 'geplant' : (st.alleFertig ? 'fertig' : (st.fertig ? 'aktiv' : 'neu'));
+    const lkN = st && st.lk ? st.lk.n : 0, lkFertig = st && st.lk ? st.lk.fertig : 0;
+    const lsN = st && st.ls ? st.ls.n : 0, lsFertig = st && st.ls ? st.ls.fertig : 0;
+    if (m.status === 'geplant' || !st || (!st.n && !lkN && !lsN)) return 'geplant';
+    if (st.n) return st.alleFertig ? 'fertig' : (st.fertig ? 'aktiv' : 'neu');
+    /* Modul aus Lernskript und/oder Lernkarten (ohne Adrians Kurse) */
+    return lkFertig + lsFertig >= lkN + lsN ? 'fertig' : (lkFertig + lsFertig ? 'aktiv' : 'neu');
   };
   const zugangOffen = (z) => ZUGANG[z].aktion === 'lernen';
   const preisText = (m) => (m.preis != null && m.preis !== '' ? (typeof m.preis === 'number' ? m.preis.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' }) : String(m.preis)) : '');
@@ -10752,6 +11087,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
   const modulMeta = (m, st) => {
     const t = [];
     if (st && st.n) t.push(st.n + (st.n === 1 ? ' Lektion' : ' Lektionen'));
+    if (st && st.lk && st.lk.n) t.push(st.lk.n + ' Lernkarten-Sets · ' + st.lk.karten + ' Karten');
     if (m.dauerMinuten) t.push('ca. ' + m.dauerMinuten + ' Min.');
     const teile = enthaelt(m); if (teile.length) t.push('Enthält ' + teile.join(', '));
     return t.join(' · ');
@@ -10764,11 +11100,14 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     return '';
   };
   /* Kompakte Produktkarte: Titel, Fachbereich, Beschreibung/Programm-Bezug, belegte Metadaten, Zugang (+Preis), eine Aktion */
+  /* Module ohne Adrians Kurse: Stand aus Lernskript-Kapiteln und Lernkarten-Sets zusammen */
+  const festPct = (st) => { const n = (st.ls ? st.ls.n : 0) + (st.lk ? st.lk.n : 0), f = (st.ls ? st.ls.fertig : 0) + (st.lk ? st.lk.fertig : 0); return n ? Math.round(f / n * 100) : 0; };
+  const festStand = (st) => [st.ls && st.ls.n ? st.ls.fertig + ' / ' + st.ls.n + ' Kapitel' : '', st.lk && st.lk.n ? st.lk.fertig + ' / ' + st.lk.n + ' Sets' : ''].filter(Boolean).join(' · ');
   const modulKachel = (m) => {
     const i = modulIndex(m), f = fachVon(m.bereich);
     const st = window.bluuInhaltStand ? bluuInhaltStand(m.code || m.thema) : null;
-    const z = zugangVon(m, st), offen = zugangOffen(z), hatInhalt = !!(st && st.n);
-    const pct = hatInhalt ? Math.round(st.fertig / st.n * 100) : 0;
+    const z = zugangVon(m, st), offen = zugangOffen(z), hatInhalt = !!(st && (st.n || (st.lk && st.lk.n) || (st.ls && st.ls.n)));
+    const pct = !hatInhalt ? 0 : (st.n ? Math.round(st.fertig / st.n * 100) : festPct(st));
     const lp = hatInhalt ? programmVon(m) : null;
     const meta = modulMeta(m, st);
     const klickbar = hatInhalt || z === 'einzeln';
@@ -10780,7 +11119,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
       (offen && pct ? '<div class="pfad-balken"><div style="width:' + pct + '%;background:' + (pct === 100 ? 'var(--lime)' : bluuMotivFarbe(m.motiv || 'energie')) + '"></div></div>' : '') +
       '<div class="kachel-fuss">' +
       (z === 'einzeln' ? '<span class="modul-preis">' + (preisText(m) ? esc(preisText(m)) : 'Preis folgt') + '</span>'
-        : (offen && hatInhalt ? '<span class="kachel-meta">' + st.fertig + ' / ' + st.n + ' abgeschlossen</span>' : '<span class="kachel-meta">' + (z === 'geplant' ? 'Buchung und Freischaltung noch nicht festgelegt' : '') + '</span>')) +
+        : (offen && hatInhalt ? '<span class="kachel-meta">' + (st.n ? st.fertig + ' / ' + st.n + ' abgeschlossen' : festStand(st)) + '</span>' : '<span class="kachel-meta">' + (z === 'geplant' ? 'Buchung und Freischaltung noch nicht festgelegt' : '') + '</span>')) +
       modulAktion(m, z, pct, i, true) + '</div></article>';
   };
   /* Register der Programme (links) und Detail des gewählten (rechts), eins zu eins nach Canvas «Lernpfade» */
@@ -10878,8 +11217,36 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     const el = document.getElementById('bluu-weiter');
     if (!el) return;
     if (window.bluuInhaltErgaenzen) BLUU_MODULE.forEach((m) => bluuInhaltErgaenzen(m));
-    const staende = BLUU_MODULE.filter(modulSichtbar).filter((m) => m.status === 'freigeschaltet').map((m) => ({ m, s: window.bluuInhaltStand ? bluuInhaltStand(m.code || m.thema) : null })).filter((x) => x.s && x.s.n);
-    const offen = staende.find((x) => !x.s.alleFertig);
+    const staende = BLUU_MODULE.filter(modulSichtbar).filter((m) => m.status === 'freigeschaltet').map((m) => ({ m, s: window.bluuInhaltStand ? bluuInhaltStand(m.code || m.thema) : null })).filter((x) => x.s && (x.s.n || (x.s.lk && x.s.lk.n) || (x.s.ls && x.s.ls.n)));
+    /* Zuerst Module mit Lektionen, dann Lernskript-Kapitel, dann reine Lernkarten-Module */
+    const lsOffen = (x) => !x.s.n && x.s.ls && x.s.ls.naechstes;
+    const lkOffen = (x) => !x.s.n && x.s.lk && x.s.lk.fertig < x.s.lk.n;
+    const offen = staende.find((x) => x.s.n && !x.s.alleFertig) || staende.find(lsOffen) || staende.find(lkOffen);
+    if (offen && lsOffen(offen)) {
+      const { m, s } = offen, f = fachVon(m.bereich), kap = s.ls.naechstes, pct = Math.round(s.ls.fertig / s.ls.n * 100);
+      el.innerHTML = '<article class="bluu-kachel-karte weiter-karte">' +
+        '<div class="kachel-kopf"><span class="bluu-kachel">' + B('PfadIcon', { motiv: m.motiv || 'energie', status: 'aktiv', fortschritt: pct, groesse: 56 }) + '</span>' +
+        '<div><span class="kachel-label">Als Nächstes · Lernskript · ' + esc(f.kurz) + '</span><h3 class="kachel-titel gross">Kapitel ' + esc(kap.key) + ' · ' + esc(kap.titel) + '</h3></div></div>' +
+        '<p class="kachel-text">' + esc(modulTitel(m)) + ' · Lesezeit ' + esc(kap.lesezeit) + ' · Denk kurz nach, lies, mach mit.</p>' +
+        '<div class="weiter-schritt"><div class="pfad-balken"><div style="width:' + pct + '%;background:' + bluuMotivFarbe(m.motiv || 'energie') + '"></div></div><span>' + s.ls.fertig + ' / ' + s.ls.n + ' Kapitel geschafft</span></div>' +
+        '<div class="kachel-fuss"><span class="kachel-meta">Danach: Lernkarten zum Kapitel.</span><span><button type="button" class="kachel-btn" onclick="bluuModulOeffnenCode(' + esc(JSON.stringify(m.code || m.thema)) + ')">Zum Modul</button>' +
+        '<button type="button" class="kachel-btn primaer" onclick="bluuLsOeffnen(' + esc(JSON.stringify(kap.key)) + ',' + esc(JSON.stringify(m.code || m.thema)) + ')">Kapitel lesen</button></span></div></article>' +
+        '<article class="bluu-kachel-karte">' + begleiter('erklaert', 'Ich begleite dich durch das Kapitel.', 'Frag mich nach einem Begriff aus dem Lernskript oder lass dir den Abschnitt in anderen Worten erklären.', chipsZu(kap.titel)) + '</article>';
+      return;
+    }
+    if (offen && !offen.s.n) {
+      const { m, s } = offen, f = fachVon(m.bereich), naechstes = s.lk.sets.find((k) => !k.fertig) || s.lk.sets[0];
+      const pct = Math.round(s.lk.fertig / s.lk.n * 100);
+      el.innerHTML = '<article class="bluu-kachel-karte weiter-karte">' +
+        '<div class="kachel-kopf"><span class="bluu-kachel">' + B('PfadIcon', { motiv: m.motiv || 'energie', status: 'aktiv', fortschritt: pct, groesse: 56 }) + '</span>' +
+        '<div><span class="kachel-label">Als Nächstes · Lernkarten · ' + esc(f.kurz) + '</span><h3 class="kachel-titel gross">' + esc(naechstes.letter + ' · ' + naechstes.title) + '</h3></div></div>' +
+        '<p class="kachel-text">' + esc(modulTitel(m)) + ' · ' + naechstes.karten + ' Karten</p>' +
+        '<div class="weiter-schritt"><div class="pfad-balken"><div style="width:' + pct + '%;background:' + bluuMotivFarbe(m.motiv || 'energie') + '"></div></div><span>' + s.lk.fertig + ' / ' + s.lk.n + ' Sets gelernt</span></div>' +
+        '<div class="kachel-fuss"><span class="kachel-meta">Karte lesen, im Kopf antworten, aufdecken, einschätzen.</span><span><button type="button" class="kachel-btn" onclick="bluuModulOeffnenCode(' + esc(JSON.stringify(m.code || m.thema)) + ')">Zum Modul</button>' +
+        '<button type="button" class="kachel-btn primaer" onclick="bluuLkOeffnen(' + esc(JSON.stringify(naechstes.key)) + ',' + esc(JSON.stringify(m.code || m.thema)) + ')">Set lernen</button></span></div></article>' +
+        '<article class="bluu-kachel-karte">' + begleiter('erklaert', 'Ich begleite dich durch die Karten.', 'Frag mich nach einer Eselsbrücke oder lass dir einen Begriff aus dem Set erklären.', chipsZu(naechstes.title)) + '</article>';
+      return;
+    }
     if (!staende.length) {
       el.innerHTML = '<article class="bluu-kachel-karte weiter-karte"><div class="kachel-kopf"><div><span class="kachel-label">Als Nächstes</span><h3 class="kachel-titel">Noch keine Lektion freigeschaltet.</h3></div></div>' +
         '<p class="kachel-text">Im Katalog stehen die Fachbereiche, Programme und Module der Akademie.</p><div class="kachel-fuss"><span></span><button type="button" class="kachel-btn primaer" onclick="navGoModule()">Zum Katalog</button></div></article>' +
@@ -10906,11 +11273,14 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
   window.bluuMeineModule = function () {
     const el = document.getElementById('bluu-meine-module');
     if (!el) return;
+    if (window.bluuInhaltErgaenzen) BLUU_MODULE.forEach((m) => bluuInhaltErgaenzen(m));
     const mods = BLUU_MODULE.filter(modulSichtbar).filter((m) => m.status === 'freigeschaltet');
     if (!mods.length) { el.innerHTML = '<div class="bluu-leer">' + B('Maskottchen', { groesse: 56, stimmung: 'neugierig' }) + '<span>Noch kein Modul freigeschaltet. Die Übersicht aller Module steht im Katalog.</span></div>'; return; }
     el.innerHTML = mods.map((m) => {
       const s = window.bluuInhaltStand ? bluuInhaltStand(m.code || m.thema) : null;
-      const n = s ? s.n : 0, fertig = s ? s.fertig : 0, pct = n ? Math.round(fertig / n * 100) : 0, farbe = bluuMotivFarbe(m.motiv || 'energie');
+      const fest = s && !s.n && ((s.lk && s.lk.n) || (s.ls && s.ls.n));
+      const n = s ? (fest ? (s.ls ? s.ls.n : 0) + (s.lk ? s.lk.n : 0) : s.n) : 0, fertig = s ? (fest ? (s.ls ? s.ls.fertig : 0) + (s.lk ? s.lk.fertig : 0) : s.fertig) : 0, pct = n ? Math.round(fertig / n * 100) : 0, farbe = bluuMotivFarbe(m.motiv || 'energie');
+      const einheit = fest ? (s.ls && s.ls.n && s.lk && s.lk.n ? ' Kapitel und Sets' : (s.ls && s.ls.n ? ' Kapitel' : ' Sets')) : ' Lektionen';
       const pfad = s && s.pfade && s.pfade.find((lp) => s.alleFertig);
       const zert = s && s.alleFertig && pfad ? '<button type="button" class="kachel-btn" onclick="event.stopPropagation();downloadPathCert(' + esc(JSON.stringify(String(pfad.id))) + ',' + esc(JSON.stringify(pfad.title)) + ',' + esc(JSON.stringify(pfad.icon || '')) + ')">Zertifikat ↓</button>' : '';
       return '<article class="bluu-kachel-karte meine-karte klickbar" onclick="bluuModulOeffnen(' + modulIndex(m) + ')">' +
@@ -10918,7 +11288,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
         '<div><span class="kachel-label">Modul · ' + esc(fachVon(m.bereich).kurz) + '</span><h3 class="kachel-titel">' + esc(modulTitel(m)) + '</h3></div>' +
         '<span class="meine-zahl">' + pct + '<small> %</small></span></div>' +
         '<div class="pfad-balken"><div style="width:' + pct + '%;background:' + (pct === 100 ? 'var(--lime)' : farbe) + '"></div></div>' +
-        '<div class="kachel-fuss"><span class="kachel-meta">' + fertig + ' / ' + n + ' Lektionen' + (s && s.alleFertig ? ' · abgeschlossen' : '') + '</span><span>' + zert +
+        '<div class="kachel-fuss"><span class="kachel-meta">' + fertig + ' / ' + n + einheit + (s && s.alleFertig ? ' · abgeschlossen' : '') + '</span><span>' + zert +
         '<button type="button" class="kachel-btn' + (s && s.alleFertig ? '' : ' primaer') + '" onclick="event.stopPropagation();bluuModulOeffnen(' + modulIndex(m) + ')">' + (s && s.alleFertig ? 'Ansehen' : (pct ? 'Weiter' : 'Starten')) + '</button></span></div></article>';
     }).join('');
   };
@@ -11027,10 +11397,18 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
         const st = fertig ? HAKEN + ' Abgeschlossen' : (naechste ? (z === 'einzeln' ? 'Vorschau · offen' : 'Freigeschaltet · als Nächstes') : (nurZugang ? SCHLOSS + ' Nur mit Modulzugang' : (gesperrt ? SCHLOSS + ' Nach Lektion ' + esc(um[idx - 1] ? um[idx - 1][0] : '') : 'Inhalt folgt')));
         return '<li class="' + (gesperrt ? 'gesperrt' : 'klickbar') + '"' + (gesperrt ? ' title="' + (nurZugang ? 'Im vollen Zugang enthalten' : 'Vorherige Lektion abschließen') + '"' : ' onclick="bluuInhaltZu(\'' + esc(m.code || m.thema) + '\',' + idx + ')"') + '><span class="aufbau-buchstabe' + kl + '">' + esc(b) + '</span><span class="aufbau-titel">' + esc(titel) + '</span><span class="aufbau-meta">' + esc(meta || '') + (meta ? ' · ' : '') + st + '</span></li>';
       }).join('')
-        : '<li class="gesperrt"><span class="aufbau-buchstabe">–</span><span class="aufbau-titel">Noch keine Lektionen</span><span class="aufbau-meta">Inhalt wird eingepflegt</span></li>';
-      const aktion = stand && um.length && zugangOffen(z)
+        : ((stand && stand.ls && stand.ls.n
+          /* Lernskript-Kapitel (eigens erstellter Inhalt): jedes Kapitel anklickbar, Stand aus den Häkchen «Das kann ich jetzt» */
+          ? stand.ls.kapitel.map((kp) => '<li class="klickbar" onclick="bluuLsOeffnen(' + esc(JSON.stringify(kp.key)) + ')"><span class="aufbau-buchstabe' + (kp.fertig ? ' fertig' : (stand.ls.naechstes && stand.ls.naechstes.key === kp.key ? ' aktuell' : '')) + '">' + esc(kp.key) + '</span><span class="aufbau-titel">' + esc(kp.titel) + '</span><span class="aufbau-meta">Lernskript · Lesezeit ' + esc(kp.lesezeit) + ' · ' + (kp.fertig ? HAKEN + ' Geschafft' : (stand.ls.naechstes && stand.ls.naechstes.key === kp.key ? 'Als Nächstes' : 'Offen')) + '</span></li>').join('') : '') +
+          (stand && stand.lk && stand.lk.n
+          ? '<li class="klickbar" onclick="bluuModulReiter(\'lernkarten\')"><span class="aufbau-buchstabe' + (stand.lk.fertig >= stand.lk.n ? ' fertig' : ' aktuell') + '">' + stand.lk.n + '</span><span class="aufbau-titel">Lernkarten-Sets zum Modul</span><span class="aufbau-meta">' + stand.lk.karten + ' Karten · ' + stand.lk.fertig + ' / ' + stand.lk.n + ' Sets gelernt</span></li>'
+          : '') ||
+          '<li class="gesperrt"><span class="aufbau-buchstabe">–</span><span class="aufbau-titel">Noch keine Lektionen</span><span class="aufbau-meta">Inhalt wird eingepflegt</span></li>');
+      const lsAktion = stand && stand.ls && stand.ls.n && zugangOffen(z) ? '<button type="button" class="kachel-btn primaer" onclick="bluuLsOeffnen(' + esc(JSON.stringify(stand.ls.naechstes ? stand.ls.naechstes.key : 'start')) + ')">' + (stand.ls.fertig ? (stand.ls.naechstes ? 'Weiter mit Kapitel ' + esc(stand.ls.naechstes.key) : 'Lernskript noch einmal lesen') : 'Lernskript lesen') + '</button>' : '';
+      const lkAktion = stand && stand.lk && stand.lk.n && zugangOffen(z) ? '<button type="button" class="kachel-btn' + (um.length || lsAktion ? '' : ' primaer') + '" onclick="bluuModulReiter(\'lernkarten\')">Lernkarten lernen</button>' : '';
+      const aktion = lsAktion + (stand && um.length && zugangOffen(z)
         ? '<button type="button" class="kachel-btn primaer" onclick="bluuInhaltZu(\'' + esc(m.code || m.thema) + '\',' + stand.aktuell + ')">' + (stand.alleFertig ? 'Lektionen wiederholen' : (stand.fertig ? 'Weiter mit ' : 'Starten mit ') + um[stand.aktuell][0] + ' · ' + esc(um[stand.aktuell][1])) + '</button>'
-        : (z === 'einzeln' ? modulAktion(m, z, 0, modulIndex(m), false) + (stand && um.length ? '<button type="button" class="kachel-btn" onclick="bluuInhaltZu(\'' + esc(m.code || m.thema) + '\',0)">Vorschau: ' + esc(um[0][0]) + ' · ' + esc(um[0][1]) + '</button>' : '') : '');
+        : (z === 'einzeln' ? modulAktion(m, z, 0, modulIndex(m), false) + (stand && um.length ? '<button type="button" class="kachel-btn" onclick="bluuInhaltZu(\'' + esc(m.code || m.thema) + '\',0)">Vorschau: ' + esc(um[0][0]) + ' · ' + esc(um[0][1]) + '</button>' : '') : '')) + lkAktion;
       const pfadFertig = stand && stand.alleFertig && lp;
       const zertKnopf = pfadFertig ? '<button type="button" class="kachel-btn" onclick="downloadPathCert(' + esc(JSON.stringify(String(lp.id))) + ',' + esc(JSON.stringify(lp.title)) + ',' + esc(JSON.stringify(lp.icon || '')) + ')">Zertifikat herunterladen</button>' : '';
       inhalt.innerHTML = '<div class="modul-zwei">' +
@@ -11047,8 +11425,8 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
         '<div><dt>Programm</dt><dd>' + (lp ? 'Teil von «' + esc(lp.title) + '». Das Zertifikat vergibt das Programm, sobald alle seine Lektionen bestanden sind – nicht das Modul allein.' : 'Keinem Programm zugeordnet; kein Zertifikat über dieses Modul.') + '</dd></div>' +
         '</dl></section>' +
         /* Region 2: Curriculum-Vorschau */
-        '<section class="modul-region"><div class="bluu-kopfzeile"><h3 class="bluu-h3">Lektionen</h3><span class="kachel-meta">' + (stand ? stand.fertig + ' / ' + stand.n + ' abgeschlossen' : '') + '</span></div>' +
-        '<p class="kachel-text">Freigeschaltete Lektionen sind anklickbar. Gesperrte öffnen sich nach der vorherigen – so stellt die Akademie die Reihenfolge sicher.</p>' +
+        '<section class="modul-region"><div class="bluu-kopfzeile"><h3 class="bluu-h3">' + (stand && !stand.n && stand.ls && stand.ls.n ? 'Kapitel' : 'Lektionen') + '</h3><span class="kachel-meta">' + (stand ? (stand.n ? stand.fertig + ' / ' + stand.n + ' abgeschlossen' : (stand.ls && stand.ls.n ? stand.ls.fertig + ' / ' + stand.ls.n + ' Kapitel geschafft' : '')) : '') + '</span></div>' +
+        '<p class="kachel-text">' + (stand && !stand.n && stand.ls && stand.ls.n ? 'Jedes Kapitel ist anklickbar und in Ruhe lesbar: Denk kurz nach, Text mit Grafik, Mitmach-Aufgabe, drei Häkchen zum Abschluss. Die Reihenfolge ist eine Empfehlung.' : 'Freigeschaltete Lektionen sind anklickbar. Gesperrte öffnen sich nach der vorherigen – so stellt die Akademie die Reihenfolge sicher.') + '</p>' +
         '<ol class="aufbau-liste">' + liste + '</ol></section>' +
         '</div>' +
         /* Region 3 + 4: Zugang und Aktion */
@@ -11071,6 +11449,49 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
         '<div><span class="kachel-label">Platz reserviert</span><h3>' + esc(teil[1]) + '</h3><p>' + esc(teil[3]) + '</p><p>Inhalt wird eingepflegt.</p>' + chips + '</div></div>';
     }
   }
+
+  /* ── Admin: Inhalte im Überblick (Module × Fachbereich × Lektionen × Lernkarten), nur Lesen und Sprung in Adrians Editoren ── */
+  let inhalteSuche = '', inhalteFach = 'alle', inhalteOffen = null;
+  window.bluuAdminInhalte = function () {
+    const el = document.getElementById('admin-inhalte');
+    if (!el) return;
+    if (window.bluuInhaltErgaenzen) BLUU_MODULE.forEach((m) => bluuInhaltErgaenzen(m));
+    const alleKurse = typeof courses !== 'undefined' ? courses : [];
+    const zeilen = BLUU_MODULE.filter((m) => !m.nurMitInhalt || m.status === 'freigeschaltet').map((m) => {
+      const st = window.bluuInhaltStand ? bluuInhaltStand(m.code || m.thema) : null;
+      const lekt = window.bluuInhaltLektionen ? bluuInhaltLektionen(m.code || m.thema) : [];
+      const slides = lekt.reduce((a, c) => a + ((c.slides || []).length), 0), fragen = lekt.reduce((a, c) => a + ((c.questions || []).length), 0);
+      return { m, st, lekt, slides, fragen, lkN: st && st.lk ? st.lk.n : 0, lkKarten: st && st.lk ? st.lk.karten : 0, lsN: st && st.ls ? st.ls.n : 0, z: zugangVon(m, st), lp: programmVon(m) };
+    });
+    const zugeordnet = new Set(zeilen.flatMap((z) => z.lekt.map((c) => c.id)));
+    const ohne = alleKurse.filter((c) => !zugeordnet.has(c.id));
+    const q = inhalteSuche.toLowerCase();
+    const sicht = zeilen.filter((z) => (inhalteFach === 'alle' || z.m.bereich === inhalteFach) && (!q || (modulTitel(z.m) + ' ' + z.lekt.map((c) => c.title).join(' ')).toLowerCase().includes(q)));
+    const kpi = '<dl class="inhalt-kpi"><div><dd>' + zeilen.length + '</dd><dt>Module</dt></div><div><dd>' + zeilen.filter((z) => z.z !== 'geplant').length + '</dd><dt>mit Inhalt</dt></div><div><dd>' + alleKurse.length + '</dd><dt>Lektionen</dt></div><div><dd>' + zeilen.reduce((a, z) => a + z.fragen, 0) + '</dd><dt>Fragen</dt></div><div><dd>' + zeilen.reduce((a, z) => a + z.lkN, 0) + '</dd><dt>Lernkarten-Sets</dt></div><div><dd>' + zertifizierungen().length + '</dd><dt>Programme</dt></div><div><dd>' + ohne.length + '</dd><dt>nicht zugeordnet</dt></div></dl>';
+    const werkzeug = '<div class="inhalt-werkzeug"><input type="search" placeholder="Modul oder Lektion suchen …" value="' + esc(inhalteSuche) + '" oninput="bluuAdminInhalteSuche(this.value)" aria-label="Inhalte durchsuchen">' +
+      BEREICHE.map(([k, n]) => '<button type="button" aria-pressed="' + (inhalteFach === k) + '" onclick="bluuAdminInhalteFach(' + esc(JSON.stringify(k)) + ')">' + esc(n) + '</button>').join('') + '</div>';
+    const zeile = (z) => {
+      const code = z.m.code || z.m.thema, offen = inhalteOffen === code;
+      const detail = offen ? '<tr class="detail"><td colspan="8">' +
+        (z.lekt.length ? z.lekt.map((c, i) => '<div class="lektion-zeile"><span class="nr">' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[i] + '</span><span class="t">' + esc(c.title) + (c.is_published === false ? ' <span class="zugang-chip zugang-geplant">Entwurf</span>' : '') + '</span><span class="m">' + (c.slides || []).length + ' Slides · ' + (c.questions || []).length + ' Fragen</span><span class="aktion"><button type="button" onclick="openCourseModal(' + c.id + ')">Bearbeiten</button></span></div>').join('') : '<div class="lektion-zeile"><span class="t" style="color:var(--text3)">Keine Lektionen zugeordnet.</span></div>') +
+        (z.lsN ? '<div class="lektion-zeile"><span class="nr">LS</span><span class="t">Lernskript «' + esc(z.st.ls.titel) + '» · ' + z.lsN + ' Kapitel A–' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[z.lsN - 1] + ' (fest im Code, Inhalt von der Fachseite, Stand Oktober 2026)</span><span class="aktion"><button type="button" onclick="navGoModule();bluuLsOeffnen(\'start\',' + esc(JSON.stringify(code)) + ')">Ansehen</button></span></div>' : '') +
+        (z.lkN ? '<div class="lektion-zeile"><span class="nr">LK</span><span class="t">' + z.lkN + ' Lernkarten-Sets · ' + z.lkKarten + ' Karten (fest im Code, Sammlung «' + esc(z.m.lernkarten || '') + '»)</span><span class="aktion"><button type="button" onclick="openLernkartenScreen()">Ansehen</button></span></div>' : '') +
+        '</td></tr>' : '';
+      return '<tr><td class="titel"><span class="bluu-kachel">' + B('PfadIcon', { motiv: z.m.motiv || 'energie', status: 'aktiv', fortschritt: 0, groesse: 24 }) + '</span>' + esc(modulTitel(z.m)) + '</td>' +
+        '<td>' + esc(fachVon(z.m.bereich).kurz) + '</td><td>' + (z.lsN ? z.lsN + ' Kapitel' : z.lekt.length) + '</td><td>' + z.slides + ' / ' + z.fragen + '</td><td>' + (z.lkN ? z.lkN + ' Sets' : '–') + '</td>' +
+        '<td>' + zugangChip(z.z) + '</td><td>' + (z.lp ? esc(z.lp.title) : '–') + '</td>' +
+        '<td class="aktion"><button type="button" aria-expanded="' + offen + '" onclick="bluuAdminInhalteAuf(' + esc(JSON.stringify(code)) + ')">' + (offen ? 'Zuklappen' : 'Lektionen') + '</button>' + (z.lp ? '<button type="button" onclick="adminTab(\'paths\');editPath(' + z.lp.id + ')">Programm</button>' : '') + '</td></tr>' + detail;
+    };
+    el.innerHTML = kpi + werkzeug + '<table class="inhalt-tabelle"><thead><tr><th>Modul</th><th>Fachbereich</th><th>Lektionen</th><th>Slides / Fragen</th><th>Lernkarten</th><th>Zugang</th><th>Programm</th><th></th></tr></thead><tbody>' +
+      (sicht.length ? sicht.map(zeile).join('') : '<tr><td colspan="8" style="color:var(--text3)">Kein Modul passt zur Suche.</td></tr>') + '</tbody></table>' +
+      (ohne.length ? '<div class="sec-head" style="margin-top:28px"><div class="sec-title">Nicht zugeordnet · ' + ohne.length + '</div></div><p class="kachel-text">Lektionen, die keinem Modul zugeordnet sind (Titel ohne Fachgebiet und ohne Programm). Sie erscheinen im Katalog unter «Alle Lektionen».</p><table class="inhalt-tabelle"><tbody>' +
+        ohne.map((c) => '<tr><td class="titel">' + esc(c.title) + '</td><td>' + (c.slides || []).length + ' Slides · ' + (c.questions || []).length + ' Fragen</td><td class="aktion"><button type="button" onclick="openCourseModal(' + c.id + ')">Bearbeiten</button></td></tr>').join('') + '</tbody></table>' : '');
+  };
+  window.bluuAdminInhalteSuche = function (v) { inhalteSuche = String(v || ''); bluuAdminInhalte(); const i = document.querySelector('#admin-inhalte input'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } };
+  window.bluuAdminInhalteFach = function (k) { inhalteFach = k; bluuAdminInhalte(); };
+  window.bluuAdminInhalteAuf = function (code) { inhalteOffen = inhalteOffen === code ? null : code; bluuAdminInhalte(); };
+  const altAdminTab = window.adminTab;
+  if (typeof altAdminTab === 'function') window.adminTab = function (tab) { altAdminTab.apply(this, arguments); if (tab === 'inhalte') bluuAdminInhalte(); };
 
   /* ── Navigation ── */
   window.navGoModule = function () {
@@ -11344,12 +11765,44 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
   const nurMitZugang = (s, i) => s.m && s.m.zugang === 'einzeln' && i > 0 && !fertig(s.liste[i].c);
   const zustand = (s, i) => (fertig(s.liste[i].c) ? 'fertig' : (nurMitZugang(s, i) ? 'gesperrt' : (i === s.aktuell ? 'naechster' : (i < s.aktuell ? 'fertig' : 'gesperrt'))));
 
-  const leer = (m) => { m.status = 'geplant'; m.untermodule = []; m.umfang = ''; m.teile = { lernskript: 'offen', uebungen: 'offen', lernkarten: 'offen', probetest: 'offen', pruefung: 'offen' }; };
+  const leer = (m) => { m.status = 'geplant'; m.untermodule = []; m.umfang = ''; m.teile = { lernskript: 'offen', uebungen: 'offen', lernkarten: 'offen', probetest: 'offen', pruefung: 'offen' }; if (m.untertitelAuto) { m.untertitel = ''; m.untertitelAuto = false; } };
+  /* Automatischer Untertitel aus den Inhalten (nur wenn das Modul keinen eigenen hat); wird mit leer() zurückgesetzt */
+  const untertitelAuto = (m, text) => { if (m.untertitel && !m.untertitelAuto) return; m.untertitel = (m.untertitelAuto ? m.untertitel + ' · ' : '') + text; m.untertitelAuto = true; };
+  /* ── Antonias Lernskript 1.1.1 (Block BLUU-LERNSKRIPT) gehört zum Modul mit lernskript:'1.1.1' ── */
+  const lsStand = (m) => (window.bluuLernskriptStand ? bluuLernskriptStand(m) : null);
+  const lsErgaenzen = (m) => {
+    const ls = lsStand(m);
+    if (!ls) return false;
+    m.status = 'freigeschaltet';
+    m.teile.lernskript = 'bereit';
+    m.umfang = 'Lernskript mit ' + ls.n + ' Kapiteln' + (m.umfang ? ' · ' + m.umfang : '');
+    untertitelAuto(m, 'Lernskript in ' + ls.n + ' Kapiteln');
+    return true;
+  };
+  /* ── Adrians Lernkarten-Sets (fest im Code, Sammlung «1.1.1») gehören zum Modul mit lernkarten:'1.1.1' ── */
+  /* LERNKARTEN_SETS ist bei Adrian ein const auf Skriptebene (nicht an window), daher über typeof */
+  const lkSets = (m) => (m && m.lernkarten === '1.1.1' && typeof LERNKARTEN_SETS !== 'undefined' && Array.isArray(LERNKARTEN_SETS)) ? LERNKARTEN_SETS : [];
+  const lkStand = (m) => {
+    const sets = lkSets(m);
+    if (!sets.length) return null;
+    const done = (k) => { try { return typeof isDoneLK === 'function' && isDoneLK(k); } catch (e) { return false; } };
+    const liste = sets.map((s) => ({ key: s.key, letter: s.letter, title: s.title, karten: (s.cards || []).length, xp: s.totalXp, fertig: done(s.key) }));
+    return { n: liste.length, fertig: liste.filter((x) => x.fertig).length, karten: liste.reduce((a, x) => a + x.karten, 0), sets: liste };
+  };
+  const lkErgaenzen = (m) => {
+    const lk = lkStand(m);
+    if (!lk) return false;
+    m.status = 'freigeschaltet';
+    m.teile.lernkarten = 'bereit';
+    m.umfang = (m.umfang ? m.umfang + ' · ' : '') + lk.n + ' Lernkarten-Sets · ' + lk.karten + ' Karten';
+    untertitelAuto(m, 'Lernkarten in ' + lk.n + ' Sets');
+    return true;
+  };
   window.bluuInhaltErgaenzen = function (m) {
-    /* `fest`: Platz für eigens erstellte Inhalte, wird nicht aus Adrians Kursen gefüllt */
-    if (m.fest) { leer(m); return; }
+    /* `fest`: Platz für eigens erstellte Inhalte, wird nicht aus Adrians Kursen gefüllt — außer Lernskript und Lernkarten-Sammlung */
+    if (m.fest) { leer(m); lkErgaenzen(m); lsErgaenzen(m); return; }
     const s = stand(m), n = s.liste.length;
-    if (!n) { leer(m); return; }
+    if (!n) { leer(m); lkErgaenzen(m); lsErgaenzen(m); return; }
     const slides = s.liste.reduce((a, { c }) => a + (c.slides || []).length, 0);
     const fragen = s.liste.reduce((a, { c }) => a + (c.questions || []).length, 0);
     m.status = 'freigeschaltet';
@@ -11361,10 +11814,27 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     if (!m.titel) m.titelAuto = s.pfade.length === 1 ? s.pfade[0].title : (m.thema || '');
   };
   window.bluuInhaltStand = function (code) {
-    const m = modulVon(code); if (!m || m.fest) return null;
-    const s = stand(m); if (!s.liste.length) return null;
+    const m = modulVon(code); if (!m) return null;
+    const lk = lkStand(m), ls = lsStand(m);
+    const festStand = () => (lk || ls ? { done: {}, aktuell: 0, alleFertig: false, n: 0, fertig: 0, naechster: null, pfade: [], lk, ls } : null);
+    if (m.fest) return festStand();
+    const s = stand(m); if (!s.liste.length) return festStand();
     const n = s.liste.length, f = s.liste.filter(({ c }) => fertig(c)).length;
-    return { done: s.done, aktuell: s.aktuell, alleFertig: s.alleFertig, n, fertig: f, naechster: s.liste[s.aktuell].c, pfade: s.pfade };
+    return { done: s.done, aktuell: s.aktuell, alleFertig: s.alleFertig, n, fertig: f, naechster: s.liste[s.aktuell].c, pfade: s.pfade, lk, ls };
+  };
+  /* Für die Admin-Übersicht: die Lektionen (Kurse) eines Moduls in Reihenfolge */
+  window.bluuInhaltLektionen = function (code) { const m = modulVon(code); return m && !m.fest ? stand(m).liste.map(({ c }) => c) : []; };
+  /* Set aus einem Modul öffnen (Adrians Lernansicht); «Zurück» führt wieder ins Modul statt zur Übersicht */
+  let lkZurueck = null;
+  window.bluuLkOeffnen = function (key, code) {
+    if (typeof openLernkarten !== 'function') return;
+    lkZurueck = code || null;
+    openLernkarten(key);
+  };
+  const altExit = window.exitLernkarten;
+  if (typeof altExit === 'function') window.exitLernkarten = function () {
+    if (lkZurueck && window.bluuModulOeffnenCode) { const c = lkZurueck; lkZurueck = null; bluuModulOeffnenCode(c); bluuModulReiter('lernkarten'); return; }
+    return altExit.apply(this, arguments);
   };
 
   /* ── Alle Lektionen: jeder sichtbare Kurs mit Modul, Stand und Freischaltung (Reihenfolge im Lernpfad wie bei Adrian) ── */
@@ -11490,12 +11960,26 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     if (k.typ === 'match') { const r = [q.match_a, q.match_b, q.match_c, q.match_d].filter(Boolean), pairs = json(q.correct_order, o.map((_, i) => i)); return '<ul>' + o.map((x, i) => '<li>' + esc(x) + ' <strong>→ ' + esc(r[pairs[i]] || '') + '</strong></li>').join('') + '</ul>'; }
     return '<p>' + esc(o[q.correct_index] || '') + '</p>';
   }
+  /* Adrians Sets als Stapel-Kacheln im Modul: Buchstabe, Titel, Karten · XP, Stand; Klick öffnet seine Lernansicht */
+  function lkSammlung(m) {
+    const lk = lkStand(m);
+    if (!lk) return '';
+    return '<div class="bluu-kopfzeile"><div><span class="kachel-label">Lernkarten zum Modul</span><p class="ik-meta" style="margin:4px 0 0">' + lk.n + ' Sets · ' + lk.karten + ' Karten · ' + lk.fertig + ' / ' + lk.n + ' gelernt</p></div><button type="button" class="bluu-textlink" onclick="bluuLkOeffnen(' + JSON.stringify(lk.sets[0].key).replace(/"/g, '&quot;') + ',' + JSON.stringify(m.code || m.thema).replace(/"/g, '&quot;') + ')">Mit Set ' + esc(lk.sets[0].letter) + ' beginnen →</button></div>' +
+      '<div class="lk-stapel">' + lk.sets.map((x) => '<button type="button" class="stapel' + (x.fertig ? ' fertig' : '') + '" onclick="bluuLkOeffnen(' + JSON.stringify(x.key).replace(/"/g, '&quot;') + ',' + JSON.stringify(m.code || m.thema).replace(/"/g, '&quot;') + ')">' +
+        '<span style="display:flex;align-items:center;gap:10px"><span class="ik-brief' + (x.fertig ? ' fertig' : '') + '">' + esc(x.letter) + '</span><span style="display:block;font-size:14px;font-weight:600">' + esc(x.title) + '</span></span>' +
+        '<span class="ik-meta" style="display:block;margin-top:8px">' + x.karten + ' Karten · ' + x.xp + ' XP' + (x.fertig ? ' · gelernt' : '') + '</span></button>').join('') + '</div>';
+  }
   function lernkarten(s, m) {
+    const sammlung = lkSammlung(m);
     /* Nur Fragen freigeschalteter Lektionen werden zu Karten; gesperrte Lektionen erscheinen als Zeile */
     const frei = s.liste.filter((_, i) => zustand(s, i) !== 'gesperrt');
     const gesperrt = s.liste.map((x, i) => i).filter((i) => zustand(s, i) === 'gesperrt');
     const alleK = frei.flatMap(({ c }) => kartenVon(c));
-    if (!alleK.length) return '<div class="bluu-leer">Noch keine Lernkarten: die freigeschalteten Lektionen haben keine Testfragen.</div>' + gesperrt.map((i) => gesperrtZeile(s, i)).join('');
+    if (!alleK.length) return sammlung || ('<div class="bluu-leer">Noch keine Lernkarten: die freigeschalteten Lektionen haben keine Testfragen.</div>' + gesperrt.map((i) => gesperrtZeile(s, i)).join(''));
+    if (sammlung && !LK.stapel) return sammlung + '<h3 class="bluu-h3" style="font-size:19px;margin-top:32px">Karten aus den Testfragen</h3>' + lernkartenFragen(s, m, frei, gesperrt, alleK);
+    return lernkartenFragen(s, m, frei, gesperrt, alleK);
+  }
+  function lernkartenFragen(s, m, frei, gesperrt, alleK) {
     const st = lkLaden();
     const gewusst = (ks) => ks.filter((k) => st[k.id] === 'g').length;
     if (!LK.stapel) {
@@ -11546,7 +12030,10 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
 
   window.bluuInhalt = function (code, reiter, el) {
     const m = modulVon(code); if (!m) return false;
-    const s = stand(m); if (!s.liste.length) return false;
+    /* Eigens erstelltes Lernskript (Block BLUU-LERNSKRIPT) hat Vorrang vor der Slide-Ansicht */
+    if (reiter === 'lernskript' && window.bluuLernskriptRender && bluuLernskriptRender(m, el)) return true;
+    const s = m.fest ? { m, liste: [], pfade: [], done: {}, aktuell: 0, alleFertig: false } : stand(m);
+    if (!s.liste.length && !(reiter === 'lernkarten' && lkSets(m).length)) return false;
     if (reiter !== 'lernkarten') LK = { stapel: null, reihe: [], gedreht: false, hinweis: '' };
     const html = reiter === 'uebungen' ? uebungen(s) : reiter === 'lernskript' ? lernskript(s) : reiter === 'lernkarten' ? lernkarten(s, m) : reiter === 'probetest' ? probetests(s) : reiter === 'pruefung' ? pruefung(s, m) : null;
     if (html == null) return false;
@@ -11627,6 +12114,547 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
   }
 })();
 </script>
-<!-- BLUU-WIKI:ENDE -->
-</body>
+<!-- BLUU-WIKI:ENDE --><!-- BLUU-LERNSKRIPT:START -->
+<script>
+/* Lernskript 1.1.1 «1x1 der Energiewirtschaft» — Inhalt (Antonia, Stand Oktober 2026).
+   Texte wortgleich aus Lernskript_1.1.1.pdf; interaktive Grafiken nach den Umsetzungshinweisen vom 23.10.2026.
+   Nur Daten. Darstellung und Verhalten: lernskript.browser.js. */
+window.BLUU_LERNSKRIPT_111 = {
+  modul: '1.1.1', titel: '1x1 der Energiewirtschaft', untertitel: 'Vom Kraftwerk bis zur Rechnung – Dein Einstieg in die Energiewelt', stand: 'Oktober 2026',
+  start: {
+    gruss: 'Hallo, ich bin Dein Glühwürmchen! Ich begleite Dich durch dieses Lernskript – neun Kapitel, von der Erzeugung bis zur Rechnung.',
+    text: 'Dieses Lernskript erklärt Dir die Grundlagen der Energiewirtschaft in neun Kapiteln. Du kannst es am Stück lesen oder gezielt nachschlagen. Nach jedem Kapitel übst Du auf der Lernplattform, was Du gelesen hast.',
+    schritte: [['1 Lesen', 'Das Lernskript erklärt Dir jedes Thema in Ruhe.'], ['2 Üben', 'Auf der Lernplattform festigst Du es mit Aufgaben.'], ['3 Wiederholen', 'Mit den Lernkarten bleibt das Wissen hängen.'], ['4 Testen', 'Im Wissenstest zeigst Du, was Du kannst.']],
+    bereit: ['Deine letzte Stromrechnung – auf Papier oder als PDF', 'Deine letzte Gasrechnung, falls Du mit Gas heizt', 'ein paar ruhige Minuten je Kapitel'],
+    aufbau: [['Denk kurz nach', 'Eine Frage vor dem Lesen – zum Einstimmen. Richtig oder falsch gibt es hier nicht.'], ['Text und Grafik', 'Das Wichtige in kurzen Abschnitten, mit einer Grafik auf einen Blick.'], ['Mitmach-Aufgabe', 'Etwas zum Nachschauen, Nachrechnen oder Eintippen – aus Deinem eigenen Alltag.'], ['Kurz gesagt und Das kann ich jetzt', 'Die Zusammenfassung und Deine Häkchen zum Abschluss.']],
+    weg: 'Neun Kapitel, ein roter Faden: vom Kraftwerk über Netz und Daten bis zur Rechnung.'
+  },
+  kapitel: [
+    {
+      key: 'A', titel: 'Der Weg des Stroms', lesezeit: 'ca. 2 Min.', danach: 'Übungen A (ca. 20 Min.) und 7 Lernkarten', lernkarten: 7,
+      gruss: 'Los geht’s ganz am Anfang: dort, wo jeder Strom entsteht – und auf seinem Weg bis zu Dir.',
+      denk: { frage: 'Dein Handy lädt gerade. Woher kommt der Strom dafür – was glaubst Du?', hinweis: 'Tipp Deine Vermutung kurz ein, bevor Du weiterliest. Richtig oder falsch gibt es hier nicht.', felder: 2 },
+      lead: 'Strom kommt aus der Steckdose – aber woher kommt er vorher? In diesem Abschnitt verfolgst Du den Weg des Stroms von der Erzeugung bis zum Verbrauch.',
+      abschnitte: [
+        { titel: 'Am Anfang und am Ende', text: 'Am Anfang steht die Erzeugung. Strom entsteht in Kraftwerken, in Windparks oder in Photovoltaikanlagen auf Dächern und Freiflächen. Am Ende steht der Verbrauch: Haushalte, Gewerbe und Industrie nutzen den Strom für Licht, Maschinen, Wärme oder Mobilität.' },
+        { titel: 'Dazwischen: das Netz', text: 'Dazwischen liegt das Stromnetz. Es ist nötig, weil Erzeugung und Verbrauch fast nie am selben Ort stattfinden: Der Windpark steht an der Küste oder auf dem Land, der Industriebetrieb im Gewerbegebiet, die Wohnung in der Stadt. Das Netz transportiert den Strom über weite Strecken, verteilt ihn in die Regionen und sorgt dafür, dass er gesteuert beim Verbraucher ankommt.', interaktiv: 'A-1' },
+        { titel: 'Dein roter Faden', text: 'Für Deine künftige Arbeit ist diese Kette der rote Faden: Jede Rolle im Energiemarkt lässt sich einer Station zuordnen – oder sie verbindet die Stationen über Verträge und Daten. Das vertiefen die Module 1.1.2 und 1.1.3.' }
+      ],
+      alltag: { interaktiv: 'A-2', text: 'Windpark und Bäckerei haben keinen direkten Draht zueinander – das Netz verbindet beide.' },
+      mitmach: { tag: 'Schau Dich um', titel: 'Finde die drei Stationen in Deinem Alltag', hinweis: 'Auf dem Arbeitsweg, in Deinem Ort oder zu Hause: Notiere zu jeder Station ein Beispiel, das Du selbst gesehen hast.',
+        felder: [['Erzeugung', 'text'], ['Netz', 'text'], ['Verbrauch', 'text']], tipp: 'Achte auch auf die kleinen Dinge – ein Trafohäuschen an der Straßenecke gehört ebenfalls zum Netz.' },
+      kurz: ['Strom fließt von der Erzeugung über das Netz zum Verbrauch.', 'Das Netz ist nötig, weil Erzeugung und Verbrauch räumlich getrennt sind.', 'Das Netz transportiert, verteilt und steuert den Strom.'],
+      kann: ['die drei Stationen des Stroms in meinem Alltag wiedererkennen.', 'in eigenen Worten sagen, wozu es das Netz braucht.', 'für jede Station ein Beispiel aus meiner Umgebung nennen.'],
+      und: 'Schau noch einmal auf Deine Vermutung vom Kapitelanfang. Was würdest Du jetzt ergänzen?',
+      abschied: 'Der rote Faden sitzt! Übe ihn jetzt in den Übungen zu A und festige ihn mit den Lernkarten.'
+    },
+    {
+      key: 'B', titel: 'Stromnetz und Spannungsebenen', lesezeit: 'ca. 2 Min.', danach: 'Übungen B (ca. 20 Min.) und 8 Lernkarten', lernkarten: 8,
+      gruss: 'Vier Stufen von 380.000 Volt bis zur Steckdose – klingt viel? Ich zeig Dir, warum das Sinn ergibt.',
+      denk: { frage: 'Die großen Überlandleitungen und Deine Steckdose zu Hause – was unterscheidet die beiden wohl?', hinweis: 'Notiere Deine Vermutung in ein, zwei Stichworten.', felder: 2 },
+      lead: 'Das Stromnetz ist nicht ein einziges Netz, sondern ein System aus vier Ebenen – vom Höchstspannungsnetz bis zur Steckdose.',
+      abschnitte: [
+        { titel: 'Ganz oben: die Höchstspannung', text: 'Ganz oben liegt die Höchstspannung mit bis zu etwa 380 kV. Sie bildet das Übertragungsnetz, das Strom über weite Strecken transportiert und große Kraftwerke und Regionen verbindet. In Deutschland betreiben es vier Übertragungsnetzbetreiber; ihre Stromkreise sind zusammen rund 38.400 km lang (Bundesnetzagentur, Monitoringbericht 2025).' },
+        { titel: 'Darunter: die Verteilnetze', text: 'Darunter liegen die Verteilnetze: Die Hochspannung mit etwa 110 kV übernimmt die regionale Verteilung und verbindet Übertragungs- und Verteilnetz, die Mittelspannung mit etwa 10 bis 20 kV versorgt Industrie und größere Gewerbebetriebe, die Niederspannung mit 230/400 V Haushalte und kleine Betriebe. Verteilnetze betreiben sehr viele Unternehmen – am Monitoring 2025 der Bundesnetzagentur haben sich über 800 Verteilernetzbetreiber beteiligt, viele davon Stadtwerke oder ihre Netzgesellschaften.', interaktiv: 'B-1' },
+        { titel: 'Warum so viele Ebenen?', text: 'Warum der Aufwand? Je höher die Spannung, desto geringer sind die Verluste beim Transport. Deshalb wird Strom auf langen Strecken mit hoher Spannung übertragen und erst nahe am Kunden in Umspannwerken schrittweise abgesenkt.' }
+      ],
+      alltag: { text: 'Ein Haushalt hängt an der Niederspannung, ein größerer Industriebetrieb an der Mittelspannung, der Transport zwischen Regionen läuft über die Höchstspannung.' },
+      mitmach: { tag: 'Finde heraus', titel: 'Wer betreibt das Stromnetz bei Dir?', hinweis: 'Nimm Deine Stromrechnung zur Hand. Dort steht auch Dein Netzbetreiber – das Unternehmen, dem das Netz vor Deiner Haustür gehört.',
+        felder: [['Mein Netzbetreiber', 'text'], ['Ein Stadtwerk oder dessen Netzgesellschaft?', 'wahl', ['ja', 'nein', 'weiß nicht']]], tipp: 'Dein Zuhause hängt an der Niederspannung – und genau dieses Netz betreibt das Unternehmen, das Du gerade gefunden hast.' },
+      kurz: ['Vier Spannungsebenen: Höchst-, Hoch-, Mittel- und Niederspannung.', 'Nur die Höchstspannung ist Übertragungsnetz – alle anderen Ebenen sind Verteilnetze.', 'Hohe Spannung bedeutet geringe Transportverluste.'],
+      kann: ['die vier Spannungsebenen nennen und einordnen.', 'erklären, warum Strom mit hoher Spannung transportiert wird.', 'meinen eigenen Netzbetreiber benennen.'],
+      und: 'Bis zu 380.000 Volt in der Überlandleitung, 230 Volt an Deiner Steckdose: Lag Deine Vermutung in dieser Richtung?',
+      abschied: 'Vier Ebenen, ein Netz – geschafft. In den Übungen zu B ordnest Du jetzt selbst zu.'
+    },
+    {
+      key: 'C', titel: 'Der Weg des Gases', lesezeit: 'ca. 2 Min.', danach: 'Übungen C (ca. 20 Min.) und 9 Lernkarten', lernkarten: 9,
+      gruss: 'Psst … Gas hat seinen ganz eigenen Weg. Und es kann etwas, das Strom kaum kann.',
+      denk: { frage: 'Womit wird bei Dir zu Hause geheizt?', hinweis: 'Wähle aus – und notiere darunter in einem Stichwort, woher diese Energie ursprünglich kommt.', wahl: ['Erdgas', 'Heizöl', 'Fernwärme', 'Wärmepumpe', 'anders'], felder: 1 },
+      lead: 'Auch Gas hat einen Weg zum Kunden – mit einigen Unterschieden zum Strom.',
+      abschnitte: [
+        { titel: 'Woher das Gas kommt', text: 'Deutschland deckt seinen Erdgasbedarf fast vollständig aus Importen: 2025 waren es rund 95 %, wichtigster Lieferant war Norwegen mit über 42 %. Ein Teil kommt als verflüssigtes Erdgas (LNG) per Schiff; Ende 2025 waren an den Standorten Wilhelmshaven, Brunsbüttel und Mukran vier LNG-Terminals in Betrieb. Die heimische Förderung deckt nur noch knapp 5 % (AG Energiebilanzen, vorläufige Werte).' },
+        { titel: 'Vom Fernleitungs- zum Verteilernetz', text: 'Nach dem Import übernehmen die Fernleitungsnetzbetreiber. Sie transportieren das Gas unter hohem Druck über weite Strecken; Verdichterstationen halten den Druck. Das Fernleitungsnetz ist das Gegenstück zum Übertragungsnetz beim Strom und umfasst rund 45.800 km. Die Verteilernetzbetreiber bringen das Gas anschließend in die Regionen und bis zum Hausanschluss – dabei wird der Druck stufenweise abgesenkt. Die Verteilernetze sind zusammen gut 557.000 km lang, einschließlich der Hausanschlussleitungen (Bundesnetzagentur, Stand Ende 2023).', interaktiv: 'C-1' },
+        { titel: 'Der große Unterschied: speichern', text: 'Ein großer Unterschied zum Strom: Gas lässt sich in großen Mengen speichern. Untergrundspeicher nehmen im Sommer Gas auf und geben es im Winter ab, wenn viel geheizt wird. Strom lässt sich dagegen nur sehr begrenzt speichern.', interaktiv: 'C-2',
+          tabelle: { titel: 'Strom und Gas im Vergleich', kopf: ['Merkmal', 'Strom', 'Gas'], zeilen: [['Überregionaler Transport', 'Übertragungsnetz (Höchstspannung)', 'Fernleitungsnetz (hoher Druck)'], ['Regionale Verteilung', 'Verteilnetze', 'Verteilernetze'], ['Herkunft', 'überwiegend Erzeugung im Inland', 'rund 95 % Import'], ['Speichern', 'nur sehr begrenzt', 'in großen Mengen, z. B. Untergrundspeicher'], ['Gemessen in', 'kWh', 'm³, umgerechnet in kWh']] } }
+      ],
+      alltag: { text: 'Das Gas für eine Gasheizung in Musterstadt kommt per Pipeline aus Norwegen, läuft durch das Fernleitungsnetz, dann durch das Verteilernetz der örtlichen Netzgesellschaft und schließlich über den Hausanschluss zur Heizung.' },
+      mitmach: { tag: 'Schau nach', titel: 'Dein Gaszähler', hinweis: 'Wenn Du mit Gas heizt: Such den Gaszähler im Keller oder Hauswirtschaftsraum. Er sitzt am Ende des Hausanschlusses.',
+        felder: [['Welche Einheit zeigt er?', 'text'], ['Aktueller Zählerstand', 'text']], tipp: 'Merk Dir die Einheit. Warum der Zähler so misst und die Rechnung trotzdem in Kilowattstunden rechnet, erfährst Du in Kapitel H.' },
+      kurz: ['Rund 95 % des Erdgases werden importiert, vor allem aus Norwegen; dazu kommt LNG.', 'Import → Fernleitungsnetz → Verteilernetz → Hausanschluss.', 'Gas lässt sich in großen Mengen speichern – Strom kaum.'],
+      kann: ['den Weg des Gases vom Import bis zu mir beschreiben.', 'erklären, wozu Gasspeicher da sind.', 'zwei Unterschiede zwischen Strom und Gas nennen.'],
+      und: 'Heizt Du mit Gas? Dann kannst Du seinen Weg jetzt beschreiben: Import, Fernleitungsnetz, Verteilernetz, Hausanschluss – bis in Deinen Keller.',
+      abschied: 'Ich glimme vor Freude: Du kennst den Weg des Gases. Weiter geht’s mit den Übungen zu C.'
+    },
+    {
+      key: 'D', titel: 'Primär-, End- und Nutzenergie', lesezeit: 'ca. 1 Min.', danach: 'Übungen D (ca. 25 Min.) und 7 Lernkarten', lernkarten: 7,
+      gruss: 'Was unterscheidet Gas tief im Boden vom warmen Wasser unter Deiner Dusche? Genau darum geht es jetzt.',
+      denk: { frage: 'Denk an Deinen heutigen Morgen: Wofür hast Du schon Energie genutzt?', hinweis: 'Notiere drei Dinge – ganz gleich, wie klein.', felder: 3 },
+      lead: 'Energie wird mehrfach umgewandelt, bevor sie Dir nützt. Drei Begriffe beschreiben diese Stufen.',
+      abschnitte: [
+        { titel: 'Die Quelle: Primärenergie', text: 'Primärenergie ist die ursprüngliche Energiequelle: fossile Brennstoffe wie Erdöl, Erdgas und Kohle, erneuerbare Quellen wie Wind, Sonne, Wasser, Biomasse und Geothermie – und früher auch die Kernenergie.' },
+        { titel: 'Was ankommt: Endenergie', text: 'Endenergie ist das, was beim Verbraucher ankommt: Strom aus der Steckdose, Heizöl im Tank, Erdgas am Hausanschluss, Kraftstoff oder Fernwärme. Strom ist dabei immer Endenergie – er wird aus Primärenergie erzeugt, auch wenn er aus Wind oder Sonne stammt.' },
+        { titel: 'Der Nutzen: Nutzenergie', text: 'Nutzenergie ist der eigentliche Nutzen: das Licht im Raum, die warme Wohnung, die Kühlung im Kühlschrank, die Bewegung des Autos. Bei jeder Umwandlung geht ein Teil der Energie verloren, zum Beispiel als Abwärme. Deshalb kommt beim Nutzen weniger an, als ursprünglich in der Primärenergie steckte.', interaktiv: 'D-1' }
+      ],
+      alltag: { text: 'Erdgas in der Lagerstätte ist Primärenergie, Erdgas am Hausanschluss ist Endenergie, und das warme Wasser unter der Dusche ist Nutzenergie.' },
+      mitmach: { tag: 'Zuhause-Check', titel: 'Drei Geräte, zwei Fragen', hinweis: 'Wähle drei Geräte aus Deinem Haushalt. Trag ein, welche Endenergie sie nutzen und welche Nutzenergie sie liefern.',
+        tabelle: { kopf: ['Gerät', 'Endenergie: Was kommt an?', 'Nutzenergie: Was bringt es?'], beispiel: ['Kühlschrank', 'Strom', 'Kälte'], zeilen: 3, fuss: 'Erste Zeile: Beispiel' },
+        tipp: 'Die warme Rückwand am Kühlschrank ist übrigens Abwärme – also ein Teil der Energie, der bei der Umwandlung verloren geht.' },
+      kurz: ['Primärenergie = Quelle, Endenergie = was ankommt, Nutzenergie = der Nutzen.', 'Strom ist immer Endenergie.', 'Bei jeder Umwandlung geht Energie verloren.'],
+      kann: ['Primär-, End- und Nutzenergie unterscheiden.', 'Geräte in meinem Haushalt richtig einordnen.', 'erklären, warum bei jeder Umwandlung Energie verloren geht.'],
+      und: 'Schau auf Deine drei Dinge: Was davon war der eigentliche Nutzen – Licht, Wärme, Kälte oder Bewegung? Das ist Nutzenergie.',
+      abschied: 'Quelle, Ankunft, Nutzen – merk Dir die drei Stufen. Die Lernkarten zu D helfen Dir dabei.'
+    },
+    {
+      key: 'E', titel: 'Energiequellen und Energiemix', lesezeit: 'ca. 2 Min.', danach: 'Übungen E (ca. 20 Min.) und 8 Lernkarten', lernkarten: 8,
+      gruss: 'Zeit für Zahlen! Hier siehst Du, was Deutschland antreibt – und wo die größte Verwechslungsgefahr lauert.',
+      denk: { frage: 'Woran denkst Du zuerst beim Wort „Energiemix“?', hinweis: 'Notiere zwei, drei Stichworte.', felder: 2 },
+      lead: 'Woher kommt die Energie in Deutschland – und wie liest man eine Energiegrafik richtig?',
+      abschnitte: [
+        { titel: 'Der Energiemix 2025', text: 'Man unterscheidet fossile Energieträger wie Erdöl, Erdgas und Kohle, erneuerbare wie Wind, Sonne, Wasser, Biomasse und Geothermie sowie weitere wie die Kernenergie, die weder fossil noch erneuerbar ist. Der Primärenergieverbrauch lag 2025 bei rund 10.530 Petajoule – deutlich weniger als 1990 mit rund 14.905 PJ. Ein Petajoule sind 10¹⁵ Joule. Wichtigster Energieträger ist weiterhin das Mineralöl mit 36,0 %, gefolgt von Erdgas mit 26,6 %. Die erneuerbaren Energien kamen auf 20,8 % – 1990 waren es nur 1,3 %. Stein- und Braunkohle haben stark verloren, die Kernenergie spielt keine Rolle mehr (AG Energiebilanzen, Jahresbericht 2025, vorläufige Werte).' },
+        { titel: 'Vorsicht: Strommix ist nicht Energiemix', text: 'Vorsicht bei der Stromerzeugung: Hier lag der Anteil der Erneuerbaren 2025 bei 57,3 %, mit Windenergie (26,3 %) und Photovoltaik (18,1 %) an der Spitze. Der Unterschied entsteht, weil die Primärenergie auch Wärme und Verkehr umfasst – und dort dominieren Mineralöl und Erdgas. Dass die Erneuerbaren an Bedeutung gewinnen, hat zwei Gründe: Fossile Energieträger sind begrenzt, und die CO₂-Emissionen sollen sinken.', interaktiv: 'E-1' },
+        { titel: 'So liest Du Energiegrafiken', text: 'Beim Lesen jeder Energiegrafik helfen vier Fragen: Auf welche Jahre bezieht sie sich? In welcher Einheit? Zeigt sie Anteile oder Mengen? Und woher stammen die Zahlen – sind sie endgültig oder noch vorläufig?' }
+      ],
+      alltag: { text: 'Liest Du „Erneuerbare 20,8 %“, frag zuerst: Primärenergie oder Strom? Für den Strom wäre die richtige Zahl 57,3 %.' },
+      mitmach: { tag: 'Grafik-Detektiv', titel: 'Prüf eine echte Energiegrafik', hinweis: 'Such Dir eine Grafik zum Thema Energie – in der Zeitung, im Internet oder in einem Bericht – und geh die vier Fragen durch.',
+        felder: [['Welche Jahre?', 'text'], ['Welche Einheit?', 'text'], ['Anteile oder Mengen?', 'text'], ['Quelle und Stand?', 'text']], tipp: 'Steht nirgends, ob es um Strom oder um die gesamte Energie geht? Dann ist Vorsicht angesagt.' },
+      kurz: ['Mineralöl bleibt vorn; Erneuerbare decken 20,8 % der Primärenergie (2025).', 'Beim Strom liegen die Erneuerbaren bei 57,3 % – Energiemix ist nicht Strommix.', 'Vier Leseregeln: Zeitpunkt, Einheit, Anteil oder Menge, Quelle und Stand.'],
+      kann: ['die wichtigsten Energieträger im Energiemix nennen.', 'Energiemix und Strommix auseinanderhalten.', 'eine Energiegrafik mit vier Fragen prüfen.'],
+      und: 'Hast Du zuerst an Strom gedacht? So geht es vielen. Der Energiemix umfasst aber auch Wärme und Verkehr – der Strommix ist nur ein Teil davon.',
+      abschied: 'Energiemix oder Strommix? Ab jetzt fragst Du automatisch nach. Probier es in den Übungen zu E aus.'
+    },
+    {
+      key: 'F', titel: 'Energiedaten und EDM', lesezeit: 'ca. 2 Min.', danach: 'Übungen F (ca. 25 Min.) und 7 Lernkarten', lernkarten: 7,
+      gruss: 'Kleiner Leuchthinweis: Ohne saubere Daten gibt es keine richtige Rechnung. Hier erfährst Du, warum.',
+      denk: { frage: 'Wann hast Du zuletzt einen Zählerstand abgelesen oder gemeldet – und wie lief das ab?', hinweis: 'Ein, zwei Sätze genügen.', felder: 2 },
+      lead: 'Ohne Daten keine Rechnung: Hier erfährst Du, warum Energiedaten so wichtig sind und wie sie vom Zähler in die Abrechnung kommen.',
+      abschnitte: [
+        { titel: 'Viele brauchen dieselben Daten', text: 'Viele Beteiligte brauchen dieselben Messwerte. Der Lieferant benötigt sie für die Rechnung an den Kunden, der Netzbetreiber für die Netzabrechnung und die Bilanzierung. Gemessen wird vom Messstellenbetreiber – häufig ist das der Netzbetreiber selbst als grundzuständiger Messstellenbetreiber. Der Kunde ist übrigens keine eigene Marktrolle; er wird im Markt über die Marktlokation abgebildet.' },
+        { titel: 'Vom Zählerstand zur Abrechnung', text: 'Damit aus einem Zählerstand eine verlässliche Abrechnungsgrundlage wird, durchläuft er vier Schritte: Er wird gemessen, geprüft, dem richtigen Datensatz zugeordnet und erst dann genutzt – in der Abrechnung und in der Bilanzierung. Diese Arbeit nennt man Energiedatenmanagement (EDM). Im Überblick sind das drei Schritte – Messung, Datenverarbeitung und Weitergabe: Zur Datenverarbeitung gehören das Prüfen und das Zuordnen, mit der Weitergabe wird der Wert für Abrechnung und Bilanzierung nutzbar.', interaktiv: 'F-1' },
+        { titel: 'Warum Prüfen so wichtig ist', text: 'Der Prüfschritt ist entscheidend: Unplausible Werte müssen auffallen, bevor sie weiterverwendet werden. Sonst wird die Rechnung falsch, oder es entstehen Abweichungen in der Bilanzierung.' }
+      ],
+      alltag: { text: 'Ein Zählerstand ist zehnmal so hoch wie im Vorjahr. Statt ihn direkt abzurechnen, fällt er bei der Prüfung auf und wird geklärt.' },
+      mitmach: { tag: 'Selbst ablesen', titel: 'Wie viel Strom brauchst Du an einem Tag?', hinweis: 'Lies Deinen Stromzähler zweimal ab, im Abstand von 24 Stunden und möglichst zur gleichen Uhrzeit.',
+        rechner: 'F', tipp: 'Jetzt prüfst Du wie ein Profi: Passt der Jahreswert zu Deiner letzten Rechnung? Wenn nicht – war der Tag besonders, etwa mit viel Wäsche?' },
+      kurz: ['Lieferant, Netzbetreiber und Messstellenbetreiber brauchen dieselben Daten.', 'Messen – Prüfen – Zuordnen – Nutzen.', 'Nur geprüfte und zugeordnete Werte sind für Abrechnung und Bilanzierung nutzbar.'],
+      kann: ['sagen, wer Messwerte braucht und wofür.', 'die vier Schritte vom Zählerstand zur Abrechnung erklären.', 'meinen Verbrauch selbst ablesen und auf Plausibilität prüfen.'],
+      und: 'Hinter jeder Zählerstandsmeldung stecken genau die vier Schritte aus diesem Kapitel: messen, prüfen, zuordnen, nutzen.',
+      abschied: 'Messen, prüfen, zuordnen, nutzen – das wird Dein Handwerk. Übe es gleich in den Übungen zu F.'
+    },
+    {
+      key: 'G', titel: 'Leistung, Energie und Einheiten', lesezeit: 'ca. 2 Min.', danach: 'Übungen G (ca. 40 Min.) und 9 Lernkarten', lernkarten: 9,
+      gruss: 'Leistung oder Energie? Die beiden werden ständig verwechselt – Dir passiert das nach diesem Kapitel nicht mehr.',
+      denk: { frage: 'Tipp mal: Welcher Helfer in Deiner Küche oder Deinem Bad ist der stärkste?', hinweis: 'Notiere Deinen Tipp – in der Aufgabe weiter unten schaust Du nach.', felder: 1 },
+      lead: 'Die Kilowattstunde begleitet Dich ab jetzt jeden Tag. Hier lernst Du, sie sicher von der Leistung zu unterscheiden und mit Einheiten zu rechnen.',
+      abschnitte: [
+        { titel: 'Leistung und Energie', text: 'Leistung beschreibt den Moment: Wie stark ist ein Gerät oder eine Anlage gerade? Sie wird in Watt angegeben, im Energiemarkt meist in Kilowatt (kW) oder Megawatt (MW). Energie beschreibt die Menge über die Zeit und wird in Kilowattstunden (kWh) angegeben. Es gilt: Energie = Leistung × Zeit. Abgerechnet wird immer die Energie.', interaktiv: 'G-1' },
+        { titel: 'Vorsätze und Umrechnungen', text: 'Damit Zahlen handlich bleiben, gibt es Vorsätze: kilo (Tausend), Mega (Million), Giga (Milliarde), Tera (Billion) und Peta (Billiarde). Jeder Schritt bedeutet den Faktor 1.000. Für Umrechnungen gilt: 1 Wh = 3.600 Ws = 0,001 kWh, und 1 kWh entspricht 3,6 MJ.', interaktiv: 'G-2' },
+        { titel: 'Die wichtigste Formel', text: 'Aus der Elektrotechnik brauchst Du vor allem eine Formel: Leistung = Spannung × Stromstärke (P = U × I). Die Größen haben Formelzeichen (P, U, I, R), ihre Einheiten heißen Watt, Volt, Ampere und Ohm.' }
+      ],
+      alltag: { text: 'Ein Wasserkocher mit 2 kW, der 6 Minuten läuft, braucht 2 kW × 0,1 h = 0,2 kWh.' },
+      mitmach: { tag: 'Typenschild-Check', titel: 'Leistung ablesen, Energie ausrechnen', hinweis: 'Such an zwei Geräten das Typenschild, meist unten oder hinten. Schätz, wie lange sie typischerweise laufen, und rechne: Energie = Leistung × Zeit.',
+        rechner: 'G', tipp: 'Steht die Leistung in Watt auf dem Schild, teilst Du durch 1.000: 1.800 W sind 1,8 kW.' },
+      kurz: ['kW = Leistung (Moment), kWh = Energie (Menge über die Zeit).', 'Energie = Leistung × Zeit; abgerechnet wird die Energie.', 'Vorsätze in Tausenderschritten: kilo, Mega, Giga, Tera, Peta.'],
+      kann: ['kW und kWh sicher unterscheiden.', 'mit Energie = Leistung × Zeit rechnen.', 'die Vorsätze von kilo bis Peta einordnen.'],
+      und: 'Hast Du richtig getippt? Wie „stark“ ein Gerät ist, steht als Leistung auf dem Typenschild – meist in Watt oder Kilowatt.',
+      abschied: 'Ich verrat Dir was: Mit Energie = Leistung × Zeit rechnest Du ab jetzt ständig. Leg in den Übungen zu G los.'
+    },
+    {
+      key: 'H', titel: 'Gas: vom Kubikmeter zur Kilowattstunde', lesezeit: 'ca. 2 Min.', danach: 'Übungen H (ca. 25 Min.) und 8 Lernkarten', lernkarten: 8,
+      gruss: 'Dein Gaszähler zählt Kubikmeter, Deine Rechnung Kilowattstunden. Ich zeig Dir die Brücke dazwischen.',
+      denk: { frage: 'Was meinst Du: Steckt in jedem Kubikmeter Gas gleich viel Energie?', hinweis: 'Wähle aus, bevor Du weiterliest.', wahl: ['ja, immer gleich viel', 'nein, das kommt darauf an'], felder: 0 },
+      lead: 'Gas wird in Kubikmetern gemessen, aber in Kilowattstunden abgerechnet. So funktioniert die Umrechnung.',
+      abschnitte: [
+        { titel: 'Volumen ist nicht gleich Energie', text: 'Der Gaszähler misst ein Volumen. Wie viel Energie darin steckt, hängt von der Gasqualität und vom Zustand des Gases ab. Deshalb gilt: kWh = m³ × Brennwert × Zustandszahl.' },
+        { titel: 'Brennwert und Zustandszahl', text: 'Der Brennwert (Hs,eff) gibt an, wie viel Energie in einem Kubikmeter Gas im Normzustand steckt, in kWh/m³. Die Zustandszahl rechnet das gemessene Betriebsvolumen auf diesen Normzustand um – 0 °C (273,15 K) und 1.013,25 mbar, festgelegt im DVGW-Arbeitsblatt G 685 –, denn das Volumen von Gas hängt von Druck und Temperatur ab. Beide Werte stehen auf der Gasrechnung.', interaktiv: 'H-1' },
+        { titel: 'Brennwert oder Heizwert?', text: 'Ein Hinweis für Statistiken: Abgerechnet wird mit dem Brennwert. Viele Energiestatistiken, etwa die der AG Energiebilanzen, verwenden dagegen den Heizwert; der Brennwert liegt um etwa 10 % darüber. Vergleiche Gasmengen deshalb nur, wenn klar ist, welcher Wert gemeint ist.' }
+      ],
+      alltag: { text: '100 m³ × 11 kWh/m³ × 0,95 = 1.045 kWh.' },
+      rueckblick: { titel: 'Das große Ganze: Rückblick auf das ganze Modul', text: 'Zum Schluss fügt sich das ganze Modul zusammen: Energie wird erzeugt, transportiert und verbraucht. Der Verbrauch wird gemessen, die Daten werden verarbeitet – also geprüft, zugeordnet und beim Gas umgerechnet – und die Mengen werden in Folgeprozessen wie Abrechnung und Bilanzierung genutzt. Bei jeder Angabe hilft die Einheit: kW beschreibt die Leistung, kWh eine Energiemenge über die Zeit, m³ ein Gasvolumen, das erst umgerechnet werden muss.' },
+      mitmach: { tag: 'Rechne nach', titel: 'Deine Gasrechnung im Check', hinweis: 'Nimm Deine letzte Gasrechnung und trag die Werte ein. Kein Gas im Haus? Dann rechne mit diesen Werten: 850 m³, Brennwert 10,8 kWh/m³, Zustandszahl 0,95.',
+        rechner: 'H', wahl: ['Stimmt Dein Ergebnis mit der Rechnung überein?', ['ja', 'fast – Rundung', 'nein']], tipp: 'Kleine Abweichungen können durch Rundung entstehen, weil auf der Rechnung oft mit mehr Nachkommastellen gerechnet wird.' },
+      kurz: ['kWh = m³ × Brennwert × Zustandszahl.', 'Brennwert = Energie je m³ im Normzustand; Zustandszahl = Umrechnung auf den Normzustand.', 'Abrechnung nach Brennwert, Statistik oft nach Heizwert.'],
+      kann: ['Gas von m³ in kWh umrechnen.', 'Brennwert und Zustandszahl erklären.', 'meine eigene Gasrechnung nachrechnen.'],
+      und: 'Es kommt darauf an: auf die Gasqualität und darauf, bei welcher Temperatur und welchem Druck gemessen wird. Genau dafür gibt es Brennwert und Zustandszahl.',
+      abschied: 'Brücke gebaut! In den Übungen zu H rechnest Du selbst von m³ in kWh um.'
+    },
+    {
+      key: 'I', titel: 'Praxisfall: Die Energierechnung lesen', lesezeit: 'ca. 2 Min.', danach: 'Übungen I (ca. 20 Min.) und 7 Lernkarten', lernkarten: 7,
+      gruss: 'Jetzt wird gerechnet! Mit allem, was Du gelernt hast, liest Du gleich eine Musterrechnung wie ein Profi.',
+      denk: { frage: 'Wie liest Du Deine Stromrechnung normalerweise?', hinweis: 'Ehrlich auswählen – niemand schaut zu.', wahl: ['Zeile für Zeile', 'nur den Betrag unten', 'eigentlich gar nicht'], felder: 0 },
+      lead: 'Jetzt kommt alles zusammen: Mit dem Wissen aus diesem Modul kannst Du eine Strom- und eine Gasrechnung nachrechnen.',
+      abschnitte: [
+        { titel: 'Die Stromrechnung', text: 'Bei der Stromrechnung ergibt sich der Verbrauch aus der Differenz der Zählerstände: In der Musterrechnung sind das 27.810 − 24.310 = 3.500 kWh. Mit dem Arbeitspreis von 30,00 ct/kWh ergeben sich Energiekosten von 1.050,00 €. Dazu kommt der Grundpreis von 120,00 € netto; mit 19 % Umsatzsteuer beträgt die Rechnung 1.392,30 €. Abzüglich der Abschläge von 12 × 115,00 € bleibt eine Nachzahlung von 12,30 €. Die Rechnung nennt auch, wie die Zählerstände ermittelt wurden, zum Beispiel abgelesen oder geschätzt.', interaktiv: 'I-1' },
+        { titel: 'Die Gasrechnung', text: 'Bei der Gasrechnung kommt ein Schritt dazu: Die gemessenen 1.185 m³ werden mit Brennwert (11,200 kWh/m³) und Zustandszahl (0,9600) in 12.741 kWh umgerechnet. Bei 10,00 ct/kWh sind das 1.274,10 € Energiekosten; mit 150,00 € Grundpreis und 19 % Umsatzsteuer ergeben sich 1.694,68 €, nach Abzug der Abschläge von 12 × 140,00 € eine Nachzahlung von 14,68 €.' },
+        { titel: 'Was sonst noch draufsteht', text: 'Auf der Stromrechnung steht außerdem die Marktlokations-ID 51238609130. Sie bezeichnet den Ort der Belieferung – mehr dazu in Modul 1.1.5. Genau diese Werte laufen später durch Energiedatenmanagement und Abrechnung, zum Beispiel in SAP IS-U.' }
+      ],
+      alltag: { text: 'Prüfreihenfolge für jede Rechnung: Verbrauch, Energiekosten, Grundpreis, Nettosumme, Umsatzsteuer, Bruttobetrag, Abschläge, Nachzahlung oder Guthaben.' },
+      mitmach: { tag: 'Deine Rechnung', titel: 'Deine Stromrechnung Zeile für Zeile', hinweis: 'Nimm Deine letzte Stromrechnung und such diese Angaben. Keine zur Hand? Bitte jemanden aus Deinem Umfeld um eine – Namen und Adresse kannst Du abdecken.',
+        felder: [['Zählerstand alt und neu', 'text'], ['Monatlicher Abschlag', 'text'], ['Marktlokations-ID', 'text']], rechner: 'I', tipp: 'Stimmt Dein Ergebnis nicht genau? Prüf, ob die Preise netto oder brutto angegeben sind – das macht den Unterschied.' },
+      kurz: ['Verbrauch = Zählerstand neu − Zählerstand alt.', 'Rechnungsbetrag = (Energiekosten + Grundpreis) × 1,19.', 'Gas: erst in kWh umrechnen, dann rechnen wie beim Strom.'],
+      kann: ['eine Strom- und eine Gasrechnung Zeile für Zeile nachvollziehen.', 'sagen, wofür die Marktlokations-ID steht.', 'meine eigene Rechnung prüfen.'],
+      und: 'Ab jetzt kannst Du jede Zeile nachvollziehen – vom Zählerstand bis zur Nachzahlung.',
+      abschied: 'Das war das ganze 1x1! Jetzt die Übungen zu I – und dann zeigst Du im Wissenstest, was Du kannst.'
+    }
+  ],
+  interaktiv: {
+    'A-1': { art: 'kette', hinweis: 'Klick auf eine Station – oder lass den Strom fließen.', stationen: [['erz', 'Erzeugung', 'Strom entsteht in Kraftwerken, in Windparks oder in Photovoltaikanlagen auf Dächern und Freiflächen.'], ['netz', 'Netz', 'Das Netz transportiert den Strom über weite Strecken, verteilt ihn in die Regionen und sorgt dafür, dass er gesteuert beim Verbraucher ankommt.'], ['verb', 'Verbrauch', 'Am Ende steht der Verbrauch: Haushalte, Gewerbe und Industrie nutzen den Strom für Licht, Maschinen, Wärme oder Mobilität.']] },
+    'A-2': { art: 'bilder', bilder: [['Ein Windpark speist Strom ins Netz ein.', 'windpark'], ['Über Übertragungs- und Verteilnetze gelangt er …', 'netz'], ['… in eine Bäckerei, die damit ihre Öfen betreibt.', 'baeckerei']], pointe: 'Windpark und Bäckerei haben keinen direkten Draht zueinander – das Netz verbindet beide.' },
+    'B-1': { art: 'treppe', stufen: [['bis ca. 380 kV', 'Höchstspannung', 'Übertragungsnetz', 'Transport über weite Strecken'], ['ca. 110 kV', 'Hochspannung', 'Verteilnetz', 'regionale Verteilung'], ['ca. 10–20 kV', 'Mittelspannung', 'Verteilnetz', 'Industrie, größere Gewerbebetriebe'], ['230/400 V', 'Niederspannung', 'Verteilnetz', 'Haushalte, kleine Betriebe']], pfeil: 'Umspannwerk senkt ab', fuss: 'Umspannwerke senken die Spannung schrittweise ab. Je höher die Spannung, desto geringer die Verluste beim Transport.' },
+    'C-1': { art: 'schritte', schritte: [['Import', 'rund 95 %', 'per Pipeline, vor allem aus Norwegen, und als LNG per Schiff'], ['Fernleitungsnetz', '45.800 km', 'hoher Druck, Verdichterstationen'], ['Verteilernetz', '557.000 km', 'Druck sinkt stufenweise, inkl. Hausanschlüssen'], ['Hausanschluss', '', 'Heizung, Herd, Warmwasser']], einheit: 'Gas' },
+    'C-2': { art: 'speicher', titel: 'Untergrundspeicher', sommer: 'Sommer: Gas einspeichern', winter: 'Winter: Gas ausspeichern', strom: 'Strom: kaum speicherbar' },
+    'D-1': { art: 'stufen', stufen: [['Primärenergie', 'die Quelle', 'Erdöl, Erdgas, Kohle, Wind, Sonne, Wasser, Biomasse'], ['Endenergie', 'was ankommt', 'Strom, Heizöl, Erdgas am Hausanschluss, Kraftstoff, Fernwärme'], ['Nutzenergie', 'der Nutzen', 'Licht, Wärme, Kälte, Bewegung']], verlust: 'Verluste, z. B. Abwärme', fuss: 'Beispiel: Erdgas in der Lagerstätte → Erdgas am Hausanschluss → warmes Wasser unter der Dusche. Strom ist immer Endenergie.' },
+    'E-1': { art: 'mix', jahre: [['1990', '14.905 PJ'], ['2025', '10.530 PJ']], traeger: [['Mineralöl', 35.1, 36.0, '#243A4C'], ['Erdgas', 15.5, 26.6, '#4F6B82'], ['Braunkohle', 21.5, 7.1, '#8FA3B3'], ['Steinkohle', 15.5, 6.8, '#C9D6E0'], ['Kernenergie', 11.2, null, '#E3A33B'], ['Erneuerbare', 1.3, 20.8, '#BEC60E'], ['Sonstige', null, 2.7, '#EEF3F6']], hinweis: ['Nicht verwechseln!', 'Beim Strom lag der Anteil der Erneuerbaren 2025 bei', '57,3 %', 'Wind 26,3 % · Photovoltaik 18,1 %'], fuss: 'Primärenergieverbrauch nach Energieträgern, Anteile in Prozent; Sonstige 2025 inkl. Stromaustauschsaldo. 1990: Umweltbundesamt auf Basis AG Energiebilanzen; 2025: AG Energiebilanzen, Jahresbericht 2025, vorläufige Werte.' },
+    'F-1': { art: 'edm', gruppen: [['Messung', [0]], ['Datenverarbeitung', [1, 2]], ['Weitergabe', [3]]], schritte: [['1 Messen', 'Am Zähler wird der Verbrauch erfasst.'], ['2 Prüfen', 'Unplausible Werte fallen auf.'], ['3 Zuordnen', 'Der Wert kommt in den richtigen Datensatz.'], ['4 Nutzen', 'Abrechnung und Bilanzierung verwenden ihn.']], wert: '27.810 kWh', fuss: 'Ein Zählerstand ist zehnmal so hoch wie im Vorjahr? Beim Prüfen fällt er auf und wird geklärt – bevor eine falsche Rechnung entsteht.' },
+    'G-1': { art: 'leistung', karten: [['kW', 'Leistung', 'Wie stark ist ein Gerät gerade? Eine Momentaufnahme.'], ['Energie = Leistung × Zeit', '', 'Abgerechnet wird immer die Energie.'], ['kWh', 'Energie', 'Wie viel wurde insgesamt verbraucht? Eine Menge über die Zeit.']], beispiel: 'Wasserkocher', start: [2, 0.1] },
+    'G-2': { art: 'vorsaetze', stufen: [['k', 'kilo', '10³ · Tausend', 'Haushalt, Gerät (kW, kWh)'], ['M', 'Mega', '10⁶ · Million', 'Kraftwerk, Windpark (MW, MWh)'], ['G', 'Giga', '10⁹ · Milliarde', 'Netz, Region (GW, GWh)'], ['T', 'Tera', '10¹² · Billion', 'Jahresmengen eines Landes (TWh)'], ['P', 'Peta', '10¹⁵ · Billiarde', 'Primärenergie (PJ)']], merke: 'Merke: 1 Wh = 3.600 Ws = 0,001 kWh · 1 kWh entspricht 3,6 MJ' },
+    'H-1': { art: 'gasrechner', karten: [['Volumen', 'm³', 'misst der Gaszähler'], ['Brennwert', 'kWh/m³', 'Energie je m³ im Normzustand'], ['Zustandszahl', 'ohne Einheit', 'rechnet auf 0 °C und 1.013,25 mbar um'], ['Energie', 'kWh', 'wird abgerechnet']], start: [100, 11, 0.95], fuss: 'Brennwert und Zustandszahl stehen auf der Gasrechnung. Statistiken nutzen oft den Heizwert – der Brennwert liegt etwa 10 % darüber.' },
+    'I-1': { art: 'rechnung', kopf: ['Stadtwerke Musterstadt GmbH', 'Jahresabrechnung Strom 2025'],
+      zeilen: [['', 'Zählerstand 01.01.2025', '', '24.310 kWh'], ['', 'Zählerstand 31.12.2025', '', '27.810 kWh'], ['1', 'Verbrauch', '27.810 − 24.310', '3.500 kWh'], ['2', 'Arbeitspreis', '3.500 kWh × 30,00 ct/kWh', '1.050,00 €'], ['3', 'Grundpreis', '12 Monate', '120,00 €'], ['', 'Summe netto', '', '1.170,00 €'], ['', 'Umsatzsteuer 19 %', '', '222,30 €'], ['4', 'Rechnungsbetrag', '(1.050,00 € + 120,00 €) × 1,19', '1.392,30 €'], ['', 'Abschläge', '12 × 115,00 €', '− 1.380,00 €'], ['5', 'Nachzahlung', '', '12,30 €']],
+      fuss: 'Fiktive Musterrechnung, vereinfacht.',
+      erklaerung: [['1', 'Verbrauch', 'Zählerstand neu minus Zählerstand alt.'], ['2', 'Energiekosten', 'Verbrauch mal Arbeitspreis.'], ['3', 'Grundpreis', 'fällt unabhängig vom Verbrauch an.'], ['4', 'Rechnungsbetrag', 'Energiekosten plus Grundpreis, dazu 19 % Umsatzsteuer.'], ['5', 'Nachzahlung', 'Rechnungsbetrag minus gezahlte Abschläge.']] }
+  },
+  anhang: { loesungH: 'Mit den Beispielwerten: 850 m³ × 10,8 kWh/m³ × 0,95 = 8.721 kWh.', quellen: 'AG Energiebilanzen, Energieverbrauch in Deutschland im Jahr 2025 (Jahresbericht, Stand 28.05.2026, vorläufige Werte); Umweltbundesamt auf Basis AG Energiebilanzen (Werte 1990); Bundesnetzagentur/Bundeskartellamt, Monitoringberichte 2024 und 2025; DVGW-Arbeitsblatt G 685 (Gasabrechnung). Alle Beispielwerte der Musterrechnung sind fiktiv.' }
+};
+</script>
+<script>
+/* BLUU-LERNSKRIPT — Antonias Lernskript 1.1.1 als interaktive Kapitelseiten im Modul (Reiter «Lernskript»).
+   Inhalt: lernskript-111.inhalt.js (Texte wortgleich aus dem PDF). Aufbau je Kapitel nach den Umsetzungshinweisen
+   vom 23.10.2026: Leuchtpfad · Titelbild · Titel mit Lesezeit · Glühwürmchen winkt · Denk kurz nach · Einstieg und
+   drei Abschnitte mit interaktiver Grafik · Aus dem Alltag · Mitmach-Aufgabe (teils mit Rechner) · Kurz gesagt und
+   Das kann ich jetzt · Und? · Abschied mit Knöpfen. Das Lernskript bewertet nichts; es gibt weder Punkte noch XP.
+   Eingaben, Häkchen und Kapitelstand liegen vorerst im Browser (Schlüssel bluu-ls-1.1.1 je Person); die Plattform
+   kann über window.BLUU_HOOKS.lernskriptSpeichern(stand) übernehmen. Ereignisse kapitel_abgeschlossen und
+   zu_uebungen gehen als CustomEvent «bluu-lernskript» und per postMessage hinaus, wie im Muster. */
+(function () {
+  const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const B = (name, props) => (window.bluu ? bluu(name, props) : '');
+  const attr = (v) => esc(JSON.stringify(v));
+  const D = () => window.BLUU_LERNSKRIPT_111 || null;
+  const KAP = () => (D() ? D().kapitel : []);
+  const kapVon = (k) => KAP().find((x) => x.key === k) || null;
+  const nach = (k) => { const i = KAP().findIndex((x) => x.key === k); return i >= 0 && i < KAP().length - 1 ? KAP()[i + 1] : null; };
+  const vor = (k) => { const i = KAP().findIndex((x) => x.key === k); return i > 0 ? KAP()[i - 1] : null; };
+  const ruhig = () => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
+
+  /* ── Stand je Person ── */
+  const KEY = () => 'bluu-ls-1.1.1-' + ((typeof currentUser !== 'undefined' && currentUser && currentUser.id) || 'gast');
+  let S = null, SKEY = '';
+  const laden = () => { if (S && SKEY === KEY()) return S; SKEY = KEY(); try { S = JSON.parse(localStorage.getItem(SKEY)) || {}; } catch (e) { S = {}; } S.k = S.k || {}; S.fs = S.fs || 0; S.kapitel = S.kapitel || 'start'; return S; };
+  const speichern = () => { try { localStorage.setItem(SKEY, JSON.stringify(S)); } catch (e) {} try { if (window.BLUU_HOOKS && typeof BLUU_HOOKS.lernskriptSpeichern === 'function') BLUU_HOOKS.lernskriptSpeichern('1.1.1', S); } catch (e) {} };
+  const kap = (k) => { laden(); S.k[k] = S.k[k] || { e: {}, kann: [false, false, false], gemerkt: false, gemeldet: false }; return S.k[k]; };
+  const fertig = (k) => { const s = laden().k[k]; return !!(s && s.kann && s.kann.every(Boolean)); };
+  const melden = (ev, daten) => {
+    const x = Object.assign({ quelle: 'bluu-lernskript', modul: '1.1.1', event: ev }, daten || {});
+    try { document.dispatchEvent(new CustomEvent('bluu-lernskript', { detail: x })); } catch (e) {}
+    try { if (window.parent !== window) window.parent.postMessage(x, '*'); } catch (e) {}
+    try { if (window.BLUU_HOOKS && typeof BLUU_HOOKS.lernskriptEreignis === 'function') BLUU_HOOKS.lernskriptEreignis(x); } catch (e) {}
+  };
+  /* Zahlen mit Dezimalkomma annehmen (0,95 · 10,8 · 1.045,5) und deutsch ausgeben */
+  const zahl = (v) => { let t = String(v == null ? '' : v).trim().replace(/\s/g, ''); if (!t) return NaN; if (t.includes(',')) t = t.replace(/\./g, '').replace(',', '.'); else if (/^-?\d{1,3}(\.\d{3})+$/.test(t)) t = t.replace(/\./g, ''); const n = parseFloat(t); return isFinite(n) ? n : NaN; };
+  const fmt = (n, max) => (isFinite(n) ? n.toLocaleString('de-DE', { maximumFractionDigits: max == null ? 2 : max }) : '–');
+  const prozent = (n) => (n == null ? '–' : n.toLocaleString('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' %');
+
+  /* ── Flüchtiger Zustand der interaktiven Grafiken (je Kapitelseite neu) ── */
+  let U = {};
+  const u = (nr, start) => { U[nr] = U[nr] || Object.assign({}, start); return U[nr]; };
+  let aktuellerCode = null;
+
+  /* ── Symbole (Linien, 24er-Raster) ── */
+  const SYM = {
+    uhr: 'M12 2a10 10 0 1 0 0 20a10 10 0 0 0 0-20zM12 6v6l4 2', stift: 'M17 3l4 4L7 21H3v-4L17 3z', monitor: 'M3 4h18v12H3zM8 20h8M12 16v4',
+    lampe: 'M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.6.6 1 1.3 1 2.5h6c0-1.2.4-1.9 1-2.5A6 6 0 0 0 12 3z', lupe: 'M11 3a8 8 0 1 0 0 16a8 8 0 0 0 0-16zM21 21l-4.3-4.3',
+    pfeil: 'M5 12h14M12 5l7 7-7 7', zurueck: 'M15 18l-6-6 6-6', weiter: 'M9 18l6-6-6-6', play: 'M6 3l14 9-14 9z', pause: 'M7 4h3v16H7zM14 4h3v16h-3z',
+    wind: 'M9.8 4.4A2 2 0 1 1 11 8H2M17.5 8a2.5 2.5 0 1 1 2 4H2M12.8 19.6A2 2 0 1 0 14 16H2', sonne: 'M12 8a4 4 0 1 0 0 8a4 4 0 0 0 0-8zM12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M6.3 17.7l-1.4 1.4M19.1 4.9l-1.4 1.4',
+    fabrik: 'M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2z', mast: 'M12 2v20M2 5h20M3 3v2M7 3v2M17 3v2M21 3v2M19 5l-7 7-7-7',
+    haus: 'M3 10l9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM9 21v-7h6v7', laden: 'M3 9l1.5-5h15L21 9M3 9h18v11H3zM9 20v-6h6v6',
+    hand: 'M18 11V6a2 2 0 0 0-4 0M14 10V4a2 2 0 0 0-4 0v2M10 10.5V6a2 2 0 0 0-4 0v8M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.9-6-2.3l-3.6-3.6a2 2 0 0 1 2.8-2.8L7 15',
+    frage: 'M12 2a10 10 0 1 0 0 20a10 10 0 0 0 0-20zM9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01', haken: 'M5 12.5l4.5 4.5L19 7.5', stern: 'M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.5 9.3l6.1-.7z',
+    schalter: 'M8 7h8a5 5 0 0 1 0 10H8A5 5 0 0 1 8 7zM8 9a3 3 0 1 0 0 6a3 3 0 0 0 0-6', tank: 'M4 10a8 6 0 0 1 16 0v8H4zM4 14h16', flamme: 'M12 22c4 0 7-3 7-7 0-3-2-5-3-7-1 2-2 3-3 3 0-3-1-6-4-8 1 3-1 5-3 8-1 2-1 3-1 4 0 4 3 7 7 7z',
+    rechner: 'M5 2h14v20H5zM8 6h8M8 11h2M12 11h2M16 11h2M8 15h2M12 15h2M16 15h2M8 19h6', zaehler: 'M3 5h18v14H3zM6 9h12v4H6zM8 16h2M14 16h2', euro: 'M18 6a7 7 0 0 0-12 3h8M6 12h8M6 15h8M18 18a7 7 0 0 1-12-3',
+    kessel: 'M6 8h10l1 12H5zM16 10h3a2 2 0 0 1 0 4h-3M9 4c0 1 1 1 1 2M12 4c0 1 1 1 1 2', buch: 'M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 21V5', lesen: 'M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z',
+    karten: 'M7 6h12v14H7zM4 17V3h12', test: 'M9 6h11M9 12h11M9 18h11M3.5 6l1 1 2-2M3.5 12l1 1 2-2M3.5 18l1 1 2-2', liste: 'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',
+    schrift: 'M3.5 13h6M2 16l4.5-9 4.5 9M14 6h8M18 6v12'
+  };
+  const sym = (n, g, farbe) => '<svg width="' + (g || 16) + '" height="' + (g || 16) + '" viewBox="0 0 24 24" fill="none" stroke="' + (farbe || 'currentColor') + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + SYM[n] + '"/></svg>';
+  const STATION_SYM = { erz: ['fabrik', 'wind', 'sonne'], netz: ['mast'], verb: ['haus', 'laden', 'fabrik'] };
+  const POSE = { winkt: { stimmung: 'freundlich', winken: 'ja' }, denkt: { stimmung: 'denkt' }, tipp: { stimmung: 'hinweis' }, freut: { stimmung: 'stolz' }, erklaert: { stimmung: 'erklaert' } };
+  const wurm = (pose, g) => '<span class="ls-ff">' + B('Maskottchen', Object.assign({ groesse: g || 56, grund: 'hell' }, POSE[pose] || POSE.winkt)) + '</span>';
+  const bub = (pose, text, klein) => '<div class="ls-bub' + (klein ? ' sm' : '') + '">' + wurm(pose, klein ? 48 : 56) + '<p><b>Glühwürmchen:</b> ' + esc(text) + '</p></div>';
+
+  /* ── Titelbilder: ruhige Szene je Kapitel (Himmel, Hügel, Leuchtspur des Glühwürmchens, Motiv) ── */
+  const windrad = (x, y, h, rot) => '<path d="M' + (x - 4) + ' ' + (y + h) + 'L' + (x - 2) + ' ' + y + 'L' + (x + 2) + ' ' + y + 'L' + (x + 4) + ' ' + (y + h) + 'Z" fill="#fff" stroke="#243A4C" stroke-width="2"/><g transform="translate(' + x + ',' + y + ') rotate(' + rot + ')">' + [0, 120, 240].map((r) => '<path d="M-3 -4C-9 -19 -6 -38 0 -42C3 -34 4 -17 3 -4Z" fill="#fff" stroke="#243A4C" stroke-width="2" transform="rotate(' + r + ')"/>').join('') + '<circle r="6" fill="#243A4C"/><circle r="2.4" fill="#BEC60E"/></g>';
+  const mast = (x, y, h) => '<g stroke="#243A4C" stroke-width="2.4" fill="none" stroke-linecap="round"><path d="M' + (x - 14) + ' ' + (y + h) + 'L' + (x - 4) + ' ' + y + 'L' + (x + 4) + ' ' + y + 'L' + (x + 14) + ' ' + (y + h) + '"/><path d="M' + (x - 10) + ' ' + (y + h * 0.72) + 'L' + (x + 10) + ' ' + (y + h * 0.72) + 'M' + (x - 8) + ' ' + (y + h * 0.48) + 'L' + (x + 8) + ' ' + (y + h * 0.48) + 'M' + (x - 10) + ' ' + (y + h * 0.72) + 'L' + (x + 8) + ' ' + (y + h * 0.48) + 'M' + (x + 10) + ' ' + (y + h * 0.72) + 'L' + (x - 8) + ' ' + (y + h * 0.48) + '"/><path d="M' + (x - 24) + ' ' + (y + 18) + 'L' + (x + 24) + ' ' + (y + 18) + 'M' + (x - 18) + ' ' + (y + 34) + 'L' + (x + 18) + ' ' + (y + 34) + '"/></g>';
+  const haus = (x, y, b, lime) => '<rect x="' + x + '" y="' + y + '" width="' + b + '" height="' + (b * 0.95) + '" fill="' + (lime ? '#EEF3F6' : '#fff') + '" stroke="#243A4C" stroke-width="2.4"/><path d="M' + (x - 6) + ' ' + y + 'L' + (x + b / 2) + ' ' + (y - b * 0.45) + 'L' + (x + b + 6) + ' ' + y + 'Z" fill="#243A4C"/><rect x="' + (x + b * 0.18) + '" y="' + (y + b * 0.28) + '" width="' + (b * 0.22) + '" height="' + (b * 0.2) + '" fill="#F4F8C8" stroke="#243A4C" stroke-width="1.6"/><rect x="' + (x + b * 0.6) + '" y="' + (y + b * 0.28) + '" width="' + (b * 0.22) + '" height="' + (b * 0.2) + '" fill="#F4F8C8" stroke="#243A4C" stroke-width="1.6"/>';
+  const schild = (x, y, text, b) => '<rect x="' + (x - b / 2) + '" y="' + y + '" width="' + b + '" height="30" rx="15" fill="#243A4C"/><text x="' + x + '" y="' + (y + 20.5) + '" text-anchor="middle" font-family="inherit" font-weight="700" font-size="18" fill="#BEC60E">' + esc(text) + '</text>';
+  const MOTIV = {
+    A: () => windrad(80, 134, 118, 15) + windrad(170, 108, 138, 55) + mast(400, 116, 140) + mast(560, 100, 150) + mast(720, 114, 140) + '<path d="M424 134Q480 156 536 118M584 118Q640 152 696 132" stroke="#243A4C" stroke-width="1.8" fill="none"/>' + haus(800, 204, 58) + haus(880, 212, 50, true) + '<rect x="932" y="206" width="56" height="58" fill="#fff" stroke="#243A4C" stroke-width="2.4"/><path d="M928 206h64l-6 15h-52Z" fill="#BEC60E" stroke="#243A4C" stroke-width="2"/><rect x="946" y="236" width="28" height="28" fill="#F4F8C8" stroke="#243A4C" stroke-width="2"/>' + schild(150, 264, 'Erzeugung', 142) + schild(560, 264, 'Netz', 100) + schild(890, 264, 'Verbrauch', 142),
+    B: () => mast(140, 60, 196) + mast(360, 100, 156) + mast(560, 136, 120) + mast(740, 166, 90) + '<path d="M164 78Q262 128 336 118M384 118Q470 162 536 154M584 154Q660 190 716 184" stroke="#243A4C" stroke-width="1.8" fill="none"/>' + haus(880, 206, 58) + schild(140, 264, '380 kV', 110) + schild(360, 264, '110 kV', 110) + schild(560, 264, '10–20 kV', 120) + schild(740, 264, '230 V', 100),
+    C: () => '<path d="M40 150H330M330 150Q380 150 380 200T430 250H600" stroke="#243A4C" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M40 150H330M330 150Q380 150 380 200T430 250H600" stroke="#EEF3F6" stroke-width="5" fill="none" stroke-linecap="round"/><g fill="#BEC60E" stroke="#243A4C" stroke-width="2"><circle cx="150" cy="150" r="12"/><circle cx="520" cy="250" r="12"/></g><path d="M640 300V236a90 60 0 0 1 180 0v64" fill="#CBD8E2" stroke="#243A4C" stroke-width="2.4"/><path d="M660 300V240a70 42 0 0 1 140 0v60" fill="#EEF3F6" stroke="#243A4C" stroke-width="2"/>' + haus(900, 206, 58) + '<path d="M600 250H900" stroke="#243A4C" stroke-width="4" stroke-dasharray="10 8" stroke-linecap="round"/>' + schild(150, 100, 'Import', 110) + schild(430, 100, 'Fernleitung', 150) + schild(730, 180, 'Speicher', 120),
+    D: () => '<g transform="translate(140,120)"><path d="M60 140c40 0 70-30 70-70 0-30-20-50-30-70-10 20-20 30-30 30 0-30-10-60-40-80 10 30-10 50-30 80-10 20-10 30-10 40 0 40 30 70 70 70z" fill="#F4F8C8" stroke="#243A4C" stroke-width="2.4"/></g><path d="M320 200H440" stroke="#243A4C" stroke-width="3" marker-end="url(#lsPfeil)"/><g transform="translate(480,140)"><rect x="0" y="20" width="100" height="90" rx="12" fill="#fff" stroke="#243A4C" stroke-width="2.4"/><rect x="28" y="0" width="12" height="30" fill="#243A4C"/><rect x="60" y="0" width="12" height="30" fill="#243A4C"/><rect x="24" y="60" width="52" height="24" fill="#EEF3F6" stroke="#243A4C" stroke-width="1.6"/></g><path d="M620 200H740" stroke="#243A4C" stroke-width="3" marker-end="url(#lsPfeil)"/><g transform="translate(790,110)"><circle cx="50" cy="60" r="44" fill="#F4F8C8" stroke="#243A4C" stroke-width="2.4"/><circle cx="50" cy="60" r="26" fill="#BEC60E" opacity=".9"/><rect x="36" y="104" width="28" height="26" rx="4" fill="#243A4C"/></g>' + schild(200, 264, 'Primärenergie', 170) + schild(530, 264, 'Endenergie', 150) + schild(840, 264, 'Nutzenergie', 150),
+    E: () => '<g transform="translate(220,150)"><circle r="78" fill="none" stroke="#C9D6E0" stroke-width="30"/><circle r="78" fill="none" stroke="#243A4C" stroke-width="30" stroke-dasharray="176 490" transform="rotate(-90)"/><circle r="78" fill="none" stroke="#4F6B82" stroke-width="30" stroke-dasharray="130 490" stroke-dashoffset="-176" transform="rotate(-90)"/><circle r="78" fill="none" stroke="#BEC60E" stroke-width="30" stroke-dasharray="102 490" stroke-dashoffset="-306" transform="rotate(-90)"/><text y="8" text-anchor="middle" font-weight="700" font-size="26" fill="#243A4C">2025</text></g>' + windrad(560, 90, 150, 30) + windrad(650, 130, 110, 70) + '<g transform="translate(760,150)"><rect x="0" y="30" width="120" height="70" rx="6" fill="#243A4C" transform="skewX(-14)"/><path d="M10 50h100M10 70h100M40 30v70M80 30v70" stroke="#BEC60E" stroke-width="1.6" transform="skewX(-14)"/></g><circle cx="880" cy="60" r="28" fill="#F4F8C8"/><circle cx="880" cy="60" r="18" fill="#BEC60E" opacity=".9"/>' + schild(220, 264, 'Energiemix', 140) + schild(700, 264, 'Erneuerbare', 150),
+    F: () => '<g transform="translate(120,100)"><rect width="200" height="140" rx="12" fill="#fff" stroke="#243A4C" stroke-width="2.4"/><rect x="24" y="30" width="152" height="46" rx="6" fill="#243A4C"/><text x="100" y="62" text-anchor="middle" font-family="monospace" font-weight="700" font-size="28" fill="#BEC60E">27810</text><text x="100" y="112" text-anchor="middle" font-size="16" fill="#4F6B82">kWh</text></g><path d="M340 170H440" stroke="#243A4C" stroke-width="3" marker-end="url(#lsPfeil)"/><g transform="translate(470,90)"><rect width="150" height="160" rx="10" fill="#EEF3F6" stroke="#243A4C" stroke-width="2.4"/><path d="M24 40h102M24 70h102M24 100h70M24 130h86" stroke="#243A4C" stroke-width="3" stroke-linecap="round"/><circle cx="118" cy="128" r="16" fill="#BEC60E" stroke="#243A4C" stroke-width="2"/><path d="M110 128l6 6 10-12" stroke="#243A4C" stroke-width="2.6" fill="none" stroke-linecap="round"/></g><path d="M640 170H740" stroke="#243A4C" stroke-width="3" marker-end="url(#lsPfeil)"/><g transform="translate(770,100)"><rect width="160" height="140" rx="10" fill="#fff" stroke="#243A4C" stroke-width="2.4"/><path d="M20 36h120M20 60h80M20 84h120M20 108h60" stroke="#C9D6E0" stroke-width="4" stroke-linecap="round"/><text x="140" y="116" text-anchor="end" font-weight="700" font-size="18" fill="#243A4C">€</text></g>' + schild(220, 264, 'Messen', 110) + schild(545, 264, 'Prüfen · Zuordnen', 200) + schild(850, 264, 'Nutzen', 110),
+    G: () => '<g transform="translate(150,110)"><path d="M20 30h110l12 120H8z" fill="#fff" stroke="#243A4C" stroke-width="2.4"/><path d="M130 50h26a16 16 0 0 1 0 32h-22" fill="none" stroke="#243A4C" stroke-width="2.4"/><rect x="40" y="70" width="70" height="50" fill="#EEF3F6"/><path d="M50 8c0 10 8 10 8 20M75 2c0 10 8 10 8 20M100 8c0 10 8 10 8 20" fill="none" stroke="#AFC3D3" stroke-width="2.4" stroke-linecap="round"/></g><g transform="translate(420,110)"><rect width="170" height="150" rx="14" fill="#243A4C"/><text x="85" y="62" text-anchor="middle" font-weight="700" font-size="34" fill="#BEC60E">2 kW</text><text x="85" y="100" text-anchor="middle" font-size="18" fill="#EAF1F7">× 0,1 h</text><text x="85" y="134" text-anchor="middle" font-weight="700" font-size="22" fill="#fff">= 0,2 kWh</text></g><g transform="translate(680,100)"><rect width="250" height="160" rx="14" fill="#EEF3F6" stroke="#243A4C" stroke-width="2.4"/><text x="20" y="44" font-weight="700" font-size="20" fill="#243A4C">kW</text><text x="20" y="72" font-size="15" fill="#4F6B82">Leistung · der Moment</text><text x="20" y="116" font-weight="700" font-size="20" fill="#243A4C">kWh</text><text x="20" y="144" font-size="15" fill="#4F6B82">Energie · Menge über die Zeit</text></g>',
+    H: () => '<g transform="translate(130,100)"><rect width="220" height="150" rx="12" fill="#fff" stroke="#243A4C" stroke-width="2.4"/><rect x="30" y="34" width="160" height="46" rx="6" fill="#243A4C"/><text x="110" y="66" text-anchor="middle" font-family="monospace" font-weight="700" font-size="28" fill="#BEC60E">00850</text><text x="110" y="118" text-anchor="middle" font-weight="700" font-size="18" fill="#4F6B82">m³</text><path d="M60 0v34M160 0v34" stroke="#243A4C" stroke-width="8"/></g><g transform="translate(400,120)"><rect width="200" height="110" rx="12" fill="#F4F8C8" stroke="#243A4C" stroke-width="2.4"/><text x="100" y="44" text-anchor="middle" font-size="16" fill="#243A4C">× Brennwert</text><text x="100" y="80" text-anchor="middle" font-size="16" fill="#243A4C">× Zustandszahl</text></g><path d="M620 175H700" stroke="#243A4C" stroke-width="3" marker-end="url(#lsPfeil)"/><g transform="translate(730,100)"><rect width="200" height="150" rx="12" fill="#243A4C"/><text x="100" y="80" text-anchor="middle" font-weight="700" font-size="34" fill="#BEC60E">kWh</text><text x="100" y="116" text-anchor="middle" font-size="16" fill="#EAF1F7">wird abgerechnet</text></g>',
+    I: () => '<g transform="translate(200,40)"><rect width="300" height="230" rx="10" fill="#fff" stroke="#243A4C" stroke-width="2.4"/><rect x="24" y="24" width="120" height="14" rx="4" fill="#243A4C"/><path d="M24 70h252M24 100h200M24 130h252M24 160h180" stroke="#C9D6E0" stroke-width="6" stroke-linecap="round"/><rect x="24" y="190" width="252" height="26" rx="6" fill="#F4F8C8" stroke="#BEC60E" stroke-width="2"/><text x="268" y="209" text-anchor="end" font-weight="700" font-size="16" fill="#243A4C">1.392,30 €</text></g><g transform="translate(560,100)">' + [['1', 'Verbrauch'], ['2', 'Energiekosten'], ['3', 'Grundpreis'], ['4', 'Rechnungsbetrag'], ['5', 'Nachzahlung']].map((x, i) => '<g transform="translate(0,' + (i * 32) + ')"><circle cx="14" cy="14" r="14" fill="#BEC60E"/><text x="14" y="19" text-anchor="middle" font-weight="700" font-size="15" fill="#243A4C">' + x[0] + '</text><text x="40" y="19" font-size="16" fill="#243A4C">' + x[1] + '</text></g>').join('') + '</g>',
+    start: () => windrad(90, 120, 132, 20) + mast(300, 110, 146) + mast(470, 96, 160) + '<path d="M324 128Q400 160 446 114" stroke="#243A4C" stroke-width="1.8" fill="none"/>' + haus(620, 204, 58) + '<g transform="translate(760,80)"><rect width="200" height="150" rx="12" fill="#fff" stroke="#243A4C" stroke-width="2.4"/><rect x="24" y="24" width="90" height="12" rx="4" fill="#243A4C"/><path d="M24 60h152M24 84h120M24 108h152" stroke="#C9D6E0" stroke-width="6" stroke-linecap="round"/><rect x="24" y="124" width="152" height="12" rx="4" fill="#BEC60E"/></g>' + schild(160, 264, 'Erzeugung', 142) + schild(400, 264, 'Netz', 100) + schild(640, 264, 'Verbrauch', 142) + schild(860, 264, 'Rechnung', 130)
+  };
+  const hero = (k) => '<div class="ls-hero"><svg viewBox="0 0 1000 300" role="img" aria-label="' + esc('Titelbild Kapitel ' + k) + '"><defs><linearGradient id="lsHimmel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E4EDF3"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient><marker id="lsPfeil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#243A4C"/></marker></defs><rect width="1000" height="300" rx="22" fill="url(#lsHimmel)"/><path d="M0 240Q160 200 330 228T660 224T1000 216L1000 300L0 300Z" fill="#DCE6ED"/><path d="M0 260Q200 238 420 255T1000 248L1000 300L0 300Z" fill="#CBD8E2"/>' + (MOTIV[k] ? MOTIV[k]() : '') + '<path d="M230 70Q420 10 560 70T860 90" class="ls-spur" stroke="#E9F07A" stroke-width="3.5" stroke-dasharray="2 12" stroke-linecap="round" fill="none"/></svg></div>';
+
+  /* ── Leuchtpfad ── */
+  const rail = (k) => {
+    laden();
+    const n = KAP().filter((x) => fertig(x.key)).length;
+    return '<nav class="ls-rail" aria-label="Kapitel"><p class="ls-rh">Dein Leuchtpfad</p><ol>' +
+      '<li><button type="button" class="ls-node' + (k === 'start' ? ' cur' : '') + '" onclick="bluuLs.gehe(\'start\')"' + (k === 'start' ? ' aria-current="page"' : '') + '><span class="dot">' + sym('lesen', 15) + '</span><span class="lbl">Bevor es losgeht</span></button></li>' +
+      KAP().map((x) => '<li><button type="button" class="ls-node' + (x.key === k ? ' cur' : '') + (fertig(x.key) ? ' done' : '') + '" onclick="bluuLs.gehe(' + attr(x.key) + ')"' + (x.key === k ? ' aria-current="page"' : '') + '><span class="dot">' + esc(x.key) + '</span><span class="lbl">' + esc(x.titel) + '</span></button></li>').join('') +
+      '</ol><p class="ls-rail-stand">' + n + ' von ' + KAP().length + ' Kapiteln geschafft</p></nav>';
+  };
+  const werkzeug = (k) => {
+    const i = KAP().findIndex((x) => x.key === k);
+    return '<div class="ls-werkzeug"><span class="ls-wo">' + sym('buch', 14) + ' Lernskript 1.1.1' + (i >= 0 ? ' · Kapitel ' + (i + 1) + ' von ' + KAP().length : '') + '</span>' +
+      '<span class="ls-schrift" role="group" aria-label="Schriftgröße"><button type="button" class="ls-ikon" onclick="bluuLs.schrift(-1)" aria-label="Schrift kleiner">A−</button><button type="button" class="ls-ikon" onclick="bluuLs.schrift(1)" aria-label="Schrift größer">A+</button></span></div>';
+  };
+
+  /* ── Bausteine der Kapitelseite ── */
+  const feld = (k, name, platzhalter, zeilen) => { const v = kap(k).e[name]; return zeilen ? '<textarea rows="' + zeilen + '" data-ls-feld="' + esc(name) + '" placeholder="' + esc(platzhalter || '') + '" oninput="bluuLs.feld(this)">' + esc(v || '') + '</textarea>' : '<input type="text" data-ls-feld="' + esc(name) + '" placeholder="' + esc(platzhalter || '') + '" value="' + esc(v || '') + '" oninput="bluuLs.feld(this)">'; };
+  const wahl = (k, name, optionen) => { const v = kap(k).e[name]; return '<div class="ls-wahl" role="group">' + optionen.map((o) => '<button type="button" class="ls-chip" aria-pressed="' + (v === o) + '" onclick="bluuLs.wahl(' + attr(name) + ',' + attr(o) + ',this)">' + esc(o) + '</button>').join('') + '</div>'; };
+  const denk = (k, c) => {
+    const s = kap(k), d = c.denk;
+    return '<section class="ls-card ls-denk"><div class="ls-tag">' + sym('lampe', 15) + ' Denk kurz nach</div><div class="ls-row">' + wurm('denkt', 64) + '<div class="ls-grow"><h3>' + esc(d.frage) + '</h3><p class="ls-hint">' + esc(d.hinweis) + '</p>' +
+      (d.wahl ? wahl(k, 'denkWahl', d.wahl) : '') + (d.felder ? '<label class="ls-sr" for="ls-denk-' + k + '">Deine Vermutung</label>' + feld(k, 'denk', 'Meine Vermutung …', d.felder) : '') +
+      '<div class="ls-btns"><button type="button" class="ls-btn" onclick="bluuLs.merken()">Vermutung merken</button><span class="ls-ok" role="status" id="ls-denk-ok">' + (s.gemerkt ? 'Gemerkt ✓ – am Kapitelende kommen wir darauf zurück.' : '') + '</span></div></div></div></section>';
+  };
+  const tabelle = (t) => '<div class="ls-tabelle"><table>' + (t.titel ? '<caption>' + esc(t.titel) + '</caption>' : '') + '<thead><tr>' + t.kopf.map((h) => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' + t.zeilen.map((z) => '<tr>' + z.map((c, i) => (i ? '<td>' : '<th scope="row">') + esc(c) + (i ? '</td>' : '</th>')).join('') + '</tr>').join('') + '</tbody></table></div>';
+  const abschnitte = (k, c) => '<p class="ls-lead">' + esc(c.lead) + '</p>' + c.abschnitte.map((a, i) => '<section class="ls-sec"><h2><span class="no">' + (i + 1) + '</span>' + esc(a.titel) + '</h2><p>' + esc(a.text) + '</p>' + (a.interaktiv ? ia(a.interaktiv, k) : '') + (a.tabelle ? tabelle(a.tabelle) : '') + '</section>').join('');
+  const alltag = (k, c) => '<section class="ls-card ls-alltag"><div class="ls-tag soft">' + sym('hand', 15) + ' Aus dem Alltag</div>' + (c.alltag.interaktiv ? ia(c.alltag.interaktiv, k) : '<p class="ls-alltag-text">' + esc(c.alltag.text) + '</p>') + '</section>';
+  const rueckblick = (c) => c.rueckblick ? '<section class="ls-card ls-rueck"><div class="ls-tag soft">' + sym('stern', 15) + ' ' + esc(c.rueckblick.titel) + '</div><p>' + esc(c.rueckblick.text) + '</p></section>' : '';
+  const mitmach = (k, c) => {
+    const m = c.mitmach;
+    let inner = '';
+    if (m.felder) inner += '<div class="ls-fields">' + m.felder.map(([lbl, art, opt], i) => art === 'wahl' ? '<div class="ls-fl"><span>' + esc(lbl) + '</span>' + wahl(k, 'f' + i, opt) + '</div>' : '<label class="ls-fl"><span>' + esc(lbl) + '</span>' + feld(k, 'f' + i, 'Das habe ich gefunden …') + '</label>').join('') + '</div>';
+    if (m.tabelle) inner += '<div class="ls-tabelle ls-eingabe"><table><thead><tr>' + m.tabelle.kopf.map((h) => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' + (m.tabelle.beispiel ? '<tr class="bsp">' + m.tabelle.beispiel.map((x) => '<td>' + esc(x) + '</td>').join('') + '</tr>' : '') + Array.from({ length: m.tabelle.zeilen }, (_, r) => '<tr>' + m.tabelle.kopf.map((_, cI) => '<td>' + feld(k, 't' + r + '_' + cI, '…') + '</td>').join('') + '</tr>').join('') + '</tbody></table>' + (m.tabelle.fuss ? '<p class="ls-hint">' + esc(m.tabelle.fuss) + '</p>' : '') + '</div>';
+    if (m.rechner) inner += rechner(k, m.rechner);
+    if (m.wahl) inner += '<div class="ls-fl"><span>' + esc(m.wahl[0]) + '</span>' + wahl(k, 'wahl', m.wahl[1]) + '</div>';
+    return '<section class="ls-card ls-mach"><div class="ls-tag">' + sym('lupe', 15) + ' ' + esc(m.tag) + '</div><h3>' + esc(m.titel) + '</h3><p class="ls-hint">' + esc(m.hinweis) + '</p>' + inner + bub('tipp', m.tipp, true) + '</section>';
+  };
+  const duo = (k, c) => {
+    const s = kap(k), alle = s.kann.every(Boolean);
+    return '<div class="ls-duo"><section class="ls-card ls-kurz"><h3>' + sym('stern', 16) + ' Kurz gesagt</h3><ul>' + c.kurz.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul></section>' +
+      '<section class="ls-card ls-kann"><h3>' + sym('haken', 16) + ' Das kann ich jetzt</h3><p class="ls-hint">Ich kann …</p>' + c.kann.map((x, i) => '<label class="ls-cb"><input type="checkbox"' + (s.kann[i] ? ' checked' : '') + ' onchange="bluuLs.kann(' + i + ',this.checked)"><span>' + esc(x) + '</span></label>').join('') +
+      '<div class="ls-done" id="ls-done"' + (alle ? '' : ' hidden') + '>' + wurm('freut', 48) + '<b>Kapitel ' + esc(k) + ' geschafft!</b></div></section></div>';
+  };
+  const und = (k, c) => {
+    const s = kap(k), v = (s.e.denk || '').trim() || s.e.denkWahl || '';
+    return '<section class="ls-card ls-und"><div class="ls-row">' + wurm('denkt', 52) + '<div class="ls-grow"><h3>Und?</h3><p class="ls-und-txt">' + (s.gemerkt && v ? 'Du hattest vermutet: „' + esc(v) + '“. ' : '') + esc(c.und) + '</p>' +
+      '<label class="ls-sr" for="ls-und-' + k + '">Das würde ich jetzt ergänzen</label>' + feld(k, 'und', 'Das würde ich jetzt ergänzen …', 2) + '</div></div></section>';
+  };
+  const lkSet = (k) => { try { return (typeof LERNKARTEN_SETS !== 'undefined' ? LERNKARTEN_SETS : []).find((s) => s.letter === k) || null; } catch (e) { return null; } };
+  const next = (k, c) => {
+    const n = nach(k), set = lkSet(k), hook = window.BLUU_HOOKS && typeof BLUU_HOOKS.lernskriptUebungen === 'function';
+    return '<div class="ls-next">' +
+      '<button type="button" class="ls-btn ghost" onclick="bluuLs.uebungen(' + attr(k) + ')"' + (hook || set ? '' : ' disabled title="Übungen zu ' + esc(k) + ' folgen auf der Plattform"') + '>' + sym('stift', 16) + ' Zu den Übungen ' + esc(k) + '</button>' +
+      (n ? '<button type="button" class="ls-btn" onclick="bluuLs.gehe(' + attr(n.key) + ')">Weiter zu Kapitel ' + esc(n.key) + ' ' + sym('weiter', 16) + '</button>' : '<button type="button" class="ls-btn" onclick="bluuModulReiter(\'ueberblick\')">Zur Modulübersicht ' + sym('weiter', 16) + '</button>') +
+      (vor(k) ? '<button type="button" class="ls-textlink" onclick="bluuLs.gehe(' + attr(vor(k).key) + ')">' + sym('zurueck', 14) + ' Kapitel ' + esc(vor(k).key) + '</button>' : '<button type="button" class="ls-textlink" onclick="bluuLs.gehe(\'start\')">' + sym('zurueck', 14) + ' Bevor es losgeht</button>') + '</div>';
+  };
+  const kapitelSeite = (k) => {
+    const c = kapVon(k);
+    const aufgaben = (c.mitmach.felder ? 1 : 0) + (c.mitmach.rechner ? 1 : 0) + (c.mitmach.tabelle ? 1 : 0) + (c.denk ? 1 : 0);
+    return werkzeug(k) + hero(k) +
+      '<h1 class="ls-h1"><span class="l">' + esc(k) + '</span>' + esc(c.titel) + '</h1>' +
+      '<div class="ls-meta"><span class="ls-chip">' + sym('uhr', 14) + ' Lesezeit ' + esc(c.lesezeit) + '</span><span class="ls-chip">' + sym('stift', 14) + ' ' + aufgaben + ' Mitmach-Aufgaben</span><span class="ls-chip">' + sym('monitor', 14) + ' danach: ' + esc(c.danach) + '</span></div>' +
+      bub('winkt', c.gruss) + denk(k, c) + abschnitte(k, c) + alltag(k, c) + rueckblick(c) + mitmach(k, c) + duo(k, c) + und(k, c) + bub('freut', c.abschied) + next(k, c) +
+      (k === 'I' ? '<p class="ls-foot">' + esc(D().anhang.quellen) + '</p>' : '<p class="ls-foot">Lernskript 1.1.1 · Stand ' + esc(D().stand) + '. Das Lernskript bewertet nichts – Richtig oder falsch gibt es nur in den Übungen.</p>');
+  };
+  const startSeite = () => {
+    const s = D().start, n = KAP().filter((x) => fertig(x.key)).length, weiter = KAP().find((x) => !fertig(x.key)) || KAP()[0];
+    return werkzeug('start') + hero('start') +
+      '<h1 class="ls-h1">' + esc(D().titel) + '</h1><p class="ls-lead" style="margin-top:0">' + esc(D().untertitel) + '</p>' +
+      bub('winkt', s.gruss) + '<p>' + esc(s.text) + '</p>' +
+      '<section class="ls-sec"><h2>So lernst Du mit diesem Modul</h2><ol class="ls-schritte">' + s.schritte.map(([t, x]) => '<li><b>' + esc(t) + '</b><span>' + esc(x) + '</span></li>').join('') + '</ol></section>' +
+      '<section class="ls-card ls-mach"><div class="ls-tag">' + sym('lupe', 15) + ' Leg Dir bereit</div><ul class="ls-liste">' + s.bereit.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul></section>' +
+      '<section class="ls-sec"><h2>So ist jedes Kapitel aufgebaut</h2><dl class="ls-aufbau">' + s.aufbau.map(([t, x]) => '<div><dt>' + esc(t) + '</dt><dd>' + esc(x) + '</dd></div>').join('') + '</dl></section>' +
+      '<section class="ls-card ls-alltag"><div class="ls-tag soft">' + sym('liste', 15) + ' Dein Weg</div><p class="ls-alltag-text">' + esc(s.weg) + '</p><ol class="ls-kapitelliste">' + KAP().map((x) => '<li><button type="button" class="ls-kap' + (fertig(x.key) ? ' done' : '') + '" onclick="bluuLs.gehe(' + attr(x.key) + ')"><span class="dot">' + esc(x.key) + '</span><span>' + esc(x.titel) + '</span><span class="ls-kap-meta">' + esc(x.lesezeit) + (fertig(x.key) ? ' · geschafft' : '') + '</span></button></li>').join('') + '</ol></section>' +
+      '<div class="ls-next"><button type="button" class="ls-btn" onclick="bluuLs.gehe(' + attr(weiter.key) + ')">' + (n ? 'Weiter mit Kapitel ' + esc(weiter.key) : 'Mit Kapitel A beginnen') + ' ' + sym('weiter', 16) + '</button></div>' +
+      '<p class="ls-foot">Lernskript 1.1.1 · Stand ' + esc(D().stand) + '.</p>';
+  };
+
+  /* ── Rechner in den Mitmach-Aufgaben (F, G, H, I): rechnen sofort mit, bewerten nichts ── */
+  const num = (k, name, platz, start) => { const v = kap(k).e[name]; return '<input type="text" inputmode="decimal" class="ls-num" data-ls-feld="' + esc(name) + '" placeholder="' + esc(platz || '') + '" value="' + esc(v == null ? (start == null ? '' : start) : v) + '" oninput="bluuLs.feld(this);bluuLs.rechne(' + attr(k) + ')">'; };
+  const aus = (id) => '<output class="ls-aus" id="' + id + '">–</output>';
+  function rechner(k, art) {
+    if (art === 'F') return '<div class="ls-rechner"><div class="ls-fl"><span>Zählerstand heute (kWh)</span>' + num(k, 'heute', 'z. B. 27.810') + '</div><div class="ls-fl"><span>Zählerstand morgen (kWh)</span>' + num(k, 'morgen', 'z. B. 27.818') + '</div><div class="ls-ergebnis"><div><dt>Verbrauch an einem Tag</dt>' + aus('ls-r-tag') + '</div><div><dt>Aufs Jahr gerechnet (× 365)</dt>' + aus('ls-r-jahr') + '</div></div></div>';
+    if (art === 'G') return '<div class="ls-rechner">' + [0, 1].map((i) => '<div class="ls-geraet"><label class="ls-fl"><span>Gerät ' + (i + 1) + '</span>' + feld(k, 'g' + i + 'name', 'z. B. Wasserkocher') + '</label><div class="ls-fl"><span>Leistung laut Typenschild</span><span class="ls-inline">' + num(k, 'g' + i + 'p', 'z. B. 1.800') + wahlKlein(k, 'g' + i + 'e', ['W', 'kW']) + '</span></div><div class="ls-fl"><span>Laufzeit (h)</span>' + num(k, 'g' + i + 't', 'z. B. 0,5') + '</div><div class="ls-ergebnis"><div><dt>Energie</dt>' + aus('ls-r-g' + i) + '</div></div></div>').join('') + '</div>';
+    if (art === 'H') return '<div class="ls-rechner"><div class="ls-fl"><span>Verbrauch (m³)</span>' + num(k, 'm3', '850') + '</div><div class="ls-fl"><span>Brennwert (kWh/m³)</span>' + num(k, 'bw', '10,8') + '</div><div class="ls-fl"><span>Zustandszahl</span>' + num(k, 'zz', '0,95') + '</div><div class="ls-ergebnis"><div><dt>Energie</dt>' + aus('ls-r-kwh') + '</div></div></div>';
+    if (art === 'I') return '<div class="ls-rechner"><div class="ls-fl"><span>Verbrauch (kWh)</span>' + num(k, 'kwh', 'z. B. 3.500') + '</div><div class="ls-fl"><span>Arbeitspreis (ct/kWh)</span>' + num(k, 'ap', 'z. B. 30,00') + '</div><div class="ls-fl"><span>Grundpreis im Jahr (€)</span>' + num(k, 'gp', 'z. B. 120,00') + '</div><div class="ls-ergebnis"><div><dt>Rechnungsbetrag mit 19 % Umsatzsteuer</dt>' + aus('ls-r-betrag') + '</div></div></div>';
+    return '';
+  }
+  const wahlKlein = (k, name, opt) => { const v = kap(k).e[name] || opt[0]; return '<span class="ls-wahl klein" role="group">' + opt.map((o) => '<button type="button" class="ls-chip" aria-pressed="' + (v === o) + '" onclick="bluuLs.wahl(' + attr(name) + ',' + attr(o) + ',this);bluuLs.rechne(' + attr(k) + ')">' + esc(o) + '</button>').join('') + '</span>'; };
+  const setz = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
+  function rechne(k) {
+    const e = kap(k).e;
+    if (k === 'F') { const h = zahl(e.heute), m = zahl(e.morgen); const d = m - h; setz('ls-r-tag', isFinite(d) ? fmt(d) + ' kWh' : '–'); setz('ls-r-jahr', isFinite(d) ? fmt(d * 365, 0) + ' kWh' : '–'); }
+    if (k === 'G') [0, 1].forEach((i) => { let p = zahl(e['g' + i + 'p']); if ((e['g' + i + 'e'] || 'W') === 'W') p = p / 1000; const t = zahl(e['g' + i + 't']); const en = p * t; setz('ls-r-g' + i, isFinite(en) ? fmt(p, 3) + ' kW × ' + fmt(t) + ' h = ' + fmt(en, 3) + ' kWh' : '–'); });
+    if (k === 'H') { const r = zahl(e.m3) * zahl(e.bw) * zahl(e.zz); setz('ls-r-kwh', isFinite(r) ? fmt(r, 1) + ' kWh' : '–'); }
+    if (k === 'I') { const r = (zahl(e.kwh) * zahl(e.ap) / 100 + zahl(e.gp)) * 1.19; setz('ls-r-betrag', isFinite(r) ? r.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €' : '–'); }
+  }
+
+  /* ── Interaktive Grafiken A-1 … I-1 (Nummern wie im PDF; Inhalte und Zahlen aus dem Inhaltsmodul) ── */
+  const IA = {
+    kette(nr, g) {
+      const s = u(nr, { offen: null, fliesst: false });
+      const st = g.stationen.find((x) => x[0] === s.offen);
+      return '<p class="ls-ih">' + sym('pfeil', 16) + ' ' + esc(g.hinweis) + '</p><div class="ls-chain' + (s.fliesst ? ' flowing' : '') + '"><div class="track"><span class="spark"></span><span class="spark"></span><span class="spark"></span></div>' +
+        g.stationen.map((x) => '<button type="button" class="st" aria-expanded="' + (s.offen === x[0]) + '" onclick="bluuLs.ia(' + attr(nr) + ',\'offen\',' + attr(x[0]) + ')"><b>' + esc(x[1]) + '</b><span class="ci">' + (STATION_SYM[x[0]] || []).map((n) => sym(n, 24)).join('') + '</span></button>').join('') + '</div>' +
+        '<div class="stinfo" role="status">' + (st ? esc(st[2]) : 'Wähle eine Station.') + '</div><div class="ls-btns"><button type="button" class="ls-btn ghost" onclick="bluuLs.ia(' + attr(nr) + ',\'fluss\')">' + sym(s.fliesst ? 'pause' : 'play', 15) + ' ' + (s.fliesst ? 'Strom anhalten' : 'Strom fließen lassen') + '</button></div>';
+    },
+    bilder(nr, g) {
+      const s = u(nr, { i: 0 }), n = g.bilder.length, letzte = s.i === n - 1;
+      const SZENE = {
+        windpark: '<svg viewBox="0 0 300 170" aria-hidden="true">' + windrad(90, 56, 100, 20) + windrad(170, 40, 112, 70) + '<path d="M200 120Q240 110 290 120" stroke="#243A4C" stroke-width="2" fill="none"/><circle cx="250" cy="60" r="28" fill="#F4F8C8"/><circle cx="250" cy="60" r="18" fill="#BEC60E" opacity=".9"/></svg>',
+        netz: '<svg viewBox="0 0 300 170" aria-hidden="true">' + mast(70, 40, 120) + mast(230, 40, 120) + '<path d="M46 58Q150 86 206 58M94 58Q150 88 254 58" stroke="#243A4C" stroke-width="2" fill="none"/><path d="M40 40Q150 10 260 40" stroke="#E9F07A" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round" fill="none"/></svg>',
+        baeckerei: '<svg viewBox="0 0 300 170" aria-hidden="true"><rect x="90" y="60" width="120" height="100" fill="#fff" stroke="#243A4C" stroke-width="2.6"/><path d="M84 60h132l-10 22H94Z" fill="#BEC60E" stroke="#243A4C" stroke-width="2"/><rect x="118" y="100" width="64" height="44" rx="4" fill="#243A4C"/><rect x="128" y="110" width="44" height="22" rx="3" fill="#E3A33B"/><text x="150" y="52" text-anchor="middle" font-weight="700" font-size="17" fill="#243A4C">Bäckerei</text></svg>'
+      };
+      return '<div class="ls-comic">' + g.bilder.map((b, i) => '<figure class="panel' + (i === s.i ? ' on' : '') + '"><span class="pn">' + (i + 1) + '</span>' + (SZENE[b[1]] || '') + '<figcaption>' + esc(b[0]) + '</figcaption></figure>').join('') + '</div>' +
+        '<div class="ls-cnav"><button type="button" class="ls-btn ghost" aria-label="Vorheriges Bild" onclick="bluuLs.ia(' + attr(nr) + ',\'bild\',-1)"' + (s.i === 0 ? ' disabled' : '') + '>' + sym('zurueck', 16) + '</button><span class="dots">' + g.bilder.map((_, i) => '<i' + (i === s.i ? ' class="on"' : '') + '></i>').join('') + '</span><button type="button" class="ls-btn" onclick="bluuLs.ia(' + attr(nr) + ',\'bild\',1)"' + (letzte ? ' disabled' : '') + '>Nächstes Bild ' + sym('weiter', 16) + '</button></div>' +
+        (s.gesehen || letzte ? '<p class="ls-punch">' + sym('lampe', 20) + ' ' + esc(g.pointe) + '</p>' : '');
+    },
+    treppe(nr, g) {
+      const s = u(nr, { i: 0, bewegt: false }), st = g.stufen[s.i];
+      return '<div class="ls-treppe">' + g.stufen.map((x, i) => '<div class="ls-stufe-zeile" style="--w:' + (100 - i * 15) + '%"><button type="button" class="ls-stufe" aria-pressed="' + (i === s.i) + '" onclick="bluuLs.ia(' + attr(nr) + ',\'stufe\',' + i + ')"><b>' + esc(x[1]) + '</b><span>' + esc(x[0]) + '</span></button>' + (i < g.stufen.length - 1 ? '<span class="ls-pfeil' + (s.bewegt && i === s.i - 1 ? ' bewegt' : '') + '" aria-hidden="true">↓ ' + esc(g.pfeil) + '</span>' : '') + '</div>').join('') + '</div>' +
+        '<div class="stinfo" role="status"><b>' + esc(st[1]) + '</b> · ' + esc(st[0]) + ' · ' + esc(st[2]) + ' · typisch für: ' + esc(st[3]) + '</div><p class="ls-hint">' + esc(g.fuss) + '</p>';
+    },
+    schritte(nr, g) {
+      const s = u(nr, { i: 0 }), st = g.schritte[s.i];
+      return '<div class="ls-schritte">' + g.schritte.map((x, i) => '<button type="button" class="ls-schritt' + (i < s.i ? ' war' : '') + '" aria-pressed="' + (i === s.i) + '" onclick="bluuLs.ia(' + attr(nr) + ',\'schritt\',' + i + ')"><span class="nr">' + (i + 1) + '</span><b>' + esc(x[0]) + '</b>' + (x[1] ? '<span class="kw">' + esc(x[1]) + '</span>' : '') + '</button>').join('') + '</div>' +
+        '<div class="stinfo" role="status"><b>' + esc(st[0]) + '</b>' + (st[1] ? ' · ' + esc(st[1]) : '') + ' · ' + esc(st[2]) + '</div>' +
+        '<div class="ls-btns"><button type="button" class="ls-btn ghost" onclick="bluuLs.ia(' + attr(nr) + ',\'schritt\',' + (s.i + 1) + ')"' + (s.i >= g.schritte.length - 1 ? ' disabled' : '') + '>Nächster Schritt ' + sym('weiter', 15) + '</button></div>';
+    },
+    speicher(nr, g) {
+      const s = u(nr, { zeit: 'sommer' }), sommer = s.zeit === 'sommer';
+      return '<div class="ls-wahl" role="group" aria-label="Jahreszeit"><button type="button" class="ls-chip" aria-pressed="' + sommer + '" onclick="bluuLs.ia(' + attr(nr) + ',\'zeit\',\'sommer\')">Sommer</button><button type="button" class="ls-chip" aria-pressed="' + !sommer + '" onclick="bluuLs.ia(' + attr(nr) + ',\'zeit\',\'winter\')">Winter</button></div>' +
+        '<svg class="ls-speicher" viewBox="0 0 600 220" role="img" aria-label="' + esc(sommer ? g.sommer : g.winter) + '"><rect width="600" height="110" fill="' + (sommer ? '#F4F8C8' : '#DCE6ED') + '" rx="12"/><rect y="110" width="600" height="110" fill="#CBD8E2"/><path d="M0 110H600" stroke="#243A4C" stroke-width="2"/>' + (sommer ? '<circle cx="520" cy="50" r="26" fill="#BEC60E"/>' : '<path d="M500 30l10 14h-20zM520 40l10 14h-20zM480 48l10 14h-20z" fill="#fff" stroke="#243A4C" stroke-width="1.5"/>') + '<path d="M140 220V170a90 50 0 0 1 180 0v50" fill="#EEF3F6" stroke="#243A4C" stroke-width="2.4"/><text x="230" y="195" text-anchor="middle" font-weight="700" font-size="16" fill="#243A4C">' + esc(g.titel) + '</text>' +
+        '<g class="ls-speicher-pfeil ' + s.zeit + '"><path d="' + (sommer ? 'M230 40V130' : 'M230 130V40') + '" stroke="#243A4C" stroke-width="6" stroke-linecap="round" marker-end="url(#lsPfeil)"/></g>' +
+        '<text x="400" y="60" font-size="16" fill="#243A4C">' + esc(sommer ? g.sommer : g.winter) + '</text><text x="400" y="86" font-size="13" fill="#4F6B82">' + esc(g.strom) + '</text></svg>';
+    },
+    stufen(nr, g) {
+      const s = u(nr, { i: 0 }), st = g.stufen[s.i];
+      return '<div class="ls-stufen">' + g.stufen.map((x, i) => '<button type="button" class="ls-stufe-k" aria-pressed="' + (i === s.i) + '" onclick="bluuLs.ia(' + attr(nr) + ',\'stufe\',' + i + ')"><b>' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span></button>' + (i < g.stufen.length - 1 ? '<span class="ls-welle' + (i === s.i ? ' an' : '') + '" aria-hidden="true"><svg viewBox="0 0 40 60"><path d="M10 50q6-10 0-20t0-20M24 50q6-10 0-20t0-20" fill="none" stroke="#E3A33B" stroke-width="2.4" stroke-linecap="round"/></svg><span>' + esc(g.verlust) + '</span></span>' : '')).join('') + '</div>' +
+        '<div class="stinfo" role="status"><b>' + esc(st[0]) + '</b> – ' + esc(st[1]) + ': ' + esc(st[2]) + '</div><p class="ls-hint">' + esc(g.fuss) + '</p>';
+    },
+    mix(nr, g) {
+      const s = u(nr, { jahr: '2025' }), j = s.jahr === '1990' ? 1 : 2, U0 = 2 * Math.PI * 70;
+      let off = 0;
+      const ringe = g.traeger.map((t) => { const v = t[j] || 0, len = U0 * v / 100; const r = '<circle r="70" cx="100" cy="100" fill="none" stroke="' + t[3] + '" stroke-width="30" stroke-dasharray="' + len.toFixed(1) + ' ' + U0.toFixed(1) + '" stroke-dashoffset="' + (-off).toFixed(1) + '" transform="rotate(-90 100 100)"><title>' + esc(t[0] + ' ' + prozent(t[j])) + '</title></circle>'; off += len; return r; }).join('');
+      const jahr = g.jahre.find((x) => x[0] === s.jahr);
+      return '<div class="ls-wahl" role="group" aria-label="Jahr">' + g.jahre.map((x) => '<button type="button" class="ls-chip" aria-pressed="' + (x[0] === s.jahr) + '" onclick="bluuLs.ia(' + attr(nr) + ',\'jahr\',' + attr(x[0]) + ')">' + esc(x[0]) + '</button>').join('') + '</div>' +
+        '<div class="ls-mix"><svg viewBox="0 0 200 200" class="ls-ring" role="img" aria-label="' + esc('Energiemix ' + s.jahr) + '"><circle r="70" cx="100" cy="100" fill="none" stroke="#EEF3F6" stroke-width="30"/>' + ringe + '<text x="100" y="96" text-anchor="middle" font-weight="700" font-size="22" fill="#243A4C">' + esc(jahr[0]) + '</text><text x="100" y="118" text-anchor="middle" font-size="12" fill="#4F6B82">' + esc(jahr[1]) + '</text></svg>' +
+        '<ul class="ls-legende">' + g.traeger.map((t) => '<li><i style="background:' + t[3] + '"></i><span>' + esc(t[0]) + '</span><b>' + prozent(t[j]) + '</b></li>').join('') + '</ul></div>' +
+        '<div class="ls-merk"><b>' + esc(g.hinweis[0]) + '</b> ' + esc(g.hinweis[1]) + ' <strong>' + esc(g.hinweis[2]) + '</strong> · ' + esc(g.hinweis[3]) + '</div><p class="ls-hint">' + esc(g.fuss) + '</p>';
+    },
+    edm(nr, g) {
+      const s = u(nr, { i: -1, laeuft: false });
+      const gruppe = (i) => g.gruppen.find((x) => x[1].includes(i))[0];
+      return '<div class="ls-edm">' + g.schritte.map((x, i) => '<div class="ls-edm-schritt' + (i === s.i ? ' an' : (i < s.i ? ' war' : '')) + '">' + (i === 0 || gruppe(i) !== gruppe(i - 1) ? '<span class="ls-edm-gruppe">' + esc(gruppe(i)) + '</span>' : '<span class="ls-edm-gruppe leer"></span>') + '<b>' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span>' +
+        (i === s.i ? '<span class="ls-wert">' + esc(g.wert) + '</span>' : '') + (i === 1 && s.i >= 1 ? '<span class="ls-wert falsch">278.100 kWh · zehnmal zu hoch → geklärt</span>' : '') + '</div>').join('') + '</div>' +
+        '<div class="ls-btns"><button type="button" class="ls-btn ghost" onclick="bluuLs.ia(' + attr(nr) + ',\'lauf\')"' + (s.laeuft ? ' disabled' : '') + '>' + sym('play', 15) + ' Zählerstand losschicken</button>' + (s.i >= 0 && !s.laeuft ? '<button type="button" class="ls-textlink" onclick="bluuLs.ia(' + attr(nr) + ',\'schritt\',' + (s.i + 1 < g.schritte.length ? s.i + 1 : 0) + ')">' + (s.i + 1 < g.schritte.length ? 'Nächster Schritt' : 'Von vorn') + '</button>' : '') + '</div><p class="ls-hint">' + esc(g.fuss) + '</p>';
+    },
+    leistung(nr, g) {
+      const s = u(nr, { p: g.start[0], t: g.start[1] });
+      return '<div class="ls-drei">' + g.karten.map((x, i) => '<div class="ls-k' + (i === 1 ? ' formel' : '') + '"><b>' + esc(x[0]) + '</b>' + (x[1] ? '<span class="kw">' + esc(x[1]) + '</span>' : '') + '<span>' + esc(x[2]) + '</span></div>').join('') + '</div>' +
+        '<div class="ls-regler"><label><span>Leistung: <output id="ls-g1-p">' + fmt(s.p, 1) + '</output> kW</span><input type="range" min="0.1" max="3" step="0.1" value="' + s.p + '" oninput="bluuLs.regler(' + attr(nr) + ',\'p\',this.value)"></label><label><span>Zeit: <output id="ls-g1-t">' + fmt(s.t, 1) + '</output> h</span><input type="range" min="0" max="5" step="0.1" value="' + s.t + '" oninput="bluuLs.regler(' + attr(nr) + ',\'t\',this.value)"></label></div>' +
+        '<div class="ls-merk" id="ls-g1-aus" aria-live="polite">' + esc(g.beispiel) + ': ' + fmt(s.p, 1) + ' kW × ' + fmt(s.t, 1) + ' h = <strong>' + fmt(s.p * s.t, 2) + ' kWh</strong></div>';
+    },
+    vorsaetze(nr, g) {
+      const s = u(nr, { i: 0 }), st = g.stufen[s.i];
+      return '<div class="ls-leiter">' + g.stufen.slice().reverse().map((x) => { const i = g.stufen.indexOf(x); return '<button type="button" class="ls-sprosse" aria-pressed="' + (i === s.i) + '" onclick="bluuLs.ia(' + attr(nr) + ',\'stufe\',' + i + ')"><b>' + esc(x[0]) + '</b><span>' + esc(x[1]) + '</span><span class="kw">' + esc(x[2]) + '</span></button>'; }).join('') + '</div>' +
+        '<div class="stinfo" role="status"><b>' + esc(st[1]) + ' (' + esc(st[0]) + ')</b> · ' + esc(st[2]) + ' · typische Anwendung: ' + esc(st[3]) + '</div><p class="ls-hint">' + esc(g.merke) + '</p>';
+    },
+    gasrechner(nr, g) {
+      const s = u(nr, { v: g.start[0], bw: g.start[1], zz: g.start[2] }), r = s.v * s.bw * s.zz;
+      const inp = (key, wert) => '<input type="text" inputmode="decimal" class="ls-num" value="' + esc(String(wert).replace('.', ',')) + '" oninput="bluuLs.gas(' + attr(nr) + ',' + attr(key) + ',this.value)" aria-label="' + esc(key) + '">';
+      return '<div class="ls-drei vier">' + g.karten.map((x, i) => '<div class="ls-k' + (i === 3 ? ' formel' : '') + '"><b>' + esc(x[0]) + '</b>' + (i < 3 ? inp(['v', 'bw', 'zz'][i], [s.v, s.bw, s.zz][i]) : '<output class="ls-aus" id="ls-h1-aus">' + fmt(r, 1) + '</output>') + '<span class="kw">' + esc(x[1]) + '</span><span>' + esc(x[2]) + '</span></div>').join('') + '</div>' +
+        '<div class="ls-merk" id="ls-h1-formel" aria-live="polite">' + fmt(s.v) + ' m³ × ' + fmt(s.bw, 3) + ' kWh/m³ × ' + fmt(s.zz, 4) + ' = <strong>' + fmt(r, 1) + ' kWh</strong></div><p class="ls-hint">' + esc(g.fuss) + '</p>';
+    },
+    rechnung(nr, g) {
+      const s = u(nr, { i: null }), erk = g.erklaerung.find((x) => x[0] === s.i);
+      return '<div class="ls-rechnung"><div class="ls-rechnung-kopf"><b>' + esc(g.kopf[0]) + '</b><span>' + esc(g.kopf[1]) + '</span></div><table>' + g.zeilen.map((z) => '<tr' + (z[0] && z[0] === s.i ? ' class="an"' : '') + '><td class="nr">' + (z[0] ? '<button type="button" class="ls-nr" aria-pressed="' + (z[0] === s.i) + '" onclick="bluuLs.ia(' + attr(nr) + ',\'nr\',' + attr(z[0]) + ')" aria-label="' + esc('Erklärung ' + z[0]) + '">' + esc(z[0]) + '</button>' : '') + '</td><td>' + esc(z[1]) + '</td><td class="rechnung">' + esc(z[2]) + '</td><td class="wert">' + esc(z[3]) + '</td></tr>').join('') + '</table><p class="ls-hint">' + esc(g.fuss) + '</p></div>' +
+        '<div class="stinfo" role="status">' + (erk ? '<b>' + esc(erk[0] + ' · ' + erk[1]) + '</b> · ' + esc(erk[2]) : 'Klick auf eine Nummer 1 bis 5 – die Erklärung blendet sich ein.') + '</div>';
+    }
+  };
+  const ia = (nr, k) => { const g = D().interaktiv[nr]; if (!g || !IA[g.art]) return ''; return '<div class="ls-ia" id="ls-ia-' + esc(nr) + '" data-ls-ia="' + esc(nr) + '"><span class="ls-ia-nr">interaktiv ' + esc(nr) + '</span>' + IA[g.art](nr, g) + '</div>'; };
+  const iaNeu = (nr) => { const el = document.getElementById('ls-ia-' + nr); const g = D().interaktiv[nr]; if (el && g) el.innerHTML = '<span class="ls-ia-nr">interaktiv ' + esc(nr) + '</span>' + IA[g.art](nr, g); };
+
+  /* ── Rendern ── */
+  function render(m, el) {
+    laden();
+    const k = S.kapitel === 'start' || kapVon(S.kapitel) ? S.kapitel : 'start';
+    el.innerHTML = '<div class="ls" style="--ls-fs:' + [18, 20, 22][S.fs] + 'px">' + rail(k) + '<div class="ls-main">' + (k === 'start' ? startSeite() : kapitelSeite(k)) + '</div></div>';
+    if (k !== 'start') rechne(k);
+  }
+  const neuZeichnen = () => { if (window.bluuModulReiter) bluuModulReiter('lernskript'); };
+  window.bluuLernskriptRender = function (m, el) {
+    if (!m || m.lernskript !== '1.1.1' || !D()) return false;
+    aktuellerCode = m.code || m.thema;
+    render(m, el);
+    return true;
+  };
+  window.bluuLernskriptStand = function (m) {
+    if (!m || m.lernskript !== '1.1.1' || !D()) return null;
+    laden();
+    const kapitel = KAP().map((x) => ({ key: x.key, titel: x.titel, lesezeit: x.lesezeit, fertig: fertig(x.key) }));
+    const naechstes = kapitel.find((x) => !x.fertig) || null;
+    return { n: kapitel.length, fertig: kapitel.filter((x) => x.fertig).length, kapitel, naechstes, titel: D().titel };
+  };
+  window.bluuLsOeffnen = function (key, code) {
+    laden(); S.kapitel = key || S.kapitel; speichern(); U = {};
+    if (code && window.bluuModulOeffnenCode) bluuModulOeffnenCode(code);
+    neuZeichnen();
+  };
+  window.bluuLs = {
+    gehe(key) { laden(); S.kapitel = key; speichern(); U = {}; neuZeichnen(); const el = document.getElementById('modul-reiter'); if (el) el.scrollIntoView({ behavior: ruhig() ? 'auto' : 'smooth', block: 'start' }); },
+    schrift(d) { laden(); S.fs = Math.max(0, Math.min(2, S.fs + d)); speichern(); const el = document.querySelector('.ls'); if (el) el.style.setProperty('--ls-fs', [18, 20, 22][S.fs] + 'px'); },
+    feld(el) { const k = S.kapitel; kap(k).e[el.getAttribute('data-ls-feld')] = el.value; speichern(); },
+    wahl(name, wert, btn) { const k = S.kapitel; kap(k).e[name] = wert; speichern(); const grp = btn.parentElement; grp.querySelectorAll('.ls-chip').forEach((b) => b.setAttribute('aria-pressed', String(b === btn))); },
+    merken() { const k = S.kapitel, s = kap(k), v = (s.e.denk || '').trim() || s.e.denkWahl; s.gemerkt = !!v; speichern(); setz('ls-denk-ok', v ? 'Gemerkt ✓ – am Kapitelende kommen wir darauf zurück.' : 'Schreib zuerst ein paar Worte.'); const und = document.querySelector('.ls-und-txt'); if (und && v) und.textContent = 'Du hattest vermutet: „' + v + '“. ' + kapVon(k).und; },
+    kann(i, an) {
+      const k = S.kapitel, s = kap(k); s.kann[i] = !!an; speichern();
+      const alle = s.kann.every(Boolean), done = document.getElementById('ls-done'); if (done) done.hidden = !alle;
+      const node = document.querySelector('.ls-node.cur'); if (node) node.classList.toggle('done', alle);
+      const stand = document.querySelector('.ls-rail-stand'); if (stand) stand.textContent = KAP().filter((x) => fertig(x.key)).length + ' von ' + KAP().length + ' Kapiteln geschafft';
+      if (alle && !s.gemeldet) { s.gemeldet = true; speichern(); melden('kapitel_abgeschlossen', { kapitel: k }); }
+      if (window.bluuWeiter) try { bluuWeiter(); } catch (e) {}
+    },
+    uebungen(k) {
+      melden('zu_uebungen', { kapitel: k });
+      if (window.BLUU_HOOKS && typeof BLUU_HOOKS.lernskriptUebungen === 'function') { BLUU_HOOKS.lernskriptUebungen('1.1.1', k); return; }
+      const set = lkSet(k);
+      if (set && window.bluuLkOeffnen) { bluuLkOeffnen(set.key, aktuellerCode); return; }
+      if (window.bluuModulReiter) bluuModulReiter('uebungen');
+    },
+    rechne,
+    regler(nr, key, v) { const s = u(nr, {}); s[key] = parseFloat(v); setz('ls-g1-' + key, fmt(s[key], 1)); const g = D().interaktiv[nr]; const el = document.getElementById('ls-g1-aus'); if (el) el.innerHTML = esc(g.beispiel) + ': ' + fmt(s.p, 1) + ' kW × ' + fmt(s.t, 1) + ' h = <strong>' + fmt(s.p * s.t, 2) + ' kWh</strong>'; },
+    gas(nr, key, v) { const s = u(nr, {}); const n = zahl(v); s[key] = isFinite(n) ? n : 0; const r = s.v * s.bw * s.zz; setz('ls-h1-aus', fmt(r, 1)); const el = document.getElementById('ls-h1-formel'); if (el) el.innerHTML = fmt(s.v) + ' m³ × ' + fmt(s.bw, 3) + ' kWh/m³ × ' + fmt(s.zz, 4) + ' = <strong>' + fmt(r, 1) + ' kWh</strong>'; },
+    ia(nr, aktion, wert) {
+      const s = u(nr, {}), g = D().interaktiv[nr];
+      if (aktion === 'offen') s.offen = s.offen === wert ? null : wert;
+      else if (aktion === 'fluss') s.fliesst = !s.fliesst;
+      else if (aktion === 'bild') { s.i = Math.max(0, Math.min(g.bilder.length - 1, (s.i || 0) + wert)); if (s.i === g.bilder.length - 1) s.gesehen = true; }
+      else if (aktion === 'stufe') { s.bewegt = wert !== s.i; s.i = wert; }
+      else if (aktion === 'schritt') { s.i = wert; s.laeuft = false; }
+      else if (aktion === 'zeit') s.zeit = wert;
+      else if (aktion === 'jahr') s.jahr = wert;
+      else if (aktion === 'nr') s.i = s.i === wert ? null : wert;
+      else if (aktion === 'lauf') {
+        s.i = 0;
+        if (ruhig()) { s.i = g.schritte.length - 1; iaNeu(nr); return; }
+        s.laeuft = true; let i = 0;
+        const tick = () => { i += 1; if (i >= g.schritte.length) { s.laeuft = false; iaNeu(nr); return; } s.i = i; iaNeu(nr); setTimeout(tick, i === 1 ? 1600 : 1000); };
+        setTimeout(tick, 1000);
+      }
+      iaNeu(nr);
+    }
+  };
+})();
+</script>
+<!-- BLUU-LERNSKRIPT:ENDE --></body>
 </html>
