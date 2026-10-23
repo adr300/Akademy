@@ -1838,6 +1838,26 @@ html{overflow-x:clip;}
 .hero-streak{color:#C7D5E1;}
 /* Phase 2: nächster Schritt im Modul-Hero */
 .hero-aktion{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;}
+/* Phase 3: Katalog — Filterleiste mit Zählern, Programm-Zeile in der Karte, Register ohne Detail, Lektionen eingeklappt */
+.modul-filter button small{font-weight:400;opacity:.7;margin-left:4px;}
+.modul-programm{margin:8px 0 0;font-size:13px;color:var(--text2);}
+.modul-gruppe-text{margin:-6px 0 14px;max-width:70ch;}
+.zert-grid.nur-register{grid-template-columns:minmax(0,1fr);}
+.zert-grid.nur-register .programm-zeile{cursor:pointer;}
+.lektionen-hinweis{margin:14px 0 0;font-size:14px;color:var(--text2);}
+/* Phase 4: «Ihr Stand» in der Erfolge-Seite */
+.stand-im-profil{padding:0;margin:0 0 28px;background:none;}
+.stand-im-profil .bluu-h2{font-size:26px;}
+.stand-im-profil .bluu-lead{margin-bottom:14px;}
+/* Phase 6: Admin-Sidebar nach Aufgaben, Untergruppe «Anlegen & Import» */
+.sidebar-untergruppe .sidebar-pfeil{margin-left:auto;font-size:11px;color:var(--text3);transition:transform var(--d-base,.2s);}
+.sidebar-untergruppe[aria-expanded="true"] .sidebar-pfeil{transform:rotate(180deg);}
+.sidebar-unter{padding-left:14px;border-left:2px solid var(--border);margin:2px 0 4px 12px;}
+/* Phase 7: Rückweg ins Modul auf Folien, Test und Ergebnis */
+#bluu-zurueck-modul{position:fixed;left:max(16px,calc(50vw - 600px));top:88px;z-index:60;display:none;}
+#bluu-zurueck-modul.sichtbar{display:block;}
+#bluu-zurueck-modul .bluu-zurueck{background:var(--bg2);border:1px solid var(--border2);color:var(--text);padding:8px 14px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 8px 20px -12px rgba(0,0,0,.4);}
+@media(max-width:900px){#bluu-zurueck-modul{top:auto;bottom:16px;left:16px;}}
 .modul-reiter{display:flex;flex-wrap:wrap;gap:4px 26px;border-bottom:1px solid var(--border);}
 .modul-reiter button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 0 12px;font:inherit;font-size:15px;font-weight:500;color:var(--text2);cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
 .modul-reiter button:hover{color:var(--text);}
@@ -1951,6 +1971,10 @@ html{overflow-x:clip;}
 .erfolge-filter button:hover{border-color:var(--text3);color:var(--text);}
 .erfolge-filter button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#FFFFFF;}
 .erfolge-katalog{display:flex;flex-direction:column;gap:28px;}
+.erfolge-gruppe.zu .erfolge-grid{display:none;}
+button.erfolge-gruppe-kopf{width:100%;background:none;border:0;padding:0;font:inherit;color:inherit;cursor:pointer;text-align:left;}
+.erfolge-gruppe-kopf .pfeil{display:inline-block;font-style:normal;margin-left:6px;transition:transform .2s;}
+.erfolge-gruppe.zu .erfolge-gruppe-kopf .pfeil{transform:rotate(-90deg);}
 .erfolge-gruppe{display:flex;flex-direction:column;gap:14px;}
 .erfolge-gruppe-kopf{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--border);padding-bottom:8px;}
 .erfolge-gruppe-kopf h3{margin:0;font-family:var(--disp);font-stretch:108%;font-size:18px;font-weight:700;color:var(--text);}
@@ -2266,6 +2290,26 @@ html{overflow-x:clip;}
 .chat-hinweis{margin:0;padding:0 14px 10px;font-size:11px;line-height:1.4;color:var(--fg-3);background:var(--sf-1);flex-shrink:0;}
 .chat-bubble.ai:not(.typing){border-left:3px solid var(--lime);}
 .chat-msg-row:first-child .chat-bubble.ai{border-left-width:1px;border-left-color:var(--ln);}
+/* Phase 5 (Plan 23.10.2026): Suche und A–Z bleiben beim Scrollen stehen, Kategorien ebenso; Einträge als Zeilen,
+   Erklärung klappt auf (bei Suche sofort offen); Register alphabetisch mit Buchstaben-Marken */
+.wiki-werkzeug{flex-basis:100%;position:sticky;top:73px;z-index:5;display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding:12px 0;margin-top:-12px;background:var(--sf-0,var(--bg));border-bottom:1px solid var(--ln);}
+.wiki-werkzeug .wiki-suche{margin:0;flex:1 1 320px;height:46px;max-width:none;border:1px solid var(--ln);}
+.wiki-az{display:flex;flex-wrap:wrap;gap:2px;}
+.wiki-az button{min-width:28px;height:28px;border:0;border-radius:6px;background:transparent;font:inherit;font-size:12px;font-weight:600;color:var(--fg-2);cursor:pointer;}
+.wiki-az button:hover{background:var(--sf-2);color:var(--fg);}
+.wiki-az button[disabled]{opacity:.3;cursor:default;}
+.wiki-kategorien{position:sticky;top:150px;align-self:flex-start;max-height:calc(100vh - 170px);overflow:auto;}
+.wiki-liste{grid-template-columns:minmax(0,1fr);}
+.wiki-buchstabe{position:sticky;top:146px;z-index:2;margin:0;padding:10px 16px 6px;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.08em;color:var(--fg-3);background:var(--sf-0,var(--bg));border-bottom:1px solid var(--ln);}
+.begriff{cursor:pointer;padding:14px 16px;flex-direction:row;flex-wrap:wrap;align-items:baseline;gap:4px 14px;}
+.begriff-kopf{flex:0 0 auto;gap:10px;}
+.begriff h2{font-size:22px;}
+.begriff-lang{flex:1 1 240px;font-size:15px;}
+.begriff p{display:none;flex-basis:100%;padding-top:4px;}
+.begriff.offen p,.wiki-liste.suche .begriff p{display:block;}
+.begriff::after{content:'▾';flex:none;margin-left:auto;font-size:12px;color:var(--fg-3);transition:transform .2s;}
+.begriff.offen::after{transform:rotate(180deg);}
+@media(max-width:900px){.wiki-werkzeug{top:62px;}.wiki-kategorien{position:static;max-height:none;overflow:visible;}.wiki-buchstabe{top:150px;}}
 @media (prefers-reduced-motion:reduce){.begriff,.begriff h2 .kurz,.wiki-kat{transition:none;}.begriff:hover h2 .kurz{transform:none;}}
 @media(max-width:900px){.wiki-kategorien{max-width:none;flex-direction:row;flex-wrap:wrap;border-top:0;gap:6px;}.wiki-kategorien>span{width:100%;padding-left:0;}.wiki-kat{border:1px solid var(--ln-2);border-radius:999px;min-height:34px;padding:0 12px;font-size:13px;}.wiki-kat .zahl{display:none;}}
 @media(max-width:640px){.hero.hero-band.hero-wiki .hero-band-inhalt{padding-top:36px;padding-bottom:36px;}.wiki-suche{height:48px;margin-top:22px;}.wiki-koerper{padding-top:28px;gap:24px;}.begriff{padding:18px 8px;}.begriff h2{font-size:28px;}}
@@ -11196,7 +11240,9 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     return '<article class="modul-karte ' + ZUGANG[z].klasse + (klickbar ? ' klickbar' : '') + '"' + (klickbar ? ' onclick="bluuModulOeffnen(' + i + ')"' : '') + '>' +
       '<div class="kachel-kopf"><span class="bluu-kachel">' + B('PfadIcon', { motiv: m.motiv || 'energie', status: offen && hatInhalt ? (pct === 100 ? 'fertig' : (pct ? 'aktiv' : 'neu')) : 'neu', fortschritt: pct, groesse: 40 }) + '</span>' +
       '<div><span class="kachel-label">Modul · ' + esc(f.kurz) + '</span><h3 class="kachel-titel">' + esc(modulTitel(m)) + '</h3></div>' + zugangChip(z) + '</div>' +
-      (m.beschreibung ? '<p class="kachel-text">' + esc(m.beschreibung) + '</p>' : (lp ? '<p class="modul-bezug">Teil des Programms «' + esc(lp.title) + '»</p>' : '')) +
+      (m.beschreibung ? '<p class="kachel-text">' + esc(m.beschreibung) + '</p>' : '') +
+      /* Phase 3: Programm und Zertifikat stehen in der Karte — eine Zeile, keine eigene Sektion nötig */
+      (hatInhalt ? '<p class="modul-programm">' + (lp ? 'Programm «' + esc(lp.title) + '» · Zertifikat nach dem Abschlusstest' + (lp.is_published === false ? ' <span class="zugang-chip zugang-geplant">Entwurf</span>' : '') : 'Kein Programm · kein Zertifikat') + '</p>' : '') +
       (meta ? '<p class="modul-meta">' + esc(meta) + '</p>' : '<p class="modul-meta leise">' + esc(ZUGANG[z].text) + '</p>') +
       (offen && pct ? '<div class="pfad-balken"><div style="width:' + pct + '%;background:' + (pct === 100 ? 'var(--lime)' : bluuMotivFarbe(m.motiv || 'energie')) + '"></div></div>' : '') +
       '<div class="kachel-fuss">' +
@@ -11215,9 +11261,11 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     if (!z.some((x) => String(x.lp.id) === programmWahl)) programmWahl = String((z.find((x) => x.pct < 100) || z[0]).lp.id);
     const g = z.find((x) => String(x.lp.id) === programmWahl);
     const statusVon = (x) => (x.pct === 100 ? 'fertig' : (x.fertig ? 'inarbeit' : 'neu'));
+    /* Phase 3: Register ohne Detail-Panel — ein Klick öffnet das Modul, das das Programm trägt (Detail lebt dort) */
+    zg.classList.add('nur-register');
     const register = '<div class="programm-register"><div class="programm-kopf"><span>Programm</span><span>Lektionen</span><span>Fortschritt</span></div>' + z.map((x) => {
-      const st = statusVon(x), sel = String(x.lp.id) === programmWahl;
-      return '<button type="button" class="programm-zeile" aria-pressed="' + sel + '" style="--farbe:' + x.farbe + ';--toenung:' + mix(x.farbe, '#FFFFFF', 0.92) + ';--toenung-dunkel:' + mix(x.farbe, '#1B2E3E', 0.8) + ';--ton:' + mix(x.farbe, '#1B2E3E', 0.35) + ';--ton-dunkel:' + mix(x.farbe, '#FFFFFF', 0.55) + '" onclick="bluuProgrammWaehlen(' + esc(JSON.stringify(String(x.lp.id))) + ')">' +
+      const st = statusVon(x), sel = false;
+      return '<button type="button" class="programm-zeile" aria-pressed="' + sel + '" style="--farbe:' + x.farbe + ';--toenung:' + mix(x.farbe, '#FFFFFF', 0.92) + ';--toenung-dunkel:' + mix(x.farbe, '#1B2E3E', 0.8) + ';--ton:' + mix(x.farbe, '#1B2E3E', 0.35) + ';--ton-dunkel:' + mix(x.farbe, '#FFFFFF', 0.55) + '" onclick="bluuPfadOeffnen(' + esc(JSON.stringify(String(x.lp.id))) + ')">' +
         '<span class="programm-name"><span class="bdg ' + ({ fertig: 't2', inarbeit: 't1', neu: 't0' }[st]) + '">' + B('PfadIcon', { motiv: x.motiv, status: st === 'inarbeit' ? 'aktiv' : st, fortschritt: x.pct, groesse: 44 }) + '</span><span class="programm-titel">' + esc(x.lp.title) + (x.entwurf ? ' <span class="zugang-chip zugang-geplant">Entwurf</span>' : '') + '</span></span>' +
         '<span class="programm-kurse">' + x.fertig + ' / ' + x.n + '</span>' +
         '<span class="programm-fortschritt"><span class="pfad-balken"><span style="width:' + x.pct + '%;background:' + (x.pct === 100 ? 'var(--lime)' : x.farbe) + '"></span></span><span class="programm-prozent">' + x.pct + ' %</span></span></button>';
@@ -11244,7 +11292,8 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
         : (next >= 0 ? '<button type="button" class="kachel-btn primaer" onclick="bluuKursStarten(' + schritte[next].id + ')">' + esc(kurz(schritte[next].name)) + ' starten <span class="pfeil">↗</span></button>' : '')) +
       (m ? '<button type="button" class="kachel-btn" onclick="bluuPfadOeffnen(' + esc(JSON.stringify(String(g.lp.id))) + ')">Zum Modul</button>' : '') +
       '</div></div></aside>';
-    zg.innerHTML = register + detail;
+    void detail;
+    zg.innerHTML = register;
   }
   let suche = '';
   window.renderModulKatalog = function () {
@@ -11269,24 +11318,42 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     /* Programme & Zertifikate: Register + Detail wie Canvas «Lernpfade» (Adrians Lernpfade) */
     renderProgramme(z);
 
+    /* Phase 3: Fachbereiche sind die Filterleiste (mit Zähler), keine eigene Kartenreihe mehr */
     const fl = document.getElementById('modul-filter');
-    if (fl) fl.innerHTML = BEREICHE.map(([k, n]) => '<button type="button" aria-pressed="' + (filter === k) + '" onclick="bluuModulFilter(' + esc(JSON.stringify(k)) + ')">' + n + '</button>').join('');
+    if (fl) fl.innerHTML = BEREICHE.map(([k, n]) => { const z = k === 'alle' ? sichtbar.length : sichtbar.filter((m) => m.bereich === k).length; return '<button type="button" aria-pressed="' + (filter === k) + '" onclick="bluuModulFilter(' + esc(JSON.stringify(k)) + ')">' + n + ' <small>' + z + '</small></button>'; }).join('');
 
-    /* Module, gruppiert nach Fachbereich */
+    /* Module, gruppiert nach Fachbereich; gefiltert steht der Satz des Fachbereichs über der Gruppe */
     const mg = document.getElementById('modul-grid');
     if (mg) mg.innerHTML = BLUU_FACHBEREICHE.filter((f) => filter === 'alle' || f.key === filter).map((f) => {
       const mods = sichtbar.filter((m) => m.bereich === f.key);
+      if (!mods.length && filter === 'alle') return '';
       return '<section class="modul-gruppe" aria-label="' + esc(f.name) + '"><h3 class="modul-gruppe-titel"><span class="bluu-kachel">' + B('PfadIcon', { motiv: f.motiv || 'energie', status: 'aktiv', fortschritt: 0, groesse: 28 }) + '</span>' + esc(f.name) + '<small>' + mods.length + (mods.length === 1 ? ' Modul' : ' Module') + '</small></h3>' +
+        (filter !== 'alle' ? '<p class="kachel-text modul-gruppe-text">' + esc(f.text) + '</p>' : '') +
         '<div class="modul-raster">' + (mods.length ? mods.map(modulKachel).join('') : '<div class="bluu-leer">Noch kein Modul in diesem Fachbereich.</div>') + '</div></section>';
     }).join('');
 
-    /* Alle Lektionen (Block BLUU-INHALT kennt Adrians Kurse) */
+    /* Alle Lektionen: eingeklappt — Suche immer sichtbar, die Liste erst bei Eingabe oder «Alle anzeigen» */
     const ll = document.getElementById('lektionen-liste');
-    if (ll) ll.innerHTML = window.bluuLektionen ? bluuLektionen(suche) : '<div class="lektionen-leer">Lektionen werden geladen …</div>';
+    if (ll) {
+      if (suche || lektionenOffen) ll.innerHTML = (window.bluuLektionen ? bluuLektionen(suche) : '<div class="lektionen-leer">Lektionen werden geladen …</div>') + (lektionenOffen && !suche ? '<p class="lektionen-hinweis"><button type="button" class="bluu-textlink" onclick="bluuLektionenAlle(false)">Liste einklappen ↑</button></p>' : '');
+      else ll.innerHTML = '<p class="lektionen-hinweis">' + alleKurse.length + ' Lektionen in ' + sichtbar.filter((m) => m.status === 'freigeschaltet').length + ' Modulen. Suche oben – oder <button type="button" class="bluu-textlink" onclick="bluuLektionenAlle(true)">alle anzeigen ↓</button></p>';
+    }
   };
+  let lektionenOffen = false;
+  window.bluuLektionenAlle = function (auf) { lektionenOffen = !!auf; renderModulKatalog(); if (!auf) { const el = document.getElementById('lektionen-titel'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); } };
   window.bluuModulFilter = function (k, scrollen) {
     filter = k; renderModulKatalog();
     if (scrollen) setTimeout(() => { const el = document.getElementById('module-titel'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 40);
+  };
+  /* Phase 3: Katalog ordnen — Module zuerst, dann Programme als Register, dann die eingeklappte Lektionsliste;
+     die Fachbereich-Karten entfallen (Filterleiste), der Fachbereich-Bildschirm wird zum Filter */
+  window.bluuKatalogOrdnen = function () {
+    const sek = (id) => { const h = document.getElementById(id); return h ? h.closest('section') : null; };
+    const fach = sek('fach-titel'), prog = sek('zert-titel'), mod = sek('module-titel'), lekt = sek('lektionen-titel');
+    if (!fach || !prog || !mod || !lekt || fach.dataset.geordnet) return;
+    fach.dataset.geordnet = '1'; fach.style.display = 'none';
+    mod.insertAdjacentElement('afterend', prog); prog.insertAdjacentElement('afterend', lekt);
+    const lead = prog.querySelector('.bluu-lead'); if (lead) lead.textContent = 'Ein Programm ist Adrians Lernpfad: Lektionen in Reihenfolge, am Ende Abschlusstest und Zertifikat. Klick öffnet das Modul, zu dem das Programm gehört.';
   };
   window.bluuLektionenSuche = function (text) {
     suche = String(text || '').trim();
@@ -11392,10 +11459,11 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
   /* ── Fachbereich-Detail: Programme und Module eines Fachbereichs (eigene Ansicht, aus den Daten) ── */
   let aktuellerFach = null;
   window.bluuFachOeffnen = function (key) {
+    /* Phase 3: kein eigener Fachbereich-Bildschirm mehr — der Katalog wird gefiltert und zu den Modulen gescrollt */
     aktuellerFach = key;
-    renderFach();
-    showScreen('screen-fach');
-    setNavActive('module');
+    filter = key;
+    navGoModule();
+    setTimeout(() => { const el = document.getElementById('module-titel'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 40);
   };
   function renderFach() {
     const f = fachVon(aktuellerFach), el = document.getElementById('fach-kopf'), inhalt = document.getElementById('fach-inhalt');
@@ -11675,7 +11743,13 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     meine.insertAdjacentElement('afterend', band);
     const ziel = band.querySelector('#bluu-fristen');
     ['deadline-banner', 'user-timeline-wrap'].forEach((id) => { const e = document.getElementById(id); if (e) ziel.appendChild(e); });
-    if (profil) { stand.classList.add('stand-im-profil'); profil.insertAdjacentElement('afterbegin', stand); }
+    /* Phase 4: in der Erfolge-Seite rechts oben (Kennzahlen, Streak, Zuletzt verdient), die Titel-Liste wandert ans Ende */
+    if (profil) {
+      stand.classList.add('stand-im-profil');
+      const rechts = profil.querySelector('.screen-profile-inner > div:nth-child(2)');
+      if (rechts) { rechts.insertAdjacentElement('afterbegin', stand); const titel = rechts.querySelector('.stand-im-profil + div'); if (titel && titel.querySelector('.sec-title')) rechts.appendChild(titel); }
+      else profil.insertAdjacentElement('afterbegin', stand);
+    }
     bluuFristen();
   };
   window.bluuFristen = function () {
@@ -11685,7 +11759,65 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     const hat = (dl && dl.classList.contains('show')) || (tl && tl.style.display !== 'none' && tl.innerHTML.trim());
     band.classList.toggle('hat-inhalt', !!hat);
   };
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => bluuUebersichtOrdnen()); else bluuUebersichtOrdnen();
+  /* ── Phase 6: Admin/Manager nach Aufgaben ordnen — Inhalte · Personen · Auswertung; Anlegen & Import als
+        eingeklappte Untergruppe. Nur Anordnung der vorhandenen Tasten (Rollen, Reiter und Funktionen bleiben). ── */
+  window.bluuAdminOrdnen = function () {
+    const side = document.querySelector('.admin-sidebar');
+    if (!side || side.dataset.geordnet) return;
+    const taste = (tab) => side.querySelector('.sidebar-item[data-tab="' + tab + '"]');
+    const GRUPPEN = [
+      ['Inhalte', ['inhalte', 'struktur', 'courses', 'paths', 'simulators'], ['ki', 'ai-import', 'import']],
+      ['Personen', ['superadmin', 'teams', 'assignments', 'zeitplan'], []],
+      ['Auswertung', ['progress', 'analytics', 'leaderboard', 'reports', 'reflections'], []]
+    ];
+    if (!GRUPPEN.every(([, tabs]) => tabs.some(taste))) return;
+    const alt = [...side.querySelectorAll('.sidebar-group')];
+    const neu = GRUPPEN.map(([name, tabs, unter]) => {
+      const g = document.createElement('div'); g.className = 'sidebar-group'; g.setAttribute('data-role', 'manager-up'); g.id = 'sg-bluu-' + name.toLowerCase();
+      g.innerHTML = '<div class="sidebar-group-label">' + name + '</div><div class="sidebar-items-row"></div>';
+      const row = g.querySelector('.sidebar-items-row');
+      tabs.forEach((t) => { const b = taste(t); if (b) row.appendChild(b); });
+      if (unter.length && unter.some(taste)) {
+        const auf = document.createElement('button'); auf.type = 'button'; auf.className = 'sidebar-item sidebar-untergruppe'; auf.setAttribute('aria-expanded', 'false');
+        auf.innerHTML = '<span class="sidebar-icon">＋</span><span class="sidebar-label">Anlegen &amp; Import</span><span class="sidebar-pfeil">▾</span>';
+        const box = document.createElement('div'); box.className = 'sidebar-unter'; box.hidden = true;
+        unter.forEach((t) => { const b = taste(t); if (b) box.appendChild(b); });
+        auf.onclick = () => { const offen = box.hidden; box.hidden = !offen; auf.setAttribute('aria-expanded', String(offen)); };
+        row.appendChild(auf); row.appendChild(box);
+      }
+      return g;
+    });
+    alt.forEach((g) => { if (!g.querySelector('.sidebar-item')) g.remove(); });
+    neu.forEach((g) => side.appendChild(g));
+    /* Sind Tasten übrig geblieben (neue Reiter von Adrian), bleiben sie in ihrer alten Gruppe sichtbar */
+    side.dataset.geordnet = '1';
+  };
+  /* Beim Öffnen eines Import-Reiters die Untergruppe aufklappen, damit die aktive Taste sichtbar ist */
+  const altAdminTab2 = window.adminTab;
+  if (typeof altAdminTab2 === 'function') window.adminTab = function (tab) { altAdminTab2.apply(this, arguments); const b = document.querySelector('.sidebar-unter .sidebar-item[data-tab="' + tab + '"]'); if (b) { const box = b.closest('.sidebar-unter'); box.hidden = false; const auf = box.previousElementSibling; if (auf) auf.setAttribute('aria-expanded', 'true'); } };
+
+  /* ── Phase 7: Rückwege — aus Folien, Test und Ergebnis zurück ins Modul, aus dem die Lektion gestartet wurde ── */
+  window.bluuModulKontext = null;
+  const kontextLeiste = () => {
+    let el = document.getElementById('bluu-zurueck-modul');
+    if (!el) { el = document.createElement('div'); el.id = 'bluu-zurueck-modul'; el.innerHTML = '<button type="button" class="bluu-zurueck" onclick="bluuZurueckInsModul()">← Zum Modul</button>'; document.body.appendChild(el); }
+    return el;
+  };
+  window.bluuZurueckInsModul = function () { const c = window.bluuModulKontext; if (c) bluuModulOeffnenCode(c); else if (typeof showDash === 'function') showDash(); };
+  window.bluuKontextZeigen = function () {
+    const el = kontextLeiste();
+    const aktiv = document.querySelector('#view-user .screen.active');
+    const lern = aktiv && ['screen-slides', 'screen-quiz', 'screen-result'].includes(aktiv.id);
+    el.classList.toggle('sichtbar', !!(lern && window.bluuModulKontext));
+    const cta = document.getElementById('res-cta');
+    if (cta && window.bluuModulKontext && aktiv && aktiv.id === 'screen-result') { cta.textContent = 'Zum Modul'; cta.onclick = bluuZurueckInsModul; }
+  };
+  nach('showScreen', () => bluuKontextZeigen());
+  nach('showResult', () => bluuKontextZeigen());
+  ['navGoOverview', 'navGoModule', 'navGoWiki', 'navGoProfile', 'navGoAdmin', 'showDash'].forEach((n) => nach(n, () => { const modulAktiv = document.getElementById('screen-modul'); if (!(modulAktiv && modulAktiv.classList.contains('active'))) window.bluuModulKontext = null; bluuKontextZeigen(); }));
+
+  const ordnen = () => { bluuUebersichtOrdnen(); bluuKatalogOrdnen(); bluuAdminOrdnen(); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ordnen); else ordnen();
   /* Übersicht sofort zeigen: Adrians navGoOverview wechselt erst am Ende von showDash (nach mehreren
      Datenbankabfragen) die Ansicht — bei langsamer oder fehlender Verbindung wirkt die Navigation hängend. */
   const altUebersicht = window.navGoOverview;
@@ -11821,6 +11953,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
   }
 
   let filter = 'alle';
+  let offeneKats = new Set();
   function karte(x) {
     const tier = x.erreicht ? 't' + Math.max(x.hex ? 2 : 1, x.stufe) : 't0';
     const svg = window.bluu ? bluu('Abzeichen', { zeichen: x.zeichen, form: x.hex ? 'sechseck' : 'kreis', stufe: x.stufe, farbe: x.farbe, zustand: x.erreicht ? 'erreicht' : 'gesperrt', groesse: 96, animiert: 'nein' }) : '';
@@ -11855,7 +11988,9 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
       const l = sicht.filter((x) => x.kat === kat);
       if (!l.length) return '';
       const inKat = liste.filter((x) => x.kat === kat);
-      return '<section class="erfolge-gruppe"><div class="erfolge-gruppe-kopf"><h3>' + kat + '</h3><span>' + inKat.filter((x) => x.erreicht).length + ' / ' + inKat.length + '</span></div><div class="erfolge-grid">' + l.map(karte).join('') + '</div></section>';
+      /* Phase 4: Kategorien eingeklappt (Zähler sichtbar), aufklappbar; bei Filter «erreicht»/«offen» offen */
+      const zu = filter === 'alle' && !offeneKats.has(kat);
+      return '<section class="erfolge-gruppe' + (zu ? ' zu' : '') + '"><button type="button" class="erfolge-gruppe-kopf" aria-expanded="' + !zu + '" onclick="bluuErfolgeKat(' + JSON.stringify(kat).replace(/"/g, '&quot;') + ')"><h3>' + kat + '</h3><span>' + inKat.filter((x) => x.erreicht).length + ' / ' + inKat.length + ' <i class="pfeil" aria-hidden="true">▾</i></span></button><div class="erfolge-grid">' + l.map(karte).join('') + '</div></section>';
     }).join('') +
       '<div class="erfolge-legende"><p style="margin:0"><strong>Stufen I–IV.</strong> Das Abzeichen wächst mit: Scheibe · Ring und Funkeln · Lorbeer · Meister mit Lime-Ring, Band und Krone. Die vier Striche zeigen die Stufe auch ohne Farbe.</p>' +
       '<p style="margin:0"><strong>Vorschlag.</strong> Gestrichelt umrandete Abzeichen gibt es noch nicht in der Datenbank; ihr Stand ist aus Kursen, Tests, Streak und XP abgeleitet, XP gibt es dafür noch nicht.</p>' +
@@ -11871,6 +12006,8 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     }
   };
   window.bluuErfolgeFilter = function (id) { filter = id; renderErfolge(); };
+  /* Phase 4: aufgeklappte Kategorien merken (Sitzung) */
+  window.bluuErfolgeKat = function (kat) { if (offeneKats.has(kat)) offeneKats.delete(kat); else offeneKats.add(kat); renderErfolge(); };
   const alt = window.showProfile;
   if (typeof alt === 'function') window.showProfile = function () { const r = alt.apply(this, arguments); try { renderErfolge(); } catch (e) { console.warn('Erfolge', e); } return r; };
 })();
@@ -12059,7 +12196,11 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
   };
   window.bluuKursStarten = function (courseId) {
     const i = courses.findIndex((c) => c.id === courseId);
-    if (i >= 0) startCourse(i);
+    if (i < 0) return;
+    /* Phase 7: Modul merken, aus dem die Lektion kommt — Folien, Test und Ergebnis führen dorthin zurück */
+    const m = (window.BLUU_MODULE || []).find((mm) => stand(mm).liste.some(({ c }) => c.id === courseId));
+    window.bluuModulKontext = m ? (m.code || m.thema) : null;
+    startCourse(i);
   };
   window.bluuTestStarten = function (courseId) {
     /* Nur der Test eines Kurses, wie Adrians Ablauf für Kurse ohne Slides: Ergebnis zählt wie beim Kurs. */
@@ -12296,14 +12437,33 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
       leer.hidden = gef.length > 0;
       leer.innerHTML = 'Kein Begriff gefunden. Fehlt einer? ' + (window.bluuFrag ? '<button type="button" onclick="bluuFrag(' + esc(JSON.stringify('Was bedeutet «' + (wikiFilter || 'der Begriff') + '» in der Energiewirtschaft? Erkläre es kurz und mit einem Beispiel.')) + ')">Den KI-Assistenten fragen →</button>' : '');
     }
-    list.innerHTML = gef.map((e) => {
-      const f = farbeVon(e.cat);
-      return '<article class="begriff" style="--begriff-farbe:' + f + ';--begriff-ton:' + mix(f, '#1B2E3E', 0.35) + ';--begriff-toenung:' + mix(f, '#FFFFFF', 0.88) +
-        ';--begriff-farbe-dunkel:' + mix(f, '#FFFFFF', 0.45) + ';--begriff-ton-dunkel:' + mix(f, '#FFFFFF', 0.6) + ';--begriff-toenung-dunkel:' + mix(f, '#1B2E3E', 0.72) + '">' +
+    /* Phase 5: alphabetisch, mit Buchstaben-Marken; Erklärung klappt per Klick auf (bei Suche offen) */
+    const buchst = (e) => { const c = String(e.abbr || '').trim().charAt(0).toUpperCase(); return /[A-ZÄÖÜ]/.test(c) ? c.replace('Ä', 'A').replace('Ö', 'O').replace('Ü', 'U') : '#'; };
+    const sortiert = gef.slice().sort((a, b) => String(a.abbr).localeCompare(String(b.abbr), 'de', { sensitivity: 'base' }));
+    list.classList.toggle('suche', !!wikiFilter);
+    let letzter = '';
+    list.innerHTML = sortiert.map((e) => {
+      const f = farbeVon(e.cat), b = buchst(e);
+      const marke = b !== letzter ? '<h3 class="wiki-buchstabe" id="wiki-buchstabe-' + (b === '#' ? 'sonst' : b) + '">' + esc(b) + '</h3>' : '';
+      letzter = b;
+      return marke + '<article class="begriff" style="--begriff-farbe:' + f + ';--begriff-ton:' + mix(f, '#1B2E3E', 0.35) + ';--begriff-toenung:' + mix(f, '#FFFFFF', 0.88) +
+        ';--begriff-farbe-dunkel:' + mix(f, '#FFFFFF', 0.45) + ';--begriff-ton-dunkel:' + mix(f, '#FFFFFF', 0.6) + ';--begriff-toenung-dunkel:' + mix(f, '#1B2E3E', 0.72) + '" onclick="this.classList.toggle(\'offen\')">' +
         '<div class="begriff-kopf"><h2><span class="kurz">' + esc(e.abbr) + '</span></h2><span class="begriff-kat">' + esc(e.cat) + '</span></div>' +
         '<div class="begriff-lang">' + esc(e.full) + '</div><p>' + esc(e.desc) + '</p></article>';
     }).join('');
+    const az = document.getElementById('wiki-az');
+    if (az) { const da = new Set(sortiert.map(buchst)); az.innerHTML = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#'.split('').map((b) => '<button type="button"' + (da.has(b) ? ' onclick="bluuWikiSpringe(' + esc(JSON.stringify(b)) + ')"' : ' disabled') + '>' + b + '</button>').join(''); }
   };
+  window.bluuWikiSpringe = function (b) { const el = document.getElementById('wiki-buchstabe-' + (b === '#' ? 'sonst' : b)); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 150, behavior: 'smooth' }); };
+  /* Phase 5: Suchfeld aus dem Band in eine klebende Werkzeugleiste über dem Register (einmalig) */
+  (function () {
+    const koerper = document.querySelector('.wiki-koerper'), suche = document.querySelector('#wiki-hero .wiki-suche');
+    if (!koerper || !suche || document.querySelector('.wiki-werkzeug')) return;
+    const w = document.createElement('div'); w.className = 'wiki-werkzeug';
+    w.appendChild(suche);
+    const az = document.createElement('div'); az.className = 'wiki-az'; az.id = 'wiki-az'; az.setAttribute('aria-label', 'Alphabet'); w.appendChild(az);
+    koerper.insertAdjacentElement('afterbegin', w);
+  })();
   /* Canvas «KI-Assistent»: ehrlicher Hinweis unter der Eingabe */
   const foot = document.querySelector('#chat-panel .chat-foot');
   if (foot && !document.querySelector('#chat-panel .chat-hinweis')) {
