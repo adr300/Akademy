@@ -1594,8 +1594,11 @@ html{overflow-x:clip;}
 .inhalt-werkzeug input{height:36px;min-width:220px;padding:0 12px;border:1px solid var(--border2);border-radius:999px;background:var(--bg2);color:var(--text);font:inherit;font-size:13px;}
 .inhalt-werkzeug button{height:32px;padding:0 12px;border-radius:999px;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);font:inherit;font-size:12px;cursor:pointer;}
 .inhalt-werkzeug button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#FFFFFF;}
-.inhalt-tabelle{width:100%;border-collapse:collapse;font-size:13px;}
-.inhalt-tabelle th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);padding:8px 10px;border-bottom:1px solid var(--border);white-space:nowrap;}
+.inhalt-tabelle{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed;}
+.inhalt-tabelle th{text-align:left;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);padding:8px 10px;border-bottom:1px solid var(--border);}
+/* feste Spaltenbreiten, damit die Tabelle nie breiter als ihr Rahmen wird (Aktionen bleiben sichtbar) */
+.inhalt-tabelle thead th:nth-child(1){width:21%;}.inhalt-tabelle thead th:nth-child(2){width:12%;}.inhalt-tabelle thead th:nth-child(3){width:8%;}.inhalt-tabelle thead th:nth-child(4){width:10%;}.inhalt-tabelle thead th:nth-child(5){width:9%;}.inhalt-tabelle thead th:nth-child(6){width:11%;}.inhalt-tabelle thead th:nth-child(7){width:17%;}.inhalt-tabelle thead th:nth-child(8){width:12%;}
+.inhalt-tabelle td{overflow-wrap:anywhere;}
 .inhalt-tabelle td{padding:10px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text2);font-variant-numeric:tabular-nums;}
 .inhalt-tabelle td.titel{color:var(--text);font-weight:600;}
 .inhalt-tabelle td.titel .bluu-kachel{display:inline-flex;vertical-align:middle;margin-right:8px;}
@@ -1607,8 +1610,8 @@ html{overflow-x:clip;}
 .inhalt-tabelle .lektion-zeile .m{font-size:12px;color:var(--text3);white-space:nowrap;flex:none;}
 .inhalt-tabelle td:nth-child(7){max-width:220px;font-size:12px;line-height:1.4;}
 .inhalt-tabelle tr.detail td{overflow:visible;}
-.inhalt-tabelle .aktion{white-space:nowrap;}
-.inhalt-tabelle .aktion button{height:28px;padding:0 10px;border-radius:999px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);font:inherit;font-size:12px;cursor:pointer;margin-left:4px;}
+.inhalt-tabelle .aktion{white-space:normal;}
+.inhalt-tabelle .aktion button{height:28px;padding:0 10px;border-radius:999px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);font:inherit;font-size:12px;cursor:pointer;margin:2px 0 2px 4px;}
 .inhalt-tabelle .aktion button:hover{border-color:var(--navy);}
 @media(max-width:900px){.inhalt-tabelle thead{display:none;}.inhalt-tabelle tr{display:block;border-bottom:1px solid var(--border);padding:8px 0;}.inhalt-tabelle td{display:inline-block;border:0;padding:4px 10px 4px 0;}.inhalt-tabelle tr.detail td{display:block;padding-left:10px;}}
 /* Marke: stiller Zusatz statt «· Energie» */
