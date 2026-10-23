@@ -1812,6 +1812,21 @@ html{overflow-x:clip;}
 .modul-fakten dt{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#AFC3D3;}
 .modul-fakten dd{margin:0;font-family:var(--disp);font-stretch:108%;font-size:22px;font-weight:700;color:#FFFFFF;}
 .modul-bereich{padding-top:28px;}
+/* Admin «Struktur»: Vorschlag als Gliederung */
+.struktur-quellen{margin:22px 0;padding:18px 20px;border:1px solid var(--border);border-radius:10px;background:var(--bg2);}
+.struktur-quellen h4,.struktur-fach h4{margin:0 0 8px;font-family:var(--disp);font-stretch:108%;font-size:17px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:10px;}
+.struktur-quellen ul,.struktur-quellen ol{margin:0;padding-left:1.2rem;font-size:14px;line-height:1.6;color:var(--text2);}
+.struktur-quellen li{margin-bottom:6px;}
+.struktur-quellen code{font-family:'IBM Plex Mono',monospace;font-size:12px;background:var(--bg3);padding:1px 5px;border-radius:4px;}
+.struktur-baum{display:grid;gap:18px;margin:22px 0;}
+.struktur-fach{padding:18px 20px;border:1px solid var(--border);border-radius:10px;background:var(--bg2);}
+.struktur-module{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:12px;}
+.struktur-module>li{padding:12px 14px;border:1px solid var(--border);border-radius:8px;background:var(--bg);}
+.struktur-modul{display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:15px;color:var(--text);}
+.struktur-programme{list-style:none;margin:8px 0 0 38px;padding:0;font-size:13px;color:var(--text2);display:grid;gap:4px;}
+.struktur-lektionen{margin:8px 0 0 38px;padding-left:1.3rem;font-size:13px;color:var(--text2);line-height:1.6;}
+.struktur-lektionen.archiv{opacity:.7;}
+.lektion-zeile.archiv{opacity:.75;}
 .modul-reiter{display:flex;flex-wrap:wrap;gap:4px 26px;border-bottom:1px solid var(--border);}
 .modul-reiter button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 0 12px;font:inherit;font-size:15px;font-weight:500;color:var(--text2);cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
 .modul-reiter button:hover{color:var(--text);}
@@ -3502,6 +3517,10 @@ class Component extends DCLogic {
           <button class="sidebar-item" data-tab="inhalte" onclick="adminTab('inhalte')">
             <span class="sidebar-icon">▦</span><span class="sidebar-label">Überblick</span>
           </button>
+          <!-- BLUU-PLATTFORM: Struktur-Vorschlag (gefüllt von bluuAdminStruktur) -->
+          <button class="sidebar-item" data-tab="struktur" onclick="adminTab('struktur')">
+            <span class="sidebar-icon">⌘</span><span class="sidebar-label">Struktur</span>
+          </button>
           <button class="sidebar-item" data-tab="courses" onclick="adminTab('courses')">
             <span class="sidebar-icon">📚</span><span class="sidebar-label">Kurse</span>
           </button>
@@ -3580,6 +3599,12 @@ class Component extends DCLogic {
       <div class="sec-head"><div class="sec-title">Inhalte im Überblick</div><button class="btn-add" onclick="openCourseModal(null)">+ Lektion hinzufügen</button></div>
       <p class="kachel-text" style="margin:0 0 18px;max-width:70ch">Welche Module es gibt, zu welchem Fachbereich sie gehören, welche Lektionen und Lernkarten sie enthalten und was noch leer ist. Bearbeitet wird weiterhin in «Kurse» und «Lernpfade».</p>
       <div id="admin-inhalte"></div>
+    </div>
+    <!-- BLUU-PLATTFORM: Struktur-Vorschlag (gefüllt von bluuAdminStruktur) -->
+    <div class="admin-section" id="atab-struktur">
+      <div class="sec-head"><div class="sec-title">Struktur der Akademie – Vorschlag</div></div>
+      <p class="kachel-text" style="margin:0 0 18px;max-width:72ch">Fachbereich → Programm → Modul → Lektion, aus den echten Daten abgeleitet. Was hier steht, ist ein Vorschlag zum Entscheiden – Adrians Kurse, Lernpfade und Fortschritte bleiben unverändert.</p>
+      <div id="admin-struktur"></div>
     </div>
     <div class="admin-section active" id="atab-courses">
       <div class="sec-head"><div class="sec-title">Alle Kurse</div><button class="btn-add" onclick="openCourseModal(null)">+ Kurs hinzufügen</button></div>
@@ -10880,29 +10905,49 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
   const mix = (a, b, t) => '#' + [1, 3, 5].map((i) => Math.round(parseInt(a.slice(i, i + 2), 16) * (1 - t) + parseInt(b.slice(i, i + 2), 16) * t).toString(16).padStart(2, '0')).join('');
   const B = (name, props) => (window.bluu ? bluu(name, props) : '');
 
-  /* ── Fachbereiche (gleichrangig, keine Reihenfolge) → Programm (Adrians Lernpfad, vergibt das Zertifikat)
-        → Modul (Produkt) → Lektion (Adrians Kurs). «code» ist nur ein Schlüssel, nie eine Nummer. Inhalt füllt der
-        Block BLUU-INHALT aus Adrians Kursen nach Motiv; Module ohne Kurse sind «geplant» (in Vorbereitung).
-        «fest»: wird nicht automatisch gefüllt. «nurMitInhalt»: erscheint nur, wenn Kurse dazu existieren.
-        Zugangsstufen, die die App kennt: verfügbar (freigeschaltet), gesperrt (Lektion nach Reihenfolge), geplant.
-        Buchung, Preise, Pakete: kein Datenfeld und keine Logik in der App — wird nicht dargestellt (siehe MODULE-STRUKTUR.md). ── */
+  /* ── Struktur (Vorschlag 23.10.2026 nach Jaimes Brief «Rediseño arquitectónico modular» und dem Live-Stand, siehe
+        diseno/ARCHITEKTUR.md und daten/struktur-live.json): Fachbereich → Programm (Adrians Lernpfad, vergibt das
+        Zertifikat) → Modul (Produkt) → Lektion (Adrians Kurs). Die Zuordnung Lektion → Modul ist EXPLIZIT und läuft an
+        genau einer Stelle (einordnen() im Block BLUU-INHALT):
+          «pfade»       Titelmuster der Lernpfade, deren Lektionen das Modul trägt — unabhängig vom Publish-Flag
+                        (publiziert heißt nur: Programm und Zertifikat für Lernende sichtbar; Entwürfe sieht der Admin)
+          «kurse»       Titelmuster für Lektionen ohne Pfad
+          «archiv»/«archivPfade»  ältere Fassungen desselben Themas: bleiben erhalten, nur für Admins sichtbar
+          «ausblenden»  Lektionen, die die App durch eigene Inhalte ersetzt (z. B. das Lernskript als Slides)
+          «sammelt»     fängt alles Unzugeordnete — Regal «Noch nicht zugeordnet»: nichts verschwindet
+        Jede Lektion liegt in genau einem Modul (erste Regel gewinnt, Reihenfolge dieser Liste). «code» ist ein
+        Schlüssel, nie eine Nummer. Zugangsstufen der App: verfügbar, gesperrt (Reihenfolge), geplant — keine Preise,
+        keine Buchung (MODULE-STRUKTUR.md). Spätere Ausbaustufe (Adrian): Spalte fachbereich/modul in der Datenbank,
+        diese Liste bleibt dann Rückfall. ── */
   window.BLUU_FACHBEREICHE = window.BLUU_FACHBEREICHE || [
     { key: 'grundlagen', name: 'Grundlagen der Energiewirtschaft', kurz: 'Grundlagen', motiv: 'energie', text: 'Markt, Rollen, Recht und Daten – das Fundament für alle weiteren Module.' },
     { key: 'marktkommunikation', name: 'Marktkommunikation', kurz: 'Marktkommunikation', motiv: 'gpke', text: 'GPKE, MaBiS, GeLi Gas, WiM: die Prozesse zwischen den Marktpartnern, Frist für Frist.' },
-    { key: 'messwesen', name: 'Messwesen & Smart Meter', kurz: 'Messwesen', motiv: 'wim', text: 'Messstellenbetrieb, Zähler, Messwerte und intelligente Messsysteme.' },
-    { key: 'systeme', name: 'SAP & Systeme', kurz: 'SAP & Systeme', motiv: 'isu', text: 'SAP IS-U, S/4HANA Utilities und die Werkzeuge im Tagesgeschäft.' }
+    { key: 'messwesen', name: 'Messwesen & Smart Meter', kurz: 'Messwesen', motiv: 'wim', text: 'Messstellenbetrieb, Zähler, Messwerte, steuerbare Verbrauchseinrichtungen und intelligente Messsysteme.' },
+    { key: 'systeme', name: 'SAP & Systeme', kurz: 'SAP & Systeme', motiv: 'isu', text: 'SAP IS-U, S/4HANA Utilities, Simulator und die Werkzeuge im Tagesgeschäft.' },
+    { key: 'intern', name: 'Bluu intern', kurz: 'Bluu intern', motiv: 'dsgvo', text: 'Sicherheitsunterweisung, Datenschutz und Regeln für die Arbeit bei Bluu Energy.' }
   ];
   window.BLUU_MODULE = window.BLUU_MODULE || [
-    /* «lernkarten»: Schlüssel der Lernkarten-Sammlung in der App (Adrians LERNKARTEN_SETS, Modul «1.1.1») */
-    { code: 'grundlagen-1x1', titel: '1x1 der Energiewirtschaft', bereich: 'grundlagen', motiv: 'energie', status: 'geplant', fest: true, lernkarten: '1.1.1', lernskript: '1.1.1' },
-    { code: 'energie-kurse', thema: 'Energiewirtschaft – Kurse', bereich: 'grundlagen', motiv: 'energie', status: 'geplant', nurMitInhalt: true },
-    { code: 'datenschutz', thema: 'Datenschutz', bereich: 'grundlagen', motiv: 'dsgvo', status: 'geplant' },
-    { code: 'podcasts', thema: 'Podcasts', bereich: 'grundlagen', motiv: 'podcast', status: 'geplant' },
-    { code: 'video', thema: 'Video-Kurse', bereich: 'grundlagen', motiv: 'video', status: 'geplant' },
-    { code: 'gpke', thema: 'GPKE', bereich: 'marktkommunikation', motiv: 'gpke', status: 'geplant' },
-    { code: 'mabis', thema: 'MaBiS', bereich: 'marktkommunikation', motiv: 'mabis', status: 'geplant' },
-    { code: 'wim', thema: 'WiM', bereich: 'messwesen', motiv: 'wim', status: 'geplant' },
-    { code: 'sap-isu', thema: 'SAP IS-U', bereich: 'systeme', motiv: 'isu', status: 'geplant' }
+    /* 1x1: eigenes Lernskript (Block BLUU-LERNSKRIPT) + Adrians Lernkarten-Sammlung «1.1.1» + die Lektionen der Pfade
+       «1x1 der Energiewirtschaft» (Übungen) und «Einführung in die Energiewirtschaft» (Einführung, Abschlusstest).
+       Die vier älteren Fassungen (Pfad «1x1 Energiewirtschaft» A–G, Kurs «1x1 der Energiewirtschaft», Kapitel-A-Proben)
+       liegen im Archiv; Adrians Kurs «Lernskript» (9 Slides) ist durch den interaktiven Reiter ersetzt. */
+    { code: 'grundlagen-1x1', titel: '1x1 der Energiewirtschaft', bereich: 'grundlagen', motiv: 'energie', status: 'geplant', fest: true, lernkarten: '1.1.1', lernskript: '1.1.1',
+      pfade: ['^1x1 der Energiewirtschaft$', '^Einführung in die Energiewirtschaft$'], kurse: ['^Übungen$'], ausblenden: ['^Lernskript$'],
+      archivPfade: ['^1x1 Energiewirtschaft$', '^Lernskript$'], archiv: ['^1x1 der Energiewirtschaft$', '^1[.]1[.]1 A', 'Kapitel A$', 'Wissenscheck'],
+      beschreibung: 'Vom Kraftwerk bis zur Rechnung: das Lernskript mit neun Kapiteln, die Übungen auf der Plattform, Lernkarten zu jedem Kapitel und der Abschlusstest.' },
+    { code: 'edm', titel: 'Energiedatenmanagement', bereich: 'grundlagen', motiv: 'energie', status: 'geplant', kurse: ['^EDM'] },
+    { code: 'podcasts', titel: 'Podcasts', bereich: 'grundlagen', motiv: 'podcast', status: 'geplant', pfade: ['^Podcasts'], kurse: ['^Podcast'] },
+    { code: 'gpke', titel: 'GPKE', bereich: 'marktkommunikation', motiv: 'gpke', status: 'geplant', pfade: ['^GPKE'], kurse: ['^GPKE', 'Lieferantenwechsel'] },
+    { code: 'mabis', titel: 'MaBiS', bereich: 'marktkommunikation', motiv: 'mabis', status: 'geplant', pfade: ['mabis'], kurse: ['mabis'] },
+    { code: 'wim-1', titel: 'WiM Strom Teil 1', bereich: 'messwesen', motiv: 'wim', status: 'geplant', pfade: ['^WiM Strom Teil 1'], kurse: ['^WiM Strom Teil 1', '^WiM Strom –'] },
+    { code: 'wim-2', titel: 'WiM Strom Teil 2', bereich: 'messwesen', motiv: 'wim', status: 'geplant', pfade: ['^WiM Strom Teil 2'], kurse: ['^WiM Strom T2'] },
+    { code: 'enwg-14a', titel: '§14a EnWG – Steuerbare Verbrauchseinrichtungen', bereich: 'messwesen', motiv: 'wim', status: 'geplant', pfade: ['14a'], kurse: ['14a'] },
+    { code: 'sap-isu', titel: 'SAP IS-U', bereich: 'systeme', motiv: 'isu', status: 'geplant', pfade: ['^SAP IS-U'], kurse: ['^SAP IS-U', 'IS-U'] },
+    { code: 'bluusim', titel: 'Bluu SIM', bereich: 'systeme', motiv: 'isu', status: 'geplant', kurse: ['^Bluu SIM'], beschreibung: 'Platz für den SAP-Simulator (bluusim). Heute ein leerer Kurs in der Datenbank; der Simulator selbst läuft außerhalb der Akademie.' },
+    { code: 'sicherheit', titel: 'Sicherheitsunterweisung', bereich: 'intern', motiv: 'dsgvo', status: 'geplant', pfade: ['Sicherheitsunterweisung'], kurse: ['Sicherheitsunterweisung'] },
+    { code: 'datenschutz', titel: 'Datenschutz (DSGVO)', bereich: 'intern', motiv: 'dsgvo', status: 'geplant', pfade: ['DSGVO'], kurse: ['DSGVO', 'Datenschutz'] },
+    { code: 'weitere', titel: 'Noch nicht zugeordnet', bereich: 'grundlagen', motiv: 'energie', status: 'geplant', nurMitInhalt: true, sammelt: true,
+      beschreibung: 'Lektionen, für die es noch keine Zuordnungsregel gibt. Sie verschwinden nicht – sie warten hier, bis ein Modul sie aufnimmt (Regel in BLUU_MODULE oder später eine Spalte in der Datenbank).' }
   ];
   const BEREICHE = [['alle', 'Alle']].concat(BLUU_FACHBEREICHE.map((f) => [f.key, f.kurz]));
   /* Zugangsstufen. Abgeleitete Stufen (aus Adrians Daten): geplant · neu · aktiv · fertig.
@@ -11072,11 +11117,11 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
       const fertig = pcs.filter((pc) => isCourseCompleted(pc.course_id)).length;
       const pct = pcs.length ? Math.round(fertig / pcs.length * 100) : 0;
       const motiv = bluuMotiv(lp.title), farbe = bluuMotivFarbe(motiv);
-      return { lp, n: pcs.length, fertig, pct, motiv, farbe };
+      return { lp, n: pcs.length, fertig, pct, motiv, farbe, entwurf: lp.is_published === false };
     });
   }
-  /* Modul, das die Kurse eines Lernpfads trägt (gleiches Motiv, nicht «fest») */
-  const modulZuPfad = (lp) => { const motiv = bluuMotiv(lp.title); return BLUU_MODULE.find((m) => !m.fest && m.motiv === motiv && m.status === 'freigeschaltet') || BLUU_MODULE.find((m) => !m.fest && m.motiv === motiv); };
+  /* Modul, das die Lektionen eines Lernpfads trägt — aus der expliziten Zuordnung (einordnen() im Block BLUU-INHALT) */
+  const modulZuPfad = (lp) => BLUU_MODULE.find((m) => { const st = window.bluuInhaltStand ? bluuInhaltStand(m.code || m.thema) : null; return st && st.pfade && st.pfade.some((p) => p.id === lp.id); }) || null;
   window.bluuPfadOeffnen = function (lpId) {
     const lp = (typeof learningPaths !== 'undefined' ? learningPaths : []).find((x) => String(x.id) === String(lpId));
     const m = lp && modulZuPfad(lp);
@@ -11108,14 +11153,15 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     return '';
   };
   /* Kompakte Produktkarte: Titel, Fachbereich, Beschreibung/Programm-Bezug, belegte Metadaten, Zugang (+Preis), eine Aktion */
-  /* Module ohne Adrians Kurse: Stand aus Lernskript-Kapiteln und Lernkarten-Sets zusammen */
-  const festPct = (st) => { const n = (st.ls ? st.ls.n : 0) + (st.lk ? st.lk.n : 0), f = (st.ls ? st.ls.fertig : 0) + (st.lk ? st.lk.fertig : 0); return n ? Math.round(f / n * 100) : 0; };
-  const festStand = (st) => [st.ls && st.ls.n ? st.ls.fertig + ' / ' + st.ls.n + ' Kapitel' : '', st.lk && st.lk.n ? st.lk.fertig + ' / ' + st.lk.n + ' Sets' : ''].filter(Boolean).join(' · ');
+  /* Stand eines Moduls über alle Inhaltsarten: Lektionen + Lernskript-Kapitel + Lernkarten-Sets */
+  const gesamt = (st) => { const n = (st ? st.n : 0) + (st && st.ls ? st.ls.n : 0) + (st && st.lk ? st.lk.n : 0), f = (st ? st.fertig : 0) + (st && st.ls ? st.ls.fertig : 0) + (st && st.lk ? st.lk.fertig : 0); return { n, f, pct: n ? Math.round(f / n * 100) : 0 }; };
+  const festPct = (st) => gesamt(st).pct;
+  const festStand = (st) => [st.n ? st.fertig + ' / ' + st.n + (st.n === 1 ? ' Lektion' : ' Lektionen') : '', st.ls && st.ls.n ? st.ls.fertig + ' / ' + st.ls.n + ' Kapitel' : '', st.lk && st.lk.n ? st.lk.fertig + ' / ' + st.lk.n + ' Sets' : ''].filter(Boolean).join(' · ');
   const modulKachel = (m) => {
     const i = modulIndex(m), f = fachVon(m.bereich);
     const st = window.bluuInhaltStand ? bluuInhaltStand(m.code || m.thema) : null;
     const z = zugangVon(m, st), offen = zugangOffen(z), hatInhalt = !!(st && (st.n || (st.lk && st.lk.n) || (st.ls && st.ls.n)));
-    const pct = !hatInhalt ? 0 : (st.n ? Math.round(st.fertig / st.n * 100) : festPct(st));
+    const pct = !hatInhalt ? 0 : festPct(st);
     const lp = hatInhalt ? programmVon(m) : null;
     const meta = modulMeta(m, st);
     const klickbar = hatInhalt || z === 'einzeln';
@@ -11127,7 +11173,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
       (offen && pct ? '<div class="pfad-balken"><div style="width:' + pct + '%;background:' + (pct === 100 ? 'var(--lime)' : bluuMotivFarbe(m.motiv || 'energie')) + '"></div></div>' : '') +
       '<div class="kachel-fuss">' +
       (z === 'einzeln' ? '<span class="modul-preis">' + (preisText(m) ? esc(preisText(m)) : 'Preis folgt') + '</span>'
-        : (offen && hatInhalt ? '<span class="kachel-meta">' + (st.n ? st.fertig + ' / ' + st.n + ' abgeschlossen' : festStand(st)) + '</span>' : '<span class="kachel-meta">' + (z === 'geplant' ? 'Buchung und Freischaltung noch nicht festgelegt' : '') + '</span>')) +
+        : (offen && hatInhalt ? '<span class="kachel-meta">' + festStand(st) + '</span>' : '<span class="kachel-meta">' + (z === 'geplant' ? 'Buchung und Freischaltung noch nicht festgelegt' : '') + '</span>')) +
       modulAktion(m, z, pct, i, true) + '</div></article>';
   };
   /* Register der Programme (links) und Detail des gewählten (rechts), eins zu eins nach Canvas «Lernpfade» */
@@ -11144,7 +11190,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     const register = '<div class="programm-register"><div class="programm-kopf"><span>Programm</span><span>Lektionen</span><span>Fortschritt</span></div>' + z.map((x) => {
       const st = statusVon(x), sel = String(x.lp.id) === programmWahl;
       return '<button type="button" class="programm-zeile" aria-pressed="' + sel + '" style="--farbe:' + x.farbe + ';--toenung:' + mix(x.farbe, '#FFFFFF', 0.92) + ';--toenung-dunkel:' + mix(x.farbe, '#1B2E3E', 0.8) + ';--ton:' + mix(x.farbe, '#1B2E3E', 0.35) + ';--ton-dunkel:' + mix(x.farbe, '#FFFFFF', 0.55) + '" onclick="bluuProgrammWaehlen(' + esc(JSON.stringify(String(x.lp.id))) + ')">' +
-        '<span class="programm-name"><span class="bdg ' + ({ fertig: 't2', inarbeit: 't1', neu: 't0' }[st]) + '">' + B('PfadIcon', { motiv: x.motiv, status: st === 'inarbeit' ? 'aktiv' : st, fortschritt: x.pct, groesse: 44 }) + '</span><span class="programm-titel">' + esc(x.lp.title) + '</span></span>' +
+        '<span class="programm-name"><span class="bdg ' + ({ fertig: 't2', inarbeit: 't1', neu: 't0' }[st]) + '">' + B('PfadIcon', { motiv: x.motiv, status: st === 'inarbeit' ? 'aktiv' : st, fortschritt: x.pct, groesse: 44 }) + '</span><span class="programm-titel">' + esc(x.lp.title) + (x.entwurf ? ' <span class="zugang-chip zugang-geplant">Entwurf</span>' : '') + '</span></span>' +
         '<span class="programm-kurse">' + x.fertig + ' / ' + x.n + '</span>' +
         '<span class="programm-fortschritt"><span class="pfad-balken"><span style="width:' + x.pct + '%;background:' + (x.pct === 100 ? 'var(--lime)' : x.farbe) + '"></span></span><span class="programm-prozent">' + x.pct + ' %</span></span></button>';
     }).join('') + '</div>';
@@ -11286,9 +11332,9 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     if (!mods.length) { el.innerHTML = '<div class="bluu-leer">' + B('Maskottchen', { groesse: 56, stimmung: 'neugierig' }) + '<span>Noch kein Modul freigeschaltet. Die Übersicht aller Module steht im Katalog.</span></div>'; return; }
     el.innerHTML = mods.map((m) => {
       const s = window.bluuInhaltStand ? bluuInhaltStand(m.code || m.thema) : null;
-      const fest = s && !s.n && ((s.lk && s.lk.n) || (s.ls && s.ls.n));
-      const n = s ? (fest ? (s.ls ? s.ls.n : 0) + (s.lk ? s.lk.n : 0) : s.n) : 0, fertig = s ? (fest ? (s.ls ? s.ls.fertig : 0) + (s.lk ? s.lk.fertig : 0) : s.fertig) : 0, pct = n ? Math.round(fertig / n * 100) : 0, farbe = bluuMotivFarbe(m.motiv || 'energie');
-      const einheit = fest ? (s.ls && s.ls.n && s.lk && s.lk.n ? ' Kapitel und Sets' : (s.ls && s.ls.n ? ' Kapitel' : ' Sets')) : ' Lektionen';
+      const g = gesamt(s), n = g.n, fertig = g.f, pct = g.pct, farbe = bluuMotivFarbe(m.motiv || 'energie');
+      const arten = [s && s.n ? 'Lektionen' : '', s && s.ls && s.ls.n ? 'Kapitel' : '', s && s.lk && s.lk.n ? 'Sets' : ''].filter(Boolean);
+      const einheit = ' ' + (arten.length > 1 ? 'Schritte' : (arten[0] || 'Lektionen'));
       const pfad = s && s.pfade && s.pfade.find((lp) => s.alleFertig);
       const zert = s && s.alleFertig && pfad ? '<button type="button" class="kachel-btn" onclick="event.stopPropagation();downloadPathCert(' + esc(JSON.stringify(String(pfad.id))) + ',' + esc(JSON.stringify(pfad.title)) + ',' + esc(JSON.stringify(pfad.icon || '')) + ')">Zertifikat ↓</button>' : '';
       return '<article class="bluu-kachel-karte meine-karte klickbar" onclick="bluuModulOeffnen(' + modulIndex(m) + ')">' +
@@ -11397,25 +11443,26 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     if (reiter === 'ueberblick') {
       /* Produktseite in vier Regionen: Produkt · Curriculum-Vorschau · Zugang · Aktion */
       const z = zNow, f = fachVon(m.bereich), lp = programmVon(m), teile = enthaelt(m);
-      const liste = um.length ? um.map(([b, titel, meta], idx) => {
+      /* Trägt das Modul ein Lernskript (Kapitel A–I), bekommen die Lektionen Nummern statt Buchstaben */
+      const bz = (b, idx) => (stand && stand.ls && stand.ls.n ? String(idx + 1) : b);
+      const umZeilen = um.length ? um.map(([b, titel, meta], idx) => {
         const fertig = stand && stand.done[b];
         const nurZugang = z === 'einzeln' && idx > 0 && !fertig;
         const naechste = !nurZugang && stand && idx === stand.aktuell && !fertig, gesperrt = nurZugang || (stand && !fertig && !naechste);
         const kl = fertig ? ' fertig' : (naechste ? ' aktuell' : '');
         const st = fertig ? HAKEN + ' Abgeschlossen' : (naechste ? (z === 'einzeln' ? 'Vorschau · offen' : 'Freigeschaltet · als Nächstes') : (nurZugang ? SCHLOSS + ' Nur mit Modulzugang' : (gesperrt ? SCHLOSS + ' Nach Lektion ' + esc(um[idx - 1] ? um[idx - 1][0] : '') : 'Inhalt folgt')));
         return '<li class="' + (gesperrt ? 'gesperrt' : 'klickbar') + '"' + (gesperrt ? ' title="' + (nurZugang ? 'Im vollen Zugang enthalten' : 'Vorherige Lektion abschließen') + '"' : ' onclick="bluuInhaltZu(\'' + esc(m.code || m.thema) + '\',' + idx + ')"') + '><span class="aufbau-buchstabe' + kl + '">' + esc(b) + '</span><span class="aufbau-titel">' + esc(titel) + '</span><span class="aufbau-meta">' + esc(meta || '') + (meta ? ' · ' : '') + st + '</span></li>';
-      }).join('')
-        : ((stand && stand.ls && stand.ls.n
-          /* Lernskript-Kapitel (eigens erstellter Inhalt): jedes Kapitel anklickbar, Stand aus den Häkchen «Das kann ich jetzt» */
-          ? stand.ls.kapitel.map((kp) => '<li class="klickbar" onclick="bluuLsOeffnen(' + esc(JSON.stringify(kp.key)) + ')"><span class="aufbau-buchstabe' + (kp.fertig ? ' fertig' : (stand.ls.naechstes && stand.ls.naechstes.key === kp.key ? ' aktuell' : '')) + '">' + esc(kp.key) + '</span><span class="aufbau-titel">' + esc(kp.titel) + '</span><span class="aufbau-meta">Lernskript · Lesezeit ' + esc(kp.lesezeit) + ' · ' + (kp.fertig ? HAKEN + ' Geschafft' : (stand.ls.naechstes && stand.ls.naechstes.key === kp.key ? 'Als Nächstes' : 'Offen')) + '</span></li>').join('') : '') +
-          (stand && stand.lk && stand.lk.n
-          ? '<li class="klickbar" onclick="bluuModulReiter(\'lernkarten\')"><span class="aufbau-buchstabe' + (stand.lk.fertig >= stand.lk.n ? ' fertig' : ' aktuell') + '">' + stand.lk.n + '</span><span class="aufbau-titel">Lernkarten-Sets zum Modul</span><span class="aufbau-meta">' + stand.lk.karten + ' Karten · ' + stand.lk.fertig + ' / ' + stand.lk.n + ' Sets gelernt</span></li>'
-          : '') ||
-          '<li class="gesperrt"><span class="aufbau-buchstabe">–</span><span class="aufbau-titel">Noch keine Lektionen</span><span class="aufbau-meta">Inhalt wird eingepflegt</span></li>');
+      }).join('') : '';
+      /* Lernskript-Kapitel (eigens erstellter Inhalt): jedes Kapitel anklickbar, Stand aus den Häkchen «Das kann ich jetzt» */
+      const lsZeilen = stand && stand.ls && stand.ls.n
+        ? stand.ls.kapitel.map((kp) => '<li class="klickbar" onclick="bluuLsOeffnen(' + esc(JSON.stringify(kp.key)) + ')"><span class="aufbau-buchstabe' + (kp.fertig ? ' fertig' : (stand.ls.naechstes && stand.ls.naechstes.key === kp.key ? ' aktuell' : '')) + '">' + esc(kp.key) + '</span><span class="aufbau-titel">' + esc(kp.titel) + '</span><span class="aufbau-meta">Lernskript · Lesezeit ' + esc(kp.lesezeit) + ' · ' + (kp.fertig ? HAKEN + ' Geschafft' : (stand.ls.naechstes && stand.ls.naechstes.key === kp.key ? 'Als Nächstes' : 'Offen')) + '</span></li>').join('') : '';
+      const lkZeile = stand && stand.lk && stand.lk.n
+        ? '<li class="klickbar" onclick="bluuModulReiter(\'lernkarten\')"><span class="aufbau-buchstabe' + (stand.lk.fertig >= stand.lk.n ? ' fertig' : ' aktuell') + '">' + stand.lk.n + '</span><span class="aufbau-titel">Lernkarten-Sets zum Modul</span><span class="aufbau-meta">' + stand.lk.karten + ' Karten · ' + stand.lk.fertig + ' / ' + stand.lk.n + ' Sets gelernt</span></li>' : '';
+      const liste = (lsZeilen + umZeilen + lkZeile) || '<li class="gesperrt"><span class="aufbau-buchstabe">–</span><span class="aufbau-titel">Noch keine Lektionen</span><span class="aufbau-meta">Inhalt wird eingepflegt</span></li>';
       const lsAktion = stand && stand.ls && stand.ls.n && zugangOffen(z) ? '<button type="button" class="kachel-btn primaer" onclick="bluuLsOeffnen(' + esc(JSON.stringify(stand.ls.naechstes ? stand.ls.naechstes.key : 'start')) + ')">' + (stand.ls.fertig ? (stand.ls.naechstes ? 'Weiter mit Kapitel ' + esc(stand.ls.naechstes.key) : 'Lernskript noch einmal lesen') : 'Lernskript lesen') + '</button>' : '';
       const lkAktion = stand && stand.lk && stand.lk.n && zugangOffen(z) ? '<button type="button" class="kachel-btn' + (um.length || lsAktion ? '' : ' primaer') + '" onclick="bluuModulReiter(\'lernkarten\')">Lernkarten lernen</button>' : '';
       const aktion = lsAktion + (stand && um.length && zugangOffen(z)
-        ? '<button type="button" class="kachel-btn primaer" onclick="bluuInhaltZu(\'' + esc(m.code || m.thema) + '\',' + stand.aktuell + ')">' + (stand.alleFertig ? 'Lektionen wiederholen' : (stand.fertig ? 'Weiter mit ' : 'Starten mit ') + um[stand.aktuell][0] + ' · ' + esc(um[stand.aktuell][1])) + '</button>'
+        ? '<button type="button" class="kachel-btn' + (lsAktion ? '' : ' primaer') + '" onclick="bluuInhaltZu(\'' + esc(m.code || m.thema) + '\',' + stand.aktuell + ')">' + (stand.alleFertig ? 'Lektionen wiederholen' : (stand.fertig ? 'Weiter mit ' : 'Starten mit ') + esc(bz(um[stand.aktuell][0], stand.aktuell)) + ' · ' + esc(um[stand.aktuell][1])) + '</button>'
         : (z === 'einzeln' ? modulAktion(m, z, 0, modulIndex(m), false) + (stand && um.length ? '<button type="button" class="kachel-btn" onclick="bluuInhaltZu(\'' + esc(m.code || m.thema) + '\',0)">Vorschau: ' + esc(um[0][0]) + ' · ' + esc(um[0][1]) + '</button>' : '') : '')) + lkAktion;
       const pfadFertig = stand && stand.alleFertig && lp;
       const zertKnopf = pfadFertig ? '<button type="button" class="kachel-btn" onclick="downloadPathCert(' + esc(JSON.stringify(String(lp.id))) + ',' + esc(JSON.stringify(lp.title)) + ',' + esc(JSON.stringify(lp.icon || '')) + ')">Zertifikat herunterladen</button>' : '';
@@ -11433,8 +11480,8 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
         '<div><dt>Programm</dt><dd>' + (lp ? 'Teil von «' + esc(lp.title) + '». Das Zertifikat vergibt das Programm, sobald alle seine Lektionen bestanden sind – nicht das Modul allein.' : 'Keinem Programm zugeordnet; kein Zertifikat über dieses Modul.') + '</dd></div>' +
         '</dl></section>' +
         /* Region 2: Curriculum-Vorschau */
-        '<section class="modul-region"><div class="bluu-kopfzeile"><h3 class="bluu-h3">' + (stand && !stand.n && stand.ls && stand.ls.n ? 'Kapitel' : 'Lektionen') + '</h3><span class="kachel-meta">' + (stand ? (stand.n ? stand.fertig + ' / ' + stand.n + ' abgeschlossen' : (stand.ls && stand.ls.n ? stand.ls.fertig + ' / ' + stand.ls.n + ' Kapitel geschafft' : '')) : '') + '</span></div>' +
-        '<p class="kachel-text">' + (stand && !stand.n && stand.ls && stand.ls.n ? 'Jedes Kapitel ist anklickbar und in Ruhe lesbar: Denk kurz nach, Text mit Grafik, Mitmach-Aufgabe, drei Häkchen zum Abschluss. Die Reihenfolge ist eine Empfehlung.' : 'Freigeschaltete Lektionen sind anklickbar. Gesperrte öffnen sich nach der vorherigen – so stellt die Akademie die Reihenfolge sicher.') + '</p>' +
+        '<section class="modul-region"><div class="bluu-kopfzeile"><h3 class="bluu-h3">' + (stand && stand.ls && stand.ls.n ? (stand.n ? 'Kapitel und Lektionen' : 'Kapitel') : 'Lektionen') + '</h3><span class="kachel-meta">' + (stand ? festStand(stand) : '') + '</span></div>' +
+        '<p class="kachel-text">' + (stand && stand.ls && stand.ls.n ? 'Erst lesen, dann üben: Die Kapitel des Lernskripts sind in Ruhe lesbar (Denk kurz nach, Text mit Grafik, Mitmach-Aufgabe, drei Häkchen); die Lektionen darunter sind die Übungen und Tests auf der Plattform, in Reihenfolge freigeschaltet.' : 'Freigeschaltete Lektionen sind anklickbar. Gesperrte öffnen sich nach der vorherigen – so stellt die Akademie die Reihenfolge sicher.') + '</p>' +
         '<ol class="aufbau-liste">' + liste + '</ol></section>' +
         '</div>' +
         /* Region 3 + 4: Zugang und Aktion */
@@ -11465,14 +11512,16 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     if (!el) return;
     if (window.bluuInhaltErgaenzen) BLUU_MODULE.forEach((m) => bluuInhaltErgaenzen(m));
     const alleKurse = typeof courses !== 'undefined' ? courses : [];
-    const zeilen = BLUU_MODULE.filter((m) => !m.nurMitInhalt || m.status === 'freigeschaltet').map((m) => {
+    const zeilen = BLUU_MODULE.filter((m) => !m.sammelt).map((m) => {
       const st = window.bluuInhaltStand ? bluuInhaltStand(m.code || m.thema) : null;
       const lekt = window.bluuInhaltLektionen ? bluuInhaltLektionen(m.code || m.thema) : [];
+      const archiv = window.bluuInhaltArchiv ? bluuInhaltArchiv(m.code || m.thema) : [];
       const slides = lekt.reduce((a, c) => a + ((c.slides || []).length), 0), fragen = lekt.reduce((a, c) => a + ((c.questions || []).length), 0);
-      return { m, st, lekt, slides, fragen, lkN: st && st.lk ? st.lk.n : 0, lkKarten: st && st.lk ? st.lk.karten : 0, lsN: st && st.ls ? st.ls.n : 0, z: zugangVon(m, st), lp: programmVon(m) };
+      return { m, st, lekt, archiv, slides, fragen, lkN: st && st.lk ? st.lk.n : 0, lkKarten: st && st.lk ? st.lk.karten : 0, lsN: st && st.ls ? st.ls.n : 0, z: zugangVon(m, st), lp: programmVon(m), pfade: st && st.pfade ? st.pfade : [] };
     });
-    const zugeordnet = new Set(zeilen.flatMap((z) => z.lekt.map((c) => c.id)));
-    const ohne = alleKurse.filter((c) => !zugeordnet.has(c.id));
+    /* «Noch nicht zugeordnet» = das Sammelmodul (einordnen() legt dort alles ab, was keine Regel trifft) */
+    const sammler = BLUU_MODULE.find((m) => m.sammelt);
+    const ohne = sammler && window.bluuInhaltLektionen ? bluuInhaltLektionen(sammler.code || sammler.thema) : [];
     const q = inhalteSuche.toLowerCase();
     const sicht = zeilen.filter((z) => (inhalteFach === 'alle' || z.m.bereich === inhalteFach) && (!q || (modulTitel(z.m) + ' ' + z.lekt.map((c) => c.title).join(' ')).toLowerCase().includes(q)));
     const kpi = '<dl class="inhalt-kpi"><div><dd>' + zeilen.length + '</dd><dt>Module</dt></div><div><dd>' + zeilen.filter((z) => z.z !== 'geplant').length + '</dd><dt>mit Inhalt</dt></div><div><dd>' + alleKurse.length + '</dd><dt>Lektionen</dt></div><div><dd>' + zeilen.reduce((a, z) => a + z.fragen, 0) + '</dd><dt>Fragen</dt></div><div><dd>' + zeilen.reduce((a, z) => a + z.lkN, 0) + '</dd><dt>Lernkarten-Sets</dt></div><div><dd>' + zertifizierungen().length + '</dd><dt>Programme</dt></div><div><dd>' + ohne.length + '</dd><dt>nicht zugeordnet</dt></div></dl>';
@@ -11484,22 +11533,66 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
         (z.lekt.length ? z.lekt.map((c, i) => '<div class="lektion-zeile"><span class="nr">' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[i] + '</span><span class="t">' + esc(c.title) + (c.is_published === false ? ' <span class="zugang-chip zugang-geplant">Entwurf</span>' : '') + '</span><span class="m">' + (c.slides || []).length + ' Slides · ' + (c.questions || []).length + ' Fragen</span><span class="aktion"><button type="button" onclick="openCourseModal(' + c.id + ')">Bearbeiten</button></span></div>').join('') : '<div class="lektion-zeile"><span class="t" style="color:var(--text3)">Keine Lektionen zugeordnet.</span></div>') +
         (z.lsN ? '<div class="lektion-zeile"><span class="nr">LS</span><span class="t">Lernskript «' + esc(z.st.ls.titel) + '» · ' + z.lsN + ' Kapitel A–' + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[z.lsN - 1] + ' (fest im Code, Inhalt von der Fachseite, Stand Oktober 2026)</span><span class="aktion"><button type="button" onclick="navGoModule();bluuLsOeffnen(\'start\',' + esc(JSON.stringify(code)) + ')">Ansehen</button></span></div>' : '') +
         (z.lkN ? '<div class="lektion-zeile"><span class="nr">LK</span><span class="t">' + z.lkN + ' Lernkarten-Sets · ' + z.lkKarten + ' Karten (fest im Code, Sammlung «' + esc(z.m.lernkarten || '') + '»)</span><span class="aktion"><button type="button" onclick="openLernkartenScreen()">Ansehen</button></span></div>' : '') +
+        z.archiv.map((c) => '<div class="lektion-zeile archiv"><span class="nr">A</span><span class="t">' + esc(c.title) + ' <span class="zugang-chip zugang-geplant">Archiv · ältere Fassung</span></span><span class="m">' + (c.slides || []).length + ' Slides · ' + (c.questions || []).length + ' Fragen</span><span class="aktion"><button type="button" onclick="openCourseModal(' + c.id + ')">Bearbeiten</button></span></div>').join('') +
         '</td></tr>' : '';
       return '<tr><td class="titel"><span class="bluu-kachel">' + B('PfadIcon', { motiv: z.m.motiv || 'energie', status: 'aktiv', fortschritt: 0, groesse: 24 }) + '</span>' + esc(modulTitel(z.m)) + '</td>' +
         '<td>' + esc(fachVon(z.m.bereich).kurz) + '</td><td>' + (z.lsN ? z.lsN + ' Kapitel' : z.lekt.length) + '</td><td>' + z.slides + ' / ' + z.fragen + '</td><td>' + (z.lkN ? z.lkN + ' Sets' : '–') + '</td>' +
-        '<td>' + zugangChip(z.z) + '</td><td>' + (z.lp ? esc(z.lp.title) : '–') + '</td>' +
+        '<td>' + zugangChip(z.z) + '</td><td>' + (z.pfade.length ? z.pfade.map((lp) => esc(lp.title) + (lp.is_published === false ? ' <span class="zugang-chip zugang-geplant">Entwurf</span>' : '')).join('<br>') : '–') + '</td>' +
         '<td class="aktion"><button type="button" aria-expanded="' + offen + '" onclick="bluuAdminInhalteAuf(' + esc(JSON.stringify(code)) + ')">' + (offen ? 'Zuklappen' : 'Lektionen') + '</button>' + (z.lp ? '<button type="button" onclick="adminTab(\'paths\');editPath(' + z.lp.id + ')">Programm</button>' : '') + '</td></tr>' + detail;
     };
     el.innerHTML = kpi + werkzeug + '<table class="inhalt-tabelle"><thead><tr><th>Modul</th><th>Fachbereich</th><th>Lektionen</th><th>Slides / Fragen</th><th>Lernkarten</th><th>Zugang</th><th>Programm</th><th></th></tr></thead><tbody>' +
       (sicht.length ? sicht.map(zeile).join('') : '<tr><td colspan="8" style="color:var(--text3)">Kein Modul passt zur Suche.</td></tr>') + '</tbody></table>' +
-      (ohne.length ? '<div class="sec-head" style="margin-top:28px"><div class="sec-title">Nicht zugeordnet · ' + ohne.length + '</div></div><p class="kachel-text">Lektionen, die keinem Modul zugeordnet sind (Titel ohne Fachgebiet und ohne Programm). Sie erscheinen im Katalog unter «Alle Lektionen».</p><table class="inhalt-tabelle"><tbody>' +
+      (ohne.length ? '<div class="sec-head" style="margin-top:28px"><div class="sec-title">Noch nicht zugeordnet · ' + ohne.length + '</div></div><p class="kachel-text">Lektionen, die keine Zuordnungsregel trifft. Sie stehen im Katalog im Modul «Noch nicht zugeordnet», bis eine Regel (BLUU_MODULE) oder später eine Spalte in der Datenbank sie einem Modul zuweist.</p><table class="inhalt-tabelle"><tbody>' +
         ohne.map((c) => '<tr><td class="titel">' + esc(c.title) + '</td><td>' + (c.slides || []).length + ' Slides · ' + (c.questions || []).length + ' Fragen</td><td class="aktion"><button type="button" onclick="openCourseModal(' + c.id + ')">Bearbeiten</button></td></tr>').join('') + '</tbody></table>' : '');
+  };
+
+  /* ── Admin/Manager: «Struktur» — der Vorschlag als lebende Gliederung aus den echten Daten, mit den Quellen
+        (Jaimes Briefs vom 22./23.10.2026) und den Entscheidungen, die Adrian, Juri oder Julien treffen müssen ── */
+  window.bluuAdminStruktur = function () {
+    const el = document.getElementById('admin-struktur');
+    if (!el) return;
+    if (window.bluuInhaltErgaenzen) BLUU_MODULE.forEach((m) => bluuInhaltErgaenzen(m));
+    const alleKurse = typeof courses !== 'undefined' ? courses : [], allePfade = typeof learningPaths !== 'undefined' ? learningPaths : [];
+    const sammler = BLUU_MODULE.find((m) => m.sammelt);
+    const ohne = sammler && window.bluuInhaltLektionen ? bluuInhaltLektionen(sammler.code || sammler.thema) : [];
+    const modStand = (m) => ({ st: window.bluuInhaltStand ? bluuInhaltStand(m.code || m.thema) : null, lekt: window.bluuInhaltLektionen ? bluuInhaltLektionen(m.code || m.thema) : [], archiv: window.bluuInhaltArchiv ? bluuInhaltArchiv(m.code || m.thema) : [] });
+    const module = BLUU_MODULE.filter((m) => !m.sammelt).map((m) => Object.assign({ m }, modStand(m)));
+    const zugeordnet = module.reduce((a, x) => a + x.lekt.length, 0), archiviert = module.reduce((a, x) => a + x.archiv.length, 0);
+    const pfadeMit = new Set(module.flatMap((x) => (x.st && x.st.pfade ? x.st.pfade.map((p) => p.id) : [])));
+    const entwuerfe = allePfade.filter((lp) => lp.is_published === false).length;
+    const kpi = '<dl class="inhalt-kpi"><div><dd>' + BLUU_FACHBEREICHE.length + '</dd><dt>Fachbereiche</dt></div><div><dd>' + module.length + '</dd><dt>Module</dt></div><div><dd>' + allePfade.length + '</dd><dt>Programme<br>' + entwuerfe + ' Entwürfe</dt></div><div><dd>' + alleKurse.length + '</dd><dt>Lektionen</dt></div><div><dd>' + zugeordnet + '</dd><dt>zugeordnet</dt></div><div><dd>' + archiviert + '</dd><dt>im Archiv</dt></div><div><dd>' + ohne.length + '</dd><dt>nicht zugeordnet</dt></div></dl>';
+    const quellen = '<section class="struktur-quellen"><h4>Woher der Vorschlag kommt</h4><ul>' +
+      '<li><strong>Brief «Rediseño arquitectónico modular»</strong> (Jaime, 22.10.2026) → Phase 1 Audit und Phase 2 «Regalsystem» in <code>diseno/ARCHITEKTUR.md</code>: Hierarchie Fachbereich → Programm → Modul → Lektion wird aus den Daten abgeleitet, eine Stelle für die Einordnung, nichts verschwindet («Noch nicht zugeordnet»), Ressourcen nur, wo Daten sind.</li>' +
+      '<li><strong>Brief «Module Product Design, Access States & Commercial Presentation»</strong> (22.10.) → Modul als Produkt mit Zugangsstufen aus den Daten, keine erfundenen Kauf-Zustände (<code>diseno/MODULE-STRUKTUR.md</code>).</li>' +
+      '<li><strong>Brief «UX & Design Improvement Blueprint»</strong> (23.10.) → Lernkarten im Modul, Admin-Überblick, Lesevorlage für Lektionen aus PDF (<code>diseno/LEKTIONEN-VORLAGE.md</code>).</li>' +
+      '<li><strong>Live-Stand vom 23.10.2026</strong> (mit Jaimes Konto gelesen, nur Titel und Zählwerte: <code>diseno/daten/struktur-live.json</code>): 48 Lektionen, 13 Programme – 12 davon Entwürfe –, vier Fassungen von «1x1». Daraus die Regeln in <code>BLUU_MODULE</code>.</li></ul></section>';
+    const baum = BLUU_FACHBEREICHE.map((f) => {
+      const mods = module.filter((x) => x.m.bereich === f.key);
+      return '<section class="struktur-fach"><h4>' + esc(f.name) + ' <span class="kachel-meta">' + mods.length + (mods.length === 1 ? ' Modul' : ' Module') + '</span></h4><p class="kachel-text">' + esc(f.text) + '</p>' +
+        (mods.length ? '<ul class="struktur-module">' + mods.map((x) => {
+          const pf = x.st && x.st.pfade ? x.st.pfade : [];
+          return '<li><div class="struktur-modul"><span class="bluu-kachel">' + B('PfadIcon', { motiv: x.m.motiv || 'energie', status: 'aktiv', fortschritt: 0, groesse: 28 }) + '</span><strong>' + esc(modulTitel(x.m)) + '</strong>' + zugangChip(zugangVon(x.m, x.st)) + '<span class="kachel-meta">' + (x.m.lernskript ? 'Lernskript · ' : '') + (x.m.lernkarten ? 'Lernkarten · ' : '') + x.lekt.length + (x.lekt.length === 1 ? ' Lektion' : ' Lektionen') + (x.archiv.length ? ' · Archiv ' + x.archiv.length : '') + '</span></div>' +
+            (pf.length ? '<ul class="struktur-programme">' + pf.map((lp) => '<li>Programm «' + esc(lp.title) + '»' + (lp.is_published === false ? ' <span class="zugang-chip zugang-geplant">Entwurf · für Lernende unsichtbar</span>' : ' <span class="zugang-chip zugang-aktiv">publiziert</span>') + '</li>').join('') + '</ul>' : '<ul class="struktur-programme"><li class="leise">Kein Programm – kein Zertifikat' + (x.lekt.length ? '; Lektionen über Titelregel' : '') + '</li></ul>') +
+            (x.lekt.length ? '<ol class="struktur-lektionen">' + x.lekt.map((c) => '<li>' + esc(c.title) + ' <span class="kachel-meta">' + (c.slides || []).length + ' Slides · ' + (c.questions || []).length + ' Fragen' + (c.is_published === false ? ' · Entwurf' : '') + '</span></li>').join('') + '</ol>' : '') +
+            (x.archiv.length ? '<ol class="struktur-lektionen archiv">' + x.archiv.map((c) => '<li>' + esc(c.title) + ' <span class="kachel-meta">Archiv · ältere Fassung</span></li>').join('') + '</ol>' : '') + '</li>';
+        }).join('') + '</ul>' : '<p class="leise">Noch kein Modul.</p>') + '</section>';
+    }).join('');
+    const rest = '<section class="struktur-fach"><h4>Noch nicht zugeordnet <span class="kachel-meta">' + ohne.length + '</span></h4>' + (ohne.length ? '<ol class="struktur-lektionen">' + ohne.map((c) => '<li>' + esc(c.title) + ' <span class="kachel-meta">' + (c.slides || []).length + ' Slides · ' + (c.questions || []).length + ' Fragen</span></li>').join('') + '</ol>' : '<p class="leise">Alles zugeordnet – jede Lektion liegt in genau einem Modul.</p>') + '</section>';
+    const pfadeOhne = allePfade.filter((lp) => !pfadeMit.has(lp.id) && !BLUU_MODULE.some((m) => (m.archivPfade || []).some((p) => new RegExp(p, 'i').test(lp.title))));
+    const entscheidungen = '<section class="struktur-quellen"><h4>Was zu entscheiden ist</h4><ol>' +
+      '<li><strong>Programme veröffentlichen</strong> (Adrian): ' + entwuerfe + ' von ' + allePfade.length + ' Lernpfaden sind Entwürfe. Lernende sehen ihre Lektionen jetzt im Modul, aber kein Programm und kein Zertifikat. Vorschlag: publizieren, sobald der Abschlusstest steht.</li>' +
+      '<li><strong>Vier Fassungen von «1x1»</strong>: Vorschlag = ein Modul (interaktives Lernskript + Übungen + Lernkarten + Abschlusstest), Pfad «1x1 Energiewirtschaft» (A–G) und die Kapitel-A-Proben ins Archiv, Kurs «Lernskript» (Slides) ausgeblendet. Entscheiden: behalten oder löschen?</li>' +
+      '<li><strong>Fachbereich «Bluu intern»</strong> für Sicherheitsunterweisung und DSGVO – Name und Zuschnitt mit Juri/Julien.</li>' +
+      '<li><strong>Regel oder Spalte</strong>: Heute Titelregeln in <code>BLUU_MODULE</code>; dauerhaft eine Spalte <code>fachbereich</code>/<code>modul</code> in <code>learning_paths</code> und <code>courses</code> (ARCHITEKTUR.md 2.3). Die Regeln bleiben dann Rückfall.</li>' +
+      '<li><strong>Offene Punkte aus ARCHITEKTUR.md</strong>: Menü bleibt «Katalog» (statt «Studium»); Programm = Modul, wo ein Lernpfad existiert (WiM Teil 1 und 2 sind daher zwei Module); Wiki bleibt verlinkt; Daten für die Vorschau als Titel-Export (daten/struktur-live.json), keine Schlüssel.</li>' +
+      (pfadeOhne.length ? '<li><strong>Programme ohne Modul</strong>: ' + pfadeOhne.map((lp) => '«' + esc(lp.title) + '»').join(', ') + ' – Regel ergänzen oder Pfad leeren.</li>' : '') + '</ol></section>';
+    el.innerHTML = kpi + quellen + '<div class="struktur-baum">' + baum + rest + '</div>' + entscheidungen;
   };
   window.bluuAdminInhalteSuche = function (v) { inhalteSuche = String(v || ''); bluuAdminInhalte(); const i = document.querySelector('#admin-inhalte input'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } };
   window.bluuAdminInhalteFach = function (k) { inhalteFach = k; bluuAdminInhalte(); };
   window.bluuAdminInhalteAuf = function (code) { inhalteOffen = inhalteOffen === code ? null : code; bluuAdminInhalte(); };
   const altAdminTab = window.adminTab;
-  if (typeof altAdminTab === 'function') window.adminTab = function (tab) { altAdminTab.apply(this, arguments); if (tab === 'inhalte') bluuAdminInhalte(); };
+  if (typeof altAdminTab === 'function') window.adminTab = function (tab) { altAdminTab.apply(this, arguments); if (tab === 'inhalte') bluuAdminInhalte(); if (tab === 'struktur') bluuAdminStruktur(); };
 
   /* ── Navigation ── */
   window.navGoModule = function () {
@@ -11744,29 +11837,52 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
   const idxVon = (c) => courses.indexOf(c);
   const note = (c) => { const p = (typeof userProgress !== 'undefined' ? userProgress : {})[idxVon(c)]; return p && p.completed ? p.score : null; };
 
-  /* ── Zuordnung Modul → Kurse ── */
-  function kurseFuer(m) {
-    const motiv = m.motiv || 'energie';
+  /* ── Einordnung: die eine Stelle, an der Lektionen Modulen zugeordnet werden (ARCHITEKTUR.md 2.3, Stand 23.10.2026).
+        Regeln je Modul in BLUU_MODULE: «pfade» (Titelmuster der Lernpfade, unabhängig vom Publish-Flag), «kurse» (Titelmuster
+        für Lektionen ohne Pfad), «archivPfade»/«archiv» (ältere Fassungen, nur Admin), «ausblenden» (durch eigene Inhalte
+        ersetzt), «sammelt» (fängt den Rest). Jede Lektion landet in genau einem Modul: erste Regel in Listenreihenfolge gewinnt.
+        Das Ergebnis wird je Datenstand einmal berechnet. ── */
+  const muster = (p) => (p instanceof RegExp ? p : new RegExp(p, 'i'));
+  const passt = (liste, text) => Array.isArray(liste) && liste.some((p) => muster(p).test(String(text || '')));
+  let EINORDNUNG = null, einKey = '';
+  function einordnen() {
     const alleKurse = typeof courses !== 'undefined' ? courses : [];
-    const pfade = (typeof learningPaths !== 'undefined' ? learningPaths : []).filter((lp) => (lp.is_published !== false || admin()) && bluuMotiv(lp.title) === motiv);
-    const liste = [], gesehen = new Set();
-    pfade.forEach((lp) => {
-      (pathCourses || []).filter((pc) => pc.path_id === lp.id).sort((a, b) => a.position - b.position).forEach((pc) => {
-        const c = alleKurse.find((x) => x.id === pc.course_id);
-        if (c && !gesehen.has(c.id) && sichtbar(c)) { gesehen.add(c.id); liste.push({ c, lp }); }
-      });
+    const allePfade = typeof learningPaths !== 'undefined' ? learningPaths : [];
+    const pcs = typeof pathCourses !== 'undefined' && pathCourses ? pathCourses : [];
+    const key = admin() + '|' + alleKurse.map((c) => c.id + (c.is_published === false ? 'e' : '')).join(',') + '|' + allePfade.map((lp) => lp.id + (lp.is_published === false ? 'e' : '')).join(',') + '|' + pcs.length;
+    if (EINORDNUNG && einKey === key) return EINORDNUNG;
+    const belegt = new Set(), out = new Map();
+    const kurseVon = (lp) => pcs.filter((pc) => pc.path_id === lp.id).sort((a, b) => a.position - b.position).map((pc) => alleKurse.find((c) => c.id === pc.course_id)).filter(Boolean);
+    (window.BLUU_MODULE || []).forEach((m) => {
+      const liste = [], archiv = [];
+      const nimm = (c, lp, ziel) => { if (!belegt.has(c.id)) { belegt.add(c.id); ziel.push({ c, lp }); } };
+      /* Durch eigene Inhalte ersetzte Lektionen: belegt, aber nirgends gelistet */
+      alleKurse.filter((c) => passt(m.ausblenden, c.title)).forEach((c) => belegt.add(c.id));
+      /* Pfade in der Reihenfolge der Muster (so bestimmt die Regel die Lektionsfolge, nicht die Datenbank) */
+      const pfade = [];
+      (Array.isArray(m.pfade) ? m.pfade : []).forEach((p) => allePfade.filter((lp) => muster(p).test(lp.title)).forEach((lp) => { if (!pfade.includes(lp)) pfade.push(lp); }));
+      pfade.forEach((lp) => kurseVon(lp).forEach((c) => { if (sichtbar(c)) nimm(c, lp, passt(m.archiv, c.title) ? archiv : liste); }));
+      alleKurse.filter((c) => sichtbar(c) && passt(m.kurse, c.title) && !passt(m.archiv, c.title)).forEach((c) => nimm(c, null, liste));
+      allePfade.filter((lp) => passt(m.archivPfade, lp.title)).forEach((lp) => kurseVon(lp).forEach((c) => { if (sichtbar(c)) nimm(c, lp, archiv); }));
+      alleKurse.filter((c) => sichtbar(c) && passt(m.archiv, c.title)).forEach((c) => nimm(c, null, archiv));
+      out.set(m, { liste, pfade, archiv });
     });
-    const inPfad = new Set((pathCourses || []).map((pc) => pc.course_id));
-    alleKurse.filter((c) => sichtbar(c) && !inPfad.has(c.id) && !gesehen.has(c.id) && bluuMotiv(c.title) === motiv).forEach((c) => { gesehen.add(c.id); liste.push({ c, lp: null }); });
-    return { liste, pfade };
+    /* Rest → Sammelmodul («Noch nicht zugeordnet»); sichtbar, nie versteckt, plus Hinweis in der Konsole für die nächste Regel */
+    const rest = alleKurse.filter((c) => sichtbar(c) && !belegt.has(c.id));
+    const sammler = (window.BLUU_MODULE || []).find((m) => m.sammelt);
+    if (sammler) out.set(sammler, { liste: rest.map((c) => ({ c, lp: null })), pfade: [], archiv: [] });
+    if (rest.length) console.info('BluuAkademie · ' + rest.length + ' Lektion(en) ohne Modulregel:', rest.map((c) => c.id + ' «' + c.title + '»').join(' · '));
+    EINORDNUNG = out; einKey = key;
+    return out;
   }
+  const kurseFuer = (m) => einordnen().get(m) || { liste: [], pfade: [], archiv: [] };
   const pruefungsKurs = (liste) => { const x = liste.find(({ c }) => /abschlusstest|abschlussprüfung|abschlusspruefung|wissenstest|abschluss/i.test(c.title)); return x ? x.c : null; };
   function stand(m) {
-    const { liste, pfade } = kurseFuer(m);
+    const { liste, pfade, archiv } = kurseFuer(m);
     const done = {}; let aktuell = -1;
     liste.forEach(({ c }, i) => { const f = fertig(c); done[BUCHST[i]] = f; if (!f && aktuell < 0) aktuell = i; });
     if (aktuell < 0) aktuell = Math.max(0, liste.length - 1);
-    return { m, liste, pfade, done, aktuell, alleFertig: liste.length > 0 && liste.every(({ c }) => fertig(c)) };
+    return { m, liste, pfade, archiv, done, aktuell, alleFertig: liste.length > 0 && liste.every(({ c }) => fertig(c)) };
   }
   const modulVon = (code) => (window.BLUU_MODULE || []).find((m) => (m.code || m.thema) === code);
   /* «einzeln erhältlich» (Datenfeld m.zugang, kommt später): nur die erste Lektion ist Vorschau, der Rest nur mit Modulzugang */
@@ -11807,31 +11923,32 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     return true;
   };
   window.bluuInhaltErgaenzen = function (m) {
-    /* `fest`: Platz für eigens erstellte Inhalte, wird nicht aus Adrians Kursen gefüllt — außer Lernskript und Lernkarten-Sammlung */
-    if (m.fest) { leer(m); lkErgaenzen(m); lsErgaenzen(m); return; }
+    /* Jedes Modul: Lektionen aus der Einordnung, dazu Lernkarten-Sammlung und eigenes Lernskript, wo das Modul sie trägt */
     const s = stand(m), n = s.liste.length;
-    if (!n) { leer(m); lkErgaenzen(m); lsErgaenzen(m); return; }
-    const slides = s.liste.reduce((a, { c }) => a + (c.slides || []).length, 0);
-    const fragen = s.liste.reduce((a, { c }) => a + (c.questions || []).length, 0);
-    m.status = 'freigeschaltet';
-    m.untermodule = s.liste.map(({ c }, i) => [BUCHST[i], c.title, (c.slides || []).length + ' Slides · ' + (c.questions || []).length + ' Fragen']);
-    m.umfang = n + (n === 1 ? ' Lektion' : ' Lektionen') + ' · ' + slides + ' Slides · ' + fragen + ' Fragen';
-    m.teile = { lernskript: slides ? 'bereit' : 'offen', uebungen: 'bereit', lernkarten: fragen ? 'bereit' : 'offen', probetest: fragen ? 'bereit' : 'offen', pruefung: pruefungsKurs(s.liste) ? 'bereit' : 'offen' };
-    if (!m.untertitel && s.pfade.length) m.untertitel = s.pfade.map((lp) => 'Lernpfad «' + lp.title + '»').join(' · ');
-    /* Ohne eigenen Titel heißt das Modul wie sein Lernpfad (einer) oder wie das Thema */
-    if (!m.titel) m.titelAuto = s.pfade.length === 1 ? s.pfade[0].title : (m.thema || '');
+    leer(m);
+    if (n) {
+      const slides = s.liste.reduce((a, { c }) => a + (c.slides || []).length, 0);
+      const fragen = s.liste.reduce((a, { c }) => a + (c.questions || []).length, 0);
+      m.status = 'freigeschaltet';
+      m.untermodule = s.liste.map(({ c }, i) => [BUCHST[i], c.title, (c.slides || []).length + ' Slides · ' + (c.questions || []).length + ' Fragen' + (c.video_url ? ' · Video' : '')]);
+      m.umfang = n + (n === 1 ? ' Lektion' : ' Lektionen') + ' · ' + slides + ' Slides · ' + fragen + ' Fragen';
+      m.teile = { lernskript: slides ? 'bereit' : 'offen', uebungen: 'bereit', lernkarten: fragen ? 'bereit' : 'offen', probetest: fragen ? 'bereit' : 'offen', pruefung: pruefungsKurs(s.liste) ? 'bereit' : 'offen' };
+      if (s.pfade.length) untertitelAuto(m, s.pfade.map((lp) => 'Programm «' + lp.title + '»').join(' · '));
+      /* Ohne eigenen Titel heißt das Modul wie sein Lernpfad (einer) oder wie das Thema */
+      if (!m.titel) m.titelAuto = s.pfade.length === 1 ? s.pfade[0].title : (m.thema || '');
+    }
+    lkErgaenzen(m); lsErgaenzen(m);
   };
   window.bluuInhaltStand = function (code) {
     const m = modulVon(code); if (!m) return null;
-    const lk = lkStand(m), ls = lsStand(m);
-    const festStand = () => (lk || ls ? { done: {}, aktuell: 0, alleFertig: false, n: 0, fertig: 0, naechster: null, pfade: [], lk, ls } : null);
-    if (m.fest) return festStand();
-    const s = stand(m); if (!s.liste.length) return festStand();
+    const lk = lkStand(m), ls = lsStand(m), s = stand(m);
+    if (!s.liste.length) return (lk || ls || s.pfade.length ? { done: {}, aktuell: 0, alleFertig: false, n: 0, fertig: 0, naechster: null, pfade: s.pfade, archiv: s.archiv.length, lk, ls } : null);
     const n = s.liste.length, f = s.liste.filter(({ c }) => fertig(c)).length;
-    return { done: s.done, aktuell: s.aktuell, alleFertig: s.alleFertig, n, fertig: f, naechster: s.liste[s.aktuell].c, pfade: s.pfade, lk, ls };
+    return { done: s.done, aktuell: s.aktuell, alleFertig: s.alleFertig, n, fertig: f, naechster: s.liste[s.aktuell].c, pfade: s.pfade, archiv: s.archiv.length, lk, ls };
   };
-  /* Für die Admin-Übersicht: die Lektionen (Kurse) eines Moduls in Reihenfolge */
-  window.bluuInhaltLektionen = function (code) { const m = modulVon(code); return m && !m.fest ? stand(m).liste.map(({ c }) => c) : []; };
+  /* Für Admin-Übersicht und Struktur: die Lektionen (Kurse) eines Moduls in Reihenfolge, und sein Archiv */
+  window.bluuInhaltLektionen = function (code) { const m = modulVon(code); return m ? stand(m).liste.map(({ c }) => c) : []; };
+  window.bluuInhaltArchiv = function (code) { const m = modulVon(code); return m ? stand(m).archiv.map(({ c }) => c) : []; };
   /* Set aus einem Modul öffnen (Adrians Lernansicht); «Zurück» führt wieder ins Modul statt zur Übersicht */
   let lkZurueck = null;
   window.bluuLkOeffnen = function (key, code) {
@@ -11847,21 +11964,22 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
 
   /* ── Alle Lektionen: jeder sichtbare Kurs mit Modul, Stand und Freischaltung (Reihenfolge im Lernpfad wie bei Adrian) ── */
   window.bluuLektionen = function (suche) {
-    const module = (window.BLUU_MODULE || []).filter((m) => !m.fest);
+    /* Alle Module in Listenreihenfolge (auch das Sammelmodul); Archiv-Fassungen nur für Admins, am Ende */
+    const module = window.BLUU_MODULE || [];
     const zeilen = [], gesehen = new Set();
     module.forEach((m) => {
       const s = stand(m);
       s.liste.forEach(({ c, lp }, i) => { if (!gesehen.has(c.id)) { gesehen.add(c.id); zeilen.push({ c, lp, m, pos: i, z: zustand(s, i) }); } });
     });
-    (typeof courses !== 'undefined' ? courses : []).filter(sichtbar).forEach((c) => { if (!gesehen.has(c.id)) zeilen.push({ c, lp: null, m: null, pos: -1, z: fertig(c) ? 'fertig' : 'naechster' }); });
+    if (admin()) module.forEach((m) => stand(m).archiv.forEach(({ c, lp }) => { if (!gesehen.has(c.id)) { gesehen.add(c.id); zeilen.push({ c, lp, m, pos: -1, z: fertig(c) ? 'fertig' : 'naechster', archiv: true }); } }));
     const q = String(suche || '').toLowerCase();
     const treffer = q ? zeilen.filter(({ c, m }) => (c.title + ' ' + (m ? (m.code || '') + ' ' + (m.titel || m.titelAuto || m.thema || '') : '')).toLowerCase().includes(q)) : zeilen;
     if (!zeilen.length) return '<div class="lektionen-leer">Noch keine Lektionen veröffentlicht.</div>';
     if (!treffer.length) return '<div class="lektionen-leer">Keine Lektion passt zu «' + esc(suche) + '».</div>';
-    return treffer.map(({ c, m, pos, z }) => {
+    return treffer.map(({ c, m, pos, z, archiv }) => {
       const n = note(c), motiv = bluuMotiv(c.title);
-      const standText = z === 'fertig' ? 'Abgeschlossen' + (n != null ? ' · ' + n + ' %' : '') : (z === 'naechster' ? 'Als Nächstes' : 'Gesperrt');
-      const nr = m && pos >= 0 ? BUCHST[pos] : '–';
+      const standText = archiv ? 'Archiv · ältere Fassung' : (z === 'fertig' ? 'Abgeschlossen' + (n != null ? ' · ' + n + ' %' : '') : (z === 'naechster' ? 'Als Nächstes' : 'Gesperrt'));
+      const nr = m && pos >= 0 ? BUCHST[pos] : (archiv ? 'A' : '–');
       return '<button type="button" class="lektion' + (z === 'gesperrt' ? ' zu' : '') + '"' + (z === 'gesperrt' ? ' disabled title="Vorherige Lektion zuerst abschließen"' : ' onclick="bluuKursStarten(' + c.id + ')"') + '>' +
         '<span class="lektion-nr">' + esc(nr) + '</span>' +
         '<span class="bluu-kachel">' + B('PfadIcon', { motiv, status: z === 'fertig' ? 'fertig' : (z === 'naechster' ? 'aktiv' : 'neu'), fortschritt: z === 'fertig' ? 100 : 0, groesse: 40 }) + '</span>' +
@@ -12040,7 +12158,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     const m = modulVon(code); if (!m) return false;
     /* Eigens erstelltes Lernskript (Block BLUU-LERNSKRIPT) hat Vorrang vor der Slide-Ansicht */
     if (reiter === 'lernskript' && window.bluuLernskriptRender && bluuLernskriptRender(m, el)) return true;
-    const s = m.fest ? { m, liste: [], pfade: [], done: {}, aktuell: 0, alleFertig: false } : stand(m);
+    const s = stand(m);
     if (!s.liste.length && !(reiter === 'lernkarten' && lkSets(m).length)) return false;
     if (reiter !== 'lernkarten') LK = { stapel: null, reihe: [], gedreht: false, hinweis: '' };
     const html = reiter === 'uebungen' ? uebungen(s) : reiter === 'lernskript' ? lernskript(s) : reiter === 'lernkarten' ? lernkarten(s, m) : reiter === 'probetest' ? probetests(s) : reiter === 'pruefung' ? pruefung(s, m) : null;
@@ -12461,10 +12579,12 @@ window.BLUU_LERNSKRIPT_111 = {
       '<label class="ls-sr" for="ls-und-' + k + '">Das würde ich jetzt ergänzen</label>' + feld(k, 'und', 'Das würde ich jetzt ergänzen …', 2) + '</div></div></section>';
   };
   const lkSet = (k) => { try { return (typeof LERNKARTEN_SETS !== 'undefined' ? LERNKARTEN_SETS : []).find((s) => s.letter === k) || null; } catch (e) { return null; } };
+  /* Adrians Übungs-Kurs des Moduls (Titel «Übungen»), wenn die Einordnung ihn dem Modul zuweist */
+  const uebungsKurs = () => { try { return (window.bluuInhaltLektionen ? bluuInhaltLektionen(aktuellerCode) : []).find((c) => /^übungen/i.test(c.title)) || null; } catch (e) { return null; } };
   const next = (k, c) => {
-    const n = nach(k), set = lkSet(k), hook = window.BLUU_HOOKS && typeof BLUU_HOOKS.lernskriptUebungen === 'function';
+    const n = nach(k), set = lkSet(k), hook = window.BLUU_HOOKS && typeof BLUU_HOOKS.lernskriptUebungen === 'function', kurs = uebungsKurs();
     return '<div class="ls-next">' +
-      '<button type="button" class="ls-btn ghost" onclick="bluuLs.uebungen(' + attr(k) + ')"' + (hook || set ? '' : ' disabled title="Übungen zu ' + esc(k) + ' folgen auf der Plattform"') + '>' + sym('stift', 16) + ' Zu den Übungen ' + esc(k) + '</button>' +
+      '<button type="button" class="ls-btn ghost" onclick="bluuLs.uebungen(' + attr(k) + ')"' + (hook || kurs || set ? '' : ' disabled title="Übungen zu ' + esc(k) + ' folgen auf der Plattform"') + (kurs ? ' title="' + esc('Öffnet «' + kurs.title + '» auf der Plattform') + '"' : '') + '>' + sym('stift', 16) + ' Zu den Übungen ' + esc(k) + '</button>' +
       (n ? '<button type="button" class="ls-btn" onclick="bluuLs.gehe(' + attr(n.key) + ')">Weiter zu Kapitel ' + esc(n.key) + ' ' + sym('weiter', 16) + '</button>' : '<button type="button" class="ls-btn" onclick="bluuModulReiter(\'ueberblick\')">Zur Modulübersicht ' + sym('weiter', 16) + '</button>') +
       (vor(k) ? '<button type="button" class="ls-textlink" onclick="bluuLs.gehe(' + attr(vor(k).key) + ')">' + sym('zurueck', 14) + ' Kapitel ' + esc(vor(k).key) + '</button>' : '<button type="button" class="ls-textlink" onclick="bluuLs.gehe(\'start\')">' + sym('zurueck', 14) + ' Bevor es losgeht</button>') + '</div>';
   };
@@ -12644,6 +12764,9 @@ window.BLUU_LERNSKRIPT_111 = {
     uebungen(k) {
       melden('zu_uebungen', { kapitel: k });
       if (window.BLUU_HOOKS && typeof BLUU_HOOKS.lernskriptUebungen === 'function') { BLUU_HOOKS.lernskriptUebungen('1.1.1', k); return; }
+      /* Die Übungen des Moduls auf der Plattform (Adrians Kurs «Übungen» im Pfad «1x1 der Energiewirtschaft»); sonst das Lernkarten-Set zum Kapitel */
+      const kurs = uebungsKurs();
+      if (kurs && window.bluuKursStarten) { bluuKursStarten(kurs.id); return; }
       const set = lkSet(k);
       if (set && window.bluuLkOeffnen) { bluuLkOeffnen(set.key, aktuellerCode); return; }
       if (window.bluuModulReiter) bluuModulReiter('uebungen');
