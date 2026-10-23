@@ -1846,7 +1846,20 @@ html{overflow-x:clip;}
 /* Phase 3: Katalog — Filterleiste mit Zählern, Programm-Zeile in der Karte, Register ohne Detail, Lektionen eingeklappt */
 .modul-filter button small{font-weight:400;opacity:.7;margin-left:4px;}
 .modul-programm{margin:8px 0 0;font-size:13px;color:var(--text2);}
-.modul-gruppe-text{margin:-6px 0 14px;max-width:70ch;}
+/* Regale je Fachbereich: eigener Rahmen mit farbiger Kante, Kopf mit Icon, Kicker, Satz und Link; klare Abstände */
+.modul-gruppe{margin-top:26px;padding:22px 24px 24px;border:1px solid var(--border);border-left:5px solid var(--gruppe-farbe,var(--navy));border-radius:12px;background:var(--bg2);}
+.modul-gruppe:first-child{margin-top:18px;}
+.modul-gruppe-kopf{display:flex;align-items:flex-start;gap:14px;margin-bottom:18px;padding-bottom:16px;border-bottom:1px dashed var(--border);}
+.modul-gruppe-kopf .bluu-kachel{flex:none;}
+.modul-gruppe-text{flex:1;min-width:0;}
+.modul-gruppe-text .kachel-label{display:block;margin-bottom:2px;}
+.modul-gruppe-text .modul-gruppe-titel{margin:0 0 4px;padding:0;border:0;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+.modul-gruppe-text .kachel-text{margin:0;max-width:70ch;}
+.modul-gruppe-link{flex:none;align-self:center;white-space:nowrap;}
+/* Katalog-Abschnitte deutlich voneinander getrennt: Kicker über dem Titel, Linie zwischen den Bändern */
+#screen-module .bluu-band+.bluu-band{border-top:1px solid var(--border);}
+#screen-module .bluu-h2::before{content:'Katalog';display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:6px;}
+@media(max-width:640px){.modul-gruppe{padding:16px 14px 18px;border-left-width:4px;}.modul-gruppe-kopf{flex-wrap:wrap;}}
 .zert-grid.nur-register{grid-template-columns:minmax(0,1fr);}
 .zert-grid.nur-register .programm-zeile{cursor:pointer;}
 .lektionen-hinweis{margin:14px 0 0;font-size:14px;color:var(--text2);}
@@ -11333,8 +11346,11 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     if (mg) mg.innerHTML = BLUU_FACHBEREICHE.filter((f) => filter === 'alle' || f.key === filter).map((f) => {
       const mods = sichtbar.filter((m) => m.bereich === f.key);
       if (!mods.length && filter === 'alle') return '';
-      return '<section class="modul-gruppe" aria-label="' + esc(f.name) + '"><h3 class="modul-gruppe-titel"><span class="bluu-kachel">' + B('PfadIcon', { motiv: f.motiv || 'energie', status: 'aktiv', fortschritt: 0, groesse: 28 }) + '</span>' + esc(f.name) + '<small>' + mods.length + (mods.length === 1 ? ' Modul' : ' Module') + '</small></h3>' +
-        (filter !== 'alle' ? '<p class="kachel-text modul-gruppe-text">' + esc(f.text) + '</p>' : '') +
+      /* Jeder Fachbereich ist ein eigenes Regal: farbige Kante, Kicker, Name, Satz, Zähler — deutlich getrennt vom nächsten */
+      const farbe = bluuMotivFarbe(f.motiv || 'energie');
+      return '<section class="modul-gruppe" aria-label="' + esc(f.name) + '" style="--gruppe-farbe:' + farbe + '"><div class="modul-gruppe-kopf"><span class="bluu-kachel">' + B('PfadIcon', { motiv: f.motiv || 'energie', status: 'aktiv', fortschritt: 0, groesse: 40 }) + '</span>' +
+        '<div class="modul-gruppe-text"><span class="kachel-label">Fachbereich</span><h3 class="modul-gruppe-titel">' + esc(f.name) + '<small>' + mods.length + (mods.length === 1 ? ' Modul' : ' Module') + '</small></h3><p class="kachel-text">' + esc(f.text) + '</p></div>' +
+        (filter === 'alle' ? '<button type="button" class="bluu-textlink modul-gruppe-link" onclick="bluuModulFilter(' + esc(JSON.stringify(f.key)) + ',true)">Nur ' + esc(f.kurz) + ' →</button>' : '<button type="button" class="bluu-textlink modul-gruppe-link" onclick="bluuModulFilter(\'alle\',true)">Alle Fachbereiche →</button>') + '</div>' +
         '<div class="modul-raster">' + (mods.length ? mods.map(modulKachel).join('') : '<div class="bluu-leer">Noch kein Modul in diesem Fachbereich.</div>') + '</div></section>';
     }).join('');
 
