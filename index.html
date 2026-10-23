@@ -1827,6 +1827,17 @@ html{overflow-x:clip;}
 .struktur-lektionen{margin:8px 0 0 38px;padding-left:1.3rem;font-size:13px;color:var(--text2);line-height:1.6;}
 .struktur-lektionen.archiv{opacity:.7;}
 .lektion-zeile.archiv{opacity:.75;}
+/* Phase 1: Übersicht — altes Kursraster aus, Fristen-Band nur mit Inhalt, «Ihr Stand» im Profil ohne Tagesaufgabe */
+#course-grid,#all-courses-heading{display:none!important;}
+#bluu-fristen-band{display:none;}
+#bluu-fristen-band.hat-inhalt{display:block;}
+#bluu-fristen .deadline-banner{margin-bottom:0;}
+#bluu-fristen .deadline-banner+#user-timeline-wrap{margin-top:18px;}
+.stand-im-profil .gp-daily-card,.stand-im-profil .zuletzt-kopf .bluu-textlink{display:none;}
+.stand-im-profil .gp-row{grid-template-columns:minmax(0,1fr);}
+.hero-streak{color:#C7D5E1;}
+/* Phase 2: nächster Schritt im Modul-Hero */
+.hero-aktion{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;}
 .modul-reiter{display:flex;flex-wrap:wrap;gap:4px 26px;border-bottom:1px solid var(--border);}
 .modul-reiter button{background:none;border:0;border-bottom:2px solid transparent;padding:10px 0 12px;font:inherit;font-size:15px;font-weight:500;color:var(--text2);cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
 .modul-reiter button:hover{color:var(--text);}
@@ -10997,7 +11008,8 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     ['uebungen', 'Übungen', 'M9 6h11M9 12h11M9 18h11M3.5 6l1 1 2-2M3.5 12l1 1 2-2M3.5 18l1 1 2-2', 'Übungen mit sofortiger Rückmeldung: Single und Multiple Choice, Richtig/Falsch, Zuordnung, Reihenfolge und Fallentscheidung.'],
     ['lernkarten', 'Lernkarten', 'M7 6h12v14H7zM4 17V3h12', 'Lernkarten zum Wiederholen, mit Glühwürmchen-Tipps und Wiederholung nach Bedarf.'],
     ['probetest', 'Probetests', 'M3 12a9 9 0 1 0 18 0a9 9 0 1 0-18 0M12 7v5l3 2', 'Probetests unter Prüfungsbedingungen, beliebig oft wiederholbar.'],
-    ['pruefung', 'Abschlussprüfung', 'M5 3h14v12H5zM8 7h8M8 10h5M10 15l-1 6 3-2 3 2-1-6', 'Die Abschlussprüfung ist die letzte Lektion und öffnet sich nach allen anderen. Ein Zertifikat vergibt das Programm, zu dem das Modul gehört.']
+    ['pruefung', 'Abschlussprüfung', 'M5 3h14v12H5zM8 7h8M8 10h5M10 15l-1 6 3-2 3 2-1-6', 'Die Abschlussprüfung ist die letzte Lektion und öffnet sich nach allen anderen. Ein Zertifikat vergibt das Programm, zu dem das Modul gehört.'],
+    ['video', 'Videos', 'M4 6h12v12H4zM16 10l5-3v10l-5-3', 'Videolektionen des Moduls, mit Reflexion danach.']
   ];
   const STATUS = { freigeschaltet: 'Freigeschaltet', vorbereitung: 'In Vorbereitung', geplant: 'Geplant' };
   const symbol = (d, farbe, g) => '<svg width="' + (g || 14) + '" height="' + (g || 14) + '" viewBox="0 0 24 24" fill="none" stroke="' + (farbe || 'currentColor') + '" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"/></svg>';
@@ -11059,7 +11071,9 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
       document.getElementById('hero-rang-emblem').innerHTML = B('RangEmblem', { stufe: bluuRangStufe(lvl), groesse: 88 });
       document.getElementById('hero-rang-titel').textContent = 'Level ' + lvl + ' · ' + getLevelTitle(lvl).replace(/^[^\s]+\s/, '');
       document.getElementById('hero-rang-xp').innerHTML = cur.toLocaleString('de-DE') + ' <small>/ ' + ziel.toLocaleString('de-DE') + ' XP</small>';
-      document.getElementById('hero-rang-rest').textContent = 'noch ' + Math.max(0, ziel - cur).toLocaleString('de-DE') + ' bis Level ' + (lvl + 1);
+      /* Streak nur hier (Phase 1: eine Zahl, ein Ort) */
+      const streak = typeof userStreak !== 'undefined' ? (userStreak | 0) : 0;
+      document.getElementById('hero-rang-rest').innerHTML = esc('noch ' + Math.max(0, ziel - cur).toLocaleString('de-DE') + ' bis Level ' + (lvl + 1)) + '<span class="hero-streak" id="hero-streak">' + (streak ? ' · Streak ' + streak + (streak === 1 ? ' Tag' : ' Tage') : ' · noch kein Streak') + '</span>';
       document.getElementById('hero-xp-fill').style.width = pct + '%';
       document.getElementById('hero-xp-linie').setAttribute('aria-valuenow', pct);
     } catch (e) { /* XP noch nicht geladen */ }
@@ -11156,6 +11170,20 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
   /* Stand eines Moduls über alle Inhaltsarten: Lektionen + Lernskript-Kapitel + Lernkarten-Sets */
   const gesamt = (st) => { const n = (st ? st.n : 0) + (st && st.ls ? st.ls.n : 0) + (st && st.lk ? st.lk.n : 0), f = (st ? st.fertig : 0) + (st && st.ls ? st.ls.fertig : 0) + (st && st.lk ? st.lk.fertig : 0); return { n, f, pct: n ? Math.round(f / n * 100) : 0 }; };
   const festPct = (st) => gesamt(st).pct;
+  /* Der eine nächste Schritt eines Moduls (Kapitel lesen · Lektion starten · Set lernen · Ansehen) — dieselbe Taste
+     im Modul-Hero, in «Meine Module» und im Überblick, damit es überall genau einen Weg weiter gibt */
+  const naechsterSchritt = (m, s) => {
+    const code = esc(JSON.stringify(m.code || m.thema));
+    const z = zugangVon(m, s);
+    if (!zugangOffen(z)) return { text: 'Modul ansehen', klick: 'bluuModulOeffnenCode(' + code + ')', primaer: false };
+    if (s && s.ls && s.ls.naechstes) return { text: 'Kapitel ' + s.ls.naechstes.key + ' lesen', klick: 'bluuLsOeffnen(' + esc(JSON.stringify(s.ls.naechstes.key)) + ',' + code + ')', primaer: true };
+    const c = s && s.naechster;
+    const hatInhalt = c && ((c.slides || []).length || (c.questions || []).length || c.video_url);
+    if (s && s.n && !s.alleFertig && hatInhalt) return { text: c.video_url && !(c.slides || []).length ? 'Video ansehen' : 'Lektion starten', klick: 'bluuKursStarten(' + c.id + ')', primaer: true };
+    if (s && s.lk && s.lk.n && s.lk.fertig < s.lk.n) { const set = s.lk.sets.find((x) => !x.fertig) || s.lk.sets[0]; return { text: 'Set ' + set.letter + ' lernen', klick: 'bluuLkOeffnen(' + esc(JSON.stringify(set.key)) + ',' + code + ')', primaer: true }; }
+    return { text: s && gesamt(s).pct === 100 ? 'Ansehen' : 'Modul öffnen', klick: 'bluuModulOeffnenCode(' + code + ')', primaer: false };
+  };
+  const schrittTaste = (m, s, klasse) => { const x = naechsterSchritt(m, s); return '<button type="button" class="kachel-btn' + (x.primaer ? ' primaer' : '') + (klasse ? ' ' + klasse : '') + '" onclick="event.stopPropagation();' + x.klick + '">' + esc(x.text) + '</button>'; };
   const festStand = (st) => [st.n ? st.fertig + ' / ' + st.n + (st.n === 1 ? ' Lektion' : ' Lektionen') : '', st.ls && st.ls.n ? st.ls.fertig + ' / ' + st.ls.n + ' Kapitel' : '', st.lk && st.lk.n ? st.lk.fertig + ' / ' + st.lk.n + ' Sets' : ''].filter(Boolean).join(' · ');
   const modulKachel = (m) => {
     const i = modulIndex(m), f = fachVon(m.bereich);
@@ -11328,8 +11356,14 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     const el = document.getElementById('bluu-meine-module');
     if (!el) return;
     if (window.bluuInhaltErgaenzen) BLUU_MODULE.forEach((m) => bluuInhaltErgaenzen(m));
-    const mods = BLUU_MODULE.filter(modulSichtbar).filter((m) => m.status === 'freigeschaltet');
-    if (!mods.length) { el.innerHTML = '<div class="bluu-leer">' + B('Maskottchen', { groesse: 56, stimmung: 'neugierig' }) + '<span>Noch kein Modul freigeschaltet. Die Übersicht aller Module steht im Katalog.</span></div>'; return; }
+    const alle = BLUU_MODULE.filter(modulSichtbar).filter((m) => m.status === 'freigeschaltet');
+    if (!alle.length) { el.innerHTML = '<div class="bluu-leer">' + B('Maskottchen', { groesse: 56, stimmung: 'neugierig' }) + '<span>Noch kein Modul freigeschaltet. Die Übersicht aller Module steht im Katalog.</span></div>'; return; }
+    /* Phase 1: «Meine» heißt begonnen — begonnene Module zuerst, dazu höchstens drei Vorschläge; der Rest im Katalog */
+    const mitStand = alle.map((m) => ({ m, g: gesamt(window.bluuInhaltStand ? bluuInhaltStand(m.code || m.thema) : null) }));
+    const begonnen = mitStand.filter((x) => x.g.f > 0 && x.g.pct < 100), fertigAlle = mitStand.filter((x) => x.g.pct === 100 && x.g.n), neu = mitStand.filter((x) => !x.g.f);
+    const mods = begonnen.concat(neu.slice(0, Math.max(0, 3 - begonnen.length)), fertigAlle).map((x) => x.m);
+    const hinweis = document.getElementById('meine-hinweis');
+    if (hinweis) hinweis.textContent = alle.length > mods.length ? (alle.length - mods.length) + ' weitere Module im Katalog.' : '';
     el.innerHTML = mods.map((m) => {
       const s = window.bluuInhaltStand ? bluuInhaltStand(m.code || m.thema) : null;
       const g = gesamt(s), n = g.n, fertig = g.f, pct = g.pct, farbe = bluuMotivFarbe(m.motiv || 'energie');
@@ -11343,7 +11377,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
         '<span class="meine-zahl">' + pct + '<small> %</small></span></div>' +
         '<div class="pfad-balken"><div style="width:' + pct + '%;background:' + (pct === 100 ? 'var(--lime)' : farbe) + '"></div></div>' +
         '<div class="kachel-fuss"><span class="kachel-meta">' + fertig + ' / ' + n + einheit + (s && s.alleFertig ? ' · abgeschlossen' : '') + '</span><span>' + zert +
-        '<button type="button" class="kachel-btn' + (s && s.alleFertig ? '' : ' primaer') + '" onclick="event.stopPropagation();bluuModulOeffnen(' + modulIndex(m) + ')">' + (s && s.alleFertig ? 'Ansehen' : (pct ? 'Weiter' : 'Starten')) + '</button></span></div></article>';
+        schrittTaste(m, s) + '</span></div></article>';
     }).join('');
   };
 
@@ -11400,6 +11434,10 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
   function renderModul() {
     const m = BLUU_MODULE[aktuellesModul];
     if (!m) return;
+    /* Inhalt vorhanden (Block BLUU-INHALT)? Dann übernimmt die Inhalts-Engine Reiter und Stand. */
+    if (window.bluuInhaltErgaenzen) bluuInhaltErgaenzen(m);
+    const stand = (window.bluuInhaltStand && bluuInhaltStand(m.code || m.thema)) || null;
+    const zNow = zugangVon(m, stand);
     const um = m.untermodule || [];
     document.getElementById('modul-kopf').innerHTML =
       document.querySelector('#screen-module .hero-landschaft').outerHTML +
@@ -11411,21 +11449,19 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
       /* Fakten nur aus belegten Daten: Lektionen, Umfang (Slides/Fragen), Zugang, Programm */
       '<dl class="modul-fakten"><div><dt>Lektionen</dt><dd>' + (um.length || '–') + '</dd></div>' +
       '<div><dt>Umfang</dt><dd>' + ((m.umfang || '').replace(/^\d+ Lektionen? · /, '') || '–') + '</dd></div>' +
-      '<div><dt>Zugang</dt><dd>' + ZUGANG[zugangVon(m, window.bluuInhaltStand ? bluuInhaltStand(m.code || m.thema) : null)].label + '</dd></div>' +
-      '<div><dt>Zertifikat</dt><dd>' + (programmVon(m) ? 'über das Programm' : '–') + '</dd></div></dl></div>';
+      '<div><dt>Zugang</dt><dd>' + ZUGANG[zNow].label + '</dd></div>' +
+      '<div><dt>Zertifikat</dt><dd>' + (programmVon(m) ? 'über das Programm' : '–') + '</dd></div></dl>' +
+      /* Phase 2: der nächste Schritt steht im Hero — ein Klick, kein Reiterwechsel */
+      (zugangOffen(zNow) && stand && naechsterSchritt(m, stand).primaer ? '<div class="hero-aktion">' + schrittTaste(m, stand) + '</div>' : '') + '</div>';
 
-    /* Reiter: feste Teile plus optionale Seiten, die nur erscheinen, wenn das Datenfeld gefüllt ist */
+    /* Reiter: nur Teile mit Inhalt (teile[k] === 'bereit', aus der Inhalts-Engine) plus optionale Datenseiten */
     const OPTIONAL = [['lernziele', 'Lernziele'], ['voraussetzungen', 'Voraussetzungen'], ['faq', 'FAQ']].filter(([k]) => Array.isArray(m[k]) && m[k].length);
-    const REITER = [['ueberblick', 'Überblick']].concat(TEILE.map(([k, n]) => [k, n]), OPTIONAL);
+    const REITER = [['ueberblick', 'Überblick']].concat(TEILE.filter(([k]) => m.teile && m.teile[k] === 'bereit').map(([k, n]) => [k, n]), OPTIONAL);
     if (!REITER.some(([k]) => k === reiter)) reiter = 'ueberblick';
     document.getElementById('modul-reiter').innerHTML = REITER.map(([k, n]) =>
       '<button type="button" role="tab" aria-selected="' + (reiter === k) + '" onclick="bluuModulReiter(\'' + k + '\')">' + n + '</button>').join('');
 
     const inhalt = document.getElementById('modul-inhalt');
-    /* Inhalt vorhanden (Block BLUU-INHALT)? Dann übernimmt die Inhalts-Engine Reiter und Stand. */
-    if (window.bluuInhaltErgaenzen) bluuInhaltErgaenzen(m);
-    const stand = (window.bluuInhaltStand && bluuInhaltStand(m.code || m.thema)) || null;
-    const zNow = zugangVon(m, stand);
     /* Optionale Seiten aus Datenfeldern: Lernziele (Liste), Voraussetzungen (Liste), FAQ ([{frage, antwort}]) */
     if (OPTIONAL.some(([k]) => k === reiter)) {
       const titel = OPTIONAL.find(([k]) => k === reiter)[1];
@@ -11619,7 +11655,37 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
   nach('updateXPBar', () => bluuHero());
   nach('applyDisplayName', () => bluuHero());
   nach('renderDailyChallenge', () => bluuHeute());
-  nach('showDash', () => { bluuHero(); bluuZuletzt(); bluuHeute(); bluuWeiter(); bluuMeineModule(); });
+  nach('showDash', () => { bluuHero(); bluuZuletzt(); bluuHeute(); bluuWeiter(); bluuMeineModule(); bluuFristen(); });
+  nach('renderUserTimeline', () => bluuFristen());
+  nach('renderDeadlineBanner', () => bluuFristen());
+
+  /* ── Phase 1 (Plan 23.10.2026): Übersicht ordnen — jede Information einmal, der nächste Schritt oben.
+        «Ihr Stand» (Kennzahlen, Streak-Karte, Zuletzt verdient) zieht in die Erfolge-Seite; Pflichtfristen und
+        Onboarding-Zeitplan bilden das Band «Fristen und Plan» (nur sichtbar, wenn Adrians Daten etwas liefern);
+        die Tagesaufgabe steht nur im Hero, Adrians Karte bleibt im DOM (seine Funktionen schreiben hinein), ist aber
+        ausgeblendet; das alte Kursraster ist ausgeblendet (Katalog → Alle Lektionen, Admin → Überblick). ── */
+  window.bluuUebersichtOrdnen = function () {
+    const stand = document.querySelector('section[aria-labelledby="stand-titel"]');
+    const meine = document.getElementById('bluu-meine-band');
+    const profil = document.getElementById('screen-profile');
+    if (!stand || !meine || document.getElementById('bluu-fristen-band')) return;
+    const band = document.createElement('section');
+    band.className = 'bluu-band'; band.id = 'bluu-fristen-band'; band.setAttribute('aria-labelledby', 'fristen-titel');
+    band.innerHTML = '<div class="bluu-kopfzeile"><h2 class="bluu-h2" id="fristen-titel">Fristen und Plan.</h2></div><p class="bluu-lead">Pflichtlektionen mit Frist und dein Onboarding-Zeitplan – nur, wenn dir etwas zugewiesen ist.</p><div id="bluu-fristen"></div>';
+    meine.insertAdjacentElement('afterend', band);
+    const ziel = band.querySelector('#bluu-fristen');
+    ['deadline-banner', 'user-timeline-wrap'].forEach((id) => { const e = document.getElementById(id); if (e) ziel.appendChild(e); });
+    if (profil) { stand.classList.add('stand-im-profil'); profil.insertAdjacentElement('afterbegin', stand); }
+    bluuFristen();
+  };
+  window.bluuFristen = function () {
+    const band = document.getElementById('bluu-fristen-band');
+    if (!band) return;
+    const dl = document.getElementById('deadline-banner'), tl = document.getElementById('user-timeline-wrap');
+    const hat = (dl && dl.classList.contains('show')) || (tl && tl.style.display !== 'none' && tl.innerHTML.trim());
+    band.classList.toggle('hat-inhalt', !!hat);
+  };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => bluuUebersichtOrdnen()); else bluuUebersichtOrdnen();
   /* Übersicht sofort zeigen: Adrians navGoOverview wechselt erst am Ende von showDash (nach mehreren
      Datenbankabfragen) die Ansicht — bei langsamer oder fehlender Verbindung wirkt die Navigation hängend. */
   const altUebersicht = window.navGoOverview;
@@ -11889,7 +11955,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
   const nurMitZugang = (s, i) => s.m && s.m.zugang === 'einzeln' && i > 0 && !fertig(s.liste[i].c);
   const zustand = (s, i) => (fertig(s.liste[i].c) ? 'fertig' : (nurMitZugang(s, i) ? 'gesperrt' : (i === s.aktuell ? 'naechster' : (i < s.aktuell ? 'fertig' : 'gesperrt'))));
 
-  const leer = (m) => { m.status = 'geplant'; m.untermodule = []; m.umfang = ''; m.teile = { lernskript: 'offen', uebungen: 'offen', lernkarten: 'offen', probetest: 'offen', pruefung: 'offen' }; if (m.untertitelAuto) { m.untertitel = ''; m.untertitelAuto = false; } };
+  const leer = (m) => { m.status = 'geplant'; m.untermodule = []; m.umfang = ''; m.teile = { lernskript: 'offen', uebungen: 'offen', lernkarten: 'offen', probetest: 'offen', pruefung: 'offen', video: 'offen' }; if (m.untertitelAuto) { m.untertitel = ''; m.untertitelAuto = false; } };
   /* Automatischer Untertitel aus den Inhalten (nur wenn das Modul keinen eigenen hat); wird mit leer() zurückgesetzt */
   const untertitelAuto = (m, text) => { if (m.untertitel && !m.untertitelAuto) return; m.untertitel = (m.untertitelAuto ? m.untertitel + ' · ' : '') + text; m.untertitelAuto = true; };
   /* ── Antonias Lernskript 1.1.1 (Block BLUU-LERNSKRIPT) gehört zum Modul mit lernskript:'1.1.1' ── */
@@ -11932,7 +11998,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
       m.status = 'freigeschaltet';
       m.untermodule = s.liste.map(({ c }, i) => [BUCHST[i], c.title, (c.slides || []).length + ' Slides · ' + (c.questions || []).length + ' Fragen' + (c.video_url ? ' · Video' : '')]);
       m.umfang = n + (n === 1 ? ' Lektion' : ' Lektionen') + ' · ' + slides + ' Slides · ' + fragen + ' Fragen';
-      m.teile = { lernskript: slides ? 'bereit' : 'offen', uebungen: 'bereit', lernkarten: fragen ? 'bereit' : 'offen', probetest: fragen ? 'bereit' : 'offen', pruefung: pruefungsKurs(s.liste) ? 'bereit' : 'offen' };
+      m.teile = { lernskript: slides ? 'bereit' : 'offen', uebungen: slides || fragen ? 'bereit' : 'offen', lernkarten: fragen ? 'bereit' : 'offen', probetest: fragen ? 'bereit' : 'offen', pruefung: pruefungsKurs(s.liste) ? 'bereit' : 'offen', video: s.liste.some(({ c }) => c.video_url) ? 'bereit' : 'offen' };
       if (s.pfade.length) untertitelAuto(m, s.pfade.map((lp) => 'Programm «' + lp.title + '»').join(' · '));
       /* Ohne eigenen Titel heißt das Modul wie sein Lernpfad (einer) oder wie das Thema */
       if (!m.titel) m.titelAuto = s.pfade.length === 1 ? s.pfade[0].title : (m.thema || '');
@@ -12049,6 +12115,14 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
           '</article>').join('') + '</section>').join('') +
       gesperrt.map((i) => gesperrtZeile(s, i)).join('');
   }
+  /* Videolektionen des Moduls (Adrians Kurse mit video_url): Ansehen startet den Kurs wie gewohnt, Reflexion folgt dort */
+  function videos(s) {
+    const mit = s.liste.map((x, i) => ({ ...x, i })).filter(({ c }) => c.video_url);
+    if (!mit.length) return '<div class="bluu-leer">Keine Videos in diesem Modul.</div>';
+    const knopf = (c, z) => z === 'gesperrt' ? '<button type="button" class="kachel-btn" disabled>Gesperrt</button>' : '<button type="button" class="kachel-btn primaer" onclick="bluuKursStarten(' + c.id + ')">' + (z === 'fertig' ? 'Noch einmal ansehen' : 'Ansehen') + '</button>';
+    return '<p class="bluu-lead">Videolektionen dieses Moduls. Nach dem Video folgt eine kurze Reflexion – sie zählt wie ein Test.</p>' +
+      '<div class="ik-liste">' + mit.map(({ i }) => kursKarte(s, i, knopf)).join('') + '</div>';
+  }
   function probetests(s) {
     const mit = s.liste.filter(({ c }) => (c.questions || []).length);
     if (!mit.length) return '<div class="bluu-leer">Noch keine Tests in diesem Modul.</div>';
@@ -12161,7 +12235,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
     const s = stand(m);
     if (!s.liste.length && !(reiter === 'lernkarten' && lkSets(m).length)) return false;
     if (reiter !== 'lernkarten') LK = { stapel: null, reihe: [], gedreht: false, hinweis: '' };
-    const html = reiter === 'uebungen' ? uebungen(s) : reiter === 'lernskript' ? lernskript(s) : reiter === 'lernkarten' ? lernkarten(s, m) : reiter === 'probetest' ? probetests(s) : reiter === 'pruefung' ? pruefung(s, m) : null;
+    const html = reiter === 'uebungen' ? uebungen(s) : reiter === 'lernskript' ? lernskript(s) : reiter === 'lernkarten' ? lernkarten(s, m) : reiter === 'probetest' ? probetests(s) : reiter === 'pruefung' ? pruefung(s, m) : reiter === 'video' ? videos(s) : null;
     if (html == null) return false;
     el.innerHTML = html;
     return true;
