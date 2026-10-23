@@ -11450,8 +11450,8 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
         const nurZugang = z === 'einzeln' && idx > 0 && !fertig;
         const naechste = !nurZugang && stand && idx === stand.aktuell && !fertig, gesperrt = nurZugang || (stand && !fertig && !naechste);
         const kl = fertig ? ' fertig' : (naechste ? ' aktuell' : '');
-        const st = fertig ? HAKEN + ' Abgeschlossen' : (naechste ? (z === 'einzeln' ? 'Vorschau · offen' : 'Freigeschaltet · als Nächstes') : (nurZugang ? SCHLOSS + ' Nur mit Modulzugang' : (gesperrt ? SCHLOSS + ' Nach Lektion ' + esc(um[idx - 1] ? um[idx - 1][0] : '') : 'Inhalt folgt')));
-        return '<li class="' + (gesperrt ? 'gesperrt' : 'klickbar') + '"' + (gesperrt ? ' title="' + (nurZugang ? 'Im vollen Zugang enthalten' : 'Vorherige Lektion abschließen') + '"' : ' onclick="bluuInhaltZu(\'' + esc(m.code || m.thema) + '\',' + idx + ')"') + '><span class="aufbau-buchstabe' + kl + '">' + esc(b) + '</span><span class="aufbau-titel">' + esc(titel) + '</span><span class="aufbau-meta">' + esc(meta || '') + (meta ? ' · ' : '') + st + '</span></li>';
+        const st = fertig ? HAKEN + ' Abgeschlossen' : (naechste ? (z === 'einzeln' ? 'Vorschau · offen' : 'Freigeschaltet · als Nächstes') : (nurZugang ? SCHLOSS + ' Nur mit Modulzugang' : (gesperrt ? SCHLOSS + ' Nach Lektion ' + esc(um[idx - 1] ? bz(um[idx - 1][0], idx - 1) : '') : 'Inhalt folgt')));
+        return '<li class="' + (gesperrt ? 'gesperrt' : 'klickbar') + '"' + (gesperrt ? ' title="' + (nurZugang ? 'Im vollen Zugang enthalten' : 'Vorherige Lektion abschließen') + '"' : ' onclick="bluuInhaltZu(\'' + esc(m.code || m.thema) + '\',' + idx + ')"') + '><span class="aufbau-buchstabe' + kl + '">' + esc(bz(b, idx)) + '</span><span class="aufbau-titel">' + esc(titel) + '</span><span class="aufbau-meta">' + esc(meta || '') + (meta ? ' · ' : '') + st + '</span></li>';
       }).join('') : '';
       /* Lernskript-Kapitel (eigens erstellter Inhalt): jedes Kapitel anklickbar, Stand aus den Häkchen «Das kann ich jetzt» */
       const lsZeilen = stand && stand.ls && stand.ls.n
