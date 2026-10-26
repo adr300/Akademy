@@ -62,6 +62,10 @@ Nach Canvas-Seite «Wiki» (Artefakt, Seite dcb81aee8d83): Navy-Band mit der Hea
 
 Siehe `docs/INHALTSMUSTER.md`: `.ls-text` / `.slide-text` mit h2–h4, p, Listen, Tabellen (`.tabelle-scroll`, `caption`), `figure` + `figcaption`, `.kasten.definition|.beispiel|.hinweis|.warnung|.merke`, `.formel`, `blockquote` + `cite`, `dl`, `sup.fn` + `.fussnoten`, `.quelle`.
 
+## Lernskript-Form B (Block `BLUU-TF1`, Module 1.1.2–1.1.5)
+
+Gleicher Rahmen wie 1.1.1 (Leuchtpfad, Werkzeugleiste, Hero, Meta-Chips, Glühwürmchen-Blasen, `.ls-card`), aber ohne handgezeichnete Szene und ohne Mitmach-Rechner: Hero = Modulkachel in weißer Karte + Kapitelreihe (aktuell Lime, geschafft Navy). Reihenfolge der Karte: «Darum geht es» (Maskottchen «erklärt») → «Das Wichtigste» als nummerierte `.ls-sec` mit `.ls-tabelle` und `.ls-reihe` → «Typische Stolperstellen» (Maskottchen «denkt», `<details>` mit ?/✓-Marke) → `.ls-merk` → «Erklär es Dir selbst» (`.ls-mach`, Textarea + `details.ls-loesung`) → «Das kann ich jetzt» → Abschied («freut») → Weiter-Knöpfe. Lernkarten-Screen: Gruppenzeile `.lk-set-gruppe` je Modul (Mono-Chip mit Modulnummer, Titel, Sets-Zähler). Tabellen unter 640 px mit `overflow-wrap:anywhere`.
+
 ## Bewegung auf Modul-Icons (Block `BLUU-KANDIS`)
 
 Ausnahme vom «kein Glanz»: auf Wunsch des Users bekommen die geometrischen Modul-Icons beim Hover einen «Candy»-Pop: federndes Heben (`cubic-bezier(.34,1.56,.64,1)`, −4 px, 110 %, −2,5°), weicher Glanzbogen oben links plus kleiner Reflex unten rechts (radiale Verläufe, screen), innerer Lichtrand, Schatten in der Modulfarbe. Gilt nur für `.szene-kachel`-Bilder (Modulkarten, «Meine Module», Modul-Kopf), nicht für Fachbereich-Illustrationen, Abzeichen oder Navigation. Dunkelmodus gedämpft, reduced-motion = nur Glanz.

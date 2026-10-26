@@ -20,3 +20,10 @@ Prompt in `api/chat.js` / KI-Import so ergänzen, dass die erzeugten Slides die 
 
 ## 6. Nutzer einladen für Manager
 Der Button «+ Nutzer einladen» ist für Manager sichtbar und schreibt in `pending_roles`. Ob RLS das für Manager erlaubt, ist aus dem Frontend nicht ersichtlich. Bitte klären; falls nein, Button clientseitig für Manager ausblenden **und** RLS so belassen (Ausblenden ist keine Autorisierung).
+
+## 7. Lernkarten und Lernskripte 1.1.2–1.1.5 (TF1, 26.10.2026)
+- `lernkarten_progress`: das Frontend schreibt jetzt auch `module = '1.1.2' … '1.1.5'` (Set-Schlüssel `112-A` …) und liest alle fünf Module. Bitte prüfen, ob RLS/Constraints den Wert zulassen (bisher nur `'1.1.1'`).
+- Abzeichen: die 30 neuen Sets haben kein Abzeichen (`badge:null`). Wenn gewünscht, je Untermodul ein `badges`-Eintrag wie bei 1.1.1 («Stromläufer» …) – die Schlüssel kann das Frontend dann in `BLUU_LERNKARTEN[modul][i].badge` eintragen.
+- XP je Kartentyp (Erklären 10 · Merksatz 10 · Stolperstelle 20 · Erklär es Dir selbst 30) ist ein Frontend-Vorschlag; die Word-Dateien nennen keine Werte. XP-Vergabe läuft unverändert über `awardXP`.
+- Kursinhalte aus dem Zip, die nicht in die App gehören (Adrian, Supabase `courses`): Übungen A–I je Modul, Wissenstest, Praxisfall, Reflexion, Live-Arbeitsblätter, Sprechertexte. Ein Kurs «Übungen» im Lernpfad des Moduls wird vom Lernskript-Knopf «Zu den Übungen» automatisch gefunden (Titel beginnt mit «Übungen»); Lernpfad-/Kurstitel sollten mit «1.1.2 …» oder dem Modultitel beginnen, damit `BLUU_MODULE[].pfade/kurse` greifen.
+- Wunsch wie in 1.: Lernskript-Stand (`bluu-ls-<modul>-<uid>` im Browser) in eine Tabelle `lernskript_progress (user_id, module, chapter, done, inputs jsonb)` – dann wandert der Stand mit dem Konto.

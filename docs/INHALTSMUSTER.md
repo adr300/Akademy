@@ -35,3 +35,22 @@ Die Prüf-Lektion «Bilanzkreis und Ausgleichsenergie» (Fixture im Screenshot-H
 
 - Inhalte sind admin-verfasstes HTML und werden ungefiltert eingesetzt (bestehender Zustand, siehe `docs/AUDIT-NOTIZEN.md`).
 - Keine automatische PDF-Konvertierung außer dem bestehenden KI-Import; dieses Muster beschreibt das Zielformat, das der KI-Import erzeugen sollte (Prompt-Anpassung = Backend-Thema, siehe `docs/BACKEND-AENDERUNGEN.md`).
+
+## Lernskript-Form B und Lernkarten aus Word (TF1, 26.10.2026)
+
+Die Word-Dateien aus «04 Lernplattform» haben eine feste Gliederung, die sich ohne Nacharbeit einlesen lässt (Dump: `docx_dump.py`, Parser: `tf1_port.js`, Eintrag: `tf1_patch.js`, Block `BLUU-TF1`):
+
+| Word | Datenfeld | Darstellung |
+|---|---|---|
+| Starttabelle «Untermodul · Lesezeit · Danach üben» | `kapitel[].lesezeit`, `danach` | Meta-Chips, Startseite |
+| `# A  Titel` | `kapitel[].key/titel` | Kapitel |
+| `### Darum geht es` (Absätze) | `darum[]` | Karte mit Glühwürmchen «erklärt» |
+| `### Das Wichtigste`: kurze Zeile = Blocktitel, Tabelle, Absatz nach Tabelle = Notiz, «Reihenfolge: …» + `1. A – B` | `wichtig[{titel, tabelle{kopf,zeilen}, notiz, reihe[[A,B]], text}]` | nummerierte Abschnitte, `.ls-tabelle`, `.ls-reihe` |
+| `### Typische Stolperstellen` (Tabelle Falsche Annahme · Richtig ist) | `stolper[[falsch, richtig]]` | `<details>` je Zeile |
+| einzellige Tabelle «Merksatz: …» | `merksatz` | `.ls-merk` |
+| `### Erklär es Dir selbst`: «Frage: …» / «So könnte Deine Antwort lauten: …» | `selbst{frage, antwort}` | Textfeld + Musterantwort |
+| Modulbeschreibung, Tabelle «Untermodul · Ergebnis» | `kann[Ergebnis]` | «Das kann ich jetzt» |
+| Steckbrief «Darum geht es» | `start.weg`, `BLUU_MODULE[].beschreibung` | Startseite, Katalogkarte |
+| Lernkarten: `### 1.1.2-A-01 · Typ` + Tabelle Vorderseite/Rückseite | `cards[{id, type, f, b, level, xp}]` | Lernkarten |
+
+Für ein weiteres Modul: Zip entpacken, die vier Dateien (Lernskript, Lernkarten, Modulbeschreibung, Steckbrief) dumpen, in `tf1_port.js` die Modulzeile ergänzen, Patch laufen lassen; Kachel aus `docs/bilder-module/` wählen. Weicht ein Dokument von der Gliederung ab, meldet der Parser die Zeile («Warnung»).
