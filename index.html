@@ -2632,6 +2632,22 @@ ol.ls-schritte b{color:var(--ls-navy);}
 .ls-loesung summary{font-weight:600;}
 .ls-foot{color:var(--ls-muted);font-size:.8em;margin-top:28px;}
 /* BLUU-RUHIG:ENDE */
+/* BLUU-ANTWORTEN:START — Antwortprotokoll auf der Ergebnisseite, Link in der Lektionszeile, Übersicht für Manager */
+.res-antworten{text-align:left;max-width:680px;margin:20px auto 0;}
+.ra-h{font-family:var(--disp);font-size:17px;margin:0 0 10px;color:var(--fg);}
+.ra-liste{list-style:none;margin:0;padding:0;display:grid;gap:8px;}
+.ra{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--ln);border-radius:10px;padding:10px 12px;background:var(--sf-1);font-size:13px;line-height:1.5;}
+.ra-mark{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:12px;background:var(--sf-2);color:var(--fg-2);}
+.ra.ok .ra-mark{background:color-mix(in srgb,var(--ak) 25%,var(--sf-1));color:var(--fg);}
+.ra.nein .ra-mark{background:color-mix(in srgb,#b91c1c 14%,var(--sf-1));color:#b91c1c;}
+.ra-frage{margin:0 0 4px;font-weight:600;color:var(--fg);}
+.ra-zeile{margin:2px 0 0;color:var(--fg-2);}
+.ra-zeile b{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-3);margin-right:6px;}
+.ra-fb{color:var(--fg-3);}
+.ra-box{max-width:640px;width:calc(100% - 32px);max-height:85vh;overflow:auto;text-align:left;}
+.lektion-antworten{display:block;margin-top:4px;font-size:12px;color:var(--fg-2);text-decoration:underline;text-underline-offset:3px;cursor:pointer;}
+.lektion-antworten:hover{color:var(--fg);}
+/* BLUU-ANTWORTEN:ENDE */
 /* BLUU-TF1:ENDE */
 /* BLUU-LERNSKRIPT:ENDE */
 /* BLUU-VERWALTUNG:START — Konsolidierung (24.10.2026): gemeinsame Verwaltungs-Bausteine, Manager-Überblick,
@@ -3942,6 +3958,7 @@ class Component extends DCLogic {
             <div class="r-stat"><div class="r-num" id="res-p"></div><div class="r-lbl">Ergebnis</div></div>
           </div>
           <div class="xp-gained-badge" id="res-xp" style="display:none"></div>
+          <div class="res-antworten" id="res-antworten"></div>
           <div class="res-btns">
             <button class="btn-cta" id="res-cta" onclick="showDash()">Zur Kursübersicht</button>
             <button class="btn-sec" id="res-retry" onclick="retry()">Test wiederholen</button>
@@ -4489,6 +4506,7 @@ class Component extends DCLogic {
 
       <!-- KPI row -->
       <div id="analytics-kpis" class="an-kpi-grid"></div>
+      <div id="analytics-antworten"></div>
 
       <!-- Main chart + donut -->
       <div class="an-main-row">
@@ -8978,6 +8996,7 @@ async function loadAnalytics(){
   const uniqueUsers=new Set(pd.map(r=>r.user_id)).size;
 
   _anData={pd,sd,total,passed,passRate,avgScore,totalSecs,uniqueUsers};
+  if(window.bluuAntwortenAuswertung) bluuAntwortenAuswertung();
 
   // KPI cards
   kpis.innerHTML=[
@@ -12905,7 +12924,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
         '<span class="lektion-nr">' + esc(nr) + '</span>' +
         '<span class="bluu-kachel">' + B('PfadIcon', { motiv, status: z === 'fertig' ? 'fertig' : (z === 'naechster' ? 'aktiv' : 'neu'), fortschritt: z === 'fertig' ? 100 : 0, groesse: 40 }) + '</span>' +
         '<span><p class="lektion-titel">' + esc(c.title) + '</p><p class="lektion-meta">' + (m ? esc(m.titel || m.titelAuto || m.thema || '') + ' · ' : '') + (c.slides || []).length + ' Slides · ' + (c.questions || []).length + ' Fragen' + (c.video_url ? ' · Video' : '') + '</p></span>' +
-        '<span class="lektion-stand' + (z === 'fertig' ? ' ok' : (z === 'naechster' ? ' naechst' : '')) + '">' + standText + '</span></button>';
+        '<span class="lektion-stand' + (z === 'fertig' ? ' ok' : (z === 'naechster' ? ' naechst' : '')) + '">' + standText + (window.bluuAntwortenVon && bluuAntwortenVon(c.id) ? '<span class="lektion-antworten" role="link" tabindex="0" onclick="event.stopPropagation();bluuAntwortenAnzeigen(' + c.id + ')" onkeydown="if(event.key===\'Enter\'){event.stopPropagation();bluuAntwortenAnzeigen(' + c.id + ')}">Antworten ansehen</span>' : '') + '</span></button>';
     }).join('');
   };
   window.bluuInhaltZu = function (code, idx) {
@@ -13815,6 +13834,96 @@ window.BLUU_LERNSKRIPT_111 = {
 })();
 </script>
 <!-- BLUU-LERNSKRIPT:ENDE -->
+<!-- BLUU-ANTWORTEN:START -->
+<script>
+/* BLUU-ANTWORTEN — Antwortprotokoll je Lektion (26.10.2026). Hängt sich an startQuiz/nextQ/showResult; liest die Entscheidung aus dem
+   Zähler «correct» und die gewählte Antwort aus der Frageansicht. Browser: bluu-antworten-<uid> (letzter Versuch je Lektion).
+   Server: public.question_answers (Migration 2026-10-26_08) – fehlt die Tabelle, bleibt es beim Browser. */
+(function () {
+  const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const uid = () => (typeof currentUser !== 'undefined' && currentUser && currentUser.id) || 'gast';
+  const KEY = () => 'bluu-antworten-' + uid();
+  const lies = () => { try { return JSON.parse(localStorage.getItem(KEY())) || {}; } catch (e) { return {}; } };
+  const TYP = { multiple_choice: 'Multiple Choice', multi_select: 'Mehrfachauswahl', true_false: 'Richtig / Falsch', match: 'Zuordnung', sort: 'Reihenfolge', deadline: 'Fristenrechner' };
+  const typVon = (q) => { const t = ({ ordering: 'sort', matching: 'match', single_choice: 'multiple_choice' })[q.question_type] || q.question_type || 'multiple_choice'; return t === 'multiple_choice' && (q.correct_index == null || q.correct_index < 0) && q.correct_order ? 'multi_select' : t; };
+  const opts = (q) => ['opt_a', 'opt_b', 'opt_c', 'opt_d'].map((k) => q[k]).filter(Boolean);
+  const loesung = (q) => {
+    const t = typVon(q), o = opts(q); let co = []; try { co = JSON.parse(q.correct_order || '[]'); } catch (e) {}
+    if (t === 'multiple_choice') return o[q.correct_index] || '';
+    if (t === 'multi_select') return co.map((i) => o[i]).filter(Boolean).join(' · ');
+    if (t === 'true_false') return o.map((x, i) => x + ': ' + (q['match_' + 'abcd'[i]] === 'true' ? 'Richtig' : 'Falsch')).join(' · ');
+    if (t === 'match') { const r = ['match_a', 'match_b', 'match_c', 'match_d'].map((k) => q[k]).filter((x) => x != null); return o.map((x, i) => x + ' → ' + (r[co[i] != null ? co[i] : i] || '')).join(' · '); }
+    if (t === 'sort') return co.map((i) => o[i]).filter(Boolean).join(' → ');
+    return '';
+  };
+  const antwort = (q) => {
+    const t = typVon(q), box = document.getElementById('q-opts'); if (!box) return '';
+    const txt = (el) => el.textContent.trim();
+    if (t === 'multiple_choice') { const w = box.querySelector('.q-opt.wrong'); return w ? txt(w) : txt(box.querySelector('.q-opt.correct') || box); }
+    if (t === 'multi_select') return Array.from(box.querySelectorAll('.q-opt.selected')).map(txt).join(' · ');
+    if (t === 'true_false') return Array.from(box.children).map((row) => { const s = row.querySelector('span'), b = row.querySelector('.q-opt.selected'); return s && b ? txt(s) + ': ' + txt(b) : ''; }).filter(Boolean).join(' · ');
+    if (t === 'match') return Array.from(box.querySelectorAll('select')).map((sel, i) => { const l = sel.closest('div') && sel.closest('div').querySelector('span,b,strong'); return (l ? txt(l) : (opts(q)[i] || '')) + ' → ' + (sel.value || '–'); }).join(' · ');
+    if (t === 'sort') return Array.from(box.querySelectorAll('.sort-item')).map((el) => txt(el.lastElementChild || el)).join(' → ');
+    return '';
+  };
+  let P = null;
+  const protokoll = () => {
+    if (!P || typeof courses === 'undefined' || !courses[ci] || P.fragen.some((f) => f.i === qi)) return;
+    const q = courses[ci].questions[qi]; if (!q) return;
+    const richtig = correct > P.zaehler; P.zaehler = correct;
+    P.fragen.push({ i: qi, id: q.id, frage: q.question, typ: typVon(q), richtig, antwort: antwort(q), loesung: loesung(q), feedback: q.feedback || '' });
+  };
+  const liste = (s, kompakt) => '<ol class="ra-liste">' + s.fragen.map((f) => '<li class="ra' + (f.richtig ? ' ok' : ' nein') + '"><span class="ra-mark" aria-hidden="true">' + (f.richtig ? '✓' : '✗') + '</span><div><p class="ra-frage">' + esc(f.frage) + '</p>' + (f.antwort ? '<p class="ra-zeile"><b>Deine Antwort</b> ' + esc(f.antwort) + '</p>' : '') + (!f.richtig && f.loesung ? '<p class="ra-zeile"><b>Richtig</b> ' + esc(f.loesung) + '</p>' : '') + (!kompakt && f.feedback ? '<p class="ra-zeile ra-fb">' + esc(f.feedback) + '</p>' : '') + '</div></li>').join('') + '</ol>';
+  const speichern = async (s) => {
+    try { const a = lies(); a[s.kurs_id] = { kurs_id: s.kurs_id, titel: s.titel, zeit: s.ende, richtig: s.fragen.filter((f) => f.richtig).length, n: s.fragen.length, fragen: s.fragen }; localStorage.setItem(KEY(), JSON.stringify(a)); } catch (e) {}
+    if (typeof sb === 'undefined' || typeof currentUser === 'undefined' || !currentUser || window.BLUU_ANTWORTEN_DB === false) return;
+    try {
+      const versuch = String(s.start);
+      const { error } = await sb.from('question_answers').insert(s.fragen.map((f) => ({ user_id: currentUser.id, course_id: s.kurs_id, question_id: f.id == null ? null : f.id, attempt: versuch, correct: !!f.richtig, answer: { typ: f.typ, antwort: f.antwort, loesung: f.loesung } })));
+      if (error) { if (error.code === '42P01' || error.code === 'PGRST205' || /does not exist|Could not find the table/i.test(error.message || '')) window.BLUU_ANTWORTEN_DB = false; else console.warn('question_answers:', error.message); }
+    } catch (e) { console.warn('question_answers:', e.message); }
+  };
+  /* Haken an den bestehenden Testablauf */
+  const altStart = window.startQuiz, altNext = window.nextQ, altResult = window.showResult;
+  if (typeof altStart === 'function') window.startQuiz = function () { const c = courses[ci]; P = c && c.questions && c.questions.length ? { kurs_id: c.id, titel: c.title, start: Date.now(), zaehler: 0, fragen: [] } : null; return altStart.apply(this, arguments); };
+  if (typeof altNext === 'function') window.nextQ = function () { protokoll(); return altNext.apply(this, arguments); };
+  if (typeof altResult === 'function') window.showResult = async function () {
+    protokoll();
+    const s = P; P = null;
+    const r = await altResult.apply(this, arguments);
+    const box = document.getElementById('res-antworten');
+    if (box && s && s.fragen.length) {
+      s.ende = Date.now();
+      const falsch = s.fragen.filter((f) => !f.richtig).length;
+      box.innerHTML = '<h3 class="ra-h">' + (falsch ? falsch + (falsch === 1 ? ' Frage' : ' Fragen') + ' falsch – so war es richtig' : 'Alle Fragen richtig') + '</h3>' + liste(s, false);
+      speichern(s);
+    } else if (box) box.innerHTML = '';
+    return r;
+  };
+  window.BLUU_ANTWORTEN = { aktuell: () => P };
+  window.bluuAntwortenVon = (kursId) => lies()[kursId] || null;
+  window.bluuAntwortenAnzeigen = (kursId) => {
+    const s = lies()[kursId]; if (!s) return;
+    const o = document.createElement('div'); o.className = 'lk-badge-pop'; o.setAttribute('role', 'dialog'); o.setAttribute('aria-label', 'Antworten');
+    o.innerHTML = '<div class="lk-badge-box ra-box"><p class="kachel-label">Letzter Versuch · ' + esc(new Date(s.zeit).toLocaleDateString('de-DE')) + '</p><h3 class="ra-h">' + esc(s.titel) + ' · ' + s.richtig + ' von ' + s.n + ' richtig</h3>' + liste(s, true) + '<button class="btn-cta" style="margin-top:1rem;width:100%" onclick="this.closest(\'.lk-badge-pop\').remove()">Schließen</button></div>';
+    o.addEventListener('click', (e) => { if (e.target === o) o.remove(); });
+    document.body.appendChild(o);
+  };
+  /* Manager/Admin: Fragen mit der höchsten Fehlerquote (mindestens drei Antworten) */
+  window.bluuAntwortenAuswertung = async () => {
+    const el = document.getElementById('analytics-antworten'); if (!el || typeof sb === 'undefined') return;
+    try {
+      const { data, error } = await sb.from('question_answers').select('course_id,question_id,correct');
+      if (error) { el.innerHTML = /does not exist|Could not find|42P01|PGRST205/i.test((error.code || '') + ' ' + (error.message || '')) ? '<div class="bv-leer">Antwortprotokoll: Tabelle question_answers ist noch nicht angelegt (supabase/migrations/2026-10-26_08).</div>' : ''; return; }
+      const agg = {}; (data || []).forEach((r) => { const k = r.course_id + ':' + r.question_id; agg[k] = agg[k] || { course_id: r.course_id, question_id: r.question_id, n: 0, f: 0 }; agg[k].n++; if (!r.correct) agg[k].f++; });
+      const zeilen = Object.values(agg).filter((a) => a.n >= 3).map((a) => { const c = (courses || []).find((x) => x.id === a.course_id); const q = c && (c.questions || []).find((x) => x.id === a.question_id); return Object.assign(a, { kurs: c ? c.title : '–', frage: q ? q.question : '–', quote: Math.round(a.f / a.n * 100) }); }).sort((a, b) => b.quote - a.quote).slice(0, 10);
+      el.innerHTML = '<div class="sec-head" style="margin-top:1.25rem"><div class="sec-kopf"><h3 class="sec-title" style="font-size:16px">Schwierigste Fragen</h3><p class="sec-lead">Fehlerquote je Frage über alle Versuche (' + (data || []).length + ' Antworten, Fragen mit mindestens drei Antworten).</p></div></div>' +
+        (zeilen.length ? '<div class="tabelle-scroll"><table class="inhalt-tabelle"><thead><tr><th>Frage</th><th>Lektion</th><th>Antworten</th><th>Fehlerquote</th></tr></thead><tbody>' + zeilen.map((z) => '<tr><td>' + esc(z.frage) + '</td><td>' + esc(z.kurs) + '</td><td>' + z.n + '</td><td><strong>' + z.quote + ' %</strong></td></tr>').join('') + '</tbody></table></div>' : '<div class="bv-leer">Noch keine Frage mit drei oder mehr Antworten.</div>');
+    } catch (e) { el.innerHTML = ''; }
+  };
+})();
+</script>
+<!-- BLUU-ANTWORTEN:ENDE -->
 <!-- BLUU-SICHER:START -->
 <script>
 /* BLUU-SICHER (26.10.2026): Inhalte aus der Datenbank (slides.content, questions.feedback) werden vor innerHTML bereinigt.

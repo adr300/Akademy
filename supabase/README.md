@@ -13,6 +13,7 @@ Reihenfolge und Abhängigkeiten:
 | 05 | `2026-10-26_05_user_progress_course_id.sql` | Fortschritt überlebt Umsortieren/Löschen von Kursen | Backup von `user_progress` |
 | 06 | `2026-10-26_06_uniques.sql` | keine doppelten Abzeichen/Titel/Fortschrittszeilen | Dubletten vorher bereinigen |
 | 07 | `2026-10-26_07_complete_lernkarten_set.sql` | Set-Abschluss als Transaktion | 03 und 06 |
+| 08 | `2026-10-26_08_question_answers.sql` | Antwortprotokoll je Frage (Lernende: Nachsehen; Manager: schwierigste Fragen) | – |
 
 Das Frontend erkennt jede dieser Änderungen zur Laufzeit (fehlende Tabelle/Spalte/Funktion → bisheriges Verhalten). Die Skripte können also in beliebiger Reihenfolge und zeitversetzt eingespielt werden, solange die Spalte «Hängt ab von» eingehalten wird.
 
