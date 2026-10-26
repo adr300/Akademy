@@ -62,6 +62,10 @@ Nach Canvas-Seite «Wiki» (Artefakt, Seite dcb81aee8d83): Navy-Band mit der Hea
 
 Siehe `docs/INHALTSMUSTER.md`: `.ls-text` / `.slide-text` mit h2–h4, p, Listen, Tabellen (`.tabelle-scroll`, `caption`), `figure` + `figcaption`, `.kasten.definition|.beispiel|.hinweis|.warnung|.merke`, `.formel`, `blockquote` + `cite`, `dl`, `sup.fn` + `.fussnoten`, `.quelle`.
 
+## Lernskript, ruhige Fassung (Block `BLUU-RUHIG`, 26.10.2026)
+
+Ton: Universität, nicht Kinder-App. Maskottchen nur bei der Begrüßung (Startseite, 1.1.1-Kapitelanfang) und beim Kapitel-Häkchen; sonst keine Figur. Karten `.ls-card` 1 px Linie, Radius 12 px, Flächen `--ls-seite`/`--ls-ice`; Abschnittslabels (`.ls-tag`, `.ls-h2b`, Merksatz-Label) als IBM Plex Mono 11 px Versalien in `--ls-muted`; keine Navy-Pillen, kein Lime-Glühen (`--ls-glow` = Ice), keine Nummernkacheln, Merksatz ohne farbige Kante. Buttons ohne Heben, Hover nur per Farbe. Kapitel-Chips mono, Rahmen statt Füllung. Modulkacheln: Icon-System v3 (Linie × Geometrie, getönt, Radius 23 %), Fachbereiche weiter gemalt rund.
+
 ## Lernskript-Form B (Block `BLUU-TF1`, Module 1.1.2–1.1.5)
 
 Gleicher Rahmen wie 1.1.1 (Leuchtpfad, Werkzeugleiste, Hero, Meta-Chips, Glühwürmchen-Blasen, `.ls-card`), aber ohne handgezeichnete Szene und ohne Mitmach-Rechner: Hero = Modulkachel in weißer Karte + Kapitelreihe (aktuell Lime, geschafft Navy). Reihenfolge der Karte: «Darum geht es» (Maskottchen «erklärt») → «Das Wichtigste» als nummerierte `.ls-sec` mit `.ls-tabelle` und `.ls-reihe` → «Typische Stolperstellen» (Maskottchen «denkt», `<details>` mit ?/✓-Marke) → `.ls-merk` → «Erklär es Dir selbst» (`.ls-mach`, Textarea + `details.ls-loesung`) → «Das kann ich jetzt» → Abschied («freut») → Weiter-Knöpfe. Lernkarten-Screen: Gruppenzeile `.lk-set-gruppe` je Modul (Mono-Chip mit Modulnummer, Titel, Sets-Zähler). Tabellen unter 640 px mit `overflow-wrap:anywhere`.

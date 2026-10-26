@@ -1,6 +1,6 @@
 -- ============================================================================
 -- 2026-10-26_04  Abzeichen für die Lernkarten-Sets 1.1.2 bis 1.1.5
--- Status: VORBEREITET, NICHT AUSGEFÜHRT. Namen und XP sind VORSCHLÄGE zur Freigabe (fachlich: Antonia/Adrian).
+-- Status: VORBEREITET, NICHT AUSGEFÜHRT. 1.1.2: Namen aus dem Lernkarten-Dokument (Entflechter … Rechnungsleser); 1.1.3–1.1.5: Set-Titel als Vorschlag.
 -- ----------------------------------------------------------------------------
 -- Befund
 --   Die Sets von 1.1.1 vergeben beim Abschluss ein Abzeichen (badges.key «stromlaeufer» …, aus dem Lernkarten-Dokument).
@@ -20,15 +20,15 @@ begin;
 
 insert into public.badges (key, title, description, icon, xp_reward, sort_order) values
   -- 1.1.2 Aufbau des Energiemarktes
-  ('lk-112-A', 'Unbundling: Warum so viele Beteiligte?', 'Lernkarten-Set A von Modul 1.1.2 gelernt', '🏅', 50, 200),
-  ('lk-112-B', 'Erzeugung, Netz und Vertrieb',           'Lernkarten-Set B von Modul 1.1.2 gelernt', '🏅', 50, 201),
-  ('lk-112-C', 'Marktstruktur und Marktrollen',          'Lernkarten-Set C von Modul 1.1.2 gelernt', '🏅', 50, 202),
-  ('lk-112-D', 'Der Kunde im Zentrum',                   'Lernkarten-Set D von Modul 1.1.2 gelernt', '🏅', 50, 203),
-  ('lk-112-E', 'Regulierung im Überblick',               'Lernkarten-Set E von Modul 1.1.2 gelernt', '🏅', 50, 204),
-  ('lk-112-F', 'Standardisierte Marktprozesse',          'Lernkarten-Set F von Modul 1.1.2 gelernt', '🏅', 50, 205),
-  ('lk-112-G', 'Strom und Gas im Vergleich',             'Lernkarten-Set G von Modul 1.1.2 gelernt', '🏅', 50, 206),
-  ('lk-112-H', 'Wertschöpfung und Energiedienstleister', 'Lernkarten-Set H von Modul 1.1.2 gelernt', '🏅', 50, 207),
-  ('lk-112-I', 'Praxisfall: Wer steckt hinter der Rechnung?', 'Lernkarten-Set I von Modul 1.1.2 gelernt', '🏅', 50, 208),
+  ('lk-112-A', 'Entflechter', 'Lernkarten-Set A von Modul 1.1.2 gelernt', '🏅', 50, 200),
+  ('lk-112-B', 'Monopol-Kenner',           'Lernkarten-Set B von Modul 1.1.2 gelernt', '🏅', 50, 201),
+  ('lk-112-C', 'Rollenprofi',          'Lernkarten-Set C von Modul 1.1.2 gelernt', '🏅', 50, 202),
+  ('lk-112-D', 'Kundenversteher',                   'Lernkarten-Set D von Modul 1.1.2 gelernt', '🏅', 50, 203),
+  ('lk-112-E', 'Regelkenner',               'Lernkarten-Set E von Modul 1.1.2 gelernt', '🏅', 50, 204),
+  ('lk-112-F', 'Prozess-Pilot',          'Lernkarten-Set F von Modul 1.1.2 gelernt', '🏅', 50, 205),
+  ('lk-112-G', 'Spartenprofi',             'Lernkarten-Set G von Modul 1.1.2 gelernt', '🏅', 50, 206),
+  ('lk-112-H', 'Wertschöpfer', 'Lernkarten-Set H von Modul 1.1.2 gelernt', '🏅', 50, 207),
+  ('lk-112-I', 'Rechnungsleser', 'Lernkarten-Set I von Modul 1.1.2 gelernt', '🏅', 50, 208),
   -- 1.1.3 Marktrollen im Strommarkt
   ('lk-113-A', 'Warum ein Rollenmodell?',                'Lernkarten-Set A von Modul 1.1.3 gelernt', '🏅', 50, 210),
   ('lk-113-B', 'Ein Unternehmen, mehrere Rollen',        'Lernkarten-Set B von Modul 1.1.3 gelernt', '🏅', 50, 211),

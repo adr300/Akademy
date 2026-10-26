@@ -32,7 +32,7 @@ test('Lernskript-Kapitel und Lernkarten-Sets stimmen je Modul überein', () => {
 
 test('Lernkarten: eindeutige IDs und Set-Schlüssel, vollständige Karten, bekannte Typen, Fragen statt Stichwörter', () => {
   const ids = new Set(), keys = new Set();
-  const TYPEN = new Set(['Erklären', 'Stolperstelle', 'Merksatz', 'Erklär es Dir selbst', 'Mitten im Job']);
+  const TYPEN = new Set(['Erklären', 'Stolperstelle', 'Merksatz', 'Erklär es Dir selbst', 'Mitten im Job', 'Leuchtfrage', 'Licht an oder aus?', 'Schätz mal!', 'Sortier-Spiel', 'Stolperfalle', 'Leuchtturm']);
   Object.keys(lernkarten).forEach((id) => lernkarten[id].forEach((s) => {
     assert.ok(!keys.has(s.key), 'Set-Schlüssel doppelt: ' + s.key); keys.add(s.key);
     assert.equal(s.modul, id); assert.match(s.badge, /^lk-\d{3}-[A-I]$/);
