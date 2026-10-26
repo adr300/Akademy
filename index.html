@@ -6313,6 +6313,7 @@ async function loadCourses(){
       sb.from('questions').select('*').order('sort_order')
     ]);
     courses=cs.map(c=>({...c,slides:(sl||[]).filter(s=>s.course_id===c.id),questions:(qs||[]).filter(q=>q.course_id===c.id)}));
+    if(typeof progressAbbilden==='function') progressAbbilden();
   }catch(e){console.error('loadCourses:',e.message);courses=[];}
 }
 
@@ -6325,9 +6326,8 @@ async function loadSimulators(){
 
 async function loadProgress(){
   try{
-    const{data}=await sb.from('user_progress').select('course_index,completed,score').eq('user_id',currentUser.id);
-    userProgress={};
-    if(data)data.forEach(r=>{userProgress[r.course_index]={completed:r.completed,score:r.score};});
+    const{data}=await sb.from('user_progress').select('*').eq('user_id',currentUser.id);
+    _progRows=data||[]; progressAbbilden();
   }catch(e){console.error('loadProgress:',e.message);userProgress={};}
 }
 
@@ -6336,8 +6336,8 @@ function isCourseCompleted(courseId){
   const idx = courses.findIndex(c=>c.id===courseId);
   if(idx<0) return false;
   const prog=userProgress[idx];
-  // Must be marked completed AND have a passing score (>= 70)
-  return !!(prog?.completed && (prog?.score||0)>=70);
+  // Must be marked completed AND have a passing score (>= Schwelle des Kurses)
+  return !!(prog?.completed && (prog?.score||0)>=bluuSchwelle(courses[idx]));
 }
 
 async function loadTeams(){
@@ -6687,14 +6687,33 @@ function showXPToast(amount,badges,dailyBonus){
   setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},4000);
 }
 
+/* BLUU (26.10.2026): Bestehensschwelle je Kurs aus courses.pass_threshold (Wissenstests: z. B. 19 von 24 = 80 %); fehlt sie, gelten 70 % */
+function bluuSchwelle(c){ const n=c&&Number(c.pass_threshold); return (n>=1&&n<=100)?Math.round(n):70; }
+let _progRows=null;
+/* Fortschritt an course_id binden, sobald user_progress die Spalte hat (Migration 2026-10-26_05); bis dahin course_index (positional) */
+function progressAbbilden(){
+  if(!_progRows) return;
+  userProgress={};
+  _progRows.forEach(r=>{
+    let idx=-1;
+    if(r.course_id){ idx=courses.findIndex(c=>c.id===r.course_id); if(idx<0&&courses.length) return; }
+    if(idx<0) idx=r.course_index;
+    if(idx==null||idx<0) return;
+    userProgress[idx]={completed:r.completed,score:r.score};
+  });
+}
 async function saveProgress(courseId,score){
   const idx=courses.findIndex(c=>c.id===courseId);
-  const passed=score>=70;
-  // Only mark completed:true if the quiz was passed (score >= 70)
+  const passed=score>=bluuSchwelle(courses[idx]);
+  // Only mark completed:true if the quiz was passed (score >= Schwelle)
   // A previous pass should not be overwritten by a new fail
   const prevPassed=userProgress[idx]?.completed||false;
   const completed=passed||prevPassed;
-  await sb.from('user_progress').upsert({user_id:currentUser.id,course_index:idx,completed,score,updated_at:new Date().toISOString()},{onConflict:'user_id,course_index'});
+  const zeile={user_id:currentUser.id,course_index:idx,completed,score,updated_at:new Date().toISOString()};
+  if(window.BLUU_PROGRESS_COURSE_ID!==false) zeile.course_id=courseId;
+  let r=await sb.from('user_progress').upsert(zeile,{onConflict:'user_id,course_index'});
+  if(r&&r.error&&zeile.course_id&&(r.error.code==='42703'||r.error.code==='PGRST204'||/course_id/.test(r.error.message||''))){ window.BLUU_PROGRESS_COURSE_ID=false; delete zeile.course_id; r=await sb.from('user_progress').upsert(zeile,{onConflict:'user_id,course_index'}); }
+  if(r&&r.error) console.warn('user_progress save:',r.error.message);
   userProgress[idx]={completed,score};
 }
 
@@ -8116,7 +8135,7 @@ function pick(idx){
 function nextQ(){const c=courses[ci];if(qi<c.questions.length-1){qi++;renderQ();}else showResult();}
 
 async function showResult(){
-  const c=courses[ci],total=c.questions.length,pct=Math.round((correct/total)*100),pass=pct>=70;
+  const c=courses[ci],total=c.questions.length,pct=Math.round((correct/total)*100),schwelle=bluuSchwelle(c),pass=pct>=schwelle;
   const sessSecs=sessionStart?Math.round((Date.now()-sessionStart)/1000):0;
   const wasAlreadyCompleted=!!userProgress[ci]?.completed;
   await endSession();
@@ -8129,7 +8148,7 @@ async function showResult(){
   let newBadges=[];
   if(pass&&!wasAlreadyCompleted){
     // Base XP: 50 + bonus for score
-    xpGained=50+Math.round((pct-70)/30*50);
+    xpGained=50+Math.round(Math.max(0,pct-schwelle)/Math.max(1,100-schwelle)*50);
     await awardXP(xpGained);
     newBadges=await checkAndAwardBadges(c.id,pct,sessSecs);
     // Daily challenge bonus
@@ -8144,7 +8163,7 @@ async function showResult(){
   document.getElementById('res-title').textContent=pass?'Kurs abgeschlossen!':'Nicht bestanden';
   document.getElementById('res-sub').textContent=pass
     ?(wasAlreadyCompleted?'Kurs wiederholt – du erhältst kein XP für bereits abgeschlossene Kurse.':'Herzlichen Glückwunsch! Du hast „'+c.title+'" mit '+pct+' % abgeschlossen.')
-    :'Du hast '+pct+' % erreicht. Zum Bestehen sind mindestens 70 % nötig.';
+    :'Du hast '+pct+' % erreicht. Zum Bestehen sind mindestens '+schwelle+' % nötig.';
   document.getElementById('res-c').textContent=correct;
   document.getElementById('res-t').textContent=total;
   document.getElementById('res-p').textContent=pct+' %';
@@ -9859,7 +9878,7 @@ async function confirmImport(){
   /* BLUU: Dublettenschutz – derselbe Kurstitel darf nicht zweimal angelegt werden (wiederholter Import, Fortschritt hängt an der Kursreihenfolge) */
   const vorhanden=(typeof courses!=='undefined'?courses:[]).find(c=>String(c.title||'').trim().toLowerCase()===String(d.title||'').trim().toLowerCase());
   if(vorhanden){showImportMsg('Ein Kurs mit dem Titel „'+d.title+'" existiert bereits (ID '+vorhanden.id+'). Import abgebrochen – bestehenden Kurs zuerst löschen oder umbenennen.','err');return;}
-  const courseData={title:d.title,icon:d.icon||'📚',icon_bg:d.icon_bg||'var(--bg3)',tag_bg:d.tag_bg||'var(--bg3)',tag_color:d.tag_color||'#3F74A6',btn_color:d.btn_color||'#3F74A6',sort_order:courses.length};
+  const courseData={title:d.title,icon:d.icon||'📚',icon_bg:d.icon_bg||'var(--bg3)',tag_bg:d.tag_bg||'var(--bg3)',tag_color:d.tag_color||'#3F74A6',btn_color:d.btn_color||'#3F74A6',sort_order:courses.length,pass_threshold:bluuSchwelle(d),is_final_exam:!!d.is_final_exam,difficulty:d.difficulty||null};
   const{data:created,error}=await sb.from('courses').insert(courseData).select().single();
   if(error){showImportMsg('Fehler: '+error.message,'err');return;}
   const courseId=created.id;
@@ -11330,6 +11349,8 @@ let lkDoneKeys = new Set();
 let lkSessionXp = 0;
 
 function isDoneLK(setKey){ return lkDoneKeys.has(setKey); }
+/* BLUU (26.10.2026): Ein schon gelerntes Set gibt beim Wiederholen keine XP mehr – Karten-XP gibt es je Set einmal */
+function lkWiederholung(){ return !!(lkCurrentSet&&lkDoneKeys.has(lkCurrentSet.key)); }
 /* BLUU-TF1: Lernkarten je Modul — window.BLUU_LERNKARTEN[modul] = Sets. Adrians Sammlung bleibt '1.1.1', die Sets 1.1.2–1.1.5 kommen aus dem Block BLUU-TF1 (Schlüssel '112-A' …). */
 window.BLUU_LERNKARTEN = Object.assign({ '1.1.1': LERNKARTEN_SETS }, window.BLUU_LERNKARTEN || {});
 function lkFindeSet(key){ const M = window.BLUU_LERNKARTEN || {}; for (const id in M) { const s = (M[id] || []).find(x => x.key === key); if (s) return s; } return null; }
@@ -11472,7 +11493,7 @@ function renderLkCard(){
   document.getElementById('lk-type-badge').textContent = card.type||'';
   document.getElementById('lk-level-stars').textContent = LK_LEVEL_LABEL[card.level]||'';
   document.getElementById('lk-prog-label').textContent = (lkCurrentIdx+1)+' / '+lkQueue.length;
-  document.getElementById('lk-xp-label').textContent = lkSessionXp+' XP';
+  document.getElementById('lk-xp-label').textContent = lkWiederholung()?'Wiederholung · keine XP':lkSessionXp+' XP';
   // tip area
   const tipArea = document.getElementById('lk-tip-area');
   const tipText = document.getElementById('lk-tip-text');
@@ -11510,15 +11531,13 @@ function lkAssess(verdict){
   const cardIdx = lkQueue[lkCurrentIdx];
   const card = lkCurrentSet.cards[cardIdx];
   if(verdict==='gewusst'){
-    if(typeof awardXP==='function') awardXP(card.xp);
-    lkSessionXp += card.xp;
+    if(!lkWiederholung()){ if(typeof awardXP==='function') awardXP(card.xp); lkSessionXp += card.xp; }
     lkGewusst.add(card.id);
     lkQueue.splice(lkCurrentIdx, 1);
     if(!lkQueue.length){ completeLernkartenSet(); return; }
     if(lkCurrentIdx >= lkQueue.length) lkCurrentIdx = 0;
   } else if(verdict==='fast'){
-    if(typeof awardXP==='function') awardXP(Math.floor(card.xp/2));
-    lkSessionXp += Math.floor(card.xp/2);
+    if(!lkWiederholung()){ if(typeof awardXP==='function') awardXP(Math.floor(card.xp/2)); lkSessionXp += Math.floor(card.xp/2); }
     // move card to end of queue so it repeats
     const removed = lkQueue.splice(lkCurrentIdx, 1)[0];
     lkQueue.push(removed);
@@ -11535,6 +11554,24 @@ function lkAssess(verdict){
 
 async function completeLernkartenSet(){
   if(!lkCurrentSet) return;
+  /* BLUU (26.10.2026): Abschluss, Abzeichen und XP in einer Transaktion über public.complete_lernkarten_set (Migration 2026-10-26_07);
+     fehlt die Funktion (PGRST202/42883), läuft der bisherige Weg aus drei Einzelschritten. */
+  if(window.BLUU_LK_RPC!==false){
+    try{
+      const r=await sb.rpc('complete_lernkarten_set',{p_module:lkCurrentSet.modul||'1.1.1',p_set_key:lkCurrentSet.key,p_badge_key:lkCurrentSet.badge||null});
+      if(!r.error){
+        const row=Array.isArray(r.data)?r.data[0]:r.data;
+        lkDoneKeys.add(lkCurrentSet.key); renderLkDash();
+        const badgeDef=(typeof allBadges!=='undefined'&&lkCurrentSet.badge)?allBadges.find(b=>b.key===lkCurrentSet.badge):null;
+        if(row&&row.badge_awarded&&badgeDef&&!userBadges.some(ub=>ub.badge_id===badgeDef.id)) userBadges.push({badge_id:badgeDef.id,earned_at:new Date().toISOString()});
+        if(row&&typeof row.total_xp==='number'){ userXP={total_xp:row.total_xp,level:typeof row.level==='number'?row.level:levelFromXP(row.total_xp)}; if(typeof updateXPBar==='function') updateXPBar(); }
+        showLkCompletionPopup(lkCurrentSet.letter, lkCurrentSet.title, badgeDef?(lkCurrentSet.badgeLabel||badgeDef.title):'', !!(row&&row.badge_awarded), lkSessionXp, '');
+        return;
+      }
+      if(r.error.code==='PGRST202'||r.error.code==='42883'||/Could not find the function|does not exist/i.test(r.error.message||'')) window.BLUU_LK_RPC=false;
+      else console.warn('complete_lernkarten_set:',r.error.message);
+    }catch(e){ console.warn('complete_lernkarten_set:',e.message); }
+  }
   await markDoneLK(lkCurrentSet.key);
   renderLkDash();
   const badgeKey = lkCurrentSet.badge;
@@ -11565,7 +11602,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
       '<svg width="64" height="64" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0e1e08"/><circle cx="50" cy="87" r="26" fill="#ffe84d" opacity="0.12"><animate attributeName="opacity" values="0.08;0.28;0.08" dur="1.5s" repeatCount="indefinite"/></circle><circle cx="50" cy="87" r="17" fill="#ffe84d" opacity="0.2"><animate attributeName="opacity" values="0.14;0.38;0.14" dur="1.5s" repeatCount="indefinite"/></circle><circle cx="50" cy="80" r="11" fill="#4a9020"/><circle cx="50" cy="67" r="14" fill="#56a828"/><circle cx="50" cy="45" r="24" fill="#68c034"/><circle cx="38" cy="39" r="10" fill="white"/><circle cx="62" cy="39" r="10" fill="white"/><circle cx="40" cy="41" r="5.5" fill="#0a1804"/><circle cx="64" cy="41" r="5.5" fill="#0a1804"/><circle cx="37" cy="37" r="2.5" fill="white" opacity="0.8"/><circle cx="61" cy="37" r="2.5" fill="white" opacity="0.8"/><path d="M40 55 Q50 64 60 55" stroke="#2a6010" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M43 23 Q36 12 30 7" stroke="#4a9020" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="30" cy="7" r="4" fill="#68c034"/><path d="M57 23 Q64 12 70 7" stroke="#4a9020" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="70" cy="7" r="4" fill="#68c034"/><circle cx="50" cy="87" r="10" fill="#ffe84d"/><circle cx="50" cy="87" r="7" fill="#fff59d"/><circle cx="50" cy="87" r="3.5" fill="white" opacity="0.9"/></svg>'+
       '<div style="font-size:18px;font-weight:800;color:var(--text);margin-top:.75rem">Set '+letter+' abgeschlossen!</div>'+
       '<div style="font-size:13px;color:var(--text3);margin-top:.25rem">'+title+'</div>'+
-      '<div style="margin-top:.6rem;font-size:14px;font-weight:700;color:var(--green)">+'+earnedXp+' XP verdient</div>'+
+      (earnedXp>0?'<div style="margin-top:.6rem;font-size:14px;font-weight:700;color:var(--green)">+'+earnedXp+' XP verdient</div>':'<div style="margin-top:.6rem;font-size:13px;color:var(--text3)">Wiederholung – das Set war schon gelernt, keine XP.</div>')+
       (badgeEarned?'<div style="margin-top:.75rem;padding:.5rem 1rem;background:color-mix(in srgb,var(--green) 12%,var(--bg2));border-radius:8px;font-size:13px;color:var(--green);font-weight:600">🏅 Abzeichen erhalten: '+badgeLabel+'</div>':
         (badgeLabel?'<div style="margin-top:.75rem;font-size:12px;color:var(--text3)">Abzeichen „'+badgeLabel+'" – weiter so!</div>':''))+
       (speicherFehler?'<div role="alert" style="margin-top:.75rem;padding:.5rem 1rem;border-radius:8px;font-size:12px;background:color-mix(in srgb,#b91c1c 10%,var(--bg2));color:#b91c1c">Der Abschluss konnte nicht gespeichert werden – bitte später noch einmal lernen. ('+speicherFehler+')</div>':'')+

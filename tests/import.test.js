@@ -43,7 +43,9 @@ test('je Lernskript-Kapitel gibt es eine Übungs-Lektion, je Modul Wissenstest u
   const titel = DATEIEN.map((d) => d.kurs.title);
   Object.keys(lernskripte).forEach((id) => {
     lernskripte[id].kapitel.forEach((k) => assert.ok(titel.some((t) => new RegExp('^' + id.replace(/\./g, '\\.') + ' Übungen ' + k.key + ' ').test(t)), id + ' ' + k.key + ': keine Übungs-Lektion'));
-    assert.ok(titel.some((t) => t.startsWith(id + ' Wissenstest')), id + ': kein Wissenstest');
+    const wt = DATEIEN.find((d) => d.kurs.title.startsWith(id + ' Wissenstest'));
+    assert.ok(wt, id + ': kein Wissenstest');
+    assert.ok(wt.kurs.is_final_exam === true && wt.kurs.pass_threshold >= 50 && wt.kurs.pass_threshold <= 100, id + ': Wissenstest ohne Bestehensschwelle');
     assert.ok(titel.some((t) => t.startsWith(id + ' Praxisfall')), id + ': kein Praxisfall');
   });
 });

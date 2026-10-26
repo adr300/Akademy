@@ -34,12 +34,11 @@ Dateien in `supabase/migrations/`, jede mit Zweck, Tabellen, Constraints, RLS, D
 - `2026-10-26_02_lernskript_progress.sql` – neue Tabelle für den Lernskript-Stand je Gerät, Trigger gegen ältere Stände. Optional; ohne sie bleibt der Stand im Browser.
 - `2026-10-26_03_award_xp_rpc.sql` – `award_xp(p_amount)` serverseitig (3a), später Schreibrechte auf `user_xp` entziehen (3b). Das Frontend nutzt die Funktion automatisch, wenn sie existiert.
 - `2026-10-26_04_badges_lernkarten_tf1.sql` – 30 Abzeichen `lk-<modul>-<Set>` (Namen/XP = Vorschlag). Spaltennamen von `badges` bitte prüfen.
-- Bestanden-Grenze: Wissenstests nennen 19/24 bzw. 16/20, die App wertet 70 %. Entscheidung: Spalte `courses.pass_percent` oder Regel «70 % bleibt».
-- Unique `(user_id, badge_id)` auf `user_badges` empfohlen (Doppelvergabe wird heute nur im Browser verhindert).
-- Unique auf `courses.title` empfohlen (Dublettenschutz liegt heute nur im Import-Frontend).
+- Bestanden-Grenze: erledigt im Frontend über die vorhandene Spalte `courses.pass_threshold` (26.10.).
+- Uniques: Migration 06 vorbereitet (`user_badges`, `courses.title`, `user_progress`).
 
-## 9. Abschluss als Transaktion (Wunsch)
+## 9. Abschluss als Transaktion – vorbereitet (Migration 07)
 Heute: Lernkarten-Set abschließen = `lernkarten_progress` (upsert) → `user_badges` (insert) → `award_xp` – drei getrennte Aufrufe aus dem Browser. Schlägt einer fehl, bleibt ein Teilzustand (das Popup meldet es). Wunsch: RPC `complete_lernkarten_set(module, set_key)` als eine Transaktion, die Abschluss, Abzeichen (einmalig) und XP setzt und idempotent ist (zweiter Aufruf = kein zweites Abzeichen/XP). Gleiches Muster für `user_progress` + XP beim Lektionsabschluss.
 
-## 10. Fortschritt an course_id statt course_index
-Siehe `docs/DATENMODELL.md` Abschnitt 6. Nicht vorbereitet, weil das Backfill von der Umsortier-Historie abhängt.
+## 10. Fortschritt an course_id statt course_index – vorbereitet (Migration 05)
+Siehe `docs/DATENMODELL.md` Abschnitt 6; Frontend ist bereits umgestellt und fällt ohne Spalte zurück.

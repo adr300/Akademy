@@ -46,7 +46,7 @@ Die Zuordnung Lektion → Modul ist **nicht** in der Datenbank, sondern ein Tite
 | Inhalt → Lektion | Import-Dateien in `content/import/` (Admin: «Kurs importieren») | Import war nicht dublettensicher → jetzt Titelprüfung im Frontend (`confirmImport`). Ein DB-Unique auf `courses.title` wäre robuster (Adrian). |
 | Lektion → Modul | Titelmuster | Umbenennen eines Kurses löst die Zuordnung. |
 | Aktivität → Prüfung | Fragen werden im Browser geprüft (`pick`, `renderSortQ` …) | Lösungen liegen im Client (`questions` wird komplett geladen). Für Übungen vertretbar; für Prüfungen mit Zertifikat Backend-Thema. |
-| Fortschritt | `user_progress.course_index` ist **positional** | Löschen/Umsortieren eines Kurses verschiebt den Fortschritt aller Lernenden auf andere Kurse. Nicht geändert (Vorgabe); Vorschlag unten. |
+| Fortschritt | `user_progress.course_index` ist **positional**; seit 26.10. schreibt das Frontend zusätzlich `course_id` und liest bevorzugt darüber, sobald die Spalte existiert (Migration 05) | Bis zur Migration verschiebt Löschen/Umsortieren eines Kurses den Fortschritt aller Lernenden. |
 | XP | Browser rechnet und schreibt `user_xp` | Jeder Lernende kann sich XP setzen. Migration 03: `award_xp()` serverseitig, Frontend nutzt sie automatisch, wenn vorhanden. XP werden bei Wiederholungen erneut vergeben (bestehendes Verhalten, auch 1.1.1). |
 | Abzeichen | Browser prüft «schon vergeben» und fügt in `user_badges` ein | Doppelvergabe nur durch Client-Check verhindert → Unique (`user_id, badge_id`) in der DB empfohlen. Abzeichen für 1.1.2–1.1.5: Migration 04 (Namen zur Freigabe). |
 | Lernkarten-Stand | Upsert auf `lernkarten_progress`; Fehler wurden verschluckt | Jetzt sichtbar im Abschluss-Popup; Migration 01 für Modulwerte/Unique/RLS. |
@@ -71,10 +71,14 @@ Ablauf: Beim Öffnen eines Lernskripts einmal je Sitzung Serverzeile lesen → z
 ## 5. XP und Abzeichen: Regeln, Status
 
 - XP je Lernkarte beim ersten «Gewusst» einer Sitzung: 1.1.1 laut Dokument 10/20/30 nach Leuchtstufe; 1.1.2–1.1.5 **Vorschlag** Erklären 10 · Merksatz 10 · Stolperstelle 20 · Mitten im Job 20 · Erklär es Dir selbst 30 (Konfiguration: `XP` in `scratchpad/tf1_port.js` → Felder `level/xp` je Karte im Block `BLUU-TF1`). Status: **nicht freigegeben**.
-- Wiederholung eines Sets vergibt erneut XP (bestehendes Verhalten in `lkAssess`). Idempotenz wäre: Karten-XP nur, solange das Set nicht `isDoneLK` ist. Nicht geändert, weil es auch 1.1.1 betrifft → Entscheidung Adrian/Antonia.
+- Wiederholung eines gelernten Sets vergibt **keine** XP mehr (`lkWiederholung()` in `lkAssess`, seit 26.10., gilt auch für 1.1.1). Bricht jemand ein Set vor dem Abschluss ab, zählen die Karten beim nächsten Durchlauf erneut (Set noch nicht «done»).
 - Abzeichen je Set: 1.1.1 aus dem Dokument; 1.1.2–1.1.5 Schlüssel `lk-<modul>-<Set>`; vergeben nur, wenn `badges` die Zeile hat (Migration 04, Namen = Set-Titel, 50 XP – Vorschlag). Kein Abzeichen → kein Hinweis im Popup.
-- Abschluss-Reihenfolge im Frontend: `markDoneLK` (Server) → bei Erfolg Abzeichen prüfen/einfügen → XP. Schlägt das Speichern fehl, wird der Set-Schlüssel nicht als fertig markiert und das Popup nennt den Fehler; XP der Karten sind dann bereits vergeben (kein Rollback möglich ohne RPC – siehe Backend-Wunsch 9).
+- Abschluss: bevorzugt `complete_lernkarten_set` (Migration 07, eine Transaktion, idempotent); sonst `markDoneLK` → Abzeichen → XP in drei Schritten, Fehler im Popup sichtbar.
 
-## 6. Vorschlag für später: Fortschritt an `course_id` binden
+## 6. Fortschritt an `course_id` (Migration 05)
 
-`user_progress.course_index` sollte durch `course_id uuid` ersetzt werden: neue Spalte, Backfill `course_id = (select id from courses order by sort_order offset course_index limit 1)` **zum Zeitpunkt der Migration**, Unique `(user_id, course_id)`, Frontend liest beides (Übergang). Nicht vorbereitet, weil das Backfill nur stimmt, wenn seit den Einträgen nichts umsortiert wurde – das muss Adrian anhand der Historie beurteilen.
+Spalte `course_id uuid` (FK, on delete set null) mit Backfill nach der Position zum Zeitpunkt der Migration; `course_index` bleibt (Unique-Key des Upserts, Admin-Auswertungen). Frontend: `progressAbbilden()` mappt Zeilen über `course_id`, sonst über `course_index`; `saveProgress` schreibt beides und fällt bei fehlender Spalte (42703/PGRST204) auf `course_index` zurück. Das Backfill stimmt nur, wenn seit den letzten Einträgen nicht umsortiert/gelöscht wurde – Kontrollabfrage im Migrationskopf.
+
+## 7. Bestehensschwelle
+
+`courses.pass_threshold` (1–100) gilt für Abschluss, Ergebnisseite und XP-Bonus (`bluuSchwelle(c)`, Standard 70). Wissenstest-Importe: 80 % (19/24 bzw. 16/20), `is_final_exam: true`.
