@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>1.1.1 Übungen I – Praxisfall: Die Energierechnung lesen</title></head><body>
+<p>Bluuakademie-Kursdatei – in der Verwaltung unter «Kurs importieren» hochladen. Erzeugt aus den Word-Dateien des Zips «TF1 Grundlagen» (scratchpad/tf1_kurse.js).</p>
+<!--ENERGYACADEMY_COURSE-->
+{
+ "title": "1.1.1 Übungen I – Praxisfall: Die Energierechnung lesen",
+ "icon": "✏️",
+ "icon_bg": "#EEF3F6",
+ "tag_bg": "#243A4C",
+ "tag_color": "#BEC60E",
+ "btn_color": "#243A4C",
+ "slides": [
+  {
+   "tag": "I0",
+   "title": "Startscreen",
+   "content": "<p>Jetzt wird es praktisch: Auf jeder Energierechnung findest Du vieles wieder, was Du in diesem Modul gelernt hast. Die App zeigt Dir dazu eine Musterrechnung für Strom und Gas.</p><div class=\"kasten hinweis\">Glühwürmchen (Einblendung beim Start): „Finale! Jetzt prüfst Du eine echte Rechnung – mit allem, was Du in diesem Modul gelernt hast.“</div>"
+  },
+  {
+   "tag": "I1",
+   "title": "Lernkarte: So liest Du die Musterrechnung",
+   "content": "<p>Die App zeigt die Musterrechnung aus dem Begleitmaterial „Praxisfall Musterrechnung“ als Bild. Die nummerierten Stellen sind antippbar und blenden die Erklärung ein.</p><div class=\"tabelle-scroll\"><table><thead><tr><th>Angabe</th><th>Teilnehmertext</th></tr></thead><tbody><tr><th scope=\"row\">Zählerstände</th><td>Anfangs- und Endzählerstand des Abrechnungszeitraums. Die Rechnung nennt auch, wie sie ermittelt wurden, z. B. abgelesen oder geschätzt.</td></tr><tr><th scope=\"row\">Verbrauch</th><td>Endzählerstand minus Anfangszählerstand. Beim Strom direkt in kWh.</td></tr><tr><th scope=\"row\">Arbeitspreis</th><td>Preis je kWh – er hängt an der verbrauchten Energie.</td></tr><tr><th scope=\"row\">Grundpreis</th><td>Fester Betrag pro Jahr – unabhängig vom Verbrauch.</td></tr><tr><th scope=\"row\">Gas</th><td>Gemessen in m³, umgerechnet mit Brennwert und Zustandszahl in kWh.</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "I6",
+   "title": "Selbstcheck, Merksatz und Abschluss",
+   "content": "<h3>Erklär es Dir selbst</h3><p>Erkläre anhand der Musterrechnung, wie der Stromverbrauch und die Energiekosten zustande kommen.</p><details><summary>Musterantwort zeigen</summary><p>Verbrauch = Zählerstand neu minus Zählerstand alt = 3.500 kWh. Die Energiekosten ergeben sich aus Arbeitspreis × kWh: 3.500 kWh × 30 ct = 1.050 €. Dazu kommt der feste Grundpreis.</p></details><p class=\"quelle\">„Konnte ich erklären“ / „teilweise“ / „noch nicht“. Bei „noch nicht“ erscheint der Hinweis auf Folie 14 bzw. das Lernskript, Abschnitt I.</p><div class=\"kasten merke\"><strong>Merksatz</strong>Verbrauch = Zählerstand neu − Zählerstand alt. Abgerechnet wird Energie in kWh: Arbeitspreis × kWh plus Grundpreis. Gas wird vorher von m³ in kWh umgerechnet.</div><div class=\"tabelle-scroll\"><table><thead><tr><th>Feld</th><th>Speicherung</th></tr></thead><tbody><tr><th scope=\"row\">module_id</th><td>1.1.1</td></tr><tr><th scope=\"row\">task_status_A–I</th><td>nicht begonnen / in Bearbeitung / abgeschlossen</td></tr><tr><th scope=\"row\">self_check</th><td>Selbsteinschätzung je Untermodul</td></tr><tr><th scope=\"row\">closed_answers / retry_count / hint_shown</th><td>letzte Auswahl, Anzahl Wiederholungen, angezeigte Tipps</td></tr><tr><th scope=\"row\">started_at / completed_at</th><td>Zeitstempel je Untermodul (Nachweis des begleiteten Selbststudiums)</td></tr><tr><th scope=\"row\">gw_start / gw_tip / gw_end</th><td>Glühwürmchen-Texte je Untermodul bzw. Aufgabe (Einblendung)</td></tr><tr><th scope=\"row\">test_status / test_score / test_attempts</th><td>Wissenstest: Status, richtige Antworten (von 24), Versuche</td></tr></tbody></table></div>"
+  }
+ ],
+ "questions": [
+  {
+   "question": "Zählerstand alt: 24.310 kWh, Zählerstand neu: 27.810 kWh. Wie hoch ist der Verbrauch?",
+   "opt_a": "2.431 kWh",
+   "opt_b": "3.500 kWh",
+   "opt_c": "27.810 kWh",
+   "opt_d": "52.120 kWh",
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "27.810 − 24.310 = 3.500 kWh. Der Verbrauch ist die Differenz der Zählerstände.",
+   "scenario": null,
+   "_art": "Single Choice."
+  },
+  {
+   "question": "Der Arbeitspreis beträgt 30,00 ct/kWh (netto). Wie hoch sind die Energiekosten für 3.500 kWh ohne Grundpreis?",
+   "opt_a": "105,00 €",
+   "opt_b": "350,00 €",
+   "opt_c": "1.050,00 €",
+   "opt_d": "10.500,00 €",
+   "correct_index": 2,
+   "question_type": "multiple_choice",
+   "feedback": "3.500 kWh × 0,30 € = 1.050,00 €.",
+   "scenario": null,
+   "_art": "Single Choice."
+  },
+  {
+   "question": "Laut Rechnung: 1.185 m³, Brennwert 11,200 kWh/m³, Zustandszahl 0,9600. Welche Energiemenge wird abgerechnet?",
+   "opt_a": "12.741 kWh",
+   "opt_b": "1.185 kWh",
+   "opt_c": "13.272 kWh",
+   "opt_d": "11.376 kWh",
+   "correct_index": 0,
+   "question_type": "multiple_choice",
+   "feedback": "1.185 × 11,200 × 0,9600 = 12.741 kWh. Ohne Zustandszahl kämen 13.272 kWh heraus.",
+   "scenario": null,
+   "_art": "Single Choice."
+  },
+  {
+   "question": "Was bedeutet die Angabe auf der Rechnung?",
+   "question_type": "match",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2
+   ],
+   "feedback": "3.500 kWh → Verbrauch (Energie) (kWh ist eine Energieeinheit.) · 30,00 ct/kWh → Arbeitspreis (Preis je verbrauchter kWh.) · 120,00 € pro Jahr → Grundpreis (Fester Betrag, unabhängig vom Verbrauch.) · Glühwürmchen-Tipp: „Pro kWh oder pro Jahr? m³ oder kWh? Die Einheit verrät fast immer die Bedeutung.“",
+   "opt_a": "3.500 kWh",
+   "match_a": "Verbrauch (Energie)",
+   "opt_b": "30,00 ct/kWh",
+   "match_b": "Arbeitspreis",
+   "opt_c": "120,00 € pro Jahr",
+   "match_c": "Grundpreis"
+  },
+  {
+   "question": "Was bedeutet die Angabe auf der Rechnung?",
+   "question_type": "match",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1
+   ],
+   "feedback": "1.185 m³ → Gasvolumen, noch keine Energie (Erst die Umrechnung ergibt kWh.) · 0,9600 → Zustandszahl (Rechnet das Volumen auf den Normzustand um.) · Glühwürmchen-Tipp: „Pro kWh oder pro Jahr? m³ oder kWh? Die Einheit verrät fast immer die Bedeutung.“",
+   "opt_a": "1.185 m³",
+   "match_a": "Gasvolumen, noch keine Energie",
+   "opt_b": "0,9600",
+   "match_b": "Zustandszahl"
+  },
+  {
+   "question": "Entscheide für jede Aussage, ob sie richtig oder falsch ist.",
+   "question_type": "true_false",
+   "correct_index": -1,
+   "feedback": "1: So entstehen die Energiekosten. · 2: Der Grundpreis ist ein fester Betrag pro Jahr. · 3: So lässt sich die Energiemenge nachrechnen. · 4: Zum Beispiel abgelesen oder geschätzt – das schreibt § 40 EnWG vor. · Glühwürmchen-Tipp: „Der Grundpreis heißt nicht ohne Grund so – hängt er vom Verbrauch ab?“",
+   "opt_a": "„Der Arbeitspreis wird mit dem Verbrauch in kWh multipliziert.“",
+   "match_a": "true",
+   "opt_b": "„Der Grundpreis steigt mit dem Verbrauch.“",
+   "match_b": "false",
+   "opt_c": "„Brennwert und Zustandszahl stehen auf der Gasrechnung, damit die Umrechnung nachvollziehbar ist.“",
+   "match_c": "true",
+   "opt_d": "„Die Rechnung muss angeben, wie der Zählerstand ermittelt wurde.“",
+   "match_d": "true"
+  }
+ ]
+}
+<!--/ENERGYACADEMY_COURSE-->
+</body></html>

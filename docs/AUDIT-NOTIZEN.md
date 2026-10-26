@@ -12,8 +12,8 @@ Gefunden beim Redesign am 24.10.2026. Keiner dieser Punkte wurde geändert, um V
 - Filter-Chip «Admins» wird für Manager per `style.display` versteckt (Z. ~4681) – reine Anzeige, keine Berechtigung.
 
 ## Lernende
-- `slides.content` wird ungefiltert per `innerHTML` gerendert (admin-verfasst). Bei Fremdinhalten (KI-Import) wäre ein Sanitizer sinnvoll.
-- Lernkarten-Fortschritt liegt nur im `localStorage`, geht beim Gerätewechsel verloren.
+- `slides.content` wird per `innerHTML` gerendert – seit 26.10.2026 durch `bluuSanitize` (Block BLUU-SICHER) bereinigt; `questions.question` wird als textContent gesetzt.
+- Lernskript-Stand lag nur im `localStorage`; seit 26.10.2026 Sync über `lernskript_progress` (Migration 02, noch nicht eingespielt). Lernkarten-Fortschritt liegt in `lernkarten_progress`.
 - Wiki-Daten (`WIKI_ENTRIES`, 212 Einträge) und `LERNKARTEN_SETS` sind im Code hartkodiert.
 - Mehrere CSS-Epochen (Legacy-Tokens, «Bluuakademie 1:1», BLUU-*, BLUU-SYSTEM, BLUU-LERNSKRIPT, BLUU-VERWALTUNG) überlagern sich mit `!important`. Nach Abnahme: Legacy-Regeln, die nirgends mehr greifen, entfernen.
 
@@ -28,3 +28,9 @@ Alle Befunde liegen in älteren Schichten (Login, Onboarding-«Welcome»-Sektion
 
 ## Harness (nur Prüfwerkzeug, nicht im Repo)
 - `akademy-shot.js` setzt `isAdmin/isManager` direkt und bricht Supabase-Anfragen ab; datenladende Reiter zeigen daher Leer- oder Ladezustände. Reale Daten wurden nicht geprüft.
+
+## Backend-Integration 26.10.2026 (offen)
+- `user_progress.course_index` ist positional: Löschen/Umsortieren eines Kurses verschiebt den Fortschritt aller Lernenden. Nicht geändert (Vorgabe); Vorschlag in `docs/DATENMODELL.md` §6.
+- XP werden bei Wiederholung eines Lernkarten-Sets erneut vergeben (auch 1.1.1). Entscheidung offen.
+- Lösungen der Fragen liegen im Client (`questions` wird komplett geladen) – für Prüfungen mit Zertifikat Backend-Thema.
+- `awardXP` schreibt ohne RPC weiterhin aus dem Browser (bis Migration 03/3b).

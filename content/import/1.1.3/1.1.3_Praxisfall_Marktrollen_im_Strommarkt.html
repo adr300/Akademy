@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>1.1.3 Praxisfall – Marktrollen im Strommarkt</title></head><body>
+<p>Bluuakademie-Kursdatei – in der Verwaltung unter «Kurs importieren» hochladen. Erzeugt aus den Word-Dateien des Zips «TF1 Grundlagen» (scratchpad/tf1_kurse.js).</p>
+<!--ENERGYACADEMY_COURSE-->
+{
+ "title": "1.1.3 Praxisfall – Marktrollen im Strommarkt",
+ "icon": "🧾",
+ "icon_bg": "#EEF3F6",
+ "tag_bg": "#243A4C",
+ "tag_color": "#BEC60E",
+ "btn_color": "#243A4C",
+ "slides": [
+  {
+   "tag": "Praxisfall",
+   "title": "Wozu dieser Praxisfall?",
+   "content": "<p>Das Stammdatenblatt zeigt einen typischen Hausanschluss mit PV-Anlage und alle Rollen, Objekte und Gebiete aus dem Modul. Einsatz: Live-Seminar (Gruppenarbeit 4, Arbeitsblatt 5) und Lernplattform (Untermodul G).</p><div class=\"kasten hinweis\"><strong>Hinweis</strong>Alle Namen und IDs sind fiktiv. Die IDs folgen den Bildungsvorschriften der BDEW-Anwendungshilfe „Identifikatoren in der Marktkommunikation“ (V1.2) – einschließlich korrekter Prüfziffer.</div>"
+  },
+  {
+   "tag": "Praxisfall",
+   "title": "Stammdatenblatt Musterweg 1, 12345 Musterstadt",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Anschlussnutzer</th><th>Familie Musterfrau</th></tr></thead><tbody><tr><th scope=\"row\">Verbrauch</th><td>Haushalt, ca. 3.500 kWh pro Jahr</td></tr><tr><th scope=\"row\">Erzeugung</th><td>PV-Anlage auf dem Dach, Überschusseinspeisung</td></tr></tbody></table></div><div class=\"tabelle-scroll\"><table><thead><tr><th>Objekt</th><th>ID</th><th>Bemerkung</th></tr></thead><tbody><tr><th scope=\"row\">Marktlokation Bezug</th><td>51238609130</td><td>Entnahme: hier wird Strom verbraucht</td></tr><tr><th scope=\"row\">Marktlokation Einspeisung</th><td>58073419625</td><td>Einspeisung: hier speist die PV-Anlage Überschüsse ein</td></tr><tr><th scope=\"row\">Messlokation</th><td>DE0001231234500000000000000012345</td><td>Zweirichtungszähler misst Bezug und Einspeisung</td></tr><tr><th scope=\"row\">Zähler</th><td>1EMH0012345678</td><td>Gerätenummer – ändert sich beim Zählertausch</td></tr></tbody></table></div><div class=\"tabelle-scroll\"><table><thead><tr><th>Rolle</th><th>Unternehmen</th><th>Marktpartner-ID</th></tr></thead><tbody><tr><th scope=\"row\">Netzbetreiber</th><td>Netzgesellschaft Musterstadt GmbH</td><td>9900123456787</td></tr><tr><th scope=\"row\">Messstellenbetreiber (grundzuständig)</th><td>Netzgesellschaft Musterstadt GmbH</td><td>9900123456795</td></tr><tr><th scope=\"row\">Lieferant (Bezug)</th><td>Stadtwerke Musterstadt GmbH</td><td>9900987654329</td></tr><tr><th scope=\"row\">Bilanzkreisverantwortlicher (Bezug)</th><td>Stadtwerke Musterstadt GmbH</td><td>eigene MP-ID (hier nicht dargestellt)</td></tr></tbody></table></div><div class=\"tabelle-scroll\"><table><thead><tr><th>Bilanzkreis (Bezug)</th><th>Bilanzkreis der Stadtwerke Musterstadt</th></tr></thead><tbody><tr><th scope=\"row\">Netzgebiet</th><td>Netzgesellschaft Musterstadt GmbH</td></tr><tr><th scope=\"row\">Regelzone</th><td>Regelzone des zuständigen Übertragungsnetzbetreibers</td></tr><tr><th scope=\"row\">Gebotszone</th><td>Deutschland–Luxemburg</td></tr><tr><th scope=\"row\">Einspeisung</th><td>Für die Einspeise-Marktlokation sind Abnahme und Vergütung gesondert geregelt, z. B. EEG-Vergütung über den Netzbetreiber. Das wird hier nicht im Detail dargestellt.</td></tr></tbody></table></div><p>Netzbetreiber und Messstellenbetreiber sind dasselbe Unternehmen – in der Marktkommunikation tritt es aber in jeder Rolle mit einer eigenen Marktpartner-ID auf.</p>"
+  },
+  {
+   "tag": "Praxisfall",
+   "title": "Was passiert, wenn …?",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Ereignis</th><th>Das ändert sich</th><th>Das bleibt gleich</th></tr></thead><tbody><tr><th scope=\"row\">Familie Musterfrau wechselt den Stromlieferanten.</th><td>Lieferant und in der Regel der Bilanzkreis</td><td>MaLo-ID, Messlokation, Zähler, Netzbetreiber, Messstellenbetreiber</td></tr><tr><th scope=\"row\">Der Zähler wird gegen ein intelligentes Messsystem getauscht.</th><td>Zählernummer</td><td>MaLo-ID, Messlokation, Lieferant, Netzbetreiber</td></tr><tr><th scope=\"row\">Die Familie beauftragt einen wettbewerblichen Messstellenbetreiber.</th><td>Messstellenbetreiber mit seiner MP-ID, in der Regel auch der Zähler</td><td>MaLo-ID, Messlokation, Netzbetreiber, Lieferant</td></tr><tr><th scope=\"row\">Ein neuer Netzbetreiber übernimmt das Netz (neue Konzession).</th><td>Netzbetreiber mit seiner MP-ID</td><td>MaLo-ID – sie bleibt laut BDEW auch beim Netzbetreiberwechsel unverändert</td></tr><tr><th scope=\"row\">Familie Musterfrau zieht aus, eine neue Familie zieht ein.</th><td>Anschlussnutzer und ggf. Lieferant</td><td>MaLo-ID und Messlokation – sie gehören zum Ort, nicht zur Person</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "Praxisfall",
+   "title": "Lesehilfe",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Angabe</th><th>Wo im Modul?</th></tr></thead><tbody><tr><th scope=\"row\">Rollen und Marktpartner-IDs</th><td>Folien 5 bis 10 (interne Präsentation), Untermodule B bis E</td></tr><tr><th scope=\"row\">Bilanzkreis</th><td>Folie 11, Untermodul E</td></tr><tr><th scope=\"row\">Netzgebiet, Regelzone, Gebotszone</th><td>Folie 12, Untermodul E</td></tr><tr><th scope=\"row\">Zusammenspiel und Datenfluss</th><td>Folie 13, Untermodul F</td></tr><tr><th scope=\"row\">Marktlokation, Messlokation, Zähler und IDs</th><td>Modul 1.1.5 „Lokationen und Identifikatoren“</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "Praxisfall",
+   "title": "Ergebnis und Quellen",
+   "content": "<p>Ergebnis: Die Marktlokation gehört zum Ort: Sie bleibt bei Lieferanten-, Zähler-, MSB- und Netzbetreiberwechsel bestehen.</p><p>Quellen: BDEW-Anwendungshilfe „Identifikatoren in der Marktkommunikation“ V1.2 (07.02.2025); Bilanzkreise: bis Ende 2025 § 4 StromNZV, seither Festlegungen der Bundesnetzagentur; § 5 MsbG (Wahl des Messstellenbetreibers).</p>"
+  }
+ ],
+ "questions": [
+  {
+   "question": "Ordne den Eintrag zu (Rolle, Objekt oder Gebiet) Ordne zu.",
+   "question_type": "match",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "feedback": "51238609130 → Objekt (Marktlokations-ID der Bezugs-Marktlokation) · DE0001231234500000000000000012345 → Objekt (Zählpunktbezeichnung der Messlokation) · Netzgesellschaft Musterstadt GmbH (MP-ID 9900123456787) → Rolle (Netzbetreiber) · Netzgesellschaft Musterstadt GmbH (MP-ID 9900123456795) → Rolle (grundzuständiger Messstellenbetreiber – gleiches Unternehmen, andere MP-ID)",
+   "opt_a": "51238609130",
+   "match_a": "Objekt",
+   "opt_b": "DE0001231234500000000000000012345",
+   "match_b": "Objekt",
+   "opt_c": "Netzgesellschaft Musterstadt GmbH (MP-ID 9900123456787)",
+   "match_c": "Rolle",
+   "opt_d": "Netzgesellschaft Musterstadt GmbH (MP-ID 9900123456795)",
+   "match_d": "Rolle"
+  },
+  {
+   "question": "Ordne den Eintrag zu (Rolle, Objekt oder Gebiet) Ordne zu.",
+   "question_type": "match",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2
+   ],
+   "feedback": "Stadtwerke Musterstadt GmbH (MP-ID 9900987654329) → Rolle (Lieferant (Bezug)) · Bilanzkreis der Stadtwerke Musterstadt → Objekt (Mengenkonto, in dem die Bezugs-Marktlokation geführt wird) · Regelzone des zuständigen ÜNB → Gebiet (Gebiet des Übertragungsnetzbetreibers)",
+   "opt_a": "Stadtwerke Musterstadt GmbH (MP-ID 9900987654329)",
+   "match_a": "Rolle",
+   "opt_b": "Bilanzkreis der Stadtwerke Musterstadt",
+   "match_b": "Objekt",
+   "opt_c": "Regelzone des zuständigen ÜNB",
+   "match_c": "Gebiet"
+  },
+  {
+   "question": "Ordne den Eintrag zu (Rolle, Objekt oder Gebiet) Ordne zu.",
+   "question_type": "match",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2
+   ],
+   "feedback": "Deutschland–Luxemburg → Gebiet (Gebotszone) · Familie Musterfrau wechselt den Stromlieferanten. → Lieferant und in der Regel der Bilanzkreis (MaLo-ID, Messlokation, Zähler, Netzbetreiber, MSB) · Der Zähler wird gegen ein intelligentes Messsystem getauscht. → Zählernummer (MaLo-ID, Messlokation, Lieferant, Netzbetreiber)",
+   "opt_a": "Deutschland–Luxemburg",
+   "match_a": "Gebiet",
+   "opt_b": "Familie Musterfrau wechselt den Stromlieferanten.",
+   "match_b": "Lieferant und in der Regel der Bilanzkreis",
+   "opt_c": "Der Zähler wird gegen ein intelligentes Messsystem getauscht.",
+   "match_c": "Zählernummer"
+  },
+  {
+   "question": "Ordne den Eintrag zu (Rolle, Objekt oder Gebiet) Ordne zu.",
+   "question_type": "match",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2
+   ],
+   "feedback": "Die Familie beauftragt einen wettbewerblichen Messstellenbetreiber. → MSB mit seiner MP-ID, in der Regel auch der Zähler (MaLo-ID, Messlokation, Netzbetreiber, Lieferant) · Ein neuer Netzbetreiber übernimmt das Netz (neue Konzession). → Netzbetreiber mit seiner MP-ID (MaLo-ID) · Familie Musterfrau zieht aus, eine neue Familie zieht ein. → Anschlussnutzer und ggf. Lieferant (MaLo-ID und Messlokation)",
+   "opt_a": "Die Familie beauftragt einen wettbewerblichen Messstellenbetreiber.",
+   "match_a": "MSB mit seiner MP-ID, in der Regel auch der Zähler",
+   "opt_b": "Ein neuer Netzbetreiber übernimmt das Netz (neue Konzession).",
+   "match_b": "Netzbetreiber mit seiner MP-ID",
+   "opt_c": "Familie Musterfrau zieht aus, eine neue Familie zieht ein.",
+   "match_c": "Anschlussnutzer und ggf. Lieferant"
+  }
+ ]
+}
+<!--/ENERGYACADEMY_COURSE-->
+</body></html>

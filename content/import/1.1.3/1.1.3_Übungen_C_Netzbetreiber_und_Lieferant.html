@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>1.1.3 Übungen C – Netzbetreiber und Lieferant</title></head><body>
+<p>Bluuakademie-Kursdatei – in der Verwaltung unter «Kurs importieren» hochladen. Erzeugt aus den Word-Dateien des Zips «TF1 Grundlagen» (scratchpad/tf1_kurse.js).</p>
+<!--ENERGYACADEMY_COURSE-->
+{
+ "title": "1.1.3 Übungen C – Netzbetreiber und Lieferant",
+ "icon": "✏️",
+ "icon_bg": "#EEF3F6",
+ "tag_bg": "#243A4C",
+ "tag_color": "#BEC60E",
+ "btn_color": "#243A4C",
+ "slides": [
+  {
+   "tag": "C0",
+   "title": "Startscreen",
+   "content": "<p>Netzbetreiber und Lieferant arbeiten an jeder Marktlokation zusammen – mit klar getrennten Aufgaben. Der eine kümmert sich um das Netz, der andere um die Belieferung und den Kunden.</p>"
+  },
+  {
+   "tag": "C1",
+   "title": "Lernkarte: Der Netzbetreiber (NB)",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Aufgabe</th><th>Teilnehmertext</th></tr></thead><tbody><tr><th scope=\"row\">Hauptaufgabe</th><td>Betrieb, Wartung und Ausbau des Stromnetzes.</td></tr><tr><th scope=\"row\">Versorgungssicherheit</th><td>Er sorgt für einen stabilen und sicheren Netzbetrieb.</td></tr><tr><th scope=\"row\">Netzanschlüsse</th><td>Er verbindet Haushalte, Unternehmen und Erzeugungsanlagen mit dem Netz.</td></tr><tr><th scope=\"row\">Daten</th><td>Er verwaltet Stammdaten, beantragt die Marktlokations-ID und ordnet sie der Marktlokation zu.</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "C2",
+   "title": "Lernkarte: Der Lieferant (LF)",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Aufgabe</th><th>Teilnehmertext</th></tr></thead><tbody><tr><th scope=\"row\">Hauptaufgabe</th><td>Belieferung von Endkunden mit Strom und Kundenbetreuung.</td></tr><tr><th scope=\"row\">Beschaffung</th><td>Er beschafft Strom an der Börse oder über bilaterale Verträge.</td></tr><tr><th scope=\"row\">Abrechnung</th><td>Er rechnet den Stromverbrauch mit seinen Kunden ab.</td></tr><tr><th scope=\"row\">Bilanzkreis</th><td>Bei der Anmeldung einer Marktlokation nennt er den Bilanzkreis, in dem sie geführt wird.</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "C5",
+   "title": "Selbstcheck, Merksatz und Abschluss",
+   "content": "<h3>Erklär es Dir selbst</h3><p>Erkläre, warum ein Lieferant Strom verkaufen kann, ohne eine einzige Leitung zu besitzen.</p><details><summary>Musterantwort zeigen</summary><p>Weil Netz und Vertrieb getrennt sind: Der Netzbetreiber stellt das Netz für alle bereit. Der Lieferant beschafft den Strom und ist für Belieferung, Abrechnung und Kundenbeziehung zuständig.</p></details><p class=\"quelle\">„Konnte ich erklären“ / „teilweise“ / „noch nicht“. Bei „noch nicht“ erscheint der Hinweis auf Folie 6–7 bzw. das Lernskript, Abschnitt C.</p><div class=\"kasten merke\"><strong>Merksatz</strong>Netzbetreiber = Netz, Anschlüsse, Stammdaten, MaLo-ID. Lieferant = Beschaffung, Belieferung, Abrechnung, Kundenbeziehung.</div>"
+  }
+ ],
+ "questions": [
+  {
+   "question": "Wer ist zuständig?: „Beantragt die Marktlokations-ID und ordnet sie zu.“",
+   "opt_a": "Netzbetreiber",
+   "opt_b": "Lieferant",
+   "opt_c": null,
+   "opt_d": null,
+   "correct_index": 0,
+   "question_type": "multiple_choice",
+   "feedback": "Die Codevergabestelle gibt die ID aus, zugeordnet wird sie vom Netzbetreiber."
+  },
+  {
+   "question": "Wer ist zuständig?: „Kauft Strom an der Börse ein.“",
+   "opt_a": "Netzbetreiber",
+   "opt_b": "Lieferant",
+   "opt_c": null,
+   "opt_d": null,
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "Beschaffung ist Aufgabe des Lieferanten."
+  },
+  {
+   "question": "Wer ist zuständig?: „Schließt eine PV-Anlage ans Netz an.“",
+   "opt_a": "Netzbetreiber",
+   "opt_b": "Lieferant",
+   "opt_c": null,
+   "opt_d": null,
+   "correct_index": 0,
+   "question_type": "multiple_choice",
+   "feedback": "Netzanschlüsse gehören zum Netzbetrieb."
+  },
+  {
+   "question": "Wer ist zuständig?: „Schließt den Liefervertrag mit dem Kunden.“",
+   "opt_a": "Netzbetreiber",
+   "opt_b": "Lieferant",
+   "opt_c": null,
+   "opt_d": null,
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "Die Kundenbeziehung liegt beim Lieferanten."
+  },
+  {
+   "question": "Wer ist zuständig?: „Sorgt für einen stabilen Netzbetrieb.“",
+   "opt_a": "Netzbetreiber",
+   "opt_b": "Lieferant",
+   "opt_c": null,
+   "opt_d": null,
+   "correct_index": 0,
+   "question_type": "multiple_choice",
+   "feedback": "Versorgungssicherheit ist seine Kernaufgabe."
+  },
+  {
+   "question": "Ein neuer Ökostromanbieter ohne eigene Leitungen will Kunden in Musterstadt beliefern. Was braucht er dafür?",
+   "opt_a": "Ein eigenes Stromnetz in Musterstadt",
+   "opt_b": "Eine eigene Regelzone",
+   "opt_c": "Die Nutzung des Netzes des örtlichen Netzbetreibers",
+   "opt_d": "Die Zustimmung des bisherigen Lieferanten",
+   "correct_index": 2,
+   "question_type": "multiple_choice",
+   "feedback": "Das Netz steht allen Lieferanten offen – der Lieferant braucht keine eigenen Leitungen.",
+   "scenario": null,
+   "_art": "Fallentscheidung (Single Choice)."
+  },
+  {
+   "question": "Nach einem Sturm fällt bei einer Kundin der Strom aus. Sie ruft ihren Lieferanten an. Wer behebt die Störung?",
+   "opt_a": "Der Lieferant",
+   "opt_b": "Der Netzbetreiber",
+   "opt_c": "Der Bilanzkreisverantwortliche",
+   "opt_d": "Der Messstellenbetreiber",
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "Störungen im Netz behebt der Netzbetreiber; der Lieferant ist für die kaufmännische Belieferung zuständig.",
+   "scenario": null,
+   "_art": "Fallentscheidung (Single Choice)."
+  }
+ ]
+}
+<!--/ENERGYACADEMY_COURSE-->
+</body></html>

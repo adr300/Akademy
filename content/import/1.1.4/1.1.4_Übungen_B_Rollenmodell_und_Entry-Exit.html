@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>1.1.4 Übungen B – Rollenmodell und Entry-Exit</title></head><body>
+<p>Bluuakademie-Kursdatei – in der Verwaltung unter «Kurs importieren» hochladen. Erzeugt aus den Word-Dateien des Zips «TF1 Grundlagen» (scratchpad/tf1_kurse.js).</p>
+<!--ENERGYACADEMY_COURSE-->
+{
+ "title": "1.1.4 Übungen B – Rollenmodell und Entry-Exit",
+ "icon": "✏️",
+ "icon_bg": "#EEF3F6",
+ "tag_bg": "#243A4C",
+ "tag_color": "#BEC60E",
+ "btn_color": "#243A4C",
+ "slides": [
+  {
+   "tag": "B0",
+   "title": "Startscreen",
+   "content": "<p>Im Gas gibt es neue Spieler – den Marktgebietsverantwortlichen und den Transportkunden – und ein eigenes System für den Netzzugang: Entry-Exit.</p>"
+  },
+  {
+   "tag": "B1",
+   "title": "Lernkarte: Das Rollenmodell Gas",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Baustein</th><th>Teilnehmertext</th></tr></thead><tbody><tr><th scope=\"row\">Rollen</th><td>Fernleitungsnetzbetreiber (FNB), Verteilnetzbetreiber (VNB), Marktgebietsverantwortlicher (MGV), Transportkunde, Lieferant, Bilanzkreisverantwortlicher (BKV), Messstellenbetreiber (MSB)</td></tr><tr><th scope=\"row\">Objekte</th><td>Marktlokation, Messlokation, Bilanzkreis, Ein- und Ausspeisepunkte</td></tr><tr><th scope=\"row\">Gebiete</th><td>Netzgebiet, Marktgebiet Trading Hub Europe, Virtueller Handelspunkt (VHP)</td></tr><tr><th scope=\"row\">IDs</th><td>Wie beim Strom: MaLo-ID und Zählpunktbezeichnung. Gas-Marktpartner-IDs beginnen mit 98 (DVGW).</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "B2",
+   "title": "Lernkarte: Entry-Exit (§ 20 Abs. 1b EnWG)",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Begriff</th><th>Teilnehmertext</th></tr></thead><tbody><tr><th scope=\"row\">Grundidee</th><td>Ein- und Ausspeisekapazitäten werden ohne festen Transportpfad angeboten und sind unabhängig voneinander nutzbar und handelbar.</td></tr><tr><th scope=\"row\">Einspeisevertrag</th><td>Mit dem Netzbetreiber, in dessen Netz eingespeist wird – z. B. am Grenzübergang oder am Speicher.</td></tr><tr><th scope=\"row\">Ausspeisevertrag</th><td>Mit dem Netzbetreiber, aus dessen Netz entnommen wird – z. B. beim Letztverbraucher.</td></tr><tr><th scope=\"row\">Kooperation</th><td>Die Netzbetreiber arbeiten so zusammen, dass auch über mehrere Netze hinweg nur ein Einspeise- und ein Ausspeisevertrag nötig sind.</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "B6",
+   "title": "Selbstcheck, Merksatz und Abschluss",
+   "content": "<h3>Erklär es Dir selbst</h3><p>Erkläre das Entry-Exit-System in zwei Sätzen.</p><details><summary>Musterantwort zeigen</summary><p>Wer Gas transportieren will, bucht Kapazität beim Netzbetreiber, in dessen Netz eingespeist wird, und beim Netzbetreiber, aus dessen Netz entnommen wird. Einen Transportweg durch die Netze muss niemand festlegen – die Netzbetreiber kooperieren dafür.</p></details><p class=\"quelle\">„Konnte ich erklären“ / „teilweise“ / „noch nicht“. Bei „noch nicht“ erscheint der Hinweis auf Folie 4–5 bzw. das Lernskript, Abschnitt B.</p><div class=\"kasten merke\"><strong>Merksatz</strong>Entry-Exit: ein Einspeisevertrag, ein Ausspeisevertrag, kein Transportpfad.</div>"
+  }
+ ],
+ "questions": [
+  {
+   "question": "Wird hier Gas ins Netz eingespeist oder entnommen?: „Grenzübergang einer Importleitung nach Deutschland“",
+   "opt_a": "Einspeisepunkt",
+   "opt_b": "Ausspeisepunkt",
+   "opt_c": null,
+   "opt_d": null,
+   "correct_index": 0,
+   "question_type": "multiple_choice",
+   "feedback": "Hier kommt Gas ins Marktgebiet."
+  },
+  {
+   "question": "Wird hier Gas ins Netz eingespeist oder entnommen?: „Gasheizung in einem Einfamilienhaus“",
+   "opt_a": "Einspeisepunkt",
+   "opt_b": "Ausspeisepunkt",
+   "opt_c": null,
+   "opt_d": null,
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "Hier wird Gas entnommen."
+  },
+  {
+   "question": "Wird hier Gas ins Netz eingespeist oder entnommen?: „Biogasanlage, die ins Netz einspeist“",
+   "opt_a": "Einspeisepunkt",
+   "opt_b": "Ausspeisepunkt",
+   "opt_c": null,
+   "opt_d": null,
+   "correct_index": 0,
+   "question_type": "multiple_choice",
+   "feedback": "Auch Biogas wird eingespeist."
+  },
+  {
+   "question": "Wird hier Gas ins Netz eingespeist oder entnommen?: „Industriebetrieb mit Gasbrenner“",
+   "opt_a": "Einspeisepunkt",
+   "opt_b": "Ausspeisepunkt",
+   "opt_c": null,
+   "opt_d": null,
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "Ein Letztverbraucher."
+  },
+  {
+   "question": "Ein Händler bringt Gas an der Grenze ins Fernleitungsnetz und liefert es an einen Industriekunden im Verteilnetz. Wie viele Kapazitätsverträge braucht er dafür mindestens?",
+   "opt_a": "Einen je durchlaufenes Netz",
+   "opt_b": "Zwei – einen Einspeise- und einen Ausspeisevertrag",
+   "opt_c": "Keinen – das regelt der MGV",
+   "opt_d": "Vier – je einen pro Netzkopplungspunkt",
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "Dank Entry-Exit und Netzbetreiber-Kooperation genügen ein Einspeise- und ein Ausspeisevertrag.",
+   "scenario": null,
+   "_art": "Fallentscheidung (Single Choice)."
+  },
+  {
+   "question": "Entscheide für jede Aussage, ob sie richtig oder falsch ist.",
+   "question_type": "true_false",
+   "correct_index": -1,
+   "feedback": "1: Gerade das entfällt – gebucht werden Ein- und Ausspeisekapazitäten. · 2: Vergeben vom DVGW. · 3: Im Strom übernimmt der ÜNB die Bilanzkreiskoordination.",
+   "opt_a": "„Im Entry-Exit-System muss der Transportweg durch die Netze festgelegt werden.“",
+   "match_a": "false",
+   "opt_b": "„Gas-Marktpartner-IDs beginnen mit 98.“",
+   "match_b": "true",
+   "opt_c": "„Der Marktgebietsverantwortliche ist eine Rolle, die es nur im Gas gibt.“",
+   "match_c": "true"
+  }
+ ]
+}
+<!--/ENERGYACADEMY_COURSE-->
+</body></html>

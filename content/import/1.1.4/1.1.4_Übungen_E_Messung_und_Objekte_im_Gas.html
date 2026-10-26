@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>1.1.4 Übungen E – Messung und Objekte im Gas</title></head><body>
+<p>Bluuakademie-Kursdatei – in der Verwaltung unter «Kurs importieren» hochladen. Erzeugt aus den Word-Dateien des Zips «TF1 Grundlagen» (scratchpad/tf1_kurse.js).</p>
+<!--ENERGYACADEMY_COURSE-->
+{
+ "title": "1.1.4 Übungen E – Messung und Objekte im Gas",
+ "icon": "✏️",
+ "icon_bg": "#EEF3F6",
+ "tag_bg": "#243A4C",
+ "tag_color": "#BEC60E",
+ "btn_color": "#243A4C",
+ "slides": [
+  {
+   "tag": "E0",
+   "title": "Startscreen",
+   "content": "<p>Der Gaszähler misst Kubikmeter, abgerechnet werden Kilowattstunden. Und nicht jeder Kunde wird gleich behandelt: Es gibt Profile und gemessene Lastgänge.</p>"
+  },
+  {
+   "tag": "E1",
+   "title": "Lernkarte: MSB Gas",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Aspekt</th><th>Teilnehmertext</th></tr></thead><tbody><tr><th scope=\"row\">Hauptaufgabe</th><td>Einbau, Betrieb und Wartung der Gaszähler und Messeinrichtungen.</td></tr><tr><th scope=\"row\">Mengenumwerter</th><td>Rechnet bei größeren Anlagen das Betriebsvolumen in Normvolumen um.</td></tr><tr><th scope=\"row\">Umrechnung</th><td>Energie in kWh = Volumen in m³ × Brennwert × Zustandszahl.</td></tr><tr><th scope=\"row\">GeLi Gas 2.0</th><td>Seit 1. April 2026 ist der MSB Gas fest in den Datenaustausch eingebunden. Neue Gaszähler können an ein Smart-Meter-Gateway Strom angebunden werden.</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "E2",
+   "title": "Lernkarte: SLP und RLM",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Verfahren</th><th>Teilnehmertext</th></tr></thead><tbody><tr><th scope=\"row\">Standardlastprofil (SLP)</th><td>Bis 1,5 Mio. kWh im Jahr und bis 500 kWh pro Stunde. Der Tagesverbrauch wird über ein Profil prognostiziert, z. B. für Haushalte.</td></tr><tr><th scope=\"row\">Registrierende Leistungsmessung (RLM)</th><td>Darüber wird der Verbrauch stündlich gemessen, z. B. bei großen Gewerbe- und Industriekunden.</td></tr><tr><th scope=\"row\">Objekte</th><td>MaLo und MeLo wie beim Strom; jede MaLo ist einem Bilanzkreis im Marktgebiet zugeordnet.</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "E5",
+   "title": "Selbstcheck, Merksatz und Abschluss",
+   "content": "<h3>Erklär es Dir selbst</h3><p>Erkläre, wie aus einem Zählerstand in m³ eine Rechnung in kWh wird und wann ein Kunde RLM bekommt.</p><details><summary>Musterantwort zeigen</summary><p>Der MSB misst das Volumen in m³. Mit Brennwert und Zustandszahl wird daraus die Energie in kWh. Wer mehr als 1,5 Mio. kWh im Jahr oder mehr als 500 kWh pro Stunde verbraucht, wird stündlich gemessen (RLM), alle anderen über ein Standardlastprofil.</p></details><p class=\"quelle\">„Konnte ich erklären“ / „teilweise“ / „noch nicht“. Bei „noch nicht“ erscheint der Hinweis auf Folie 10–11 bzw. das Lernskript, Abschnitt E.</p><div class=\"kasten merke\"><strong>Merksatz</strong>kWh = m³ × Brennwert × Zustandszahl. SLP bis 1,5 Mio. kWh und 500 kWh/h, darüber RLM.</div>"
+  }
+ ],
+ "questions": [
+  {
+   "question": "Ein Gaszähler zeigt einen Verbrauch von 1.000 m³. Brennwert 11,2 kWh/m³, Zustandszahl 0,95. Wie viele kWh werden abgerechnet?",
+   "opt_a": "1.000 kWh",
+   "opt_b": "11.200 kWh",
+   "opt_c": "10.640 kWh",
+   "opt_d": "11.790 kWh",
+   "correct_index": 2,
+   "question_type": "multiple_choice",
+   "feedback": "1.000 × 11,2 × 0,95 = 10.640 kWh.",
+   "scenario": null,
+   "_art": "Single Choice."
+  },
+  {
+   "question": "Ein Hotel verbraucht 800.000 kWh Gas im Jahr, die höchste stündliche Leistung liegt bei 350 kWh. Welches Verfahren gilt?",
+   "opt_a": "RLM, weil es ein Gewerbebetrieb ist",
+   "opt_b": "SLP – beide Grenzen werden eingehalten",
+   "opt_c": "RLM, weil der Verbrauch über 500.000 kWh liegt",
+   "opt_d": "Keines – Hotels werden pauschal abgerechnet",
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "Unter 1,5 Mio. kWh und unter 500 kWh pro Stunde: Standardlastprofil.",
+   "scenario": null,
+   "_art": "Single Choice."
+  },
+  {
+   "question": "Eine Gießerei verbraucht 4 Mio. kWh im Jahr. Welches Verfahren gilt?",
+   "opt_a": "SLP",
+   "opt_b": "RLM",
+   "opt_c": "Pauschalanlage",
+   "opt_d": "Das entscheidet der Lieferant",
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "Über 1,5 Mio. kWh im Jahr wird stündlich gemessen.",
+   "scenario": null,
+   "_art": "Single Choice."
+  },
+  {
+   "question": "Entscheide für jede Aussage, ob sie richtig oder falsch ist.",
+   "question_type": "true_false",
+   "correct_index": -1,
+   "feedback": "1: Sie zeigt nur die Vergabestelle. · 2: Über ein Standardlastprofil. · 3: Ihn ermittelt der Netzbetreiber.",
+   "opt_a": "„Die erste Ziffer der MaLo-ID zeigt, ob es um Gas geht.“",
+   "match_a": "false",
+   "opt_b": "„Bei SLP-Kunden wird der Tagesverbrauch prognostiziert.“",
+   "match_b": "true",
+   "opt_c": "„Der Brennwert wird vom Lieferanten festgelegt.“",
+   "match_c": "false"
+  }
+ ]
+}
+<!--/ENERGYACADEMY_COURSE-->
+</body></html>

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>1.1.5 Praxisfall – Lokationen und Identifikatoren</title></head><body>
+<p>Bluuakademie-Kursdatei – in der Verwaltung unter «Kurs importieren» hochladen. Erzeugt aus den Word-Dateien des Zips «TF1 Grundlagen» (scratchpad/tf1_kurse.js).</p>
+<!--ENERGYACADEMY_COURSE-->
+{
+ "title": "1.1.5 Praxisfall – Lokationen und Identifikatoren",
+ "icon": "🧾",
+ "icon_bg": "#EEF3F6",
+ "tag_bg": "#243A4C",
+ "tag_color": "#BEC60E",
+ "btn_color": "#243A4C",
+ "slides": [
+  {
+   "tag": "Praxisfall",
+   "title": "Wozu dieser Praxisfall?",
+   "content": "<p>Der Praxisfall zeigt einen Auszug aus einem Stammdatenimport. Einsatz: Lernplattform (Untermodul G) und Reflexionsgespräch; im Live-Seminar arbeiten die Gruppen mit drei weiteren Auszügen (Arbeitsblätter 6–8).</p><div class=\"kasten hinweis\"><strong>Hinweis</strong>Alle IDs sind fiktiv. Sie folgen den Bildungsvorschriften der BDEW-Anwendungshilfe „Identifikatoren in der Marktkommunikation“ (V1.2, 07.02.2025) – die gültigen IDs haben eine korrekte Prüfziffer.</div>"
+  },
+  {
+   "tag": "Praxisfall",
+   "title": "Übungsblatt: Importauszug",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Nr.</th><th>Feld</th><th>Wert</th><th>Gültig?</th><th>Begründung</th></tr></thead><tbody><tr><th scope=\"row\">1</th><td>MaLo-ID</td><td>51238609130</td><td></td><td></td></tr><tr><th scope=\"row\">2</th><td>MaLo-ID</td><td>5123860913</td><td></td><td></td></tr><tr><th scope=\"row\">3</th><td>MaLo-ID</td><td>51238609131</td><td></td><td></td></tr><tr><th scope=\"row\">4</th><td>MaLo-ID</td><td>20431876507</td><td></td><td></td></tr><tr><th scope=\"row\">5</th><td>MP-ID Netzbetreiber</td><td>9900123456787</td><td></td><td></td></tr><tr><th scope=\"row\">6</th><td>MP-ID Gaslieferant</td><td>9800123456789</td><td></td><td></td></tr><tr><th scope=\"row\">7</th><td>MP-ID Lieferant</td><td>9990123456780</td><td></td><td></td></tr><tr><th scope=\"row\">8</th><td>MaLo-ID</td><td>EZ7Q4M2K812</td><td></td><td></td></tr><tr><th scope=\"row\">9</th><td>TR-ID</td><td>C7H4N2W9Q51</td><td></td><td></td></tr><tr><th scope=\"row\">10</th><td>Paket-ID</td><td>P9A7K3M2Q18</td><td></td><td></td></tr></tbody></table></div><p>Prüfe jeden Eintrag in drei Schritten: 1. Länge und Zeichen, 2. Codetyp, 3. Prüfziffer.</p>"
+  },
+  {
+   "tag": "Praxisfall",
+   "title": "Ergebnis und Quellen",
+   "content": "<p>Ergebnis: Gültig sind nur Einträge, bei denen Länge, Codetyp und Prüfziffer stimmen; fehlerhafte IDs werden mit dem Netzbetreiber geklärt.</p><p>Quelle: BDEW-Anwendungshilfe „Identifikatoren in der Marktkommunikation“, Version 1.2 (07.02.2025), Kapitel 2 bis 8.</p>"
+  }
+ ],
+ "questions": [
+  {
+   "question": "Prüfe den Eintrag im Feld „MaLo-ID“ Ordne zu.",
+   "question_type": "match",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "feedback": "1 → 51238609130 (gültig) · 2 → 5123860913 (ungültig) · 3 → 51238609131 (ungültig) · 4 → 20431876507 (gültig)",
+   "opt_a": "1",
+   "match_a": "51238609130",
+   "opt_b": "2",
+   "match_b": "5123860913",
+   "opt_c": "3",
+   "match_c": "51238609131",
+   "opt_d": "4",
+   "match_d": "20431876507"
+  },
+  {
+   "question": "Prüfe den Eintrag im Feld „MaLo-ID“ Ordne zu.",
+   "question_type": "match",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2
+   ],
+   "feedback": "5 → 9900123456787 (gültig) · 6 → 9800123456789 (gültig) · 7 → 9990123456780 (ungültig)",
+   "opt_a": "5",
+   "match_a": "9900123456787",
+   "opt_b": "6",
+   "match_b": "9800123456789",
+   "opt_c": "7",
+   "match_c": "9990123456780"
+  },
+  {
+   "question": "Prüfe den Eintrag im Feld „MaLo-ID“ Ordne zu.",
+   "question_type": "match",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2
+   ],
+   "feedback": "8 → EZ7Q4M2K812 (falsches Feld) · 9 → C7H4N2W9Q51 (falscher Typ) · 10 → P9A7K3M2Q18 (gültig)",
+   "opt_a": "8",
+   "match_a": "EZ7Q4M2K812",
+   "opt_b": "9",
+   "match_b": "C7H4N2W9Q51",
+   "opt_c": "10",
+   "match_c": "P9A7K3M2Q18"
+  }
+ ]
+}
+<!--/ENERGYACADEMY_COURSE-->
+</body></html>

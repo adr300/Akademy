@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>1.1.5 Übungen E – NeLo-, NeBe-, Ressourcen- und Paket-ID</title></head><body>
+<p>Bluuakademie-Kursdatei – in der Verwaltung unter «Kurs importieren» hochladen. Erzeugt aus den Word-Dateien des Zips «TF1 Grundlagen» (scratchpad/tf1_kurse.js).</p>
+<!--ENERGYACADEMY_COURSE-->
+{
+ "title": "1.1.5 Übungen E – NeLo-, NeBe-, Ressourcen- und Paket-ID",
+ "icon": "✏️",
+ "icon_bg": "#EEF3F6",
+ "tag_bg": "#243A4C",
+ "tag_color": "#BEC60E",
+ "btn_color": "#243A4C",
+ "slides": [
+  {
+   "tag": "E0",
+   "title": "Startscreen",
+   "content": "<p>Neben MP-ID und MaLo-ID gibt es im Strommarkt vier weitere Codenummerntypen. Sie beginnen alle mit einem Buchstaben – dem Codetyp. Daran erkennst Du sie sofort.</p>"
+  },
+  {
+   "tag": "E1",
+   "title": "Lernkarte: Netzlokation und Netzbereich",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>ID</th><th>Teilnehmertext</th></tr></thead><tbody><tr><th scope=\"row\">NeLo-ID (Codetyp E)</th><td>Identifiziert die Netzlokation – einen Anschlusspunkt am Netz, der z. B. für die Ermittlung und Abrechnung der Blindarbeit genutzt wird. Eingeführt mit der BNetzA-Festlegung BK6-22-128, Ausgabe seit 15.02.2023. Vergeben nur, wenn die Netzlokation für die Marktkommunikation relevant ist.</td></tr><tr><th scope=\"row\">NeBe-ID (Codetyp F)</th><td>Identifiziert den Netzbereich – Grundlage für die netzorientierte Steuerung steuerbarer Verbrauchseinrichtungen nach § 14a EnWG, z. B. Wärmepumpen oder private Ladepunkte. Festlegungen BK6-22-300 und BK8-22/010-A, Ausgabe seit 20.02.2025.</td></tr><tr><th scope=\"row\">Gemeinsam</th><td>11 Zeichen, alphanumerisch, ASCII-Prüfziffer. Der Netzbetreiber ordnet zu; die ID bleibt auch beim Netzbetreiberwechsel gleich.</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "E2",
+   "title": "Lernkarte: Ressourcen-ID und Paket-ID",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>ID</th><th>Teilnehmertext</th></tr></thead><tbody><tr><th scope=\"row\">Ressourcen-ID</th><td>Für Redispatch 2.0. Codetyp A = Cluster Ressource, B = Steuergruppe, C = Steuerbare Ressource, D = Technische Ressource. Eine technische Ressource ist ein technisches Objekt, das Strom erzeugt und/oder verbraucht.</td></tr><tr><th scope=\"row\">Zuordnung</th><td>Die SR-ID ordnet der Einsatzverantwortliche zu; TR-, SG- und CR-ID der Netzbetreiber.</td></tr><tr><th scope=\"row\">Paket-ID</th><td>P = Paket, 9 = BDEW/Strom. Identifiziert die Lokationen, die von einem Netzbetreiberwechsel betroffen sind. Die Codevergabestelle veröffentlicht sie in einer allgemein zugänglichen Liste.</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "E6",
+   "title": "Selbstcheck, Merksatz und Abschluss",
+   "content": "<h3>Erklär es Dir selbst</h3><p>Erkläre, wie Du NeLo-, NeBe-, Ressourcen- und Paket-ID auseinanderhältst.</p><details><summary>Musterantwort zeigen</summary><p>Am ersten Zeichen: E = Netzlokation, F = Netzbereich, A bis D = Ressourcen im Redispatch 2.0 (Cluster, Steuergruppe, steuerbare, technische Ressource), P = Paket beim Netzbetreiberwechsel. Alle haben 11 Zeichen und eine ASCII-Prüfziffer.</p></details><p class=\"quelle\">„Konnte ich erklären“ / „teilweise“ / „noch nicht“. Bei „noch nicht“ erscheint der Hinweis auf Folie 8–9 bzw. das Lernskript, Abschnitt E.</p><div class=\"kasten merke\"><strong>Merksatz</strong>E = Netzlokation, F = Netzbereich, A–D = Ressourcen, P = Paket. Alle nur Strom, alle 11 Zeichen, ASCII-Prüfziffer.</div>"
+  }
+ ],
+ "questions": [
+  {
+   "question": "Welches Objekt verbirgt sich hinter dem ersten Zeichen?",
+   "question_type": "match",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "feedback": "E → Netzlokation (NeLo-ID.) · F → Netzbereich (NeBe-ID.) · A → Cluster Ressource (Ressourcen-ID.) · B → Steuergruppe (Ressourcen-ID.)",
+   "opt_a": "E",
+   "match_a": "Netzlokation",
+   "opt_b": "F",
+   "match_b": "Netzbereich",
+   "opt_c": "A",
+   "match_c": "Cluster Ressource",
+   "opt_d": "B",
+   "match_d": "Steuergruppe"
+  },
+  {
+   "question": "Welches Objekt verbirgt sich hinter dem ersten Zeichen?",
+   "question_type": "match",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2
+   ],
+   "feedback": "C → Steuerbare Ressource (Ressourcen-ID.) · D → Technische Ressource (Ressourcen-ID.) · P → Paket (Netzbetreiberwechsel) (Paket-ID, an Stelle 2 immer eine 9.)",
+   "opt_a": "C",
+   "match_a": "Steuerbare Ressource",
+   "opt_b": "D",
+   "match_b": "Technische Ressource",
+   "opt_c": "P",
+   "match_c": "Paket (Netzbetreiberwechsel)"
+  },
+  {
+   "question": "Wer ordnet einer steuerbaren Ressource ihre SR-ID zu?",
+   "opt_a": "Der Netzbetreiber",
+   "opt_b": "Der Einsatzverantwortliche",
+   "opt_c": "Die Codevergabestelle",
+   "opt_d": "Der Bilanzkreisverantwortliche",
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "Der Netzbetreiber sorgt dafür, dass genug SR-IDs bereitstehen – zuordnen tut sie der Einsatzverantwortliche.",
+   "scenario": null,
+   "_art": "Single Choice."
+  },
+  {
+   "question": "Wofür wird eine Netzlokation zum Beispiel genutzt?",
+   "opt_a": "Für die Bilanzierung im Gasmarkt",
+   "opt_b": "Als Ersatz für die MaLo-ID",
+   "opt_c": "Für die Abrechnung des Lieferanten mit dem Kunden",
+   "opt_d": "Für die Ermittlung und Abrechnung der Blindarbeit",
+   "correct_index": 3,
+   "question_type": "multiple_choice",
+   "feedback": "Das ist laut BDEW ein zentraler Zweck der Netzlokation.",
+   "scenario": null,
+   "_art": "Single Choice."
+  },
+  {
+   "question": "Was identifiziert die Paket-ID?",
+   "opt_a": "Die von einem Netzbetreiberwechsel betroffenen Lokationen",
+   "opt_b": "Ein Bündel von Bilanzkreisen",
+   "opt_c": "Alle Messlokationen eines Messstellenbetreibers",
+   "opt_d": "Ein Datenpaket in einer EDIFACT-Nachricht",
+   "correct_index": 0,
+   "question_type": "multiple_choice",
+   "feedback": "Sie bündelt die Lokationen, die bei einem Netzbetreiberwechsel übergehen.",
+   "scenario": null,
+   "_art": "Single Choice."
+  },
+  {
+   "question": "Entscheide für jede Aussage, ob sie richtig oder falsch ist.",
+   "question_type": "true_false",
+   "correct_index": -1,
+   "feedback": "1: Sie identifiziert den Netzbereich. · 2: Vergeben wird nur, wenn die Netzlokation relevant ist. · 3: Die NeLo-ID bleibt unverändert.",
+   "opt_a": "„Die NeBe-ID wird für die netzorientierte Steuerung nach § 14a EnWG benötigt.“",
+   "match_a": "true",
+   "opt_b": "„Jede Netzlokation erhält eine NeLo-ID, auch wenn sie für die Marktkommunikation keine Rolle spielt.“",
+   "match_b": "false",
+   "opt_c": "„Bei einem Netzbetreiberwechsel erhält eine Netzlokation eine neue NeLo-ID.“",
+   "match_c": "false"
+  }
+ ]
+}
+<!--/ENERGYACADEMY_COURSE-->
+</body></html>

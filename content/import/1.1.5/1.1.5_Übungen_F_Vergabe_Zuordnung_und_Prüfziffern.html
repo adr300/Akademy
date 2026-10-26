@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>1.1.5 Übungen F – Vergabe, Zuordnung und Prüfziffern</title></head><body>
+<p>Bluuakademie-Kursdatei – in der Verwaltung unter «Kurs importieren» hochladen. Erzeugt aus den Word-Dateien des Zips «TF1 Grundlagen» (scratchpad/tf1_kurse.js).</p>
+<!--ENERGYACADEMY_COURSE-->
+{
+ "title": "1.1.5 Übungen F – Vergabe, Zuordnung und Prüfziffern",
+ "icon": "✏️",
+ "icon_bg": "#EEF3F6",
+ "tag_bg": "#243A4C",
+ "tag_color": "#BEC60E",
+ "btn_color": "#243A4C",
+ "slides": [
+  {
+   "tag": "F0",
+   "title": "Startscreen",
+   "content": "<p>Wer gibt eine ID aus, wer verbindet sie mit dem Objekt – und wie prüft man, ob sie stimmt? In diesem Untermodul rechnest Du selbst Prüfziffern nach.</p>"
+  },
+  {
+   "tag": "F1",
+   "title": "Lernkarte: Vergabe und Zuordnung",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>ID</th><th>ausgegeben von</th><th>zugeordnet von</th></tr></thead><tbody><tr><th scope=\"row\">MP-ID</th><td>BDEW- bzw. DVGW-Codevergabestelle</td><td>Codeinhaber (Marktteilnehmer)</td></tr><tr><th scope=\"row\">MaLo-ID</th><td>BDEW- oder DVGW-Codevergabestelle</td><td>Netzbetreiber</td></tr><tr><th scope=\"row\">NeLo-ID, NeBe-ID</th><td>Energie Codes und Services GmbH</td><td>Netzbetreiber</td></tr><tr><th scope=\"row\">TR-, SG-, CR-ID</th><td>Energie Codes und Services GmbH</td><td>Netzbetreiber</td></tr><tr><th scope=\"row\">SR-ID</th><td>Energie Codes und Services GmbH</td><td>Einsatzverantwortlicher</td></tr><tr><th scope=\"row\">Paket-ID</th><td>Energie Codes und Services GmbH</td><td>Codeinhaber</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "F3",
+   "title": "Lernkarte: Zwei Prüfziffernverfahren",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Verfahren</th><th>So geht es</th></tr></thead><tbody><tr><th scope=\"row\">Lok- und Waggon-Verfahren (MP-ID, MaLo-ID)</th><td>Ziffern auf ungeraden Stellen addieren. Ziffern auf geraden Stellen addieren und mal 2 nehmen. Beides addieren. Abstand zum nächsten Vielfachen von 10 = Prüfziffer (ergibt sich 10, ist sie 0).</td></tr><tr><th scope=\"row\">ASCII-Verfahren (NeLo-, NeBe-, Ressourcen-, Paket-ID)</th><td>Buchstaben in ASCII-Werte umwandeln (z. B. A = 65). Danach wie oben: ungerade Stellen addieren, gerade Stellen addieren und mal 2, Summe bilden, Abstand zum nächsten Vielfachen von 10.</td></tr><tr><th scope=\"row\">Beispiel aus der Anwendungshilfe</th><td>MaLo-ID 4137355924: 17 + 52 = 69, Abstand zu 70 = 1 → 41373559241.</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "F6",
+   "title": "Selbstcheck, Merksatz und Abschluss",
+   "content": "<h3>Erklär es Dir selbst</h3><p>Erkläre, wie die Prüfziffer einer MaLo-ID berechnet wird und wozu sie dient.</p><details><summary>Musterantwort zeigen</summary><p>Ungerade Stellen addieren, gerade Stellen addieren und verdoppeln, beides addieren, Abstand zum nächsten Vielfachen von 10. Stimmt die Prüfziffer nicht, ist die ID fehlerhaft – so fallen Tippfehler auf.</p></details><p class=\"quelle\">„Konnte ich erklären“ / „teilweise“ / „noch nicht“. Bei „noch nicht“ erscheint der Hinweis auf Folie 10–11 bzw. das Lernskript, Abschnitt F.</p><div class=\"kasten merke\"><strong>Merksatz</strong>Die Vergabestelle gibt aus, der Codeinhaber ordnet zu. Prüfziffern: Lok- und Waggon (numerisch) bzw. ASCII (mit Buchstaben).</div>"
+  }
+ ],
+ "questions": [
+  {
+   "question": "Ordne jede Tätigkeit zu: Codevergabestelle, Netzbetreiber, Einsatzverantwortlicher oder Codeinhaber: „Gibt MaLo-IDs aus.“",
+   "opt_a": "Codevergabestelle",
+   "opt_b": "Netzbetreiber",
+   "opt_c": "Einsatzverantwortlicher",
+   "opt_d": "Codeinhaber",
+   "correct_index": 0,
+   "question_type": "multiple_choice",
+   "feedback": "BDEW- oder DVGW-Vergabestelle."
+  },
+  {
+   "question": "Ordne jede Tätigkeit zu: Codevergabestelle, Netzbetreiber, Einsatzverantwortlicher oder Codeinhaber: „Ordnet die MaLo-ID der Marktlokation zu.“",
+   "opt_a": "Codevergabestelle",
+   "opt_b": "Netzbetreiber",
+   "opt_c": "Einsatzverantwortlicher",
+   "opt_d": "Codeinhaber",
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "Er ist verantwortlich für die Zuweisung."
+  },
+  {
+   "question": "Ordne jede Tätigkeit zu: Codevergabestelle, Netzbetreiber, Einsatzverantwortlicher oder Codeinhaber: „Ordnet die SR-ID einer steuerbaren Ressource zu.“",
+   "opt_a": "Codevergabestelle",
+   "opt_b": "Netzbetreiber",
+   "opt_c": "Einsatzverantwortlicher",
+   "opt_d": "Codeinhaber",
+   "correct_index": 2,
+   "question_type": "multiple_choice",
+   "feedback": "Nicht der Netzbetreiber."
+  },
+  {
+   "question": "Ordne jede Tätigkeit zu: Codevergabestelle, Netzbetreiber, Einsatzverantwortlicher oder Codeinhaber: „Veröffentlicht die Paket-IDs in einer Liste.“",
+   "opt_a": "Codevergabestelle",
+   "opt_b": "Netzbetreiber",
+   "opt_c": "Einsatzverantwortlicher",
+   "opt_d": "Codeinhaber",
+   "correct_index": 0,
+   "question_type": "multiple_choice",
+   "feedback": "Die Energie Codes und Services GmbH."
+  },
+  {
+   "question": "Ordne jede Tätigkeit zu: Codevergabestelle, Netzbetreiber, Einsatzverantwortlicher oder Codeinhaber: „Ordnet seine eigene MP-ID in der Marktkommunikation zu.“",
+   "opt_a": "Codevergabestelle",
+   "opt_b": "Netzbetreiber",
+   "opt_c": "Einsatzverantwortlicher",
+   "opt_d": "Codeinhaber",
+   "correct_index": 3,
+   "question_type": "multiple_choice",
+   "feedback": "Die Vergabestelle gibt nur aus."
+  },
+  {
+   "question": "Ordne die Schritte des Lok- und Waggon-Verfahrens.",
+   "question_type": "sort",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "feedback": "1. Ziffern auf ungeraden Stellen addieren – Erste Teilsumme. · 2. Ziffern auf geraden Stellen addieren und mal 2 nehmen – Zweite Teilsumme. · 3. Beide Teilsummen addieren – Gesamtsumme. · 4. Abstand zum nächsten Vielfachen von 10 bilden – Das ist die Prüfziffer.",
+   "opt_a": "Ziffern auf ungeraden Stellen addieren",
+   "opt_b": "Ziffern auf geraden Stellen addieren und mal 2 nehmen",
+   "opt_c": "Beide Teilsummen addieren",
+   "opt_d": "Abstand zum nächsten Vielfachen von 10 bilden"
+  },
+  {
+   "question": "Berechne die Prüfziffer der MaLo-ID 2043187650_. (Ungerade Stellen: 2+4+1+7+5, gerade Stellen: 0+3+8+6+0)",
+   "opt_a": "3",
+   "opt_b": "7",
+   "opt_c": "0",
+   "opt_d": "6",
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "19 + 17 × 2 = 53. Abstand zu 60 = 7 → 20431876507.",
+   "scenario": null,
+   "_art": "Single Choice."
+  },
+  {
+   "question": "Die Gesamtsumme ergibt genau 60. Wie lautet die Prüfziffer?",
+   "opt_a": "10",
+   "opt_b": "6",
+   "opt_c": "0",
+   "opt_d": "1",
+   "correct_index": 2,
+   "question_type": "multiple_choice",
+   "feedback": "Der Abstand zum nächsten Vielfachen von 10 wäre 10 – dann gilt die Prüfziffer 0.",
+   "scenario": null,
+   "_art": "Single Choice."
+  },
+  {
+   "question": "Welchen Zahlenwert hat der Buchstabe A im ASCII-Verfahren?",
+   "opt_a": "65",
+   "opt_b": "1",
+   "opt_c": "10",
+   "opt_d": "97",
+   "correct_index": 0,
+   "question_type": "multiple_choice",
+   "feedback": "A = 65 (Großbuchstabe). 97 wäre das kleine a – in den IDs kommen nur Großbuchstaben vor.",
+   "scenario": null,
+   "_art": "Single Choice."
+  }
+ ]
+}
+<!--/ENERGYACADEMY_COURSE-->
+</body></html>
