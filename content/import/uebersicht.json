@@ -5,7 +5,7 @@
   "uebungen": [
    {
     "title": "1.1.1 Übungen A – Der Weg des Stroms",
-    "slides": 3,
+    "slides": 4,
     "fragen": 9
    },
    {
@@ -56,8 +56,8 @@
   },
   "praxisfall": {
    "title": "1.1.1 Praxisfall – 1x1 der Energiewirtschaft",
-   "slides": 5,
-   "fragen": 2
+   "slides": 6,
+   "fragen": 0
   },
   "ersatz": 2
  },
@@ -67,7 +67,7 @@
   "uebungen": [
    {
     "title": "1.1.2 Übungen A – Unbundling: Warum so viele Beteiligte?",
-    "slides": 5,
+    "slides": 6,
     "fragen": 10
    },
    {
@@ -118,7 +118,7 @@
   },
   "praxisfall": {
    "title": "1.1.2 Praxisfall – Aufbau des Energiemarktes",
-   "slides": 5,
+   "slides": 6,
    "fragen": 3
   },
   "ersatz": 6
@@ -129,7 +129,7 @@
   "uebungen": [
    {
     "title": "1.1.3 Übungen A – Warum ein Rollenmodell?",
-    "slides": 5,
+    "slides": 6,
     "fragen": 9
    },
    {
@@ -170,8 +170,8 @@
   },
   "praxisfall": {
    "title": "1.1.3 Praxisfall – Marktrollen im Strommarkt",
-   "slides": 5,
-   "fragen": 4
+   "slides": 6,
+   "fragen": 0
   },
   "ersatz": 5
  },
@@ -181,7 +181,7 @@
   "uebungen": [
    {
     "title": "1.1.4 Übungen A – Gas ist anders",
-    "slides": 4,
+    "slides": 5,
     "fragen": 7
    },
    {
@@ -222,8 +222,8 @@
   },
   "praxisfall": {
    "title": "1.1.4 Praxisfall – Marktrollen im Gasmarkt",
-   "slides": 4,
-   "fragen": 2
+   "slides": 5,
+   "fragen": 0
   },
   "ersatz": 5
  },
@@ -233,7 +233,7 @@
   "uebungen": [
    {
     "title": "1.1.5 Übungen A – Warum IDs? Der Überblick",
-    "slides": 5,
+    "slides": 6,
     "fragen": 4
    },
    {
@@ -274,8 +274,8 @@
   },
   "praxisfall": {
    "title": "1.1.5 Praxisfall – Lokationen und Identifikatoren",
-   "slides": 3,
-   "fragen": 3
+   "slides": 4,
+   "fragen": 0
   },
   "ersatz": 5
  }
