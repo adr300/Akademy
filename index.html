@@ -2914,6 +2914,66 @@ ol.ls-schritte b{color:var(--ls-navy);}
   .modul-karte:hover .bluu-kachel:has(> .szene-kachel)::before,.modul-karte:hover .bluu-kachel:has(> .szene-kachel)::after,.bluu-kachel:has(> .szene-kachel):hover::before,.bluu-kachel:has(> .szene-kachel):hover::after{transform:none;}
 }
 /* BLUU-KANDIS:ENDE */
+/* BLUU-CHECK:START — Begriffs-Check (24.10.2026): zwei Formen. «Karten»: eine Frage nach der anderen, Rückmeldung sofort, Glühwürmchen reagiert.
+   «Bogen»: alle Fragen auf einem Blatt, am Ende auswerten. Fragen kommen aus Wiki und Lernkarten; kein Test, keine XP. */
+.check{max-width:880px;margin:0 auto;padding:20px 0 80px;}
+.check-kopf{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px;}
+.check-kopf .btn-back{flex:none;}
+.check-titel{flex:1 1 240px;min-width:0;}
+.check-titel h1{margin:0;font-family:var(--disp);font-stretch:108%;font-size:24px;line-height:1.1;font-weight:700;letter-spacing:-0.015em;color:var(--fg);}
+.check-titel p{margin:4px 0 0;font-size:13.5px;color:var(--fg-2);}
+.check-chip{flex:none;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.04em;color:var(--fg-3);font-variant-numeric:tabular-nums;}
+.check-figur{flex:none;width:64px;height:64px;}
+.check-figur svg{width:64px;height:64px;}
+.check-segs{display:flex;gap:4px;margin:0 0 22px;}
+.check-segs span{flex:1;height:4px;border-radius:2px;background:var(--sf-2);}
+.check-segs span.richtig{background:var(--ak);}
+.check-segs span.falsch{background:#C04F35;}
+.check-segs span.aktuell{background:var(--ia-bg);}
+.check-karte{background:var(--sf-1);border:1px solid var(--ln);border-radius:var(--r-surface);padding:28px 28px 24px;}
+.check-art{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-3);margin:0 0 10px;}
+.check-frage{margin:0;font-family:var(--disp);font-stretch:108%;font-size:24px;line-height:1.25;font-weight:700;letter-spacing:-0.015em;color:var(--fg);text-wrap:balance;}
+.check-zusatz{margin:10px 0 0;font-size:15.5px;line-height:1.55;color:var(--fg-2);}
+.check-opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:22px;}
+.check-opt{display:flex;align-items:flex-start;gap:12px;min-height:56px;padding:12px 14px;border:1px solid var(--ln-2);border-radius:var(--r-field);background:var(--sf-0);color:var(--fg);font:inherit;font-size:15px;line-height:1.4;text-align:left;cursor:pointer;transition:border-color var(--d-base),background var(--d-base),transform var(--d-base) var(--ease-out);}
+.check-opt .kennung{flex:none;width:26px;height:26px;border-radius:50%;border:1px solid var(--ln-2);display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--fg-3);}
+.check-opt:hover{border-color:var(--sel-ln);transform:translateY(-1px);}
+.check-opt:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+.check-opt[disabled]{cursor:default;transform:none;}
+.check-opt.gewaehlt{border-color:var(--ia-bg);background:var(--sel-bg);}
+.check-opt.gewaehlt .kennung{background:var(--ia-bg);color:var(--ia-fg);border-color:var(--ia-bg);}
+.check-opt.richtig{border-color:var(--ak);background:color-mix(in srgb,var(--ak) 14%,var(--sf-1));}
+.check-opt.richtig .kennung{background:var(--ak);border-color:var(--ak);color:#1B2E3E;}
+.check-opt.falsch{border-color:#C04F35;background:color-mix(in srgb,#C04F35 10%,var(--sf-1));}
+.check-opt.falsch .kennung{background:#C04F35;border-color:#C04F35;color:#fff;}
+.check-rueck{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-top:18px;padding-top:16px;border-top:1px solid var(--ln);}
+.check-rueck p{margin:0;font-size:14.5px;color:var(--fg-2);}
+.check-rueck p strong{color:var(--fg);}
+.check-rueck .bluu-textlink{margin-left:10px;}
+.check-ergebnis{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px;align-items:center;background:var(--sf-1);border:1px solid var(--ln);border-radius:var(--r-surface);padding:28px;}
+.check-ring{width:120px;height:120px;position:relative;}
+.check-ring svg{width:120px;height:120px;transform:rotate(-90deg);}
+.check-ring .zahl{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--disp);font-stretch:108%;font-size:30px;font-weight:800;color:var(--fg);line-height:1;}
+.check-ring .zahl small{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;color:var(--fg-3);letter-spacing:.06em;margin-top:4px;}
+.check-ergebnis h2{margin:0 0 6px;font-family:var(--disp);font-stretch:108%;font-size:26px;font-weight:700;letter-spacing:-0.015em;color:var(--fg);}
+.check-ergebnis p{margin:0 0 14px;font-size:15px;color:var(--fg-2);}
+.check-aktionen{display:flex;flex-wrap:wrap;gap:8px;}
+/* Bogen */
+.bogen-liste{display:flex;flex-direction:column;gap:14px;counter-reset:frage;}
+.bogen-frage{background:var(--sf-1);border:1px solid var(--ln);border-radius:var(--r-surface);padding:18px 20px;}
+.bogen-frage .check-frage{font-size:18px;display:flex;gap:12px;align-items:baseline;}
+.bogen-frage .check-frage::before{counter-increment:frage;content:counter(frage,decimal-leading-zero);flex:none;font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;color:var(--fg-3);letter-spacing:.06em;}
+.bogen-frage .check-opts{margin-top:12px;}
+.bogen-frage .check-opt{min-height:44px;padding:9px 12px;font-size:14.5px;}
+.bogen-frage.richtig{border-color:var(--ak);}
+.bogen-frage.falsch{border-color:#C04F35;}
+.bogen-frage .check-rueck{margin-top:12px;padding-top:12px;}
+.bogen-fuss{position:sticky;bottom:0;z-index:4;display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:18px;padding:12px 16px;background:var(--sf-1);border:1px solid var(--ln);border-radius:var(--r-surface);box-shadow:var(--e-2);}
+.bogen-fuss p{margin:0;font-size:14px;color:var(--fg-2);font-variant-numeric:tabular-nums;}
+.check-knopf-stand{display:block;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--fg-3);margin-top:2px;}
+@media(max-width:640px){.check{padding-top:12px;}.check-karte{padding:20px 16px 18px;}.check-frage{font-size:20px;}.check-opts{grid-template-columns:1fr;}.check-ergebnis{grid-template-columns:1fr;justify-items:center;text-align:center;}.check-aktionen{justify-content:center;}.bogen-fuss{flex-wrap:wrap;}}
+@media (prefers-reduced-motion:reduce){.check-opt{transition:none;}.check-opt:hover{transform:none;}}
+/* BLUU-CHECK:ENDE */
 /* BLUU-LK-MASKOTTCHEN (24.10.2026): Lernkarten zeigen das aktuelle Maskottchen (Komponente) statt der alten Zeichnung; Stimmung folgt der Karte */
 .lk-maskottchen{width:72px;height:72px;margin:0 0 6px;display:flex;align-items:center;justify-content:center;}
 .lk-maskottchen svg{width:72px;height:72px;transition:transform .45s cubic-bezier(.34,1.56,.64,1);}
@@ -3198,12 +3258,13 @@ class Component extends DCLogic {
       dMundOffen: vor(st === 'stolz' || (st === 'froh' && !kw && !tm) || (tm && st === 'froh')),
       mundOffen: st === 'stolz' ? `M49 ${mY - 4}Q60 ${mY + 13} 71 ${mY - 4}Z` : (look === 'original' ? `M47 ${mY - 4}Q60 ${mY + 11} 73 ${mY - 4}Q60 ${mY - 1} 47 ${mY - 4}Z` : `M52 ${mY - 3}Q60 ${mY + 8} 68 ${mY - 3}Z`),
       zunge: st === 'stolz' ? `M55 ${mY + 3}Q60 ${mY + 7.5} 65 ${mY + 3}Q60 ${mY + 1} 55 ${mY + 3}Z` : `M56 ${mY + 1.6}Q60 ${mY + 5.2} 64 ${mY + 1.6}Q60 ${mY} 56 ${mY + 1.6}Z`,
-      dMundO: vor(st === 'neugierig' || (tm && st === 'ueberrascht')),
+      dMundO: vor(st === 'neugierig' || st === 'ueberrascht'),
       dMundSpricht: vor(st === 'erklaert'), sprechen: ruhig ? '3' : '1.2;3.6;1.6;3;1.2',
-      dMundLinie: vor(['muede', 'denkt', 'enttaeuscht', 'hoert'].includes(st) || (kw && st === 'froh') || (tm && ['neutral', 'freundlich', 'hinweis', 'nachdenklich', 'verwirrt', 'fehler', 'arbeitet'].includes(st))),
-      mundLinie: tm && ({ neutral: `M55 ${mY - 2}Q60 ${mY + 1} 65 ${mY - 2}`, freundlich: `M53 ${mY - 3}Q60 ${mY + 3.5} 67 ${mY - 3}`, hinweis: `M53 ${mY - 3}Q60 ${mY + 3.5} 67 ${mY - 3}`,
+      /* Mund immer: Linie in jeder Stimmung, die keinen offenen Mund hat — unabhängig vom Look (Lernskript, Lernkarten, Chat) */
+      dMundLinie: vor(['muede', 'denkt', 'enttaeuscht', 'hoert', 'neutral', 'freundlich', 'hinweis', 'nachdenklich', 'verwirrt', 'fehler', 'arbeitet'].includes(st) || (kw && st === 'froh')),
+      mundLinie: !kw && ({ neutral: `M55 ${mY - 2}Q60 ${mY + 1} 65 ${mY - 2}`, freundlich: `M53 ${mY - 3}Q60 ${mY + 3.5} 67 ${mY - 3}`, hinweis: `M53 ${mY - 3}Q60 ${mY + 3.5} 67 ${mY - 3}`,
         nachdenklich: `M55 ${mY}Q60 ${mY - 2} 65 ${mY + .5}`, verwirrt: `M53 ${mY - 1}q3.5-3 7 0t7 0`, fehler: `M56 ${mY - 1}h8`, arbeitet: `M55 ${mY - 2}Q60 ${mY + 2} 65 ${mY - 2}`,
-        denkt: `M55 ${mY + 1}Q59 ${mY - 1} 64 ${mY + 1.5}`, enttaeuscht: `M54 ${mY + 2}Q60 ${mY - 2.5} 66 ${mY + 2}`, muede: `M56 ${mY}Q60 ${mY + 2.5} 64 ${mY}`, hoert: `M55 ${mY - 1}Q60 ${mY + 3} 65 ${mY - 1}` }[st]) || (kw ? ({ froh: `M53 ${mY}q3.5 4 7 0q3.5 4 7 0`, denkt: `M53 ${mY}q3.5-3 7 0t7 0`, enttaeuscht: `M55 ${mY + 1}q2.5-2.6 5 0t5 0`, hoert: `M56 ${mY - 1}Q60 ${mY + 3.5} 64 ${mY - 1}`, muede: `M57 ${mY}h6` }[st] || 'M0 0') : { muede: `M56 ${mY}Q60 ${mY + 2.5} 64 ${mY}`, denkt: `M55 ${mY + 1}Q59 ${mY - 1} 64 ${mY + 1.5}`, enttaeuscht: `M54 ${mY + 3}Q60 ${mY - 2.5} 66 ${mY + 3}`, hoert: `M55 ${mY - 1}Q60 ${mY + 3} 65 ${mY - 1}` }[st] || 'M0 0'),
+        denkt: `M55 ${mY + 1}Q59 ${mY - 1} 64 ${mY + 1.5}`, enttaeuscht: `M54 ${mY + 2}Q60 ${mY - 2.5} 66 ${mY + 2}`, muede: `M56 ${mY}Q60 ${mY + 2.5} 64 ${mY}`, hoert: `M55 ${mY - 1}Q60 ${mY + 3} 65 ${mY - 1}` }[st]) || (kw ? ({ froh: `M53 ${mY}q3.5 4 7 0q3.5 4 7 0`, freundlich: `M53 ${mY}q3.5 4 7 0q3.5 4 7 0`, hinweis: `M54 ${mY}Q60 ${mY + 4} 66 ${mY}`, neutral: `M57 ${mY}h6`, nachdenklich: `M56 ${mY + 1}Q60 ${mY - 1} 64 ${mY + 1}`, verwirrt: `M53 ${mY}q3.5-3 7 0t7 0`, fehler: `M56 ${mY}h8`, arbeitet: `M55 ${mY - 1}Q60 ${mY + 2} 65 ${mY - 1}`, denkt: `M53 ${mY}q3.5-3 7 0t7 0`, enttaeuscht: `M55 ${mY + 1}q2.5-2.6 5 0t5 0`, hoert: `M56 ${mY - 1}Q60 ${mY + 3.5} 64 ${mY - 1}`, muede: `M57 ${mY}h6` }[st] || 'M0 0') : { muede: `M56 ${mY}Q60 ${mY + 2.5} 64 ${mY}`, denkt: `M55 ${mY + 1}Q59 ${mY - 1} 64 ${mY + 1.5}`, enttaeuscht: `M54 ${mY + 3}Q60 ${mY - 2.5} 66 ${mY + 3}`, hoert: `M55 ${mY - 1}Q60 ${mY + 3} 65 ${mY - 1}` }[st] || 'M0 0'),
       dDenkt: vor(st === 'denkt'), punkt: ruhig ? '1' : '.2;1;.2',
       dFunken: vor(st === 'stolz')
     };
@@ -3896,6 +3957,9 @@ class Component extends DCLogic {
         </div>
       </div>
     </div>
+
+    <!-- BLUU-CHECK: Begriffs-Check je Modul — Fragen aus Wiki und Lernkarten, zählt nicht als Test und vergibt keine XP -->
+    <div class="screen" id="screen-check"><div class="check" id="check-wurzel"></div></div>
 
     <!-- PROFILE / BADGES SCREEN (Bluuakademie 2-Spalten-Layout) -->
     <div class="screen" id="screen-profile">
@@ -11940,7 +12004,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
       const pfad = s && s.pfade && s.pfade.find((lp) => s.alleFertig);
       const zert = s && s.alleFertig && pfad ? '<button type="button" class="kachel-btn" onclick="event.stopPropagation();downloadPathCert(' + esc(JSON.stringify(String(pfad.id))) + ',' + esc(JSON.stringify(pfad.title)) + ',' + esc(JSON.stringify(pfad.icon || '')) + ')">Zertifikat ↓</button>' : '';
       return '<article class="bluu-kachel-karte meine-karte klickbar" onclick="bluuModulOeffnen(' + modulIndex(m) + ')">' +
-        '<div class="kachel-kopf"><span class="bluu-kachel">' + B('PfadIcon', { motiv: m.motiv || 'energie', status: pct === 100 ? 'fertig' : (pct ? 'aktiv' : 'neu'), fortschritt: pct, groesse: 48 }) + '</span>' +
+        '<div class="kachel-kopf"><span class="bluu-kachel">' + (window.bluuSzene ? bluuSzene(m.motiv || 'energie', pct === 100 ? 'fertig' : (pct ? 'aktiv' : 'voll'), 48, 'modul:' + (m.code || m.thema), pct) : B('PfadIcon', { motiv: m.motiv || 'energie', status: pct === 100 ? 'fertig' : (pct ? 'aktiv' : 'neu'), fortschritt: pct, groesse: 48 })) + '</span>' +
         '<div><span class="kachel-label">Modul · ' + esc(fachVon(m.bereich).kurz) + '</span><h3 class="kachel-titel">' + esc(modulTitel(m)) + '</h3></div>' +
         '<span class="meine-zahl">' + pct + '<small> %</small></span></div>' +
         '<div class="pfad-balken"><div style="width:' + pct + '%;background:' + (pct === 100 ? 'var(--lime)' : farbe) + '"></div></div>' +
@@ -12068,7 +12132,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
       const lkAktion = stand && stand.lk && stand.lk.n && zugangOffen(z) ? '<button type="button" class="kachel-btn' + (um.length || lsAktion ? '' : ' primaer') + '" onclick="bluuModulReiter(\'lernkarten\')">Lernkarten lernen</button>' : '';
       const aktion = lsAktion + (stand && um.length && zugangOffen(z)
         ? '<button type="button" class="kachel-btn' + (lsAktion ? '' : ' primaer') + '" onclick="bluuInhaltZu(\'' + esc(m.code || m.thema) + '\',' + stand.aktuell + ')">' + (stand.alleFertig ? 'Lektionen wiederholen' : (stand.fertig ? 'Weiter mit ' : 'Starten mit ') + esc(bz(um[stand.aktuell][0], stand.aktuell)) + ' · ' + esc(um[stand.aktuell][1])) + '</button>'
-        : (z === 'einzeln' ? modulAktion(m, z, 0, modulIndex(m), false) + (stand && um.length ? '<button type="button" class="kachel-btn" onclick="bluuInhaltZu(\'' + esc(m.code || m.thema) + '\',0)">Vorschau: ' + esc(um[0][0]) + ' · ' + esc(um[0][1]) + '</button>' : '') : '')) + lkAktion;
+        : (z === 'einzeln' ? modulAktion(m, z, 0, modulIndex(m), false) + (stand && um.length ? '<button type="button" class="kachel-btn" onclick="bluuInhaltZu(\'' + esc(m.code || m.thema) + '\',0)">Vorschau: ' + esc(um[0][0]) + ' · ' + esc(um[0][1]) + '</button>' : '') : '')) + lkAktion + (window.bluuCheckKnopf ? bluuCheckKnopf(m.code || m.thema) : '');
       const pfadFertig = stand && stand.alleFertig && lp;
       const zertKnopf = pfadFertig ? '<button type="button" class="kachel-btn" onclick="downloadPathCert(' + esc(JSON.stringify(String(lp.id))) + ',' + esc(JSON.stringify(lp.title)) + ',' + esc(JSON.stringify(lp.icon || '')) + ')">Zertifikat herunterladen</button>' : '';
       inhalt.innerHTML = '<div class="modul-zwei">' +
@@ -12767,7 +12831,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp)
   }
   function probetests(s) {
     const mit = s.liste.filter(({ c }) => (c.questions || []).length);
-    if (!mit.length) return '<div class="bluu-leer">Noch keine Tests in diesem Modul.</div>';
+    if (!mit.length) return '<div class="bluu-leer"><span>Noch keine Tests in diesem Modul.' + (window.bluuCheckKnopf && bluuCheckKnopf(aktuellerCode) ? ' Zum Aufwärmen gibt es den Begriffs-Check mit Fragen aus dem Wiki.' : '') + '</span>' + (window.bluuCheckKnopf ? bluuCheckKnopf(aktuellerCode) : '') + '</div>';
     const knopf = (c, z) => '<button type="button" class="kachel-btn' + (z === 'gesperrt' ? '' : ' primaer') + '" onclick="bluuTestStarten(' + c.id + ')">Test starten</button>';
     return '<p class="bluu-lead">Die Tests der Lektionen einzeln, ohne Slides. Das Ergebnis zählt wie in der Lektion: ab 70 % gilt sie als abgeschlossen. Gesperrte Tests öffnen sich nach der vorherigen Lektion.</p>' +
       '<div class="ik-liste">' + s.liste.map((x, i) => (x.c.questions || []).length ? kursKarte(s, i, knopf) : '').join('') + '</div>';
@@ -13807,6 +13871,148 @@ window.BLUU_LERNSKRIPT_111 = {
 })();
 </script>
 <!-- BLUU-VERWALTUNG:ENDE -->
+<!-- BLUU-CHECK:START -->
+<script>
+/* Begriffs-Check (24.10.2026): Übungsfragen je Modul, erzeugt aus vorhandenen Daten — Wiki-Einträge (Kürzel, Name, Erklärung) und,
+   beim 1x1, aus den Lernkarten. Zwei Formen: «karten» (Grundlagen: eine Frage nach der anderen) und «bogen» (Marktkommunikation,
+   Messwesen, SAP: Prüfungsblatt mit Auswertung). Kein Test, keine XP, kein Fortschritt in der Datenbank; nur das letzte Ergebnis lokal. */
+(function () {
+  if (typeof WIKI_ENTRIES === 'undefined') return;
+  const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const B = (n, p) => (window.bluu ? bluu(n, p) : '');
+  const misch = (a) => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+  const ersterSatz = (t) => { const m = String(t || '').match(/^.*?[.!?](?=\s|$)/); return m ? m[0] : String(t || ''); };
+  const GRUND = ['Rollen', 'Lokationen', 'Regulierung', 'Abrechnung', 'Prozesse', 'Messeinrichtung'];
+  /* Themen je Modul: Kategorien des Wikis und ein Muster über Kürzel, Name und Erklärung */
+  const THEMA = {
+    'grundlagen-1x1': { art: 'karten', lernkarten: true, name: 'Energiewirtschaft', cats: GRUND },
+    edm: { art: 'bogen', name: 'Energiedatenmanagement', cats: ['Zeitreihen & Daten', 'Summenzeitreihen', 'Weitere Zeitreihentypen', 'Kommunikation', 'EE-Einspeisezeitreihen', 'EEG-Überführungszeitreihen'] },
+    podcasts: { art: 'karten', name: 'Energiewirtschaft', cats: GRUND },
+    gpke: { art: 'bogen', name: 'GPKE', cats: ['Prozesse', 'Rollen', 'Lokationen', 'Kommunikation'], re: /GPKE|Lieferant|Lieferbeginn|Kündigung|UTILMD/i },
+    mabis: { art: 'bogen', name: 'MaBiS', cats: ['Abrechnung', 'Zeitreihen & Daten', 'Summenzeitreihen', 'Weitere Zeitreihentypen'], re: /MaBiS|Bilanz|BKV|BIKO/i },
+    'wim-1': { art: 'bogen', name: 'WiM Strom', cats: ['Messeinrichtung', 'Lokationen', 'Rollen'], re: /WiM|Mess|Zähler|MSB|Smart/i },
+    'wim-2': { art: 'bogen', name: 'WiM Strom', cats: ['Messeinrichtung', 'Lokationen', 'Rollen'], re: /WiM|Mess|Zähler|MSB|Smart/i },
+    'enwg-14a': { art: 'bogen', name: '§14a EnWG', cats: ['Regulierung', 'Messeinrichtung'], re: /14a|steuerbar|Netzbetreiber|Wärmepumpe|Ladepunkt/i },
+    'sap-isu': { art: 'bogen', name: 'SAP IS-U', cats: ['SAP Transaktionen', 'SAP Tabellen'] },
+    bluusim: { art: 'bogen', name: 'SAP IS-U', cats: ['SAP Transaktionen', 'SAP Tabellen'] },
+    sicherheit: { art: 'karten', name: 'Energiewirtschaft', cats: GRUND },
+    datenschutz: { art: 'karten', name: 'Energiewirtschaft', cats: GRUND },
+    weitere: { art: 'karten', name: 'Energiewirtschaft', cats: GRUND }
+  };
+  const SAP = ['SAP Transaktionen', 'SAP Tabellen'];
+  const pool = (t) => WIKI_ENTRIES.filter((e) => e.full && e.desc && e.full !== e.abbr && (t.cats.includes(e.cat) || (t.re && !SAP.includes(e.cat) && t.re.test(e.abbr + ' ' + e.full + ' ' + e.desc))));
+  const KEY = () => 'bluu-check-' + ((typeof currentUser !== 'undefined' && currentUser && currentUser.id) || 'gast');
+  const laden = () => { try { return JSON.parse(localStorage.getItem(KEY())) || {}; } catch (e) { return {}; } };
+  const speichern = (o) => { try { localStorage.setItem(KEY(), JSON.stringify(o)); } catch (e) {} };
+
+  /* Fragen aus dem Wiki: A «Wofür steht …?» (Name wählen) · B «Welches Kürzel passt?» (Kürzel zur Erklärung) */
+  const ausWiki = (e, p, i) => {
+    const gleich = p.filter((x) => x !== e && x.cat === e.cat), andere = p.filter((x) => x !== e);
+    const nimm = (n, key) => { const seen = new Set([e[key]]); const out = []; for (const x of misch(gleich).concat(misch(andere))) { if (!seen.has(x[key])) { seen.add(x[key]); out.push(x[key]); } if (out.length === n) break; } return out; };
+    const verraet = new RegExp('(^|[^A-Za-z0-9])' + e.abbr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?=$|[^A-Za-z0-9])').test(e.desc);
+    if (i % 2 === 0 || verraet) return { text: 'Wofür steht «' + e.abbr + '»?', richtig: e.full, optionen: misch([e.full].concat(nimm(3, 'full'))), wiki: e.abbr, art: e.cat };
+    return { text: 'Welches Kürzel passt zu dieser Beschreibung?', zusatz: ersterSatz(e.desc), richtig: e.abbr, optionen: misch([e.abbr].concat(nimm(3, 'abbr'))), wiki: e.abbr, art: e.cat };
+  };
+  /* Fragen aus den Lernkarten des 1x1: Vorderseite fragt, Rückseite ist richtig, drei andere Rückseiten desselben Sets lenken ab */
+  const ausKarten = () => {
+    const sets = (typeof LERNKARTEN_SETS !== 'undefined' ? LERNKARTEN_SETS : []);
+    const alle = [];
+    sets.forEach((s) => (s.cards || []).forEach((c) => { if (c.f && c.b && String(c.b).length <= 140) alle.push({ c, s }); }));
+    return misch(alle).slice(0, 10).map(({ c, s }) => {
+      const art = 'Set ' + s.letter + ' · ' + s.title, b = String(c.b);
+      const licht = b.match(/^Licht (an|aus)/i), janein = b.match(/^(Ja|Nein)\b/);
+      if (licht) return { text: c.f, richtig: licht[1].toLowerCase() === 'an' ? 'Licht an: richtig' : 'Licht aus: falsch', optionen: ['Licht an: richtig', 'Licht aus: falsch'], loesung: b, tipp: c.tip, art };
+      if (janein && /stimmt|richtig|wahr/i.test(c.f)) return { text: c.f, richtig: janein[1] === 'Ja' ? 'Ja, das stimmt' : 'Nein, das stimmt nicht', optionen: ['Ja, das stimmt', 'Nein, das stimmt nicht'], loesung: b, tipp: c.tip, art };
+      const others = misch((s.cards || []).filter((x) => x !== c && x.b && x.b !== c.b && !/^(Licht|Ja\b|Nein\b)/.test(String(x.b)))).slice(0, 3).map((x) => x.b);
+      return { text: c.f, richtig: c.b, optionen: misch([c.b].concat(others)), tipp: c.tip, art };
+    }).filter((q) => q.optionen.length >= 2);
+  };
+  const fragen = (code) => {
+    const t = THEMA[code]; if (!t) return [];
+    if (t.lernkarten) { const k = ausKarten(); if (k.length >= 6) return k; }
+    const p = pool(t); if (p.length < 8) return [];
+    return misch(p).slice(0, t.art === 'bogen' ? 12 : 10).map((e, i) => ausWiki(e, p, i));
+  };
+  window.bluuCheckKnopf = function (code) {
+    const t = THEMA[code]; if (!t) return '';
+    if (!(t.lernkarten && typeof LERNKARTEN_SETS !== 'undefined') && pool(t).length < 8) return '';
+    const st = laden()[code];
+    return '<button type="button" class="kachel-btn" onclick="bluuCheckStarten(' + esc(JSON.stringify(code)) + ')">Begriffs-Check' + (st ? '<span class="check-knopf-stand">zuletzt ' + st.richtig + ' / ' + st.n + '</span>' : '') + '</button>';
+  };
+
+  let Z = null;
+  const modulName = (code) => { const m = (window.BLUU_MODULE || []).find((x) => (x.code || x.thema) === code); return m ? (m.titel || m.titelAuto || m.thema || code) : code; };
+  window.bluuCheckStarten = function (code) {
+    const f = fragen(code); const t = THEMA[code] || { art: 'karten', name: '' };
+    if (!f.length) return;
+    Z = { code, art: t.art, thema: t.name, fragen: f, antworten: f.map(() => null), i: 0, fertig: false };
+    try { document.getElementById('screen-wiki').style.display = 'none'; document.getElementById('view-admin').style.display = 'none'; document.getElementById('view-user').style.display = 'block'; document.querySelectorAll('#view-user .screen').forEach((s) => (s.style.display = '')); } catch (e) {}
+    showScreen('screen-check'); window.scrollTo(0, 0); zeichnen();
+  };
+  window.bluuCheckZurueck = function () { if (Z && window.bluuModulOeffnenCode) bluuModulOeffnenCode(Z.code); else showScreen('screen-dashboard'); };
+  window.bluuCheckAntwort = function (fi, oi) {
+    if (!Z || Z.fertig) return;
+    const q = Z.fragen[fi];
+    if (Z.art === 'karten') { if (Z.antworten[fi] != null) return; Z.antworten[fi] = oi; }
+    else Z.antworten[fi] = oi;
+    zeichnen(q);
+  };
+  window.bluuCheckWeiter = function () { if (!Z) return; if (Z.i < Z.fragen.length - 1) { Z.i++; zeichnen(); } else abschluss(); };
+  window.bluuCheckAuswerten = function () { if (!Z) return; abschluss(); };
+  window.bluuCheckNochmal = function () { if (Z) bluuCheckStarten(Z.code); };
+  const abschluss = () => {
+    Z.fertig = true;
+    const richtig = Z.fragen.filter((q, i) => Z.antworten[i] != null && q.optionen[Z.antworten[i]] === q.richtig).length;
+    const o = laden(); o[Z.code] = { richtig, n: Z.fragen.length, datum: new Date().toISOString().slice(0, 10) }; speichern(o);
+    zeichnen();
+  };
+  const kopf = (stimmung, chip, sub) => '<div class="check-kopf"><button type="button" class="btn-back" onclick="bluuCheckZurueck()">← Zurück</button>' +
+    '<div class="check-titel"><h1>Begriffs-Check · ' + esc(Z.thema || modulName(Z.code)) + '</h1><p>' + esc(sub) + '</p></div><span class="check-chip">' + esc(chip) + '</span><span class="check-figur">' + B('Maskottchen', { groesse: 64, stimmung }) + '</span></div>';
+  const optionen = (q, fi, gewaehlt, ausgewertet) => '<div class="check-opts">' + q.optionen.map((o, oi) => {
+    let k = '';
+    if (ausgewertet) { if (o === q.richtig) k = ' richtig'; else if (gewaehlt === oi) k = ' falsch'; }
+    else if (gewaehlt === oi) k = ' gewaehlt';
+    return '<button type="button" class="check-opt' + k + '"' + (ausgewertet ? ' disabled' : '') + ' onclick="bluuCheckAntwort(' + fi + ',' + oi + ')"><span class="kennung">' + 'ABCD'[oi] + '</span><span>' + esc(o) + '</span></button>';
+  }).join('') + '</div>';
+  const rueck = (q, gewaehlt, weiter) => {
+    const ok = q.optionen[gewaehlt] === q.richtig;
+    const loesung = String(q.loesung || q.richtig).replace(/[.。]\s*$/, '');
+    return '<div class="check-rueck"><p>' + (ok ? '<strong>Richtig.</strong>' + (q.loesung ? ' ' + esc(loesung) + '.' : '') : '<strong>Nicht ganz.</strong> Richtig ist: ' + esc(loesung) + '.') + (q.tipp && !ok ? ' ' + esc(q.tipp) : '') +
+      (q.wiki ? '<button type="button" class="bluu-textlink" onclick="showWiki();setTimeout(function(){bvWikiOeffne(' + esc(JSON.stringify(q.wiki)) + ')},80)">Im Wiki nachlesen</button>' : '') + '</p>' +
+      (weiter ? '<button type="button" class="kachel-btn primaer" onclick="bluuCheckWeiter()">' + (Z.i < Z.fragen.length - 1 ? 'Nächste Frage' : 'Ergebnis') + '</button>' : '') + '</div>';
+  };
+  const ergebnis = () => {
+    const n = Z.fragen.length, r = Z.fragen.filter((q, i) => Z.antworten[i] != null && q.optionen[Z.antworten[i]] === q.richtig).length, pct = Math.round(r / n * 100);
+    const u = 2 * Math.PI * 52, ds = (u * pct / 100).toFixed(1);
+    const text = pct >= 90 ? 'Die Begriffe sitzen. Weiter zum nächsten Schritt im Modul.' : pct >= 70 ? 'Gut. Die Lücken stehen unten mit dem Wiki-Eintrag daneben.' : 'Noch wackelig. Lies die markierten Einträge im Wiki, dann noch einmal.';
+    return '<div class="check-ergebnis"><div class="check-ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--sf-2)" stroke-width="10"/><circle cx="60" cy="60" r="52" fill="none" stroke="' + (pct >= 70 ? 'var(--ak)' : '#C04F35') + '" stroke-width="10" stroke-linecap="round" stroke-dasharray="' + ds + ' ' + u.toFixed(1) + '"/></svg><div class="zahl">' + r + '<small>VON ' + n + '</small></div></div>' +
+      '<div><h2>' + (pct >= 70 ? 'Begriffs-Check geschafft.' : 'Noch einmal üben.') + '</h2><p>' + text + ' Der Check zählt nicht als Test und vergibt keine XP.</p>' +
+      '<div class="check-aktionen"><button type="button" class="kachel-btn primaer" onclick="bluuCheckNochmal()">Noch einmal, neue Fragen</button><button type="button" class="kachel-btn" onclick="bluuCheckZurueck()">Zum Modul</button></div></div></div>';
+  };
+  function zeichnen() {
+    const w = document.getElementById('check-wurzel'); if (!w || !Z) return;
+    const n = Z.fragen.length;
+    if (Z.art === 'karten') {
+      const q = Z.fragen[Z.i], g = Z.antworten[Z.i], beantwortet = g != null, ok = beantwortet && q.optionen[g] === q.richtig;
+      if (Z.fertig) { w.innerHTML = kopf('stolz', n + ' Fragen', 'Fragen aus den Lernkarten und dem Wiki. Kein Test, keine XP.') + ergebnis(); return; }
+      w.innerHTML = kopf(beantwortet ? (ok ? 'froh' : 'denkt') : 'neugierig', 'Frage ' + (Z.i + 1) + ' / ' + n, 'Eine Frage nach der anderen, Antwort sofort. Kein Test, keine XP.') +
+        '<div class="check-segs">' + Z.fragen.map((qq, i) => '<span class="' + (i === Z.i && !beantwortet ? 'aktuell' : (Z.antworten[i] == null ? '' : (qq.optionen[Z.antworten[i]] === qq.richtig ? 'richtig' : 'falsch'))) + '"></span>').join('') + '</div>' +
+        '<div class="check-karte"><p class="check-art">' + esc(q.art || '') + '</p><h2 class="check-frage">' + esc(q.text) + '</h2>' + (q.zusatz ? '<p class="check-zusatz">' + esc(q.zusatz) + '</p>' : '') +
+        optionen(q, Z.i, g, beantwortet) + (beantwortet ? rueck(q, g, true) : '') + '</div>';
+      return;
+    }
+    const offen = Z.antworten.filter((a) => a == null).length;
+    w.innerHTML = kopf(Z.fertig ? 'stolz' : 'hinweis', n + ' Fragen', 'Prüfungsblatt: alle Fragen beantworten, dann auswerten. Kein Test, keine XP.') +
+      (Z.fertig ? ergebnis() + '<div style="height:18px"></div>' : '') +
+      '<div class="bogen-liste">' + Z.fragen.map((q, fi) => { const g = Z.antworten[fi]; const ok = Z.fertig && g != null && q.optionen[g] === q.richtig;
+        return '<section class="bogen-frage' + (Z.fertig ? (ok ? ' richtig' : ' falsch') : '') + '"><p class="check-art">' + esc(q.art || '') + '</p><h2 class="check-frage"><span>' + esc(q.text) + '</span></h2>' + (q.zusatz ? '<p class="check-zusatz">' + esc(q.zusatz) + '</p>' : '') +
+          optionen(q, fi, g, Z.fertig) + (Z.fertig ? rueck(q, g == null ? -1 : g, false) : '') + '</section>'; }).join('') + '</div>' +
+      (Z.fertig ? '' : '<div class="bogen-fuss"><p>' + (n - offen) + ' von ' + n + ' beantwortet' + (offen ? ' · ' + offen + ' offen' : '') + '</p><button type="button" class="kachel-btn primaer" onclick="bluuCheckAuswerten()"' + (offen ? ' disabled' : '') + '>Auswerten</button></div>');
+    if (!Z.fertig && Z.antworten.every((a) => a != null)) { const b = w.querySelector('.bogen-fuss .kachel-btn'); if (b) b.disabled = false; }
+  }
+})();
+</script>
+<!-- BLUU-CHECK:ENDE -->
 <!-- BLUU-LK-MASKOTTCHEN:START -->
 <script>
 (function () {

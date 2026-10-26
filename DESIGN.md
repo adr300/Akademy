@@ -66,6 +66,10 @@ Siehe `docs/INHALTSMUSTER.md`: `.ls-text` / `.slide-text` mit h2–h4, p, Listen
 
 Ausnahme vom «kein Glanz»: auf Wunsch des Users bekommen die geometrischen Modul-Icons beim Hover einen «Candy»-Pop: federndes Heben (`cubic-bezier(.34,1.56,.64,1)`, −4 px, 110 %, −2,5°), weicher Glanzbogen oben links plus kleiner Reflex unten rechts (radiale Verläufe, screen), innerer Lichtrand, Schatten in der Modulfarbe. Gilt nur für `.szene-kachel`-Bilder (Modulkarten, «Meine Module», Modul-Kopf), nicht für Fachbereich-Illustrationen, Abzeichen oder Navigation. Dunkelmodus gedämpft, reduced-motion = nur Glanz.
 
+## Begriffs-Check (Block `BLUU-CHECK`)
+
+Übung ohne Prüfungscharakter, pro Modul. Form «Karten» für Grundlagen (eine Frage, vier Antworten in 2×2, Kennbuchstaben, sofortige Rückmeldung mit Lösung, Tipp und Wiki-Link; Segmentleiste oben: Navy aktuell, Lime richtig, Koralle falsch; Ergebnis als Ring mit Zahl). Form «Bogen» für Marktkommunikation, Messwesen, SAP (nummerierte Fragen auf einem Blatt, klebender Fuß «x von n beantwortet · Auswerten», nach der Auswertung Rahmen Lime/Koralle je Frage). Das Glühwürmchen im Kopf wechselt die Stimmung (neugierig → froh/denkt → stolz). Fragen immer aus vorhandenen Daten (Wiki, Lernkarten), nie erfunden; der Text sagt «Kein Test, keine XP».
+
 ## Maskottchen in Lernkarten
 
 Die Kartenvorderseite zeigt das aktuelle Maskottchen (Komponente, 72 px), nie eine eigene Zeichnung. Stimmungen: neugierig → erklärt → stolz / froh / denkt.
