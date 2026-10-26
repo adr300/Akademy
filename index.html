@@ -2748,9 +2748,15 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 @media (prefers-reduced-motion:reduce){.lumi-figur,.lumi-blase{transition:none;}.lumi-figur .lumi-innen{animation:none!important;}}
 /* BLUU-LUMI:ENDE */
 /* BLUU-SZENEN:START — Szenen im Stil der Vorlagen (26.10.2026); Modul-Hero hell mit Szene rechts */
-.ls-hero .ls-pille rect{fill:#DCE8F3;stroke:none;}
-.ls-hero .ls-pille.lime rect{fill:#E3EA86;}
-.ls-hero .ls-pille text{font-size:17px;font-weight:700;}
+.ls-hero .ls-pille rect{fill:#E4EEF7;stroke:none;}
+.ls-hero .ls-pille .badge{fill:#CFE0F0;}
+.ls-hero .ls-pille.lime .badge{fill:#C9D64A;}
+.ls-hero .ls-pille text{font-size:18px;font-weight:700;}
+.ls-hero .ls-verbinder{stroke:#CFE0F0;stroke-width:3;}
+.ls-hero .ls-berge{fill:color-mix(in srgb,var(--ls-ton) 12%,#E6EEF5);}
+.ls-hero .ls-stadt{fill:#C9D7E4;opacity:.85;}
+.ls-hero .ls-wiese{fill:#D3E6B4;}
+.ls-hero .ls-sonne{fill:#F8EDAE;}
 .ls-hero .ls-boden{stroke:#243A4C;opacity:.6;}
 .ls-hero .ls-busch{fill:#A9D18C;}
 .ls-hero .ls-krone{fill:#9CCB80;}
@@ -2776,6 +2782,62 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 :root[data-theme="light"] .modul-szene .ls-sky0,:root[data-theme="light"] .modul-szene .ls-sky1{stop-opacity:0;}
 @media (max-width:1120px){.modul-szene{display:none;}.hero-modul.mit-szene .hero-band-inhalt{padding-right:max(20px,calc(50vw - 562px));}}
 /* BLUU-SZENEN:ENDE */
+/* BLUU-DREI:START — Lernskript-Kapitelseite nach der Vorlage (26.10.2026): drei Spalten ab 1280 px, Fortschrittskarte, Tipp,
+   Kapitelkopf mit Chip und Zeit, Inhalte-Liste, Seitenleiste (Lernziele, nächster Schritt, Ziel), Weiterlernen in Lime */
+@media (min-width:1280px){.ls.ls-drei{grid-template-columns:232px minmax(0,1fr) 264px;}}
+.ls-aside{display:flex;flex-direction:column;gap:14px;position:sticky;top:76px;}
+@media (max-width:1279px){.ls-aside{grid-column:1 / -1;flex-direction:row;flex-wrap:wrap;position:static;}.ls-aside>*{flex:1 1 240px;}}
+.ls-fort{background:var(--ls-karte);border:1px solid var(--ls-line);border-radius:12px;padding:14px;margin:0 0 16px;}
+.ls-fort h4,.ls-aside h4{margin:0 0 10px;font-family:var(--disp);font-stretch:108%;font-size:15px;font-weight:700;color:var(--ls-navy);display:flex;gap:8px;align-items:center;}
+.ls-fort .ring{display:flex;gap:14px;align-items:center;}
+.ls-ring{position:relative;width:72px;height:72px;flex:none;}
+.ls-ring svg{width:72px;height:72px;transform:rotate(-90deg);display:block;}
+.ls-ring circle{fill:none;stroke-width:8;}
+.ls-ring .bg{stroke:var(--ls-line);}
+.ls-ring .fg{stroke:var(--lime);stroke-linecap:round;}
+.ls-ring b{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--disp);font-stretch:108%;font-size:15px;color:var(--ls-navy);}
+.ls-fort p{margin:0;font-size:13px;color:var(--ls-muted);max-width:none;line-height:1.45;}
+.ls-fort .ls-rail-bar{margin:8px 0 0;}
+.ls-links{list-style:none;margin:12px 0 0;padding:10px 0 0;border-top:1px solid var(--ls-line);display:grid;gap:2px;}
+.ls .ls-links button{display:flex;gap:10px;align-items:center;width:100%;background:none;border:0;padding:6px 6px;color:var(--ls-ink);font-size:13px;cursor:pointer;border-radius:8px;text-align:left;}
+.ls .ls-links button:hover{background:var(--ls-ice);}
+.ls-links svg{color:var(--ls-navy);flex:none;}
+.ls-tipp{margin-top:16px;background:#E6F0F8;border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;}
+.ls-tipp svg{flex:none;color:var(--ls-navy);margin-top:2px;}
+.ls-tipp b{display:block;font-size:13px;color:var(--ls-navy);margin-bottom:2px;}
+.ls-tipp p{margin:0;font-size:12.5px;color:var(--ls-muted);max-width:none;line-height:1.5;}
+:root:not([data-theme="light"]) .ls-tipp{background:#223544;}
+.ls-kopfzeile{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 6px;}
+.ls-kopfzeile .ls-chip{background:var(--ls-ice);color:var(--ls-navy);border-color:transparent;}
+.ls-zeit{display:inline-flex;gap:6px;align-items:center;font-size:.9em;color:var(--ls-muted);}
+.ls-drei .ls-h1{margin-top:2px;}
+.ls-intro{font-size:1.06em;color:var(--ls-ink);margin:0 0 16px;max-width:46em;}
+.ls-inhalte{margin:18px 0 4px;}
+.ls-inhalte h3{font-size:1em;margin:0 0 4px;}
+.ls-inhalte ol{list-style:none;margin:0;padding:0;}
+.ls-inhalte li{display:flex;gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--ls-line);font-size:.95em;}
+.ls-inhalte li:last-child{border-bottom:0;}
+.ls-inhalte .play{flex:none;width:22px;height:22px;border-radius:50%;background:#DCE8F3;color:var(--ls-navy);display:grid;place-items:center;}
+:root:not([data-theme="light"]) .ls-inhalte .play{background:#2E4255;color:#EAF1F7;}
+.ls-aside .ls-card{margin:0;padding:14px 16px;}
+.ls-lernziele{list-style:none;margin:0;padding:0;display:grid;gap:7px;}
+.ls-lernziele li{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;line-height:1.45;color:var(--ls-ink);}
+.ls-lernziele svg{flex:none;color:#8C9412;margin-top:3px;}
+.ls .ls-naechst{display:flex;gap:12px;align-items:center;width:100%;text-align:left;background:var(--ls-seite);border:1px solid var(--ls-line);border-radius:10px;padding:10px 12px;cursor:pointer;font:inherit;color:var(--ls-ink);}
+.ls .ls-naechst:hover{border-color:var(--ls-navy);}
+.ls-naechst .ik{flex:none;width:40px;height:40px;border-radius:10px;background:var(--ls-karte);border:1px solid var(--ls-line);display:grid;place-items:center;color:var(--ls-navy);}
+.ls-naechst b{display:block;font-size:14px;color:var(--ls-navy);}
+.ls-naechst .sub{font-size:12px;color:var(--ls-muted);}
+.ls-naechst .pf{margin-left:auto;color:var(--ls-muted);}
+.ls-aside p{font-size:13px;color:var(--ls-muted);margin:8px 0 0;max-width:none;line-height:1.5;}
+.ls-ziel{background:#F3F7DA;border-color:#DCE566!important;}
+.ls-ziel h4{color:#4F6312;}
+.ls-ziel p{color:#3F5020;}
+:root:not([data-theme="light"]) .ls-ziel{background:#2B3414;border-color:#5C7A2A!important;}
+:root:not([data-theme="light"]) .ls-ziel h4,:root:not([data-theme="light"]) .ls-ziel p{color:#DCE566;}
+.ls .ls-btn.lime{background:var(--lime);color:#1B2E3E;border-color:var(--lime);}
+.ls .ls-btn.lime:hover{background:#C9D24A;border-color:#C9D24A;}
+/* BLUU-DREI:ENDE */
 /* BLUU-UEBEN:START — Übungen Screen für Screen (26.10.2026), im Rahmen des Lernskripts (.ls): Leuchtpfad links, Karten rechts */
 .ueben{--ls-fs:17px;}
 .ueben .ls-main>*{animation:none;}
@@ -13715,19 +13777,22 @@ window.BLUU_LERNSKRIPT_111 = {
   const bub = (pose, text, klein) => '<div class="ls-bub' + (klein ? ' sm' : '') + (pose === 'winkt' ? ' mit' : '') + '">' + (pose === 'winkt' ? wurm('winkt', 48) : '') + '<p>' + esc(text) + '</p></div>';
 
   /* ── Titelbilder: ruhige Szene je Kapitel (Himmel, Hügel, Leuchtspur des Glühwürmchens, Motiv) ── */
-  const windrad = (x, y, h, rot) => '<path d="M' + (x - 4) + ' ' + (y + h) + 'L' + (x - 2) + ' ' + y + 'L' + (x + 2) + ' ' + y + 'L' + (x + 4) + ' ' + (y + h) + 'Z" fill="#fff" stroke="#243A4C" stroke-width="2"/><g transform="translate(' + x + ',' + y + ') rotate(' + rot + ')">' + [0, 120, 240].map((r) => '<path d="M-3 -4C-9 -19 -6 -38 0 -42C3 -34 4 -17 3 -4Z" fill="#fff" stroke="#243A4C" stroke-width="2" transform="rotate(' + r + ')"/>').join('') + '<circle r="6" fill="#243A4C"/><circle r="2.4" fill="#BEC60E"/></g>';
+  const windrad = (x, y, h, rot) => '<path d="M' + (x - 4) + ' ' + (y + h) + 'L' + (x - 2) + ' ' + y + 'L' + (x + 2) + ' ' + y + 'L' + (x + 4) + ' ' + (y + h) + 'Z" fill="#fff" stroke="#243A4C" stroke-width="2"/><g transform="translate(' + x + ',' + y + ') rotate(' + rot + ')">' + [0, 120, 240].map((r) => '<path d="M-3 -4C-9 -19 -6 -38 0 -42C3 -34 4 -17 3 -4Z" fill="#fff" stroke="#243A4C" stroke-width="2" transform="rotate(' + r + ')"/>').join('') + '<circle r="6" fill="#243A4C"/><circle r="2.4" fill="#BEC60E"/><path d="M-30 -22a36 36 0 0 1 10 -20M30 -22a36 36 0 0 0 -10 -20" fill="none" stroke="#BEC60E" stroke-width="3" stroke-linecap="round"/></g>';
   const mast = (x, y, h) => '<g stroke="#243A4C" stroke-width="2.4" fill="none" stroke-linecap="round"><path d="M' + (x - 14) + ' ' + (y + h) + 'L' + (x - 4) + ' ' + y + 'L' + (x + 4) + ' ' + y + 'L' + (x + 14) + ' ' + (y + h) + '"/><path d="M' + (x - 10) + ' ' + (y + h * 0.72) + 'L' + (x + 10) + ' ' + (y + h * 0.72) + 'M' + (x - 8) + ' ' + (y + h * 0.48) + 'L' + (x + 8) + ' ' + (y + h * 0.48) + 'M' + (x - 10) + ' ' + (y + h * 0.72) + 'L' + (x + 8) + ' ' + (y + h * 0.48) + 'M' + (x + 10) + ' ' + (y + h * 0.72) + 'L' + (x - 8) + ' ' + (y + h * 0.48) + '"/><path d="M' + (x - 24) + ' ' + (y + 18) + 'L' + (x + 24) + ' ' + (y + 18) + 'M' + (x - 18) + ' ' + (y + 34) + 'L' + (x + 18) + ' ' + (y + 34) + '"/></g>';
-  const haus = (x, y, b, lime) => '<rect x="' + x + '" y="' + y + '" width="' + b + '" height="' + (b * 0.95) + '" fill="' + (lime ? '#EEF3F6' : '#fff') + '" stroke="#243A4C" stroke-width="2.4"/><path d="M' + (x - 6) + ' ' + y + 'L' + (x + b / 2) + ' ' + (y - b * 0.45) + 'L' + (x + b + 6) + ' ' + y + 'Z" fill="#243A4C"/><rect x="' + (x + b * 0.18) + '" y="' + (y + b * 0.28) + '" width="' + (b * 0.22) + '" height="' + (b * 0.2) + '" fill="#DCE566" stroke="#243A4C" stroke-width="1.6"/><rect x="' + (x + b * 0.6) + '" y="' + (y + b * 0.28) + '" width="' + (b * 0.22) + '" height="' + (b * 0.2) + '" fill="#DCE566" stroke="#243A4C" stroke-width="1.6"/>';
+  const haus = (x, y, b, lime) => '<rect x="' + x + '" y="' + y + '" width="' + b + '" height="' + (b * 0.95) + '" fill="' + (lime ? '#EEF3F6' : '#fff') + '" stroke="#243A4C" stroke-width="2.4"/><path d="M' + (x - 6) + ' ' + y + 'L' + (x + b / 2) + ' ' + (y - b * 0.45) + 'L' + (x + b + 6) + ' ' + y + 'Z" fill="#243A4C"/>' + (lime ? '<path d="M' + (x + b * 0.1) + ' ' + (y - b * 0.06) + 'L' + (x + b * 0.36) + ' ' + (y - b * 0.3) + 'L' + (x + b * 0.52) + ' ' + (y - b * 0.3) + 'L' + (x + b * 0.26) + ' ' + (y - b * 0.06) + 'Z" fill="#3F74A6" stroke="#fff" stroke-width="1.2"/>' : '') + '<rect x="' + (x + b * 0.18) + '" y="' + (y + b * 0.28) + '" width="' + (b * 0.22) + '" height="' + (b * 0.2) + '" fill="#DCE566" stroke="#243A4C" stroke-width="1.6"/><rect x="' + (x + b * 0.6) + '" y="' + (y + b * 0.28) + '" width="' + (b * 0.22) + '" height="' + (b * 0.2) + '" fill="#DCE566" stroke="#243A4C" stroke-width="1.6"/>';
   /* BLUU-SZENEN: Schilder sind Pillen im Stil der Vorlage (hellblau, Icon, letzte Station Lime) */
   const schildIkon = (t) => (/erzeug|wind|kraft|import/i.test(t) ? 'blitz' : (/netz|leitung|fernleit/i.test(t) ? 'mast' : (/verbrauch|kunde|haus|speicher/i.test(t) ? 'haus' : '')));
-  const schild = (x, y, text) => pille(x, y + 15, text, /verbrauch|kunde/i.test(text), schildIkon(text));
+  const schild = (x, y, text) => pille(x, y + 15, text, /erzeug|import/i.test(text), schildIkon(text));
   const wolke = (x, y, k) => '<g transform="translate(' + x + ',' + y + ') scale(' + (k || 1) + ')" class="ls-wolke"><path d="M-40 12a16 16 0 0 1 12-28a21 21 0 0 1 40-5a14 14 0 0 1 24 12a12 12 0 0 1-5 21z" stroke-width="2"/></g>';
   const busch = (x, y, r) => '<g class="ls-busch"><circle cx="' + (x - r * 0.7) + '" cy="' + (y - r * 0.5) + '" r="' + (r * 0.75) + '"/><circle cx="' + (x + r * 0.6) + '" cy="' + (y - r * 0.55) + '" r="' + (r * 0.7) + '"/><circle cx="' + x + '" cy="' + (y - r * 0.9) + '" r="' + r + '"/><rect x="' + (x - r * 1.5) + '" y="' + (y - r * 0.4) + '" width="' + (r * 3) + '" height="' + (r * 0.4) + '"/></g>';
   const baum = (x, y, h) => '<path d="M' + x + ' ' + y + 'V' + (y - h * 0.5) + '" stroke="#243A4C" stroke-width="2.6" stroke-linecap="round"/><ellipse class="ls-krone" cx="' + x + '" cy="' + (y - h * 0.66) + '" rx="' + (h * 0.28) + '" ry="' + (h * 0.36) + '"/>';
-  const dekor = () => wolke(170, 92, 1.1) + wolke(640, 58, 0.85) + wolke(905, 112, 0.7) + baum(42, 322, 96) + busch(100, 327, 19) + busch(300, 329, 12) + busch(560, 331, 14) + busch(956, 325, 21) + baum(994, 318, 84);
+  const gebaeude = (x, y, w, h) => '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="3" fill="#fff" stroke="#243A4C" stroke-width="2.4"/><path d="M' + (x - 4) + ' ' + y + 'h' + (w + 8) + '" stroke="#243A4C" stroke-width="3" stroke-linecap="round"/>' + [0, 1, 2].map((r) => [0, 1].map((c) => '<rect x="' + (x + 10 + c * (w / 2 - 6)) + '" y="' + (y + 12 + r * (h / 3.2)) + '" width="' + (w / 2 - 16) + '" height="' + (h / 5) + '" rx="2" fill="' + ((r + c) % 2 ? '#DCE566' : '#EEF3F6') + '" stroke="#243A4C" stroke-width="1.4"/>').join('')).join('');
+  const dekor = () => '<circle class="ls-sonne" cx="236" cy="152" r="24"/>' + wolke(170, 92, 1.1) + wolke(640, 58, 0.85) + wolke(905, 112, 0.7) + baum(42, 322, 96) + busch(100, 327, 19) + baum(150, 330, 56) + busch(300, 329, 12) + busch(560, 331, 14) + busch(956, 325, 21) + baum(994, 318, 84) + baum(900, 332, 48);
+  const berge = '<path class="ls-berge" d="M0 300Q120 236 240 272T470 252T700 276T860 242T1000 282L1000 400L0 400Z"/><path class="ls-stadt" d="M330 324h18v-24h12v12h16v-38h14v38h10v-16h18v28h14v-20h20v34h16v-12h12v20h12v-30h14v30h10v8H330z"/>';
+  const wiese = '<path class="ls-wiese" d="M0 356Q110 318 250 344T440 378L440 400L0 400Z"/><path class="ls-wiese" d="M620 378Q760 330 880 350T1000 336L1000 400L620 400Z"/>';
   const boden = '<path class="ls-boden" d="M0 320Q160 272 330 306T660 300T1000 290" fill="none" stroke-width="2.2"/>';
   const MOTIV = {
-    A: () => windrad(80, 134, 118, 15) + windrad(170, 108, 138, 55) + mast(400, 116, 140) + mast(560, 100, 150) + mast(720, 114, 140) + '<path d="M424 134Q480 156 536 118M584 118Q640 152 696 132" stroke="#243A4C" stroke-width="1.8" fill="none"/>' + haus(800, 204, 58) + haus(880, 212, 50, true) + '<rect x="932" y="206" width="56" height="58" fill="#fff" stroke="#243A4C" stroke-width="2.4"/><path d="M928 206h64l-6 15h-52Z" fill="#BEC60E" stroke="#243A4C" stroke-width="2"/><rect x="946" y="236" width="28" height="28" fill="#F4F8C8" stroke="#243A4C" stroke-width="2"/>' + schild(150, 264, 'Erzeugung', 142) + schild(560, 264, 'Netz', 100) + schild(890, 264, 'Verbrauch', 142),
+    A: () => windrad(80, 134, 118, 15) + windrad(170, 108, 138, 55) + mast(400, 116, 140) + mast(560, 100, 150) + mast(720, 114, 140) + '<path d="M424 134Q480 156 536 118M584 118Q640 152 696 132" stroke="#243A4C" stroke-width="1.8" fill="none"/>' + haus(800, 204, 58) + haus(880, 212, 50, true) + '<rect x="932" y="206" width="56" height="58" fill="#fff" stroke="#243A4C" stroke-width="2.4"/><path d="M928 206h64l-6 15h-52Z" fill="#BEC60E" stroke="#243A4C" stroke-width="2"/><rect x="946" y="236" width="28" height="28" fill="#F4F8C8" stroke="#243A4C" stroke-width="2"/>' + verbinder([150, 560, 890], 279, ['Erzeugung', 'Netz', 'Verbrauch'], ['blitz', 'mast', 'haus']) + schild(150, 264, 'Erzeugung', 142) + schild(560, 264, 'Netz', 100) + schild(890, 264, 'Verbrauch', 142),
     B: () => mast(140, 60, 196) + mast(360, 100, 156) + mast(560, 136, 120) + mast(740, 166, 90) + '<path d="M164 78Q262 128 336 118M384 118Q470 162 536 154M584 154Q660 190 716 184" stroke="#243A4C" stroke-width="1.8" fill="none"/>' + haus(880, 206, 58) + schild(140, 264, '380 kV', 110) + schild(360, 264, '110 kV', 110) + schild(560, 264, '10–20 kV', 120) + schild(740, 264, '230 V', 100),
     C: () => '<path d="M40 150H330M330 150Q380 150 380 200T430 250H600" stroke="#243A4C" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M40 150H330M330 150Q380 150 380 200T430 250H600" stroke="#EEF3F6" stroke-width="5" fill="none" stroke-linecap="round"/><g fill="#BEC60E" stroke="#243A4C" stroke-width="2"><circle cx="150" cy="150" r="12"/><circle cx="520" cy="250" r="12"/></g><path d="M640 300V236a90 60 0 0 1 180 0v64" fill="#CBD8E2" stroke="#243A4C" stroke-width="2.4"/><path d="M660 300V240a70 42 0 0 1 140 0v60" fill="#EEF3F6" stroke="#243A4C" stroke-width="2"/>' + haus(900, 206, 58) + '<path d="M600 250H900" stroke="#243A4C" stroke-width="4" stroke-dasharray="10 8" stroke-linecap="round"/>' + schild(150, 100, 'Import', 110) + schild(430, 100, 'Fernleitung', 150) + schild(730, 180, 'Speicher', 120),
     D: () => '<g transform="translate(140,120)"><path d="M60 140c40 0 70-30 70-70 0-30-20-50-30-70-10 20-20 30-30 30 0-30-10-60-40-80 10 30-10 50-30 80-10 20-10 30-10 40 0 40 30 70 70 70z" fill="#F4F8C8" stroke="#243A4C" stroke-width="2.4"/></g><path d="M320 200H440" stroke="#243A4C" stroke-width="3" marker-end="url(#lsPfeil)"/><g transform="translate(480,140)"><rect x="0" y="20" width="100" height="90" rx="12" fill="#fff" stroke="#243A4C" stroke-width="2.4"/><rect x="28" y="0" width="12" height="30" fill="#243A4C"/><rect x="60" y="0" width="12" height="30" fill="#243A4C"/><rect x="24" y="60" width="52" height="24" fill="#EEF3F6" stroke="#243A4C" stroke-width="1.6"/></g><path d="M620 200H740" stroke="#243A4C" stroke-width="3" marker-end="url(#lsPfeil)"/><g transform="translate(790,110)"><circle cx="50" cy="60" r="44" fill="#F4F8C8" stroke="#243A4C" stroke-width="2.4"/><circle cx="50" cy="60" r="26" fill="#BEC60E" opacity=".9"/><rect x="36" y="104" width="28" height="26" rx="4" fill="#243A4C"/></g>' + schild(200, 264, 'Primärenergie', 170) + schild(530, 264, 'Endenergie', 150) + schild(840, 264, 'Nutzenergie', 150),
@@ -13739,7 +13804,7 @@ window.BLUU_LERNSKRIPT_111 = {
     start: () => windrad(90, 120, 132, 20) + mast(300, 110, 146) + mast(470, 96, 160) + '<path d="M324 128Q400 160 446 114" stroke="#243A4C" stroke-width="1.8" fill="none"/>' + haus(620, 204, 58) + '<g transform="translate(760,80)"><rect width="200" height="150" rx="12" fill="#fff" stroke="#243A4C" stroke-width="2.4"/><rect x="24" y="24" width="90" height="12" rx="4" fill="#243A4C"/><path d="M24 60h152M24 84h120M24 108h152" stroke="#C9D6E0" stroke-width="6" stroke-linecap="round"/><rect x="24" y="124" width="152" height="12" rx="4" fill="#BEC60E"/></g>' + schild(160, 264, 'Erzeugung', 142) + schild(400, 264, 'Netz', 100) + schild(640, 264, 'Verbrauch', 142) + schild(860, 264, 'Rechnung', 130)
   };
   /* BLUU-SZENEN: Szene = Himmel, Hügel, Bodenlinie, Dekor, Wasserzeichen, Motiv (aus 1000×300 skaliert), Leuchtspur mit Pfeilen */
-  const szeneSvg = (label, wz, motiv) => '<svg viewBox="0 0 1000 400" role="img" aria-label="' + esc(label) + '"><defs><linearGradient id="lsHimmel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="ls-sky0"/><stop offset="1" class="ls-sky1"/></linearGradient><marker id="lsPfeil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#243A4C"/></marker><marker id="lsPfeilLime" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#BEC60E"/></marker></defs><rect width="1000" height="400" rx="22" fill="url(#lsHimmel)"/><path class="ls-huegel1" d="M0 320Q160 272 330 306T660 300T1000 290L1000 400L0 400Z"/><path class="ls-huegel2" d="M0 345Q200 320 420 340T1000 330L1000 400L0 400Z"/>' + boden +
+  const szeneSvg = (label, wz, motiv) => '<svg viewBox="0 0 1000 400" role="img" aria-label="' + esc(label) + '"><defs><linearGradient id="lsHimmel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="ls-sky0"/><stop offset="1" class="ls-sky1"/></linearGradient><marker id="lsPfeil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#243A4C"/></marker><marker id="lsPfeilLime" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10z" fill="#BEC60E"/></marker></defs><rect width="1000" height="400" rx="22" fill="url(#lsHimmel)"/>' + berge + '<path class="ls-huegel1" d="M0 320Q160 272 330 306T660 300T1000 290L1000 400L0 400Z"/><path class="ls-huegel2" d="M0 345Q200 320 420 340T1000 330L1000 400L0 400Z"/>' + wiese + boden +
     (wz ? '<text class="ls-wz' + (wz.length > 1 ? ' klein' : '') + '" x="972" y="372" text-anchor="end" aria-hidden="true">' + esc(wz) + '</text>' : '') + dekor() + '<g transform="translate(-58,50) scale(1.115)">' + motiv + '</g>' +
     '<path d="M230 96Q330 40 430 62Q540 86 620 96Q740 110 860 116" class="ls-spur" stroke="#D4DC5A" stroke-width="4" stroke-dasharray="2 13" stroke-linecap="round" fill="none" marker-mid="url(#lsPfeilLime)" marker-end="url(#lsPfeilLime)"/></svg>';
   const hero = (k) => '<div class="ls-hero">' + szeneSvg(k === 'start' ? 'Titelbild Lernskript ' + D().modul : 'Titelbild Kapitel ' + k, k === 'start' ? D().modul : k, (D().modul === '1.1.1' && MOTIV[k] ? MOTIV[k]() : motivB(k))) + '</div>';
@@ -13749,13 +13814,37 @@ window.BLUU_LERNSKRIPT_111 = {
   };
 
   /* ── Leuchtpfad ── */
+  /* BLUU-DREI: Fortschrittskarte, Tipp, Kapitelkopf, Inhalte-Liste, Seitenleiste */
+  const fortKarte = () => {
+    laden();
+    const n = KAP().filter((x) => fertig(x.key)).length, ges = KAP().length, p = ges ? Math.round(100 * n / ges) : 0, r = 30, u = 2 * Math.PI * r;
+    return '<div class="ls-fort"><h4>Dein Fortschritt</h4><div class="ring"><div class="ls-ring"><svg viewBox="0 0 72 72" aria-hidden="true"><circle class="bg" cx="36" cy="36" r="' + r + '"/><circle class="fg" cx="36" cy="36" r="' + r + '" stroke-dasharray="' + (u * p / 100).toFixed(1) + ' ' + u.toFixed(1) + '"/></svg><b>' + p + ' %</b></div><div><p>' + n + ' von ' + ges + ' Kapiteln abgeschlossen</p><div class="ls-rail-bar" aria-hidden="true"><i style="width:' + p + '%"></i></div></div></div>' +
+      '<ul class="ls-links"><li><button type="button" onclick="bluuLs.zu(\'kann\')">' + sym('haken', 15) + ' Was Du lernst</button></li><li><button type="button" onclick="bluuLs.gehe(\'start\')">' + sym('buch', 15) + ' Alle Kapitel</button></li><li><button type="button" onclick="bluuModulReiter(\'ueberblick\')">' + sym('monitor', 15) + ' Zum Modul</button></li><li><button type="button" onclick="navGoWiki()">' + sym('lupe', 15) + ' Begriffe im Wiki</button></li></ul></div>';
+  };
+  const tippKarte = () => '<div class="ls-tipp">' + sym('lampe', 16) + '<div><b>Tipp</b><p>Du kannst das Lernskript jederzeit unterbrechen und später an derselben Stelle weitermachen.</p></div></div>';
+  const kopf = (k, c, zeit) => { const i = KAP().findIndex((x) => x.key === k); return '<div class="ls-kopfzeile"><span class="ls-chip">Kapitel ' + (i + 1) + ' von ' + KAP().length + '</span><span class="ls-zeit">' + sym('uhr', 14) + ' ' + esc(zeit) + '</span></div><h1 class="ls-h1"><span class="l">' + esc(k) + '</span>' + esc(c.titel) + '</h1>'; };
+  const inhalte = (titel) => titel.length ? '<div class="ls-inhalte"><h3>Inhalte dieses Kapitels</h3><ol>' + titel.map((t) => '<li><span class="play">' + sym('play', 10) + '</span><span>' + esc(t) + '</span></li>').join('') + '</ol></div>' : '';
+  const seite = (k) => {
+    if (k === 'start') return '';
+    const c = kapVon(k); if (!c) return '';
+    const n = nach(k), ue = !!(window.bluuUeben && bluuUeben.hat(aktivId, k));
+    let rz = ''; try { const u = ue && window.BLUU_UEBEN[aktivId].untermodule.find((x) => x.key === k); rz = u && u.richtzeit ? 'Richtzeit ' + u.richtzeit : ''; } catch (e) {}
+    const karte = (on, ikon, titel, sub) => '<button type="button" class="ls-naechst" onclick="' + on + '"><span class="ik">' + sym(ikon, 18) + '</span><span><b>' + esc(titel) + '</b><span class="sub">' + esc(sub) + '</span></span><span class="pf">' + sym('weiter', 16) + '</span></button>';
+    const naechst = ue ? karte('bluuLs.uebungen(' + attr(k) + ')', 'stift', 'Übungen ' + k, rz || 'Aufgaben mit Feedback') + '<p>Aufgaben zum Kapitel mit direktem Feedback, Selbstcheck und Merksatz.</p>'
+      : (n ? karte('bluuLs.gehe(' + attr(n.key) + ')', 'buch', 'Kapitel ' + n.key, n.titel) : karte("bluuModulReiter('lernkarten')", 'karten', 'Lernkarten', 'Zum Wiederholen'));
+    let prog = null, test = false; try { const st = window.bluuInhaltStand ? bluuInhaltStand(aktuellerCode) : null; prog = st && st.pfade && st.pfade[0] ? st.pfade[0] : null; test = !!(window.bluuInhaltLektionen && bluuInhaltLektionen(aktuellerCode).some((x) => /wissenstest|abschlusstest/i.test(x.title || ''))); } catch (e) {}
+    const ziel = prog ? 'Schließe alle Lektionen des Programms «' + esc(prog.title) + '» ab und erhalte Dein Zertifikat.' : ('Alle Kapitel lesen und alle Übungen lösen' + (test ? ', dann der Wissenstest zum Modul.' : '.'));
+    return '<aside class="ls-aside">' + (c.kann && c.kann.length ? '<section class="ls-card"><h4>' + sym('haken', 16) + ' Was Du in diesem Kapitel lernst</h4><ul class="ls-lernziele">' + c.kann.map((x) => '<li>' + sym('haken', 14) + '<span>' + esc(x) + '</span></li>').join('') + '</ul></section>' : '') +
+      '<section class="ls-card"><h4>' + sym('weiter', 16) + ' Nächster Schritt</h4>' + naechst + '</section>' +
+      '<section class="ls-card ls-ziel"><h4>' + sym('stern', 16) + ' Dein Ziel</h4><p>' + ziel + '</p></section></aside>';
+  };
   const rail = (k) => {
     laden();
     const n = KAP().filter((x) => fertig(x.key)).length;
-    return '<nav class="ls-rail" aria-label="Kapitel"><p class="ls-rh">Dein Leuchtpfad</p><ol>' +
+    return '<nav class="ls-rail" aria-label="Kapitel">' + fortKarte() + '<p class="ls-rh">Dein Leuchtpfad</p><ol>' +
       '<li><button type="button" class="ls-node' + (k === 'start' ? ' cur' : '') + '" onclick="bluuLs.gehe(\'start\')"' + (k === 'start' ? ' aria-current="page"' : '') + '><span class="dot">' + sym('lesen', 15) + '</span><span class="lbl">Bevor es losgeht</span></button></li>' +
       KAP().map((x) => '<li><button type="button" class="ls-node' + (x.key === k ? ' cur' : '') + (fertig(x.key) ? ' done' : '') + '" onclick="bluuLs.gehe(' + attr(x.key) + ')"' + (x.key === k ? ' aria-current="page"' : '') + '><span class="dot">' + esc(x.key) + '</span><span class="lbl">' + esc(x.titel) + '</span></button></li>').join('') +
-      '</ol><p class="ls-rail-stand">' + n + ' von ' + KAP().length + ' Kapiteln geschafft</p><div class="ls-rail-bar" aria-hidden="true"><i style="width:' + Math.round(100 * n / Math.max(1, KAP().length)) + '%"></i></div></nav>';
+      '</ol>' + tippKarte() + '</nav>';
   };
   const werkzeug = (k) => {
     const i = KAP().findIndex((x) => x.key === k);
@@ -13773,7 +13862,7 @@ window.BLUU_LERNSKRIPT_111 = {
       '<div class="ls-btns"><button type="button" class="ls-btn" onclick="bluuLs.merken()">Vermutung merken</button><span class="ls-ok" role="status" id="ls-denk-ok">' + (s.gemerkt ? 'Gemerkt ✓ – am Kapitelende kommen wir darauf zurück.' : '') + '</span></div></div></div></section>';
   };
   const tabelle = (t) => '<div class="ls-tabelle"><table>' + (t.titel ? '<caption>' + esc(t.titel) + '</caption>' : '') + '<thead><tr>' + t.kopf.map((h) => '<th>' + esc(h) + '</th>').join('') + '</tr></thead><tbody>' + t.zeilen.map((z) => '<tr>' + z.map((c, i) => (i ? '<td>' : '<th scope="row">') + esc(c) + (i ? '</td>' : '</th>')).join('') + '</tr>').join('') + '</tbody></table></div>';
-  const abschnitte = (k, c) => '<p class="ls-lead">' + esc(c.lead) + '</p>' + c.abschnitte.map((a, i) => '<section class="ls-sec">' + (a.titel ? '<h2><span class="no">' + (i + 1) + '</span>' + esc(a.titel) + '</h2>' : '') + (a.text ? '<p>' + esc(a.text) + '</p>' : '') + (a.interaktiv ? ia(a.interaktiv, k) : '') + (a.tabelle ? tabelle(a.tabelle) : '') + '</section>').join('') + (c.beispiel ? '<section class="ls-card ls-beispiel"><div class="ls-tag">Beispiel</div><p>' + esc(c.beispiel) + '</p></section>' : '');
+  const abschnitte = (k, c) => c.abschnitte.map((a, i) => '<section class="ls-sec">' + (a.titel ? '<h2><span class="no">' + (i + 1) + '</span>' + esc(a.titel) + '</h2>' : '') + (a.text ? '<p>' + esc(a.text) + '</p>' : '') + (a.interaktiv ? ia(a.interaktiv, k) : '') + (a.tabelle ? tabelle(a.tabelle) : '') + '</section>').join('') + (c.beispiel ? '<section class="ls-card ls-beispiel"><div class="ls-tag">Beispiel</div><p>' + esc(c.beispiel) + '</p></section>' : '');
   const alltag = (k, c) => '<section class="ls-card ls-alltag"><div class="ls-tag soft">' + sym('hand', 15) + ' Aus dem Alltag</div>' + (c.alltag.interaktiv ? ia(c.alltag.interaktiv, k) : '<p class="ls-alltag-text">' + esc(c.alltag.text) + '</p>') + '</section>';
   const rueckblick = (c) => c.rueckblick ? '<section class="ls-card ls-rueck"><div class="ls-tag soft">' + sym('stern', 15) + ' ' + esc(c.rueckblick.titel) + '</div><p>' + esc(c.rueckblick.text) + '</p></section>' : '';
   const mitmach = (k, c) => {
@@ -13809,7 +13898,7 @@ window.BLUU_LERNSKRIPT_111 = {
     const n = nach(k), hook = window.BLUU_HOOKS && typeof BLUU_HOOKS.lernskriptUebungen === 'function', kurs = uebungsKurs(k);
     return '<div class="ls-next">' +
       '<button type="button" class="ls-btn ghost" onclick="bluuLs.uebungen(' + attr(k) + ')"' + (hook || kurs || (window.bluuUeben && bluuUeben.hat(aktivId, k)) ? '' : ' disabled title="Übungen ' + esc(k) + ' sind noch nicht auf der Plattform"') + (kurs ? ' title="' + esc('Öffnet «' + kurs.title + '» auf der Plattform') + '"' : '') + '>' + sym('stift', 16) + ' Zu den Übungen ' + esc(k) + '</button>' + (hook || kurs ? '' : '<span class="ls-hint ls-next-hinweis">Übungen ' + esc(k) + ' sind noch nicht auf der Plattform – sie folgen mit dem Kursimport.</span>') +
-      (n ? '<button type="button" class="ls-btn" onclick="bluuLs.gehe(' + attr(n.key) + ')">Weiter zu Kapitel ' + esc(n.key) + ' ' + sym('weiter', 16) + '</button>' : '<button type="button" class="ls-btn" onclick="bluuModulReiter(\'ueberblick\')">Zur Modulübersicht ' + sym('weiter', 16) + '</button>') +
+      (n ? '<button type="button" class="ls-btn lime" onclick="bluuLs.gehe(' + attr(n.key) + ')">Weiterlernen · Kapitel ' + esc(n.key) + ' ' + sym('weiter', 16) + '</button>' : '<button type="button" class="ls-btn lime" onclick="bluuModulReiter(\'ueberblick\')">Zur Modulübersicht ' + sym('weiter', 16) + '</button>') +
       (vor(k) ? '<button type="button" class="ls-textlink" onclick="bluuLs.gehe(' + attr(vor(k).key) + ')">' + sym('zurueck', 14) + ' Kapitel ' + esc(vor(k).key) + '</button>' : '<button type="button" class="ls-textlink" onclick="bluuLs.gehe(\'start\')">' + sym('zurueck', 14) + ' Bevor es losgeht</button>') + '</div>';
   };
   const kapitelSeite = (k) => {
@@ -13817,10 +13906,9 @@ window.BLUU_LERNSKRIPT_111 = {
     if (c.form === 'b') return kapitelSeiteB(k, c);
     /* wie im PDF: «Denk kurz nach» und die Mitmach-Aufgabe = 2 Mitmach-Aufgaben je Kapitel */
     const aufgaben = (c.denk ? 1 : 0) + (c.mitmach ? 1 : 0);
-    return werkzeug(k) + hero(k) +
-      '<h1 class="ls-h1"><span class="l">' + esc(k) + '</span>' + esc(c.titel) + '</h1>' +
-      '<div class="ls-meta"><span class="ls-chip">' + sym('uhr', 14) + ' Lesezeit ' + esc(c.lesezeit) + '</span><span class="ls-chip">' + sym('stift', 14) + ' ' + aufgaben + ' Mitmach-Aufgaben</span><span class="ls-chip">' + sym('monitor', 14) + ' danach: ' + esc(c.danach) + '</span></div>' +
-      bub('winkt', c.gruss) + denk(k, c) + abschnitte(k, c) + alltag(k, c) + rueckblick(c) + mitmach(k, c) + duo(k, c) + und(k, c) + bub('freut', c.abschied) + next(k, c) +
+    return werkzeug(k) + kopf(k, c, c.lesezeit) + (c.lead ? '<p class="ls-intro">' + esc(c.lead) + '</p>' : '') + hero(k) +
+      '<div class="ls-meta"><span class="ls-chip">' + sym('stift', 14) + ' ' + aufgaben + ' Mitmach-Aufgaben</span><span class="ls-chip">' + sym('monitor', 14) + ' danach: ' + esc(c.danach) + '</span></div>' +
+      inhalte((c.abschnitte || []).map((a) => a.titel).filter(Boolean)) + bub('winkt', c.gruss) + denk(k, c) + abschnitte(k, c) + alltag(k, c) + rueckblick(c) + mitmach(k, c) + duo(k, c) + und(k, c) + bub('freut', c.abschied) + next(k, c) +
       (!nach(k) && D().anhang ? '<p class="ls-foot">' + esc(D().anhang.quellen) + '</p>' : '<p class="ls-foot">Lernskript ' + esc(D().modul) + ' · Stand ' + esc(D().stand) + '. Das Lernskript bewertet nichts – Richtig oder falsch gibt es nur in den Übungen.</p>');
   };
   const startSeite = () => {
@@ -13952,7 +14040,11 @@ window.BLUU_LERNSKRIPT_111 = {
   const NAVY = '#243A4C', LIME = '#BEC60E', ICE = '#EEF3F6', STAHL = '#AFC3D3';
   const ikon = (n, x, y, sc, farbe) => '<path d="' + SYM[n] + '" transform="translate(' + x + ',' + y + ') scale(' + sc + ')" fill="none" stroke="' + (farbe || NAVY) + '" stroke-width="' + (2 / sc).toFixed(2) + '" stroke-linecap="round" stroke-linejoin="round"/>';
   const PILLE_IKON = { blitz: 'M13 2L4 14h7l-1 8 9-12h-7z', mast: 'M12 2v20M2 5h20M5 5l7 7 7-7M8 22l4-6 4 6', haus: 'M3 10l9-7 9 7v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1zM9 21v-7h6v7' };
-  const pille = (x, y, text, lime, ikon) => { const ik = ikon && PILLE_IKON[ikon] ? PILLE_IKON[ikon] : ''; const b = Math.max(52, text.length * 10.2 + 34 + (ik ? 26 : 0)); x = Math.min(Math.max(x, 60 + b / 2), 942 - b / 2); const tx = ik ? x + 12 : x; return '<g class="ls-pille' + (lime ? ' lime' : '') + '"><rect x="' + (x - b / 2) + '" y="' + (y - 18) + '" width="' + b + '" height="36" rx="18"/>' + (ik ? '<path d="' + ik + '" transform="translate(' + (x - b / 2 + 14) + ',' + (y - 11) + ') scale(.92)" fill="none" stroke="#243A4C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>' : '') + '<text x="' + tx + '" y="' + (y + 6) + '" text-anchor="middle" font-family="inherit">' + esc(text) + '</text></g>'; };
+  const pilleB = (text, ik) => Math.max(60, text.length * 10.4 + 36 + (ik ? 42 : 0));
+  const pilleX = (x, b) => Math.min(Math.max(x, 60 + b / 2), 942 - b / 2);
+  /* Pille wie in der Vorlage: hellblaue Fläche, runde Marke links mit Icon (Lime bei «lime»), Text fett */
+  const pille = (x, y, text, lime, ikon) => { const ik = ikon && PILLE_IKON[ikon] ? PILLE_IKON[ikon] : ''; const b = pilleB(text, ik); x = pilleX(x, b); const cx = x - b / 2 + 22; return '<g class="ls-pille' + (lime ? ' lime' : '') + '"><rect x="' + (x - b / 2) + '" y="' + (y - 21) + '" width="' + b + '" height="42" rx="21"/>' + (ik ? '<circle class="badge" cx="' + cx + '" cy="' + y + '" r="16"/><path d="' + ik + '" transform="translate(' + (cx - 11) + ',' + (y - 11) + ') scale(.92)" fill="none" stroke="#243A4C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>' : '') + '<text x="' + (ik ? x + 18 : x) + '" y="' + (y + 6) + '" text-anchor="middle" font-family="inherit">' + esc(text) + '</text></g>'; };
+  const verbinder = (xs, y, texte, iks) => xs.slice(1).map((x2, i) => { const b1 = pilleB(texte[i], iks[i]), b2 = pilleB(texte[i + 1], iks[i + 1]); const a = pilleX(xs[i], b1) + b1 / 2 + 10, e = pilleX(x2, b2) - b2 / 2 - 10; return e > a ? '<path class="ls-verbinder" d="M' + a + ' ' + y + 'H' + e + '" fill="none"/>' : ''; }).join('');
   const pfeil = (x1, y1, x2, y2) => '<path d="M' + x1 + ' ' + y1 + 'L' + x2 + ' ' + y2 + '" stroke="' + NAVY + '" stroke-width="2.4" fill="none" marker-end="url(#lsPfeil)"/>';
   const dok = (x, y, b, h) => '<rect x="' + x + '" y="' + y + '" width="' + b + '" height="' + h + '" rx="8" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/><path d="M' + (x + 16) + ' ' + (y + 22) + 'h' + (b * 0.45) + 'M' + (x + 16) + ' ' + (y + 42) + 'h' + (b - 32) + 'M' + (x + 16) + ' ' + (y + 60) + 'h' + (b - 32) + (h > 90 ? 'M' + (x + 16) + ' ' + (y + 78) + 'h' + (b * 0.6) : '') + '" stroke="' + STAHL + '" stroke-width="5" stroke-linecap="round"/>';
   const brief = (x, y) => '<rect x="' + x + '" y="' + y + '" width="54" height="36" rx="6" fill="#fff" stroke="' + NAVY + '" stroke-width="2.2"/><path d="M' + x + ' ' + (y + 4) + 'l27 18 27-18" fill="none" stroke="' + NAVY + '" stroke-width="2.2"/>';
@@ -13961,7 +14053,7 @@ window.BLUU_LERNSKRIPT_111 = {
   const verteilt = (n, x0, x1) => Array.from({ length: n }, (_, i) => n > 1 ? x0 + (x1 - x0) * i / (n - 1) : (x0 + x1) / 2);
   const MOTIV_B = {
     split: (c) => { const l = labelsVon(c, 3); return '<rect x="290" y="92" width="420" height="148" rx="14" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/><path d="M430 92v148M570 92v148" stroke="' + NAVY + '" stroke-width="2.4" stroke-dasharray="8 8"/>' + ikon('fabrik', 338, 142, 1.9) + ikon('mast', 478, 142, 1.9) + ikon('laden', 618, 142, 1.9) + '<circle cx="500" cy="60" r="16" fill="' + LIME + '" stroke="' + NAVY + '" stroke-width="2"/><path d="M500 76v16" stroke="' + NAVY + '" stroke-width="2.4"/>' + (l.length === 3 ? l.map((t, i) => pille(360 + i * 140, 264, t)).join('') : ''); },
-    chain: (c) => { const l = labelsVon(c, 5); return windrad(150, 118, 118, 15) + mast(500, 90, 150) + haus(790, 190, 64) + pfeil(230, 196, 440, 196) + pfeil(560, 196, 760, 196) + (l.length ? verteilt(l.length, 150, 850).map((x, i) => pille(x, 268, l[i], i === l.length - 1, ['blitz', 'mast', 'haus'][l.length === 3 ? i : -1])).join('') : ''); },
+    chain: (c) => { const l = labelsVon(c, 5); return windrad(150, 118, 118, 15) + mast(500, 90, 150) + haus(790, 190, 64) + pfeil(230, 196, 440, 196) + pfeil(560, 196, 760, 196) + gebaeude(872, 150, 64, 98) + (l.length ? (() => { const xs = verteilt(l.length, 150, 850), iks = l.map((_, i) => ['blitz', 'mast', 'haus'][l.length === 3 ? i : -1] || ''); return verbinder(xs, 268, l, iks) + xs.map((x, i) => pille(x, 268, l[i], i === 0, iks[i])).join(''); })() : ''); },
     nodes: (c) => { const l = labelsVon(c, 5), n = l.length || 4, xs = verteilt(n, 180, 820); return xs.map((x) => '<path d="M500 84L' + x + ' 178" stroke="' + NAVY + '" stroke-width="2" stroke-dasharray="4 6"/>').join('') + '<circle cx="500" cy="80" r="30" fill="' + LIME + '" stroke="' + NAVY + '" stroke-width="2.4"/>' + ikon('hand', 486, 66, 1.2) + xs.map((x, i) => '<circle cx="' + x + '" cy="182" r="24" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/>' + ikon(['fabrik', 'mast', 'laden', 'haus', 'zaehler'][i % 5], x - 12, 170, 1) + (l.length ? pille(x, 246, l[i]) : '')).join(''); },
     customer: () => mast(150, 96, 150) + windrad(860, 118, 118, 30) + haus(445, 150, 110) + person(360, 190) + pfeil(190, 206, 420, 206) + pfeil(820, 206, 580, 206) + '<circle cx="500" cy="98" r="18" fill="' + LIME + '" stroke="' + NAVY + '" stroke-width="2"/>',
     paragraph: () => '<g transform="rotate(-6 420 160)">' + dok(300, 70, 240, 170) + '</g><text x="690" y="228" font-family="var(--disp)" font-weight="700" font-size="150" fill="' + NAVY + '">§</text><circle cx="585" cy="212" r="22" fill="' + LIME + '" stroke="' + NAVY + '" stroke-width="2.4"/>' + ikon('haken', 573, 200, 1),
@@ -13995,10 +14087,9 @@ window.BLUU_LERNSKRIPT_111 = {
     const abschied = 'Weiter geht es mit den ' + c.danach + (set ? ' und ' + set.cards.length + ' Lernkarten zu diesem Kapitel.' : '.');
     const block = (b, j) => '<section class="ls-sec">' + (b.titel ? '<h2><span class="no">' + (j + 1) + '</span>' + esc(b.titel) + '</h2>' : '') + (b.text ? '<p>' + esc(b.text) + '</p>' : '') + (b.tabelle ? tabelle(b.tabelle) : '') + (b.notiz ? '<p class="ls-hint">' + esc(b.notiz) + '</p>' : '') +
       (b.reihe ? '<ol class="ls-reihe">' + b.reihe.map((r, q) => '<li><span class="nr">' + (q + 1) + '</span><span><b>' + esc(r[0]) + '</b>' + (r[1] ? ' – ' + esc(r[1]) : '') + '</span></li>').join('') + '</ol>' : '') + '</section>';
-    return werkzeug(k) + hero(k) +
-      '<h1 class="ls-h1"><span class="l">' + esc(k) + '</span>' + esc(c.titel) + '</h1>' +
-      '<div class="ls-meta"><span class="ls-chip">' + sym('uhr', 14) + ' Lesezeit ' + esc(c.lesezeit) + '</span><span class="ls-chip">' + sym('stift', 14) + ' ' + ((c.denk ? 1 : 0) + (c.job ? c.job.length : 0) + (c.selbst ? 1 : 0)) + ' Aufgaben</span>' + (c.stolper.length ? '<span class="ls-chip">' + sym('lampe', 14) + ' ' + c.stolper.length + (c.stolper.length === 1 ? ' Stolperstelle' : ' Stolperstellen') + '</span>' : '') + '<span class="ls-chip">' + sym('monitor', 14) + ' danach: ' + esc(c.danach) + '</span></div>' +
-      '<section class="ls-card ls-darum"><div class="ls-tag">' + sym('lesen', 15) + ' Darum geht es</div><div class="ls-row"><div class="ls-grow">' + c.darum.map((p) => '<p>' + esc(p) + '</p>').join('') + '</div></div></section>' + (c.denk ? denk(k, c) : '') +
+    return werkzeug(k) + kopf(k, c, c.lesezeit) + c.darum.map((p) => '<p class="ls-intro">' + esc(p) + '</p>').join('') + hero(k) +
+      '<div class="ls-meta"><span class="ls-chip">' + sym('stift', 14) + ' ' + ((c.denk ? 1 : 0) + (c.job ? c.job.length : 0) + (c.selbst ? 1 : 0)) + ' Aufgaben</span>' + (c.stolper.length ? '<span class="ls-chip">' + sym('lampe', 14) + ' ' + c.stolper.length + (c.stolper.length === 1 ? ' Stolperstelle' : ' Stolperstellen') + '</span>' : '') + '<span class="ls-chip">' + sym('monitor', 14) + ' danach: ' + esc(c.danach) + '</span></div>' +
+      inhalte((c.wichtig || []).map((b) => b.titel).filter(Boolean)) + (c.denk ? denk(k, c) : '') +
       '<h2 class="ls-h2b">Das Wichtigste</h2>' + c.wichtig.map(block).join('') +
       (c.stolper.length ? '<section class="ls-card ls-stolper"><div class="ls-tag">' + sym('lampe', 15) + ' Typische Stolperstellen</div><div class="ls-row"><div class="ls-grow"><p class="ls-hint">Stimmt das? Überleg kurz – dann klapp die Antwort auf.</p>' + c.stolper.map((s) => '<details><summary>' + esc(s[0]) + '</summary><p><b>Richtig ist:</b> ' + esc(s[1]) + '</p></details>').join('') + '</div></div></section>' : '') +
       (c.merksatz ? '<div class="ls-merk"><b>Merksatz</b> ' + esc(c.merksatz) + '</div>' : '') +
@@ -14012,7 +14103,7 @@ window.BLUU_LERNSKRIPT_111 = {
   function render(m, el) {
     laden();
     const k = S.kapitel === 'start' || kapVon(S.kapitel) ? S.kapitel : 'start';
-    el.innerHTML = '<div class="ls" style="--ls-fs:' + [18, 20, 22][S.fs] + 'px;--ls-ton:' + ton() + '">' + rail(k) + '<div class="ls-main">' + (k === 'start' ? startSeite() : kapitelSeite(k)) + '</div></div>';
+    el.innerHTML = '<div class="ls ls-drei" style="--ls-fs:' + [18, 20, 22][S.fs] + 'px;--ls-ton:' + ton() + '">' + rail(k) + '<div class="ls-main">' + (k === 'start' ? startSeite() : kapitelSeite(k)) + '</div>' + seite(k) + '</div>';
     if (k !== 'start') rechne(k);
     lesebalken();
   }
@@ -14078,6 +14169,7 @@ window.BLUU_LERNSKRIPT_111 = {
       if (kurs && window.bluuKursStarten) { bluuKursStarten(kurs.id); return; }
       if (window.bluuModulReiter) bluuModulReiter('uebungen');
     },
+    zu: (w) => { const el = document.querySelector('.ls-main .ls-' + w); if (el) { try { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) { el.scrollIntoView(); } } },
     rechne,
     regler(nr, key, v) { const s = u(nr, {}); s[key] = parseFloat(v); setz('ls-g1-' + key, fmt(s[key], 1)); const g = D().interaktiv[nr]; const el = document.getElementById('ls-g1-aus'); if (el) el.innerHTML = esc(g.beispiel) + ': ' + fmt(s.p, 1) + ' kW × ' + fmt(s.t, 1) + ' h = <strong>' + fmt(s.p * s.t, 2) + ' kWh</strong>'; },
     gas(nr, key, v) { const s = u(nr, {}); const n = zahl(v); s[key] = isFinite(n) ? n : 0; const r = s.v * s.bw * s.zz; setz('ls-h1-aus', fmt(r, 1)); const el = document.getElementById('ls-h1-formel'); if (el) el.innerHTML = fmt(s.v) + ' m³ × ' + fmt(s.bw, 3) + ' kWh/m³ × ' + fmt(s.zz, 4) + ' = <strong>' + fmt(r, 1) + ' kWh</strong>'; },
@@ -14433,13 +14525,27 @@ window.BLUU_UEBEN = {"1.1.1":{"modul":"1.1.1","titel":"1x1 der Energiewirtschaft
   /* ── Seiten ── */
   const sym = (n) => ({ uhr: 'M12 2a10 10 0 1 0 0 20a10 10 0 0 0 0-20zM12 6v6l4 2', ziel: 'M12 2a10 10 0 1 0 0 20a10 10 0 0 0 0-20zM12 8a4 4 0 1 0 0 8a4 4 0 0 0 0-8zM12 12h.01', folie: 'M3 4h18v12H3zM8 20h8M12 16v4', weiter: 'M9 18l6-6-6-6', zurueck: 'M15 18l-6-6 6-6', lesen: 'M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 21V5' }[n] || '');
   const ikon = (n, g) => '<svg width="' + (g || 14) + '" height="' + (g || 14) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + sym(n) + '"/></svg>';
+  const fortU = () => { const n = fertigN(), ges = UM().length, p = ges ? Math.round(100 * n / ges) : 0, r = 30, u = 2 * Math.PI * r;
+    return '<div class="ls-fort"><h4>Dein Fortschritt</h4><div class="ring"><div class="ls-ring"><svg viewBox="0 0 72 72" aria-hidden="true"><circle class="bg" cx="36" cy="36" r="' + r + '"/><circle class="fg" cx="36" cy="36" r="' + r + '" stroke-dasharray="' + (u * p / 100).toFixed(1) + ' ' + u.toFixed(1) + '"/></svg><b>' + p + ' %</b></div><div><p>' + n + ' von ' + ges + ' Untermodulen abgeschlossen</p><div class="ls-rail-bar" aria-hidden="true"><i style="width:' + p + '%"></i></div></div></div>' +
+      '<ul class="ls-links"><li><button type="button" onclick="bluuUeben.gehe(\'start\')">' + ikon('lesen', 15) + ' Startseite</button></li><li><button type="button" onclick="bluuModulReiter(\'lernskript\')">' + ikon('lesen', 15) + ' Zum Lernskript</button></li><li><button type="button" onclick="bluuModulReiter(\'ueberblick\')">' + ikon('folie', 15) + ' Zum Modul</button></li><li><button type="button" onclick="navGoWiki()">' + ikon('ziel', 15) + ' Begriffe im Wiki</button></li></ul></div>'; };
+  const tippU = () => '<div class="ls-tipp">' + ikon('ziel', 16) + '<div><b>Tipp</b><p>Du kannst die Übungen jederzeit unterbrechen. Du steigst beim zuletzt bearbeiteten Screen wieder ein.</p></div></div>';
+  const aside = () => {
+    const k = Z.aktuell; if (k === 'start' || !umVon(k) || !frei(k)) return '';
+    const um = umVon(k), i = UM().findIndex((u) => u.key === k), nx = k === 'R' ? UM()[0] : UM()[i + 1];
+    const test = (() => { try { const l = window.bluuInhaltLektionen && CODE ? bluuInhaltLektionen(CODE) : []; return l.find((c) => /wissenstest|abschlusstest/i.test(c.title || '')) || null; } catch (e) { return null; } })();
+    const karte = (on, titel, sub) => '<button type="button" class="ls-naechst" onclick="' + on + '"><span class="ik">' + ikon('lesen', 18) + '</span><span><b>' + esc(titel) + '</b><span class="sub">' + esc(sub) + '</span></span><span class="pf">' + ikon('weiter', 16) + '</span></button>';
+    const naechst = nx ? karte('bluuUeben.gehe(' + attr(nx.key) + ')', 'Untermodul ' + nx.key, nx.titel + (nx.richtzeit ? ' · ' + nx.richtzeit : '')) + (frei(nx.key) ? '' : '<p>Öffnet sich, sobald Untermodul ' + esc(k) + ' abgeschlossen ist.</p>') : (test ? karte('bluuKursStarten(' + test.id + ')', 'Wissenstest', test.questions ? test.questions.length + ' Fragen' : '') : '');
+    return '<aside class="ls-aside">' + (um.ergebnis ? '<section class="ls-card"><h4>' + ikon('ziel', 16) + ' Was Du in diesem Untermodul lernst</h4><ul class="ls-lernziele"><li>' + ikon('ziel', 14) + '<span>' + esc(um.ergebnis) + '</span></li></ul></section>' : '') +
+      (naechst ? '<section class="ls-card"><h4>' + ikon('weiter', 16) + ' Nächster Schritt</h4>' + naechst + '</section>' : '') +
+      '<section class="ls-card ls-ziel"><h4>' + ikon('ziel', 16) + ' Dein Ziel</h4><p>Alle Untermodule abschließen' + (test ? ', dann der Wissenstest zum Modul.' : '.') + '</p></section></aside>';
+  };
   const rail = () => {
     const n = fertigN(), ges = UM().length;
-    return '<nav class="ls-rail" aria-label="Untermodule"><p class="ls-rh">Deine Übungen</p><ol>' +
+    return '<nav class="ls-rail" aria-label="Untermodule">' + fortU() + '<p class="ls-rh">Deine Übungen</p><ol>' +
       '<li><button type="button" class="ls-node' + (Z.aktuell === 'start' ? ' cur' : '') + '" onclick="bluuUeben.gehe(\'start\')"><span class="dot">' + ikon('lesen', 15) + '</span><span class="lbl">Startseite</span></button></li>' +
       (D().auffrischer ? '<li><button type="button" class="ls-node' + (Z.aktuell === 'R' ? ' cur' : '') + (Z.done.R ? ' done' : '') + '" onclick="bluuUeben.gehe(\'R\')"><span class="dot">R</span><span class="lbl">Auffrischer</span></button></li>' : '') +
       UM().map((u) => '<li><button type="button" class="ls-node' + (Z.aktuell === u.key ? ' cur' : '') + (Z.done[u.key] ? ' done' : '') + '"' + (frei(u.key) ? '' : ' disabled title="Öffnet sich nach Untermodul ' + esc(UM()[UM().indexOf(u) - 1].key) + '"') + ' onclick="bluuUeben.gehe(' + attr(u.key) + ')"><span class="dot">' + esc(u.key) + '</span><span class="lbl">' + esc(u.titel) + '</span></button></li>').join('') +
-      '</ol><p class="ls-rail-stand">' + n + ' von ' + ges + ' Untermodulen geschafft</p><div class="ls-rail-bar" aria-hidden="true"><i style="width:' + Math.round(100 * n / Math.max(1, ges)) + '%"></i></div></nav>';
+      '</ol>' + tippU() + '</nav>';
   };
   const startSeite = () => {
     const d = D(), st = d.start || {}, n = fertigN(), ges = UM().length, nx = naechstes();
@@ -14475,14 +14581,14 @@ window.BLUU_UEBEN = {"1.1.1":{"modul":"1.1.1","titel":"1x1 der Energiewirtschaft
       '<div class="ls-next">' + weiter + zurueck + '</div>' +
       '<p class="ls-foot">Übungen ' + esc(M) + ' · ' + (k === 'R' ? 'Auffrischer' : 'Untermodul ' + esc(k)) + ' · Dein Stand wird nach jeder Eingabe gespeichert; Du steigst beim letzten Screen wieder ein.</p>';
   };
-  const inner = () => rail() + '<div class="ls-main">' + (Z.aktuell === 'start' || !umVon(Z.aktuell) || !frei(Z.aktuell) ? startSeite() : umSeite(Z.aktuell)) + '</div>';
+  const inner = () => rail() + '<div class="ls-main">' + (Z.aktuell === 'start' || !umVon(Z.aktuell) || !frei(Z.aktuell) ? startSeite() : umSeite(Z.aktuell)) + '</div>' + aside();
   const zeichne = (oben) => { const el = document.getElementById('ueben-wurzel'); if (!el) return; el.innerHTML = inner(); if (oben) { try { el.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) {} } };
   const ton = (m) => TON[m && m.bereich] || TON.grundlagen;
 
   window.bluuUeben = {
     hat: (modul, key) => { const d = (window.BLUU_UEBEN || {})[modul]; return !!(d && (!key || d.untermodule.some((u) => u.key === key))); },
     ergaenzen: (m) => { const id = m && m.lernskript; const d = id && (window.BLUU_UEBEN || {})[id]; if (!d) return false; m.status = 'freigeschaltet'; if (!m.teile) m.teile = {}; m.teile.uebungen = 'bereit'; m.umfang = (m.umfang ? m.umfang + ' · ' : '') + 'Übungen in ' + d.untermodule.length + ' Untermodulen'; return true; },
-    html: (modul, m) => { M = modul; MOD = m || null; CODE = m ? (m.code || m.thema) : null; laden(); return '<div class="ls ueben" id="ueben-wurzel" style="--ls-ton:' + ton(m) + '">' + inner() + '</div>'; },
+    html: (modul, m) => { M = modul; MOD = m || null; CODE = m ? (m.code || m.thema) : null; laden(); return '<div class="ls ueben ls-drei" id="ueben-wurzel" style="--ls-ton:' + ton(m) + '">' + inner() + '</div>'; },
     oeffne: (modul, key, code) => { M = modul; laden(); Z.aktuell = key && frei(key) ? key : 'start'; speichern(); if (window.bluuModulReiter) bluuModulReiter('uebungen'); setTimeout(() => { const el = document.getElementById('ueben-wurzel'); if (el) el.scrollIntoView({ block: 'start' }); }, 50); },
     gehe: (k) => { if (k !== 'start' && !frei(k)) return; Z.aktuell = k; speichern(); zeichne(true); },
     screen: (k, i) => { Z.screen[k] = i; speichern(); zeichne(true); },
