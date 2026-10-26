@@ -82,3 +82,7 @@ Spalte `course_id uuid` (FK, on delete set null) mit Backfill nach der Position 
 ## 7. Bestehensschwelle
 
 `courses.pass_threshold` (1–100) gilt für Abschluss, Ergebnisseite und XP-Bonus (`bluuSchwelle(c)`, Standard 70). Wissenstest-Importe: 80 % (19/24 bzw. 16/20), `is_final_exam: true`.
+
+## 8. Vorläufige Modulnummern
+
+Die Entwurfs-Module tragen vorläufige Schlüssel (GPKE 2.1.1, MaBiS 2.1.2, WiM 1 3.1.1, WiM 2 3.1.2, § 14a 3.1.3, EDM 1.2.1). Sie stehen in `BLUU_MODULE[].lernskript/lernkarten`, in den Set-Schlüsseln (`211-A` …), in `lernkarten_progress.module` und `lernskript_progress.module`. Kommt die offizielle Gliederung, müssen diese Schlüssel in Code und Daten gemeinsam umbenannt werden (Migration für vorhandene Fortschrittszeilen).

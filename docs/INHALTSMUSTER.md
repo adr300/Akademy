@@ -58,3 +58,19 @@ Für ein weiteres Modul: Zip entpacken, die vier Dateien (Lernskript, Lernkarten
 ### Fragen statt Stichwörter (26.10.2026)
 
 Die Word-Lernkarten «Erklären» tragen vorn nur «Blocktitel: Zeile». Für die App bekommt jede dieser Karten eine ausformulierte Frage (`fragen_<modul>.json` → `fronts`), die Rückseite bleibt der Skripttext. Je Kapitel kommen dazu `denk` (Frage + Hinweis vor dem Lesen) und `job` (Situationen mit Tipp und Antwort), die sowohl im Lernskript (Karten «Denk kurz nach», «Mitten im Job», «Und?») als auch als Lernkarten vom Typ «Mitten im Job» erscheinen. Regel beim Schreiben: Antworten nur aus Sätzen des Lernskripts zusammensetzen, keine neuen Zahlen oder Regeln.
+
+## Autorendatei für eigene Lernskripte (Entwürfe, 26.10.2026)
+
+Für Module ohne Word-Vorlage gibt es ein kompaktes JSON (`scratchpad/inhalt/inhalt_<modul>.json`), aus dem `inhalt_build.js` Lernskript (Form B) und Lernkarten erzeugt:
+
+```
+{ "id": "2.1.1", "code": "gpke", "titel": "…", "beschreibung": "Entwurf … (Katalog)", "quellen": "…",
+  "kapitel": [ { "key": "A", "titel": "…", "lesezeit": "ca. 5 Min.",
+    "darum": ["…"], "denk": ["Frage", "Hinweis"],
+    "wichtig": [ { "titel": "…", "kopf": ["Begriff", "Erklärung"], "zeilen": [["Begriff", "Erklärung", "Frage für die Lernkarte"]] },
+                 { "titel": "… anordnen", "reihe": [["Schritt", "Erklärung"]] } ],
+    "stolper": [["Falsche Annahme", "Richtig ist"]], "merksatz": "…", "merkfrage": "…",
+    "job": [["Situation", "Tipp", "Antwort"]], "selbst": ["Frage", "Musterantwort"], "kann": "Ergebnis" } ] }
+```
+
+Karten entstehen automatisch: Erklären (dritte Spalte → Frage, Erklärung → Rückseite), Stolperstelle, Merksatz (merkfrage), Erklär es Dir selbst, Mitten im Job. Regeln: nur belegbare Aussagen (Gesetz, Festlegung, Branchenregel), Quellen im Feld `quellen` nennen, unsichere Zahlen weglassen statt raten, und jeden Entwurf als solchen kennzeichnen, bis Antonia/Adrian ihn geprüft haben.
