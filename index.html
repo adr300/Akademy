@@ -2747,7 +2747,7 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 .lumi-blase.dock::before{display:none;}
 @media (prefers-reduced-motion:reduce){.lumi-figur,.lumi-blase{transition:none;}.lumi-figur .lumi-innen{animation:none!important;}}
 /* BLUU-LUMI:ENDE */
-/* BLUU-SZENEN:START — Szenen im Stil der Vorlagen (26.10.2026); Modul-Hero hell mit Szene rechts */
+/* BLUU-SZENEN:START — Szenen im Stil der Vorlagen (26.10.2026) */
 .ls-hero .ls-pille rect{fill:#E4EEF7;stroke:none;}
 .ls-hero .ls-pille .badge{fill:#CFE0F0;}
 .ls-hero .ls-pille.lime .badge{fill:#C9D64A;}
@@ -2765,22 +2765,6 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 .ls-hero .ls-huegel2{fill:color-mix(in srgb,var(--ls-ton) 28%,#DCE6EE);}
 .ls-hero .ls-wz{font-size:170px;}
 .ls-hero .ls-wz.klein{font-size:100px;}
-.bluu-szene{border-radius:16px;}
-.modul-szene{position:absolute;right:max(16px,calc(50vw - 562px));top:50%;transform:translateY(-50%);width:min(520px,38vw);pointer-events:none;}
-.modul-szene .ls-hero{box-shadow:0 24px 50px -24px rgba(0,0,0,.55);}
-.hero-modul.mit-szene .hero-band-inhalt{padding-right:calc(max(20px,50vw - 562px) + min(520px,38vw) + 32px);}
-:root[data-theme="light"] .hero-modul.mit-szene{background:linear-gradient(180deg,#E8F0F7 0%,#F5F8FB 100%);color:#243A4C;}
-:root[data-theme="light"] .hero-modul.mit-szene .modul-kopf-zeile h1,:root[data-theme="light"] .hero-modul.mit-szene .modul-fakten dd{color:#243A4C;}
-.hero-modul.mit-szene .modul-kopf-zeile h1{font-size:clamp(28px,3vw,40px);}
-.hero-modul.mit-szene .modul-kopf-zeile{flex-wrap:nowrap;}
-.hero-modul.mit-szene .modul-kopf-zeile > div{min-width:0;}
-:root[data-theme="light"] .hero-modul.mit-szene .hero-eye,:root[data-theme="light"] .hero-modul.mit-szene .modul-kopf-zeile .hero-eye,:root[data-theme="light"] .hero-modul.mit-szene .modul-fakten dt{color:#4F6B82;}
-:root[data-theme="light"] .hero-modul.mit-szene .hero-sub,:root[data-theme="light"] .hero-modul.mit-szene .modul-kopf-zeile .hero-sub{color:#4F6B82;}
-:root[data-theme="light"] .hero-modul.mit-szene .bluu-zurueck{color:#4F6B82;}
-:root[data-theme="light"] .hero-modul.mit-szene .bluu-kachel{box-shadow:0 10px 24px -14px rgba(36,58,76,.45);}
-:root[data-theme="light"] .modul-szene .ls-hero{box-shadow:none;}
-:root[data-theme="light"] .modul-szene .ls-sky0,:root[data-theme="light"] .modul-szene .ls-sky1{stop-opacity:0;}
-@media (max-width:1120px){.modul-szene{display:none;}.hero-modul.mit-szene .hero-band-inhalt{padding-right:max(20px,calc(50vw - 562px));}}
 /* BLUU-SZENEN:ENDE */
 /* BLUU-DREI:START — Lernskript-Kapitelseite nach der Vorlage (26.10.2026): drei Spalten ab 1280 px, Fortschrittskarte, Tipp,
    Kapitelkopf mit Chip und Zeit, Inhalte-Liste, Seitenleiste (Lernziele, nächster Schritt, Ziel), Weiterlernen in Lime */
@@ -2838,6 +2822,24 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 .ls .ls-btn.lime{background:var(--lime);color:#1B2E3E;border-color:var(--lime);}
 .ls .ls-btn.lime:hover{background:#C9D24A;border-color:#C9D24A;}
 /* BLUU-DREI:ENDE */
+/* BLUU-AUDIT:START — Lernbildschirme: Kopfzeile umbrechend, Lernkarte wächst mit dem Inhalt, Ergebnis-Knöpfe umbrechen, Tabellen schmal (26.10.2026) */
+.chrome-top{flex-wrap:wrap;row-gap:8px;}
+.chrome-top .tb-info{flex:1 1 200px;}
+.tb-title{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.3;}
+.lk-card-wrap{height:auto;min-height:280px;}
+.lk-card{display:grid;min-height:280px;height:auto;}
+.lk-card-face{grid-area:1 / 1;position:relative;inset:auto;min-height:280px;}
+.lk-card-text{max-width:440px;overflow-wrap:anywhere;}
+.lk-card-front .lk-glow.lk-maskottchen{width:72px;height:84px;flex:none;margin:0 0 14px;align-items:flex-start;overflow:visible;}
+.lk-card-front .lk-glow.lk-maskottchen svg{width:72px;height:72px;}
+.lk-card-front .lk-card-text{margin-top:0;position:relative;z-index:1;}
+.res-btns{flex-wrap:wrap;}
+@media(max-width:640px){.res-btns{flex-direction:column;align-items:stretch;}.res-btns .btn-cta,.res-btns .btn-sec{width:100%;}}
+.ls-text tbody th,.slide-text tbody th{white-space:normal;overflow-wrap:break-word;hyphens:auto;}
+@media(max-width:640px){.ls-text th,.slide-text th{white-space:normal;overflow-wrap:break-word;hyphens:auto;letter-spacing:.02em;}.ls-text td,.slide-text td{overflow-wrap:break-word;}}
+#bluu-zurueck-modul{display:none;}
+.brand:focus-visible{outline:2px solid var(--focus,#B7C21B);outline-offset:4px;border-radius:8px;}
+/* BLUU-AUDIT:ENDE */
 /* BLUU-UEBEN:START — Übungen Screen für Screen (26.10.2026), im Rahmen des Lernskripts (.ls): Leuchtpfad links, Karten rechts */
 .ueben{--ls-fs:17px;}
 .ueben .ls-main>*{animation:none;}
@@ -3934,7 +3936,7 @@ class Component extends DCLogic {
   <nav class="topnav">
 
     <!-- Brand -->
-    <div class="brand" onclick="handleLogoClick()" style="cursor:pointer">
+    <div class="brand" role="link" tabindex="0" aria-label="Zur Übersicht" title="Zur Übersicht" onclick="handleLogoClick()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleLogoClick();}" style="cursor:pointer">
       <div class="brand-logo" id="brand-logo">
         <svg viewBox="0 0 24 24" width="18" height="18"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" fill="#fff"/></svg>
       </div>
@@ -5861,6 +5863,8 @@ function handleLogoClick(){
     clearTimeout(logoClickTimer);
     triggerSteckdoseBadge();
   }
+  /* BLUU-AUDIT: Logo = Zur Übersicht (nur angemeldet; nutzt die bestehende Navigation, kein Neuladen) */
+  try{ if(currentUser && typeof navGoOverview==='function'){ const ov=document.getElementById('screen-dashboard'); if(!(ov&&ov.classList.contains('active'))) navGoOverview(); } }catch(e){}
 }
 
 async function triggerSteckdoseBadge(){
@@ -8507,7 +8511,7 @@ async function showResult(){
 }
 
 function stopEmbeddedVideo(){const f=document.querySelector('#slide-body iframe');if(f)f.src='';}
-async function goBack(){stopEmbeddedVideo();await endSession();showDash();}
+async function goBack(){stopEmbeddedVideo();await endSession();if(window.bluuModulKontext&&typeof bluuZurueckInsModul==='function')bluuZurueckInsModul();else showDash();}
 
 function showProfile(){
   const lvl=userXP.level||1;
@@ -12502,8 +12506,6 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
   window.bluuModulReiter = function (k) { reiter = k; renderModul(); };
   window.bluuModulAktuell = function () { return BLUU_MODULE[aktuellesModul]; };
   window.bluuModulNeuZeichnen = function () { renderModul(); };
-  /* BLUU-SZENEN: Szene je Modul (Lernskript-Kennung, sonst Motiv des Fachbereichs) */
-  const szeneArt = (m) => ({ '1.1.1': 'landscape', '1.1.2': 'chain', '1.1.3': 'nodes', '1.1.4': 'pipe', '1.1.5': 'id', '3.1.3': 'control', '1.2.1': 'data', '2.1.1': 'timeline', '2.1.2': 'balance', '3.1.1': 'meter', '3.1.2': 'timeline' })[m.lernskript] || ({ energie: 'landscape', gpke: 'timeline', wim: 'meter', isu: 'data', dsgvo: 'shield' })[m.motiv] || 'landscape';
   function renderModul() {
     const m = BLUU_MODULE[aktuellesModul];
     if (!m) return;
@@ -12514,8 +12516,6 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
     const um = m.untermodule || [];
     document.getElementById('modul-kopf').innerHTML =
       document.querySelector('#screen-module .hero-landschaft').outerHTML +
-      (document.getElementById('modul-kopf').classList.toggle('mit-szene', !!window.bluuSzeneSvg), '') +
-      (window.bluuSzeneSvg ? '<div class="modul-szene" aria-hidden="true">' + bluuSzeneSvg(szeneArt(m), m.code || m.thema) + '</div>' : '') +
       '<div class="hero-band-inhalt">' +
       '<button type="button" class="bluu-zurueck" onclick="navGoModule()">← Katalog</button>' +
       '<div class="modul-kopf-zeile"><span class="bluu-kachel">' + (window.bluuSzene ? bluuSzene(m.motiv || 'energie', 'voll', 72, 'modul:' + (m.code || m.thema)) : B('PfadIcon', { motiv: m.motiv || 'energie', status: 'aktiv', fortschritt: 0, groesse: 72 })) + '</span>' +
@@ -12812,10 +12812,10 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
   };
   window.bluuZurueckInsModul = function () { const c = window.bluuModulKontext; if (c) bluuModulOeffnenCode(c); else if (typeof showDash === 'function') showDash(); };
   window.bluuKontextZeigen = function () {
-    const el = kontextLeiste();
+    /* BLUU-AUDIT: kein schwebender Zweitknopf – der Zurück-Knopf der Chrome übernimmt den Rückweg ins Modul */
+    const alt = document.getElementById('bluu-zurueck-modul'); if (alt) alt.classList.remove('sichtbar');
     const aktiv = document.querySelector('#view-user .screen.active');
-    const lern = aktiv && ['screen-slides', 'screen-quiz', 'screen-result'].includes(aktiv.id);
-    el.classList.toggle('sichtbar', !!(lern && window.bluuModulKontext));
+    document.querySelectorAll('#screen-slides .chrome-top .btn-back, #screen-quiz .chrome-top .btn-back').forEach((b) => { b.textContent = window.bluuModulKontext ? '← Zum Modul' : '← Zurück'; b.setAttribute('aria-label', window.bluuModulKontext ? 'Zurück zum Modul' : 'Zurück zur Übersicht'); });
     const cta = document.getElementById('res-cta');
     if (cta && window.bluuModulKontext && aktiv && aktiv.id === 'screen-result') { cta.textContent = 'Zum Modul'; cta.onclick = bluuZurueckInsModul; }
   };
@@ -15162,7 +15162,7 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
     { ziel: 'wiki', stimmung: 'hinweis', text: 'Im Wiki findest Du Erklärungen zu Abkürzungen und Fachbegriffen.' },
     { ziel: 'erfolge', stimmung: 'stolz', text: 'Unter Erfolge siehst Du Deine XP, Abzeichen und Deinen Rang.' },
     { ziel: 'assistent', optional: true, stimmung: 'froh', text: 'Und wenn Du eine Frage hast: Ich sitze unten rechts und bin immer ansprechbar.' },
-    { ziel: null, stimmung: 'froh', text: 'Das war der Rundgang. Viel Freude beim Lernen!', knopf: 'Jetzt lernen', ende: true }
+    { ziel: null, stimmung: 'froh', text: 'Das war der Rundgang. Viel Freude beim Lernen!', knopf: 'Fertig', ende: true }
   ];
   const RAND = 12, ABSTAND = 18;
   const groesse = () => (window.innerWidth < 700 ? 64 : 92);
@@ -15299,7 +15299,7 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
     if (Z.zustand === 'flying') return;
     if (Z.timer) { clearInterval(Z.timer); Z.timer = null; Z.text.textContent = Z.schritte[Z.i].text; Z.text.classList.remove('tippt'); Z.zustand = 'waiting'; return; }
     const st = Z.schritte[Z.i];
-    if (st.ende) { merken('fertig'); ende(); try { if (window.bluuHeuteStarten) bluuHeuteStarten(); else if (window.navGoModule) navGoModule(); } catch (e) {} return; }
+    if (st.ende) { merken('fertig'); ende(); return; }
     const j = naechsterIndex(Z.i + 1, 1); if (j < 0) { merken('fertig'); ende(); } else zeige(j);
   };
   const zurueck = () => { if (!Z || Z.zustand === 'flying') return; const j = naechsterIndex(Z.i - 1, -1); if (j >= 0) zeige(j); };
