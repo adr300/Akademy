@@ -2632,6 +2632,76 @@ ol.ls-schritte b{color:var(--ls-navy);}
 .ls-loesung summary{font-weight:600;}
 .ls-foot{color:var(--ls-muted);font-size:.8em;margin-top:28px;}
 /* BLUU-RUHIG:ENDE */
+/* BLUU-GLANZ:START — Lernskript mit mehr Ausstrahlung (26.10.2026): getönte Titelbilder je Kapitel (Motiv aus dem Kapiteltitel),
+   Wasserzeichen, Lesebalken, Tabellen mit Rahmen und Zeilenmarke, Reihen als Stepper, Merksatz als Navy-Zitat, Karten mit Icon-Anker,
+   gestaffeltes Einblenden. Ton je Fachbereich über --ls-ton (nur bestehende Palettenwerte). */
+.ls{--ls-ton:#6F93B1;}
+.ls-hero{position:relative;border-radius:18px;overflow:hidden;box-shadow:0 1px 2px rgba(27,46,62,.05),0 18px 40px -28px rgba(27,46,62,.45);}
+.ls-hero .ls-sky0{stop-color:color-mix(in srgb,var(--ls-ton) 16%,#F7F9FA);}
+.ls-hero .ls-sky1{stop-color:#FFFFFF;}
+.ls-hero .ls-huegel1{fill:color-mix(in srgb,var(--ls-ton) 18%,#E8EEF2);}
+.ls-hero .ls-huegel2{fill:color-mix(in srgb,var(--ls-ton) 30%,#DCE4EA);}
+.ls-hero .ls-wz{font-family:var(--disp);font-weight:700;font-size:150px;letter-spacing:-.04em;fill:var(--ls-ton);opacity:.18;}
+.ls-hero .ls-wz.klein{font-size:92px;}
+.ls-hero .ls-pille rect{fill:#fff;stroke:#243A4C;stroke-width:2;}
+.ls-hero .ls-pille text{fill:#243A4C;font-weight:600;font-size:15px;}
+:root:not([data-theme="light"]) .ls-hero svg{opacity:1;}
+:root:not([data-theme="light"]) .ls-hero{box-shadow:0 18px 40px -24px rgba(0,0,0,.6);}
+.ls-h1{font-size:2.25em;margin:20px 0 10px;}
+.ls-h1 .l{border-radius:10px;background:var(--ls-ton);color:#fff;font-size:.62em;width:1.9em;height:1.9em;vertical-align:6px;}
+.ls-chip svg{color:var(--ls-ton);}
+.ls-card{box-shadow:0 1px 2px rgba(27,46,62,.04),0 10px 28px -22px rgba(27,46,62,.35);}
+:root:not([data-theme="light"]) .ls-card{box-shadow:none;}
+.ls-tag{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.ls-tag svg{display:block;width:26px;height:26px;padding:5px;border-radius:8px;background:color-mix(in srgb,var(--ls-ton) 14%,var(--ls-karte));color:var(--ls-ton);}
+.ls-denk .ls-tag svg,.ls-mach .ls-tag svg{background:var(--lime);color:#243A4C;}
+.ls-h2b{display:flex;align-items:center;gap:12px;border-top:0;padding-top:0;margin-top:40px;}
+.ls-h2b::after{content:'';flex:1;height:1px;background:var(--ls-line);}
+.ls-sec h2{border-left:3px solid var(--ls-ton);padding-left:12px;line-height:1.25;}
+.ls-tabelle table{border:1px solid var(--ls-line);border-radius:12px;border-collapse:separate;border-spacing:0;overflow:hidden;}
+.ls-tabelle thead th{background:var(--ls-seite);}
+.ls-tabelle th,.ls-tabelle td{padding:10px 14px;}
+.ls-tabelle tbody tr:last-child th,.ls-tabelle tbody tr:last-child td{border-bottom:0;}
+.ls-tabelle tbody th{position:relative;padding-left:26px;}
+.ls-tabelle tbody th::before{content:'';position:absolute;left:11px;top:1.15em;width:6px;height:6px;border-radius:2px;background:var(--ls-ton);}
+.ls-tabelle tbody tr:hover td,.ls-tabelle tbody tr:hover th{background:color-mix(in srgb,var(--ls-ton) 6%,transparent);}
+.ls-reihe{margin:12px 0 0;}
+.ls-reihe li{position:relative;padding:6px 0 14px;border-bottom:0;gap:14px;}
+.ls-reihe li::before{content:'';position:absolute;left:calc(.8em - 1px);top:2.3em;bottom:0;width:2px;background:var(--ls-line);}
+.ls-reihe li:last-child::before{display:none;}
+.ls-reihe .nr{border-radius:50%;background:var(--ls-ton);color:#fff;}
+.ls-merk{background:var(--navy);border-color:var(--navy);color:#fff;padding:18px 56px 18px 26px;position:relative;overflow:hidden;font-family:var(--disp);font-stretch:108%;font-weight:600;font-size:1.08em;line-height:1.45;}
+.ls-merk b{color:var(--lime);font-weight:600;margin-bottom:8px;}
+.ls-merk::before{content:'„';position:absolute;right:14px;top:-30px;font-size:130px;line-height:1;color:var(--lime);opacity:.22;font-weight:700;}
+.ls-merk::after{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--lime);}
+:root:not([data-theme="light"]) .ls-merk{background:#1B2E3E;border-color:#3B5062;}
+.ls-stolper details[open],.ls-job details[open]{border-left:3px solid var(--ls-ton);}
+.ls-job-nr,.ls-stolper summary::before{background:color-mix(in srgb,var(--ls-ton) 14%,var(--ls-karte));color:var(--ls-ton);}
+.ls-cb input:checked+span{color:var(--ls-muted);}
+.ls-rail-bar{height:4px;background:var(--ls-line);border-radius:2px;margin:8px 8px 0;overflow:hidden;}
+.ls-rail-bar i{display:block;height:100%;background:var(--lime);border-radius:2px;transition:width .6s var(--ease-out);}
+.ls-node.cur .dot,.ls-node.cur.done .dot{background:var(--ls-ton);border-color:var(--ls-ton);color:#fff;}
+.ls-lesebalken{position:fixed;left:0;top:0;height:3px;width:100%;background:var(--lime);transform-origin:left;transform:scaleX(0);z-index:1200;pointer-events:none;opacity:0;transition:opacity .3s;}
+ol.ls-schritte li{background:var(--ls-karte);border:1px solid var(--ls-line);border-top:3px solid var(--ls-ton);border-radius:10px;padding:14px;}
+ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
+.ls-kap .dot{border-width:2px;}
+.ls-kap:hover .dot{border-color:var(--ls-ton);color:var(--ls-ton);}
+.ls-main>*{animation:ls-auf .55s var(--ease-out) both;}
+.ls-main>*:nth-child(2){animation-delay:0.04s;}
+.ls-main>*:nth-child(3){animation-delay:0.08s;}
+.ls-main>*:nth-child(4){animation-delay:0.12s;}
+.ls-main>*:nth-child(5){animation-delay:0.16s;}
+.ls-main>*:nth-child(6){animation-delay:0.20s;}
+.ls-main>*:nth-child(7){animation-delay:0.24s;}
+.ls-main>*:nth-child(8){animation-delay:0.28s;}
+.ls-main>*:nth-child(9){animation-delay:0.32s;}
+.ls-main>*:nth-child(10){animation-delay:0.36s;}
+.ls-main>*:nth-child(11){animation-delay:0.40s;}
+.ls-main>*:nth-child(12){animation-delay:0.44s;}
+.ls-main>*:nth-child(13){animation-delay:0.48s;}
+@keyframes ls-auf{from{opacity:0;transform:translateY(10px)}}
+@media (max-width:640px){.ls-hero .ls-wz{font-size:110px;}.ls-hero .ls-wz.klein{font-size:64px;}.ls-h1{font-size:1.7em;}.ls-merk{padding-right:26px;}.ls-merk::before{display:none;}}
+/* BLUU-GLANZ:ENDE */
 /* BLUU-ANTWORTEN:START — Antwortprotokoll auf der Ergebnisseite, Link in der Lektionszeile, Übersicht für Manager */
 .res-antworten{text-align:left;max-width:680px;margin:20px auto 0;}
 .ra-h{font-family:var(--disp);font-size:17px;margin:0 0 10px;color:var(--fg);}
@@ -13521,7 +13591,9 @@ window.BLUU_LERNSKRIPT_111 = {
     I: () => '<g transform="translate(200,40)"><rect width="300" height="230" rx="10" fill="#fff" stroke="#243A4C" stroke-width="2.4"/><rect x="24" y="24" width="120" height="14" rx="4" fill="#243A4C"/><path d="M24 70h252M24 100h200M24 130h252M24 160h180" stroke="#C9D6E0" stroke-width="6" stroke-linecap="round"/><rect x="24" y="190" width="252" height="26" rx="6" fill="#F4F8C8" stroke="#BEC60E" stroke-width="2"/><text x="268" y="209" text-anchor="end" font-weight="700" font-size="16" fill="#243A4C">1.392,30 €</text></g><g transform="translate(560,100)">' + [['1', 'Verbrauch'], ['2', 'Energiekosten'], ['3', 'Grundpreis'], ['4', 'Rechnungsbetrag'], ['5', 'Nachzahlung']].map((x, i) => '<g transform="translate(0,' + (i * 32) + ')"><circle cx="14" cy="14" r="14" fill="#BEC60E"/><text x="14" y="19" text-anchor="middle" font-weight="700" font-size="15" fill="#243A4C">' + x[0] + '</text><text x="40" y="19" font-size="16" fill="#243A4C">' + x[1] + '</text></g>').join('') + '</g>',
     start: () => windrad(90, 120, 132, 20) + mast(300, 110, 146) + mast(470, 96, 160) + '<path d="M324 128Q400 160 446 114" stroke="#243A4C" stroke-width="1.8" fill="none"/>' + haus(620, 204, 58) + '<g transform="translate(760,80)"><rect width="200" height="150" rx="12" fill="#fff" stroke="#243A4C" stroke-width="2.4"/><rect x="24" y="24" width="90" height="12" rx="4" fill="#243A4C"/><path d="M24 60h152M24 84h120M24 108h152" stroke="#C9D6E0" stroke-width="6" stroke-linecap="round"/><rect x="24" y="124" width="152" height="12" rx="4" fill="#BEC60E"/></g>' + schild(160, 264, 'Erzeugung', 142) + schild(400, 264, 'Netz', 100) + schild(640, 264, 'Verbrauch', 142) + schild(860, 264, 'Rechnung', 130)
   };
-  const hero = (k) => '<div class="ls-hero"><svg viewBox="0 0 1000 300" role="img" aria-label="' + esc('Titelbild Kapitel ' + k) + '"><defs><linearGradient id="lsHimmel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E4EDF3"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient><marker id="lsPfeil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#243A4C"/></marker></defs><rect width="1000" height="300" rx="22" fill="url(#lsHimmel)"/><path d="M0 240Q160 200 330 228T660 224T1000 216L1000 300L0 300Z" fill="#DCE6ED"/><path d="M0 260Q200 238 420 255T1000 248L1000 300L0 300Z" fill="#CBD8E2"/>' + (D().modul === '1.1.1' && MOTIV[k] ? MOTIV[k]() : motivB(k)) + '<path d="M230 70Q420 10 560 70T860 90" class="ls-spur" stroke="#E9F07A" stroke-width="3.5" stroke-dasharray="2 12" stroke-linecap="round" fill="none"/></svg></div>';
+  const hero = (k) => '<div class="ls-hero"><svg viewBox="0 0 1000 300" role="img" aria-label="' + esc(k === 'start' ? 'Titelbild Lernskript ' + D().modul : 'Titelbild Kapitel ' + k) + '"><defs><linearGradient id="lsHimmel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="ls-sky0"/><stop offset="1" class="ls-sky1"/></linearGradient><marker id="lsPfeil" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#243A4C"/></marker></defs><rect width="1000" height="300" rx="22" fill="url(#lsHimmel)"/><path class="ls-huegel1" d="M0 240Q160 200 330 228T660 224T1000 216L1000 300L0 300Z"/><path class="ls-huegel2" d="M0 260Q200 238 420 255T1000 248L1000 300L0 300Z"/>' +
+    '<text class="ls-wz' + (k === 'start' ? ' klein' : '') + '" x="972" y="274" text-anchor="end" aria-hidden="true">' + esc(k === 'start' ? D().modul : k) + '</text>' +
+    (D().modul === '1.1.1' && MOTIV[k] ? MOTIV[k]() : motivB(k)) + '<path d="M230 70Q420 10 560 70T860 90" class="ls-spur" stroke="#E9F07A" stroke-width="3.5" stroke-dasharray="2 12" stroke-linecap="round" fill="none"/></svg></div>';
 
   /* ── Leuchtpfad ── */
   const rail = (k) => {
@@ -13530,7 +13602,7 @@ window.BLUU_LERNSKRIPT_111 = {
     return '<nav class="ls-rail" aria-label="Kapitel"><p class="ls-rh">Dein Leuchtpfad</p><ol>' +
       '<li><button type="button" class="ls-node' + (k === 'start' ? ' cur' : '') + '" onclick="bluuLs.gehe(\'start\')"' + (k === 'start' ? ' aria-current="page"' : '') + '><span class="dot">' + sym('lesen', 15) + '</span><span class="lbl">Bevor es losgeht</span></button></li>' +
       KAP().map((x) => '<li><button type="button" class="ls-node' + (x.key === k ? ' cur' : '') + (fertig(x.key) ? ' done' : '') + '" onclick="bluuLs.gehe(' + attr(x.key) + ')"' + (x.key === k ? ' aria-current="page"' : '') + '><span class="dot">' + esc(x.key) + '</span><span class="lbl">' + esc(x.titel) + '</span></button></li>').join('') +
-      '</ol><p class="ls-rail-stand">' + n + ' von ' + KAP().length + ' Kapiteln geschafft</p></nav>';
+      '</ol><p class="ls-rail-stand">' + n + ' von ' + KAP().length + ' Kapiteln geschafft</p><div class="ls-rail-bar" aria-hidden="true"><i style="width:' + Math.round(100 * n / Math.max(1, KAP().length)) + '%"></i></div></nav>';
   };
   const werkzeug = (k) => {
     const i = KAP().findIndex((x) => x.key === k);
@@ -13723,14 +13795,46 @@ window.BLUU_LERNSKRIPT_111 = {
 
   /* ── BLUU-TF1: Kapitelform B (Lernskripte 1.1.2–1.1.5 aus dem Zip «TF1 Grundlagen»): Darum geht es · Das Wichtigste (Tabellen,
         Reihenfolgen) · Typische Stolperstellen (aufklappbar) · Merksatz · Erklär es Dir selbst (Eingabe + Musterantwort) · Das kann ich jetzt ── */
+  /* ── Motive für Form B: aus dem Kapiteltitel abgeleitet, Beschriftungen nur aus den Zeilenköpfen der ersten Tabelle ── */
+  const NAVY = '#243A4C', LIME = '#BEC60E', ICE = '#EEF3F6', STAHL = '#AFC3D3';
+  const ikon = (n, x, y, sc, farbe) => '<path d="' + SYM[n] + '" transform="translate(' + x + ',' + y + ') scale(' + sc + ')" fill="none" stroke="' + (farbe || NAVY) + '" stroke-width="' + (2 / sc).toFixed(2) + '" stroke-linecap="round" stroke-linejoin="round"/>';
+  const pille = (x, y, text) => { const b = Math.max(44, text.length * 8.6 + 26); return '<g class="ls-pille"><rect x="' + (x - b / 2) + '" y="' + (y - 14) + '" width="' + b + '" height="28" rx="14"/><text x="' + x + '" y="' + (y + 5) + '" text-anchor="middle" font-family="inherit">' + esc(text) + '</text></g>'; };
+  const pfeil = (x1, y1, x2, y2) => '<path d="M' + x1 + ' ' + y1 + 'L' + x2 + ' ' + y2 + '" stroke="' + NAVY + '" stroke-width="2.4" fill="none" marker-end="url(#lsPfeil)"/>';
+  const dok = (x, y, b, h) => '<rect x="' + x + '" y="' + y + '" width="' + b + '" height="' + h + '" rx="8" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/><path d="M' + (x + 16) + ' ' + (y + 22) + 'h' + (b * 0.45) + 'M' + (x + 16) + ' ' + (y + 42) + 'h' + (b - 32) + 'M' + (x + 16) + ' ' + (y + 60) + 'h' + (b - 32) + (h > 90 ? 'M' + (x + 16) + ' ' + (y + 78) + 'h' + (b * 0.6) : '') + '" stroke="' + STAHL + '" stroke-width="5" stroke-linecap="round"/>';
+  const brief = (x, y) => '<rect x="' + x + '" y="' + y + '" width="54" height="36" rx="6" fill="#fff" stroke="' + NAVY + '" stroke-width="2.2"/><path d="M' + x + ' ' + (y + 4) + 'l27 18 27-18" fill="none" stroke="' + NAVY + '" stroke-width="2.2"/>';
+  const person = (x, y) => '<circle cx="' + x + '" cy="' + y + '" r="13" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/><path d="M' + (x - 24) + ' ' + (y + 58) + 'c0-24 10-36 24-36s24 12 24 36" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/>';
+  const labelsVon = (c, max) => { const t = ((c && c.wichtig) || []).map((w) => w.tabelle).find(Boolean); if (!t) return []; const l = t.zeilen.map((z) => String(z[0]).replace(/^\d+\s+/, '').replace(/\s*\(.*?\)\s*$/, '').trim()); return l.length >= 2 && l.length <= max && l.every((x) => x.length <= 20) ? l : []; };
+  const verteilt = (n, x0, x1) => Array.from({ length: n }, (_, i) => n > 1 ? x0 + (x1 - x0) * i / (n - 1) : (x0 + x1) / 2);
+  const MOTIV_B = {
+    split: (c) => { const l = labelsVon(c, 3); return '<rect x="290" y="92" width="420" height="148" rx="14" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/><path d="M430 92v148M570 92v148" stroke="' + NAVY + '" stroke-width="2.4" stroke-dasharray="8 8"/>' + ikon('fabrik', 338, 142, 1.9) + ikon('mast', 478, 142, 1.9) + ikon('laden', 618, 142, 1.9) + '<circle cx="500" cy="60" r="16" fill="' + LIME + '" stroke="' + NAVY + '" stroke-width="2"/><path d="M500 76v16" stroke="' + NAVY + '" stroke-width="2.4"/>' + (l.length === 3 ? l.map((t, i) => pille(360 + i * 140, 264, t)).join('') : ''); },
+    chain: (c) => { const l = labelsVon(c, 5); return windrad(150, 118, 118, 15) + mast(500, 90, 150) + haus(790, 190, 64) + pfeil(230, 196, 440, 196) + pfeil(560, 196, 760, 196) + (l.length ? verteilt(l.length, 150, 850).map((x, i) => pille(x, 268, l[i])).join('') : ''); },
+    nodes: (c) => { const l = labelsVon(c, 5), n = l.length || 4, xs = verteilt(n, 180, 820); return xs.map((x) => '<path d="M500 84L' + x + ' 178" stroke="' + NAVY + '" stroke-width="2" stroke-dasharray="4 6"/>').join('') + '<circle cx="500" cy="80" r="30" fill="' + LIME + '" stroke="' + NAVY + '" stroke-width="2.4"/>' + ikon('hand', 486, 66, 1.2) + xs.map((x, i) => '<circle cx="' + x + '" cy="182" r="24" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/>' + ikon(['fabrik', 'mast', 'laden', 'haus', 'zaehler'][i % 5], x - 12, 170, 1) + (l.length ? pille(x, 246, l[i]) : '')).join(''); },
+    customer: () => mast(150, 96, 150) + windrad(860, 118, 118, 30) + haus(445, 150, 110) + person(360, 190) + pfeil(190, 206, 420, 206) + pfeil(820, 206, 580, 206) + '<circle cx="500" cy="98" r="18" fill="' + LIME + '" stroke="' + NAVY + '" stroke-width="2"/>',
+    paragraph: () => '<g transform="rotate(-6 420 160)">' + dok(300, 70, 240, 170) + '</g><text x="690" y="228" font-family="var(--disp)" font-weight="700" font-size="150" fill="' + NAVY + '">§</text><circle cx="585" cy="212" r="22" fill="' + LIME + '" stroke="' + NAVY + '" stroke-width="2.4"/>' + ikon('haken', 573, 200, 1),
+    timeline: (c) => { const l = labelsVon(c, 4), n = l.length || 4, xs = verteilt(n, 150, 850); return '<path d="M110 176H890" stroke="' + NAVY + '" stroke-width="2.4" marker-end="url(#lsPfeil)"/>' + xs.map((x, i) => (i % 2 ? dok(x - 28, 78, 56, 70) : brief(x - 27, 96)) + '<circle cx="' + x + '" cy="176" r="16" fill="' + (i === 0 ? LIME : '#fff') + '" stroke="' + NAVY + '" stroke-width="2.4"/><text x="' + x + '" y="181" text-anchor="middle" font-size="14" font-weight="700" fill="' + NAVY + '">' + (i + 1) + '</text>' + (l.length ? pille(x, 236, l[i]) : '')).join(''); },
+    duo: () => mast(140, 60, 100) + haus(820, 100, 54) + '<path d="M190 120L330 120L360 100L390 140L420 100L450 140L480 120L800 120" stroke="' + NAVY + '" stroke-width="2.4" fill="none" marker-end="url(#lsPfeil)"/><path d="M110 228H880" stroke="' + NAVY + '" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M110 228H880" stroke="' + ICE + '" stroke-width="6" fill="none" stroke-linecap="round"/><g fill="' + LIME + '" stroke="' + NAVY + '" stroke-width="2"><circle cx="300" cy="228" r="11"/><circle cx="640" cy="228" r="11"/></g>' + ikon('kessel', 850, 200, 1.6) + pille(90, 120, 'Strom') + pille(80, 190, 'Gas'),
+    invoice: () => dok(250, 46, 300, 210) + '<rect x="274" y="196" width="252" height="30" rx="6" fill="#F4F8C8" stroke="' + LIME + '" stroke-width="2"/><path d="M290 211h120" stroke="' + NAVY + '" stroke-width="4" stroke-linecap="round"/><circle cx="640" cy="150" r="52" fill="#fff" stroke="' + NAVY + '" stroke-width="3"/><path d="M678 188l54 54" stroke="' + NAVY + '" stroke-width="10" stroke-linecap="round"/>' + ikon('laden', 616, 126, 2) + haus(790, 190, 60),
+    meter: () => '<path d="M60 240H940" stroke="' + NAVY + '" stroke-width="2.4"/><rect x="170" y="110" width="130" height="130" rx="10" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/><circle cx="235" cy="165" r="34" fill="' + ICE + '" stroke="' + NAVY + '" stroke-width="2.4"/><path d="M235 165l20-18" stroke="' + NAVY + '" stroke-width="3" stroke-linecap="round"/><rect x="420" y="110" width="160" height="130" rx="10" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/><rect x="442" y="134" width="116" height="36" rx="6" fill="' + NAVY + '"/><path d="M456 152h88" stroke="' + LIME + '" stroke-width="6" stroke-linecap="round"/><rect x="700" y="110" width="150" height="130" rx="10" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/><rect x="722" y="134" width="106" height="36" rx="6" fill="' + NAVY + '"/><path d="M736 152h78" stroke="' + LIME + '" stroke-width="6" stroke-linecap="round"/><path d="M790 92a40 40 0 0 1 56 0M804 108a20 20 0 0 1 28 0" fill="none" stroke="' + NAVY + '" stroke-width="2.4" stroke-linecap="round"/><circle cx="818" cy="122" r="4" fill="' + NAVY + '"/>',
+    id: () => '<rect x="310" y="64" width="380" height="176" rx="14" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/><rect x="334" y="88" width="120" height="14" rx="4" fill="' + NAVY + '"/>' + Array.from({ length: 11 }, (_, i) => '<rect x="' + (334 + i * 30) + '" y="130" width="24" height="34" rx="5" fill="' + (i === 10 ? LIME : ICE) + '" stroke="' + NAVY + '" stroke-width="1.8"/>').join('') + '<path d="M334 196h160" stroke="' + STAHL + '" stroke-width="5" stroke-linecap="round"/><circle cx="650" cy="206" r="22" fill="' + LIME + '" stroke="' + NAVY + '" stroke-width="2.4"/>' + ikon('haken', 638, 194, 1) + haus(150, 196, 56) + pfeil(230, 220, 300, 220),
+    data: () => '<rect x="120" y="60" width="360" height="180" rx="12" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/><path d="M150 210V90M150 210H450" stroke="' + STAHL + '" stroke-width="2.4"/><path d="M160 190L220 150L280 170L340 110L400 130L440 96" fill="none" stroke="' + NAVY + '" stroke-width="3" stroke-linejoin="round"/><circle cx="340" cy="110" r="6" fill="' + LIME + '" stroke="' + NAVY + '" stroke-width="2"/><path d="M500 150Q600 100 700 150T880 150" stroke="' + NAVY + '" stroke-width="2" stroke-dasharray="4 7" fill="none"/>' + brief(560, 100) + brief(690, 150) + '<rect x="780" y="110" width="120" height="130" rx="10" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/>' + ikon('monitor', 816, 150, 2),
+    balance: () => '<path d="M500 80V240M420 240H580" stroke="' + NAVY + '" stroke-width="3" stroke-linecap="round"/><path d="M260 96H740" stroke="' + NAVY + '" stroke-width="3" stroke-linecap="round"/><circle cx="500" cy="96" r="10" fill="' + LIME + '" stroke="' + NAVY + '" stroke-width="2.4"/><path d="M260 96L210 200H310ZM740 96L690 200H790Z" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4" stroke-linejoin="round"/><rect x="236" y="164" width="14" height="30" fill="' + NAVY + '"/><rect x="256" y="150" width="14" height="44" fill="' + STAHL + '"/><rect x="276" y="172" width="14" height="22" fill="' + LIME + '"/><rect x="716" y="156" width="14" height="38" fill="' + LIME + '"/><rect x="736" y="150" width="14" height="44" fill="' + NAVY + '"/><rect x="756" y="168" width="14" height="26" fill="' + STAHL + '"/>',
+    pipe: () => '<path d="M60 150H330Q380 150 380 200T430 250H640" stroke="' + NAVY + '" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M60 150H330Q380 150 380 200T430 250H640" stroke="' + ICE + '" stroke-width="6" fill="none" stroke-linecap="round"/><g fill="' + LIME + '" stroke="' + NAVY + '" stroke-width="2"><circle cx="180" cy="150" r="12"/><circle cx="540" cy="250" r="12"/></g><path d="M700 250a90 90 0 0 1 180 0z" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/><path d="M730 250a60 60 0 0 1 120 0" fill="' + ICE + '" stroke="' + NAVY + '" stroke-width="2"/>' + ikon('kessel', 776, 196, 1.4),
+    control: () => mast(150, 80, 160) + '<path d="M210 120q40-30 80 0M220 150q30-20 60 0" fill="none" stroke="' + LIME + '" stroke-width="3" stroke-linecap="round"/>' + haus(400, 140, 120) + '<rect x="560" y="176" width="60" height="64" rx="8" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/><circle cx="590" cy="208" r="18" fill="' + ICE + '" stroke="' + NAVY + '" stroke-width="2.4"/><path d="M590 190v36M572 208h36" stroke="' + NAVY + '" stroke-width="2.4"/><rect x="700" y="150" width="42" height="90" rx="8" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/><path d="M742 200h40q24 0 24 24v16" fill="none" stroke="' + NAVY + '" stroke-width="2.4"/><rect x="780" y="200" width="130" height="40" rx="12" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4"/><circle cx="810" cy="240" r="11" fill="' + NAVY + '"/><circle cx="880" cy="240" r="11" fill="' + NAVY + '"/>' + ikon('schalter', 696, 160, 1.2),
+    shield: () => '<path d="M500 40l150 50v80c0 70-70 110-150 130-80-20-150-60-150-130V90z" fill="#fff" stroke="' + NAVY + '" stroke-width="3" stroke-linejoin="round"/><rect x="460" y="150" width="80" height="60" rx="8" fill="' + LIME + '" stroke="' + NAVY + '" stroke-width="2.4"/><path d="M475 150v-20a25 25 0 0 1 50 0v20" fill="none" stroke="' + NAVY + '" stroke-width="3"/><circle cx="500" cy="180" r="6" fill="' + NAVY + '"/><path d="M160 200h120M720 200h120M200 120h60M740 120h60" stroke="' + STAHL + '" stroke-width="4" stroke-dasharray="2 10" stroke-linecap="round"/>' + mast(160, 100, 140) + haus(800, 196, 56),
+    map: () => '<path d="M200 90q120-60 260-30t280 10q60 60 20 120t-150 60q-150-10-280-40t-130-120z" fill="#fff" stroke="' + NAVY + '" stroke-width="2.4" stroke-dasharray="10 8"/><path d="M360 110q60 40 130 40t150-20" fill="none" stroke="' + STAHL + '" stroke-width="3"/>' + [[330, 150], [520, 120], [700, 170]].map(([x, y]) => '<path d="M' + x + ' ' + (y + 30) + 'l-18-26a22 22 0 1 1 36 0z" fill="' + LIME + '" stroke="' + NAVY + '" stroke-width="2.4"/><circle cx="' + x + '" cy="' + (y - 4) + '" r="7" fill="#fff"/>').join('') + mast(880, 100, 140),
+    landscape: () => windrad(140, 120, 132, 20) + mast(400, 110, 146) + mast(580, 96, 160) + '<path d="M424 128Q500 160 556 114" stroke="' + NAVY + '" stroke-width="1.8" fill="none"/>' + haus(760, 204, 58) + haus(850, 212, 50, true)
+  };
+  const THEMA_B = [[/unbundling|entflecht/i, 'split'], [/steuerbar|wärmepumpe|ladepunkt|anlagen betroffen|netzbetreiber darf|gegenleistung|14a/i, 'control'], [/datenschutz|sicherheit/i, 'shield'], [/viele beteiligte/i, 'nodes'],
+    [/bilanz|ausgleich|mabis|clearing|aggregation|summen/i, 'balance'], [/rechnung|preis|entgelt|wer steckt/i, 'invoice'], [/identifikator|-id\b|\bids\b|prüfziffer|id-check|nelo|vergabe/i, 'id'], [/marktgebiet|entry|gebiete|übertragungsnetzbetreiber|handelspunkt|rollout/i, 'map'],
+    [/vergleich|strom und gas|gas ist anders|marktwelt/i, 'duo'], [/prozess|wechsel|anmeldung|lieferbeginn|lieferende|kündigung|frist|ablauf|übernahme/i, 'timeline'], [/daten|zeitreihe|lastgang|plausibil|austausch|nachricht|übertragung|übermitt/i, 'data'],
+    [/lokation|zähl|messstelle|messeinrichtung|messsystem|messwert|messung/i, 'meter'], [/regulier|gesetz|regelt|enwg|recht|regelwerk/i, 'paragraph'], [/\bkunde/i, 'customer'], [/erzeugung|netz und vertrieb|wertschöpf|kette/i, 'chain'], [/gas/i, 'pipe'],
+    [/rolle|beteiligte|marktstruktur|unternehmen|zusammenspiel|marktpartner|lieferant/i, 'nodes']];
+  const themaB = (titel) => { const t = THEMA_B.find(([re]) => re.test(titel || '')); return t ? t[1] : ''; };
   const motivB = (k) => {
-    const bild = window.bluuBildUrl ? bluuBildUrl('modul:' + aktuellerCode) : '';
-    const kap = KAP(), i = kap.findIndex((x) => x.key === k), n = kap.length, x0 = 420, x1 = 900, step = n > 1 ? (x1 - x0) / (n - 1) : 0;
-    const dots = kap.map((x, j) => { const cx = x0 + j * step, cur = j === i, done = fertig(x.key); return '<circle cx="' + cx + '" cy="170" r="' + (cur ? 27 : 20) + '" fill="' + (cur ? '#BEC60E' : (done ? '#243A4C' : '#fff')) + '" stroke="#243A4C" stroke-width="2.4"/><text x="' + cx + '" y="' + (cur ? 178 : 176) + '" text-anchor="middle" font-family="inherit" font-weight="700" font-size="' + (cur ? 22 : 16) + '" fill="' + (done && !cur ? '#fff' : '#243A4C') + '">' + esc(x.key) + '</text>'; }).join('');
-    return '<defs><clipPath id="lsKachel"><rect x="110" y="70" width="160" height="160" rx="36"/></clipPath></defs><rect x="96" y="56" width="188" height="188" rx="44" fill="#fff" stroke="#243A4C" stroke-width="2.4"/>' +
-      (bild ? '<image href="' + bild + '" x="110" y="70" width="160" height="160" preserveAspectRatio="xMidYMid slice" clip-path="url(#lsKachel)"/>' : '') +
-      '<path d="M' + x0 + ' 170H' + x1 + '" stroke="#243A4C" stroke-width="2.4"/>' + dots +
-      (i >= 0 ? '<text x="' + ((x0 + x1) / 2) + '" y="238" text-anchor="middle" font-family="inherit" font-size="16" fill="#4F6B82">Kapitel ' + (i + 1) + ' von ' + n + '</text>' : '');
+    if (k === 'start') return MOTIV_B.landscape();
+    const c = kapVon(k) || {};
+    const art = themaB(c.titel) || themaB(D().titel) || (labelsVon(c, 5).length ? 'nodes' : 'landscape');
+    return (MOTIV_B[art] || MOTIV_B.landscape)(c);
   };
   const kapitelSeiteB = (k, c) => {
     const set = lkSet(k);
@@ -13754,9 +13858,20 @@ window.BLUU_LERNSKRIPT_111 = {
   function render(m, el) {
     laden();
     const k = S.kapitel === 'start' || kapVon(S.kapitel) ? S.kapitel : 'start';
-    el.innerHTML = '<div class="ls" style="--ls-fs:' + [18, 20, 22][S.fs] + 'px">' + rail(k) + '<div class="ls-main">' + (k === 'start' ? startSeite() : kapitelSeite(k)) + '</div></div>';
+    el.innerHTML = '<div class="ls" style="--ls-fs:' + [18, 20, 22][S.fs] + 'px;--ls-ton:' + ton() + '">' + rail(k) + '<div class="ls-main">' + (k === 'start' ? startSeite() : kapitelSeite(k)) + '</div></div>';
     if (k !== 'start') rechne(k);
+    lesebalken();
   }
+  /* BLUU-GLANZ: Ton je Fachbereich (bestehende Palettenwerte) und Lesebalken am oberen Rand */
+  const TON = { grundlagen: '#6F93B1', marktkommunikation: '#3F74A6', messwesen: '#4A7A53', systeme: '#243A4C', intern: '#4F6B82' };
+  const ton = () => { const m = (window.BLUU_MODULE || []).find((x) => x.code === aktuellerCode); return TON[m && m.bereich] || TON.grundlagen; };
+  const lesebalken = () => {
+    let bar = document.getElementById('ls-lesebalken');
+    if (!bar) { bar = document.createElement('div'); bar.id = 'ls-lesebalken'; bar.className = 'ls-lesebalken'; bar.setAttribute('aria-hidden', 'true'); document.body.appendChild(bar); }
+    const tick = () => { const main = document.querySelector('.ls-main'); const r = main ? main.getBoundingClientRect() : null, h = window.innerHeight, total = r ? r.height - h : 0; if (!r || r.height === 0 || total <= 0) { bar.style.opacity = '0'; return; } const p = Math.min(1, Math.max(0, -r.top / total)); bar.style.opacity = '1'; bar.style.transform = 'scaleX(' + p.toFixed(3) + ')'; };
+    if (!lesebalken.an) { lesebalken.an = true; window.addEventListener('scroll', tick, { passive: true }); window.addEventListener('resize', tick); }
+    tick();
+  };
   const neuZeichnen = () => { if (window.bluuModulReiter) bluuModulReiter('lernskript'); };
   window.bluuLernskriptRender = function (m, el) {
     if (!waehle(m)) return false;
