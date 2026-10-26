@@ -54,3 +54,7 @@ Die Word-Dateien aus «04 Lernplattform» haben eine feste Gliederung, die sich 
 | Lernkarten: `### 1.1.2-A-01 · Typ` + Tabelle Vorderseite/Rückseite | `cards[{id, type, f, b, level, xp}]` | Lernkarten |
 
 Für ein weiteres Modul: Zip entpacken, die vier Dateien (Lernskript, Lernkarten, Modulbeschreibung, Steckbrief) dumpen, in `tf1_port.js` die Modulzeile ergänzen, Patch laufen lassen; Kachel aus `docs/bilder-module/` wählen. Weicht ein Dokument von der Gliederung ab, meldet der Parser die Zeile («Warnung»).
+
+### Fragen statt Stichwörter (26.10.2026)
+
+Die Word-Lernkarten «Erklären» tragen vorn nur «Blocktitel: Zeile». Für die App bekommt jede dieser Karten eine ausformulierte Frage (`fragen_<modul>.json` → `fronts`), die Rückseite bleibt der Skripttext. Je Kapitel kommen dazu `denk` (Frage + Hinweis vor dem Lesen) und `job` (Situationen mit Tipp und Antwort), die sowohl im Lernskript (Karten «Denk kurz nach», «Mitten im Job», «Und?») als auch als Lernkarten vom Typ «Mitten im Job» erscheinen. Regel beim Schreiben: Antworten nur aus Sätzen des Lernskripts zusammensetzen, keine neuen Zahlen oder Regeln.
