@@ -115,6 +115,10 @@ Ausnahme vom «kein Glanz»: auf Wunsch des Users bekommen die geometrischen Mod
 
 Die Kartenvorderseite zeigt das aktuelle Maskottchen (Komponente, 72 px), nie eine eigene Zeichnung. Stimmungen: neugierig → erklärt → stolz / froh / denkt.
 
+## Bewegung des Maskottchens
+
+Lumi bewegt sich weich und nie mechanisch: Spline-Easing für alle SMIL-Animationen, Schweben als liegende Acht, Fühler schwingen verzögert nach, Blinzeln einzeln und doppelt, kurze Blicke zur Seite. Strecken und Stauchen höchstens 1,5 % im Ruhezustand und 4,5 % im Flug. Abheben mit Ausholen, Landung mit Nachfedern. Bei «Bewegung reduzieren» und unter 44 px ist alles statisch.
+
 ## Was nicht erlaubt ist
 
 Emoji als Icons in der Verwaltung, farbige Glows, Gloss-Verläufe auf Abzeichen, Platzhalterzahlen, Versalien im Fließtext, Text unter 11 px, neue Farbwerte außerhalb der Tokens.
