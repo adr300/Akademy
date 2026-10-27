@@ -2716,6 +2716,19 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 .lumi-figur.erscheint .lumi-innen{animation:lumi-erscheint .6s cubic-bezier(.34,1.56,.64,1) both;}
 @keyframes lumi-erscheint{0%{opacity:0;transform:scale(.4);filter:drop-shadow(0 0 0 rgba(212,220,90,0))}55%{opacity:1;filter:drop-shadow(0 0 14px rgba(212,220,90,.75))}100%{transform:none;filter:drop-shadow(0 0 0 rgba(212,220,90,0))}}
 .lumi-figur svg{overflow:visible;display:block;}
+/* BLUU-LUMI-GLANZ: Licht statt Spur – Schein um Lumi im Flug, weiche Lichtwelle unter der Laterne beim Landen */
+.lumi-figur::before{content:'';position:absolute;left:50%;top:62%;width:150%;aspect-ratio:1;transform:translate(-50%,-50%) scale(.75);border-radius:50%;z-index:-1;pointer-events:none;opacity:0;
+  background:radial-gradient(circle,rgba(236,242,150,.6),rgba(212,220,90,.16) 44%,rgba(212,220,90,0) 68%);transition:opacity .5s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1);}
+.lumi-figur.fliegt::before{opacity:1;transform:translate(-50%,-50%) scale(1.1);}
+.lumi-figur::after{content:'';position:absolute;left:50%;top:84%;width:56%;height:18%;margin-left:-28%;border-radius:50%;pointer-events:none;opacity:0;box-shadow:0 0 0 2px rgba(183,194,27,.55),0 0 14px 2px rgba(212,220,90,.35);}
+.lumi-figur.landet::after{animation:lumi-welle .7s cubic-bezier(.16,1,.3,1) both;}
+@keyframes lumi-welle{0%{opacity:.9;transform:scale(.35)}100%{opacity:0;transform:scale(2.1)}}
+.lumi-blase{transition:opacity .26s cubic-bezier(.16,1,.3,1),transform .34s cubic-bezier(.16,1,.3,1);}
+.lumi-blase.weg{transform:scale(.94) translateY(4px);transition-duration:.14s;}
+.lumi-blase.zeigt-links{transform-origin:0 var(--spitze,28px);}
+.lumi-blase.zeigt-rechts{transform-origin:100% var(--spitze,28px);}
+.lumi-blase.zeigt-oben{transform-origin:var(--spitze,28px) 0;}
+.lumi-blase.zeigt-unten{transform-origin:var(--spitze,28px) 100%;}
 .lumi-blase{position:fixed;left:0;top:0;z-index:1351;width:max-content;max-width:min(360px,calc(100vw - 24px));background:#fff;color:#1F2F3D;border:2px solid #243A4C;border-radius:14px;padding:12px 16px 12px;box-shadow:0 18px 40px -20px rgba(27,46,62,.55);font-family:'IBM Plex Sans',sans-serif;transition:opacity .22s,transform .22s;}
 .lumi-blase.weg{opacity:0;pointer-events:none;transform:scale(.96);}
 .lumi-blase::before{content:'';position:absolute;width:14px;height:14px;background:#fff;border:2px solid #243A4C;border-right:0;border-bottom:0;transform:rotate(45deg);display:none;}
@@ -2748,7 +2761,7 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 :root:not([data-theme="light"]) .lumi-btn:hover{background:#C9D24A;}
 .lumi-blase.dock{left:12px!important;right:12px;top:auto!important;bottom:12px;max-width:none;width:auto;padding-left:86px;min-height:80px;}
 .lumi-blase.dock::before{display:none;}
-@media (prefers-reduced-motion:reduce){.lumi-figur,.lumi-blase{transition:none;}.lumi-figur .lumi-innen{animation:none!important;}}
+@media (prefers-reduced-motion:reduce){.lumi-figur,.lumi-blase,.lumi-figur::before{transition:none;}.lumi-figur .lumi-innen,.lumi-figur::after{animation:none!important;}}
 /* BLUU-LUMI:ENDE */
 /* BLUU-SZENEN:START — Szenen im Stil der Vorlagen (26.10.2026) */
 .ls-hero .ls-pille rect{fill:#E4EEF7;stroke:none;}
@@ -15940,7 +15953,7 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
     const p1 = { x: von.x + dx * 0.3, y: von.y + dy * 0.3 + hub }, p2 = { x: von.x + dx * 0.7, y: von.y + dy * 0.7 + hub };
     const bez = (t, a, b, c, d) => { const u = 1 - t; return u * u * u * a + 3 * u * u * t * b + 3 * u * t * t * c + t * t * t * d; };
     const tang = (t, a, b, c, d) => { const u = 1 - t; return 3 * u * u * (b - a) + 6 * u * t * (c - b) + 3 * t * t * (d - c); };
-    Z.figur.classList.add('hebt-ab');
+    Z.figur.classList.add('hebt-ab', 'fliegt');
     /* BLUU-LUMI-BEWEGUNG: Schräglage folgt der Flugrichtung mit Nachlauf (geglättet), Strecken proportional zum Tempo (max. 4,5 %) */
     let neig = 0;
     const t0 = performance.now() + 170;
@@ -15952,7 +15965,7 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
       neig += ((t > 0 && t < 1 ? Math.max(-14, Math.min(14, (tx / len) * 13 * Math.sin(Math.PI * t))) : 0) - neig) * 0.2;
       if (t > 0) Z.figur.classList.remove('hebt-ab');
       setze(x, y, t < 1 ? neig : 0, t < 1 ? 0.045 * tempo : 0);
-      if (t < 1) Z.raf = requestAnimationFrame(schritt); else { Z.raf = 0; Z.figur.classList.add('landet'); setTimeout(() => Z && Z.figur.classList.remove('landet'), 480); fertig(); }
+      if (t < 1) Z.raf = requestAnimationFrame(schritt); else { Z.raf = 0; Z.figur.classList.remove('fliegt'); Z.figur.classList.add('landet'); setTimeout(() => Z && Z.figur.classList.remove('landet'), 480); fertig(); }
     };
     Z.raf = requestAnimationFrame(schritt);
   };
@@ -16166,10 +16179,6 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
 .auftritt.an{opacity:1;}
 .auftritt.weg{opacity:0;pointer-events:none;}
 :root:not([data-theme="light"]) .auftritt{background:radial-gradient(ellipse at 66% 52%,rgba(183,194,27,.16),rgba(15,26,36,0) 55%),rgba(15,26,36,.88);}
-.auftritt .spur{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
-.auftritt .spur path{fill:none;stroke:#D4DC5A;stroke-width:3;stroke-linecap:round;stroke-dasharray:6 14;opacity:0;}
-.auftritt.p4 .spur path,.auftritt.p5 .spur path{opacity:.8;animation:auftritt-spur 2.6s ease-out both;}
-@keyframes auftritt-spur{from{stroke-dashoffset:900;opacity:0}to{stroke-dashoffset:0}}
 .auftritt .buehne{position:absolute;left:66%;top:52%;width:0;height:0;}
 .auftritt .funke{position:absolute;left:-7px;top:-7px;width:14px;height:14px;border-radius:50%;background:#E4EB8F;box-shadow:0 0 18px 8px rgba(212,220,90,.7);opacity:0;}
 .auftritt.p1 .funke{opacity:1;animation:auftritt-funke-ein .9s cubic-bezier(.22,1,.36,1) both,auftritt-puls 2.4s cubic-bezier(.45,0,.55,1) .9s infinite;}
@@ -16197,14 +16206,14 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
 .auftritt.p2.halb .silhouette{opacity:.32;}
 .auftritt.p3 .silhouette,.auftritt.p3.halb .silhouette,.auftritt.p5 .silhouette{opacity:0;transition:opacity .6s;}
 .auftritt .figur{position:absolute;left:66%;top:52%;width:168px;height:168px;margin:-88px 0 0 -84px;opacity:0;transform:scale(.7);
-  transition:left 1.1s cubic-bezier(.45,0,.2,1),top 1.1s cubic-bezier(.45,0,.2,1),opacity .8s,transform .9s cubic-bezier(.34,1.56,.64,1);filter:drop-shadow(0 18px 18px rgba(27,46,62,.18));}
+  transition:opacity .7s cubic-bezier(.16,1,.3,1),transform 1s cubic-bezier(.34,1.4,.64,1);filter:drop-shadow(0 18px 18px rgba(27,46,62,.18));}
 .auftritt .figur svg{width:168px!important;height:168px!important;}
 .auftritt .figur::after{content:'';position:absolute;left:50%;bottom:-6px;width:90px;height:14px;margin-left:-45px;border-radius:50%;background:rgba(27,46,62,.12);filter:blur(4px);}
 .auftritt.p3 .figur,.auftritt.p4 .figur,.auftritt.p5 .figur{opacity:1;transform:scale(1);}
 .auftritt .figur.schaut .innen{animation:auftritt-schaut 1.6s ease-in-out both;}
 @keyframes auftritt-schaut{25%{transform:rotate(-9deg) translateX(-6px)}60%{transform:rotate(8deg) translateX(6px)}}
-.auftritt .figur.fliegt .innen{animation:auftritt-flug 1.1s cubic-bezier(.45,0,.25,1) both;}
-@keyframes auftritt-flug{14%{transform:translateY(4px) scale(1.05,.94)}42%{transform:rotate(-9deg) scale(.97,1.04)}78%{transform:rotate(2deg) scale(1.02,.98)}100%{transform:none}}
+.auftritt .figur.fliegt .innen{animation:auftritt-flug .9s cubic-bezier(.45,0,.25,1) both;}
+@keyframes auftritt-flug{12%{transform:translateY(4px) scale(1.05,.94)}45%{transform:none}84%{transform:translateY(2px) scale(1.04,.95)}100%{transform:none}}
 .auftritt .figur.nickt .innen{animation:auftritt-nick .8s ease-in-out 2;}
 @keyframes auftritt-nick{45%{transform:translateY(5px) rotate(3deg) scale(1.03,.97)}75%{transform:translateY(-1px) rotate(-.5deg)}}
 .auftritt .figur .innen{display:block;transform-origin:50% 60%;}
@@ -16244,8 +16253,31 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
 .auftritt .sr{position:absolute;left:-9999px;}
 /* Schlussbild sofort (Überspringen, Bewegung reduzieren): keine Übergänge */
 .auftritt.sofort *,.auftritt.sofort{transition:none!important;animation:none!important;}
+/* BLUU-LUMI-GLANZ: Licht trägt den Auftritt – Blitz, ausschwärmende Funken, Schein im Flug, Lichtimpuls an der Karte. Keine Spurlinien. */
+@property --weit{syntax:'<number>';inherits:false;initial-value:1;}
+.auftritt .teilchen i{transform:rotate(var(--w,0deg)) translateX(calc(var(--r,150px) * var(--weit)));animation-name:auftritt-kreis-weit;}
+@keyframes auftritt-kreis-weit{to{transform:rotate(calc(var(--w,0deg) + 360deg)) translateX(calc(var(--r,150px) * var(--weit)))}}
+.auftritt.p3 .teilchen{opacity:0;transition:opacity 1.5s cubic-bezier(.4,0,.2,1) .2s;}
+.auftritt.p3 .teilchen i{--weit:2.6;transition:--weit 1.7s cubic-bezier(.16,1,.3,1);}
+.auftritt .buehne::after{content:'';position:absolute;left:-170px;top:-170px;width:340px;height:340px;border-radius:50%;pointer-events:none;opacity:0;transform:scale(.4);
+  background:radial-gradient(circle,rgba(255,255,236,.95),rgba(236,242,150,.55) 34%,rgba(212,220,90,0) 70%);}
+.auftritt.p3 .buehne::after{animation:auftritt-blitz 1.1s cubic-bezier(.16,1,.3,1) both;}
+@keyframes auftritt-blitz{22%{opacity:.95;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}
+.auftritt .figur::before{content:'';position:absolute;left:50%;top:60%;width:170px;height:170px;margin:-85px 0 0 -85px;border-radius:50%;z-index:-1;pointer-events:none;
+  background:radial-gradient(circle,rgba(236,242,150,.62),rgba(212,220,90,.18) 42%,rgba(212,220,90,0) 68%);opacity:.4;transform:scale(.8);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1);}
+.auftritt .figur.fliegt::before{opacity:1;transform:scale(1.18);}
+.auftritt .karte{position:relative;filter:blur(5px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .8s cubic-bezier(.16,1,.3,1),filter .6s cubic-bezier(.16,1,.3,1),border-color .4s,box-shadow .5s;}
+.auftritt .karte.da{filter:none;}
+.auftritt .karte{isolation:isolate;}
+.auftritt .karte::after{content:'';position:absolute;inset:0;border-radius:inherit;z-index:-1;pointer-events:none;opacity:0;
+  background:radial-gradient(130% 120% at 94% 0%,rgba(228,235,143,.6),rgba(228,235,143,.14) 45%,rgba(228,235,143,0) 72%);}
+.auftritt .karte.zeigt::after{animation:auftritt-beruehrt 1.2s cubic-bezier(.16,1,.3,1) .35s both;}
+@keyframes auftritt-beruehrt{0%{opacity:0}35%{opacity:1}100%{opacity:.45}}
+:root:not([data-theme="light"]) .auftritt .karte::after{background:radial-gradient(130% 120% at 94% 0%,rgba(212,220,90,.34),rgba(212,220,90,.08) 45%,rgba(212,220,90,0) 72%);}
+.auftritt .karte .ik{transition:background .5s,color .5s,transform .6s cubic-bezier(.16,1,.3,1),box-shadow .6s;}
+.auftritt .karte.zeigt .ik{background:#F1F4CF;transform:translateY(-2px);box-shadow:0 8px 18px -10px rgba(140,148,18,.55);}
+:root:not([data-theme="light"]) .auftritt .karte.zeigt .ik{background:#3A4A1E;color:#F1F4CF;}
 @media (max-width:760px){
-  .auftritt .spur{display:none;}
   .auftritt .buehne,.auftritt .figur{left:50%;top:34%;}
   .auftritt .figur{width:128px;height:128px;margin:-68px 0 0 -64px;}.auftritt .figur svg{width:128px!important;height:128px!important;}
   .auftritt .karten{left:16px;right:16px;top:auto;bottom:20px;width:auto;gap:10px;}
@@ -16253,7 +16285,7 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
   .auftritt .gruss{left:16px;right:16px;top:auto;bottom:calc(20px + 2 * 64px + 30px);max-width:none;}
   .auftritt .gruss p{font-size:15px;}
 }
-@media (prefers-reduced-motion:reduce){.auftritt *{animation:none!important;}}
+@media (prefers-reduced-motion:reduce){.auftritt *{animation:none!important;}.auftritt .karte{filter:none;}.auftritt .teilchen i{transition:none;}}
 </style>
 <script>
 (function () {
@@ -16278,14 +16310,33 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
   const START = [66, 52], SCHLUSS = [68, 50];
   let A = null;
   const zielVon = (i) => { const r = A.karten[i].getBoundingClientRect(); return [Math.min(94, (r.right - 14) / window.innerWidth * 100), Math.max(8, (r.top - 34) / window.innerHeight * 100)]; };
-  /* Leuchtspur durch alle Flugziele: Catmull-Rom-Kurve als kubische Bézier-Segmente (viewBox 0–100 in beiden Achsen) */
-  const spurPfad = (pkt) => { const P = [pkt[0]].concat(pkt, [pkt[pkt.length - 1]]); let d = 'M' + pkt[0][0].toFixed(1) + ' ' + pkt[0][1].toFixed(1);
-    for (let i = 1; i < P.length - 2; i++) { const a = P[i - 1], b = P[i], c = P[i + 1], e = P[i + 2]; d += ' C' + (b[0] + (c[0] - a[0]) / 6).toFixed(1) + ' ' + (b[1] + (c[1] - a[1]) / 6).toFixed(1) + ' ' + (c[0] - (e[0] - b[0]) / 6).toFixed(1) + ' ' + (c[1] - (e[1] - b[1]) / 6).toFixed(1) + ' ' + c[0].toFixed(1) + ' ' + c[1].toFixed(1); }
-    return d; };
   const figurSvg = (stimmung, winken) => bluu('Maskottchen', { groesse: 168, stimmung: stimmung || 'froh', winken: winken ? 'ja' : 'nein', grund: document.documentElement.getAttribute('data-theme') === 'light' ? 'hell' : 'dunkel' });
   const stimmung = (st, winken) => { if (A) A.figur.innerHTML = '<span class="innen">' + figurSvg(st, winken) + '</span>'; };
   const nach = (ms, fn) => { const id = setTimeout(() => { if (A) fn(); }, ms); A.timer.push(id); };
-  const pos = (x, y) => { if (!A || mobil()) return; A.figur.style.left = x + '%'; A.figur.style.top = y + '%'; };
+  /* BLUU-LUMI-GLANZ: Flug als Bogen (kubische Bézier, Scheitel über der Geraden) über die Einzel-Eigenschaften translate/rotate/scale
+     per Web Animations – läuft auf der GPU, lässt sich unterbrechen (commitStyles) und kippt in Flugrichtung. Ziel in % des Fensters. */
+  const flugPx = () => { const t = getComputedStyle(A.figur).translate; if (!t || t === 'none') return [0, 0]; const m = t.split(' ').map(parseFloat); return [m[0] || 0, m[1] || 0]; };
+  const pos = (x, y, sofort) => {
+    if (!A || mobil()) return;
+    const f = A.figur, W = window.innerWidth, H = window.innerHeight;
+    const ziel = [(x - START[0]) / 100 * W, (y - START[1]) / 100 * H];
+    if (A.flug) { try { A.flug.commitStyles(); } catch (e) { /* ältere Browser */ } A.flug.cancel(); A.flug = null; }
+    const von = flugPx(), dx = ziel[0] - von[0], dy = ziel[1] - von[1], dist = Math.hypot(dx, dy);
+    if (sofort || ruhig() || typeof f.animate !== 'function' || dist < 2) { f.style.translate = ziel[0].toFixed(1) + 'px ' + ziel[1].toFixed(1) + 'px'; f.style.rotate = '0deg'; f.style.scale = '1'; return; }
+    const hub = -Math.min(110, 30 + dist * 0.28);
+    const p1 = [von[0] + dx * 0.25, von[1] + dy * 0.25 + hub], p2 = [von[0] + dx * 0.75, von[1] + dy * 0.75 + hub];
+    const frames = [];
+    for (let k = 0; k <= 24; k++) {
+      const t = k / 24, u = 1 - t, b = (a, c, d, e) => u * u * u * a + 3 * u * u * t * c + 3 * u * t * t * d + t * t * t * e;
+      const tx = 3 * u * u * (p1[0] - von[0]) + 6 * u * t * (p2[0] - p1[0]) + 3 * t * t * (ziel[0] - p2[0]);
+      const ty = 3 * u * u * (p1[1] - von[1]) + 6 * u * t * (p2[1] - p1[1]) + 3 * t * t * (ziel[1] - p2[1]);
+      const sw = Math.sin(Math.PI * t), neig = (tx / (Math.hypot(tx, ty) || 1)) * 11 * sw;
+      frames.push({ translate: b(von[0], p1[0], p2[0], ziel[0]).toFixed(1) + 'px ' + b(von[1], p1[1], p2[1], ziel[1]).toFixed(1) + 'px', rotate: neig.toFixed(2) + 'deg', scale: (1 - 0.025 * sw).toFixed(3) + ' ' + (1 + 0.04 * sw).toFixed(3) });
+    }
+    const flug = f.animate(frames, { duration: Math.min(900, Math.max(620, 420 + dist * 0.7)), easing: 'cubic-bezier(.45,.05,.25,1)', fill: 'forwards' });
+    A.flug = flug;
+    flug.onfinish = () => { if (!A || A.flug !== flug) return; try { flug.commitStyles(); } catch (e) { /* ältere Browser */ } flug.cancel(); A.flug = null; };
+  };
   const klasse = (k, an) => { if (A) A.el.classList.toggle(k, an !== false); };
   const zeigeKarte = (i) => { if (!A) return; A.karten.forEach((k, j) => k.classList.toggle('zeigt', j === i)); if (A.karten[i]) A.karten[i].classList.add('da'); };
   const schluss = (sofort) => {
@@ -16294,7 +16345,7 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
     if (sofort) A.el.classList.add('sofort');
     ['p1', 'p2', 'halb', 'p3', 'p4'].forEach((k) => klasse(k, false)); klasse('p3'); klasse('p4'); klasse('p5'); klasse('text');
     A.karten.forEach((k) => { k.classList.add('da'); k.classList.remove('zeigt'); });
-    pos(SCHLUSS[0], SCHLUSS[1]); stimmung('froh', true); A.figur.classList.add('nickt');
+    pos(SCHLUSS[0], SCHLUSS[1], sofort); stimmung('froh', true); A.figur.classList.add('nickt');
     A.status.textContent = 'Willkommen in der BluuAkademie. Ich zeige Dir Deinen Lernweg.';
     setTimeout(() => { if (A) { A.el.classList.remove('sofort'); A.los.focus({ preventScroll: true }); } }, 60);
   };
@@ -16313,8 +16364,7 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
     if (A) ende();
     const el = document.createElement('div'); el.className = 'auftritt'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Willkommen in der BluuAkademie');
     const teilchen = Array.from({ length: 12 }, (_, i) => '<i style="--w:' + (i * 30) + 'deg;--r:' + (118 + (i % 4) * 16) + 'px;--t:' + (5 + (i % 5)) + 's;--d:' + (4 + (i % 3) * 3) + 'px"></i>').join('');
-    el.innerHTML = '<svg class="spur" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path vector-effect="non-scaling-stroke" d=""/></svg>' +
-      '<div class="buehne" aria-hidden="true"><span class="funke"></span><span class="ring"></span><span class="ring b"></span><span class="kugel"></span><span class="teilchen">' + teilchen + '</span><span class="silhouette">' + bluu('Maskottchen', { groesse: 150, stimmung: 'neutral', animiert: 'nein', grund: 'hell' }) + '</span></div>' +
+    el.innerHTML = '<div class="buehne" aria-hidden="true"><span class="funke"></span><span class="ring"></span><span class="ring b"></span><span class="kugel"></span><span class="teilchen">' + teilchen + '</span><span class="silhouette">' + bluu('Maskottchen', { groesse: 150, stimmung: 'neutral', animiert: 'nein', grund: 'hell' }) + '</span></div>' +
       '<div class="figur" aria-hidden="true"></div>' +
       '<div class="karten">' + KARTEN.map(([ik, titel, sub]) => '<div class="karte"><span class="ik' + (ik === 'lumi' ? ' lumi' : '') + '">' + (ik === 'lumi' ? bluu('Maskottchen', { groesse: 46, stimmung: 'froh', animiert: 'nein', grund: 'hell' }) : IK[ik]) + '</span><span><b>' + titel + '</b><span class="sub">' + sub + '</span></span></div>').join('') + '</div>' +
       '<div class="gruss"><p class="marke">Lumi · Dein KI-Assistent</p><h2>Willkommen in der <em>BluuAkademie.</em></h2><p>Ich zeige Dir Deinen Lernweg.</p>' +
@@ -16328,9 +16378,8 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
     el.querySelector('.spaeter').addEventListener('click', () => ende(() => fertig && fertig('spaeter')));
     el.querySelector('.skip').addEventListener('click', () => schluss(true));
     stimmung('neugierig');
-    /* Flugziele aus dem echten Layout der Karten, Spur durch alle Ziele */
+    /* Flugziele aus dem echten Layout der Karten */
     A.ziele = A.karten.map((_, i) => zielVon(i));
-    el.querySelector('.spur path').setAttribute('d', spurPfad([START].concat(A.ziele, [SCHLUSS])));
     requestAnimationFrame(() => { if (A) el.classList.add('an'); });
     if (ruhig()) { schluss(true); return; }
     /* Zeitplan (ms) nach dem Storyboard */

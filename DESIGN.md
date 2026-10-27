@@ -119,6 +119,8 @@ Die Kartenvorderseite zeigt das aktuelle Maskottchen (Komponente, 72 px), nie ei
 
 Lumi bewegt sich weich und nie mechanisch: Spline-Easing für alle SMIL-Animationen, Schweben als liegende Acht, Fühler schwingen verzögert nach, Blinzeln einzeln und doppelt, kurze Blicke zur Seite. Strecken und Stauchen höchstens 1,5 % im Ruhezustand und 4,5 % im Flug. Abheben mit Ausholen, Landung mit Nachfedern. Bei «Bewegung reduzieren» und unter 44 px ist alles statisch.
 
+Keine Spurlinien hinter Lumi: Das Licht des Glühwürmchens ist das Motiv (Schein im Flug, Lichtblitz beim Erscheinen, Aufleuchten der berührten Karte, Lichtwelle bei der Landung). Flüge laufen als Bogen über `translate`/`rotate`/`scale`, nie über `left`/`top`.
+
 ## Was nicht erlaubt ist
 
 Emoji als Icons in der Verwaltung, farbige Glows, Gloss-Verläufe auf Abzeichen, Platzhalterzahlen, Versalien im Fließtext, Text unter 11 px, neue Farbwerte außerhalb der Tokens.
