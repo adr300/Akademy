@@ -278,6 +278,14 @@ body{font-family:'IBM Plex Sans','Inter',system-ui,sans-serif;background:var(--b
 .lk-badge-pop{position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;z-index:3000;animation:fadeIn .3s}
 .lk-badge-box{background:var(--bg2);border:2px solid var(--green);border-radius:var(--rx);padding:2rem;text-align:center;max-width:320px;animation:scaleIn .35s cubic-bezier(.34,1.56,.64,1)}
 @keyframes scaleIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+/* BLUU-LK-LUMI: Lumi im Abschluss-Popup */
+.lk-badge-box .lk-lumi{position:relative;display:block;width:112px;height:112px;margin:-6px auto 0;animation:lk-lumi-ein .8s cubic-bezier(.16,1,.3,1) .12s both;}
+.lk-badge-box .lk-lumi::before{content:'';position:absolute;left:50%;top:62%;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;z-index:-1;background:radial-gradient(circle,rgba(236,242,150,.55),rgba(212,220,90,.14) 45%,rgba(212,220,90,0) 70%);animation:lk-lumi-schein 1.2s cubic-bezier(.16,1,.3,1) .12s both;}
+.lk-badge-box .lk-lumi svg{width:112px!important;height:112px!important;}
+@keyframes lk-lumi-ein{from{opacity:0;transform:translateY(16px) scale(.82)}}
+@keyframes lk-lumi-schein{from{opacity:0;transform:scale(.4)}}
+.lk-badge-box{isolation:isolate;}
+@media (prefers-reduced-motion:reduce){.lk-badge-box .lk-lumi,.lk-badge-box .lk-lumi::before{animation:none;}}
 .btn-assess{border-radius:8px;padding:.45rem .5rem;font-size:13px;font-weight:600;cursor:pointer;border-width:1.5px;border-style:solid;transition:opacity .15s}
 .btn-assess:hover{opacity:.8}
 .lk-card-hint{font-size:11px;color:var(--text3);margin-top:.5rem}
@@ -12318,11 +12326,12 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
   overlay.className = 'lk-badge-pop';
   overlay.innerHTML =
     '<div class="lk-badge-box">'+
-      '<svg width="64" height="64" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="#0e1e08"/><circle cx="50" cy="87" r="26" fill="#ffe84d" opacity="0.12"><animate attributeName="opacity" values="0.08;0.28;0.08" dur="1.5s" repeatCount="indefinite"/></circle><circle cx="50" cy="87" r="17" fill="#ffe84d" opacity="0.2"><animate attributeName="opacity" values="0.14;0.38;0.14" dur="1.5s" repeatCount="indefinite"/></circle><circle cx="50" cy="80" r="11" fill="#4a9020"/><circle cx="50" cy="67" r="14" fill="#56a828"/><circle cx="50" cy="45" r="24" fill="#68c034"/><circle cx="38" cy="39" r="10" fill="white"/><circle cx="62" cy="39" r="10" fill="white"/><circle cx="40" cy="41" r="5.5" fill="#0a1804"/><circle cx="64" cy="41" r="5.5" fill="#0a1804"/><circle cx="37" cy="37" r="2.5" fill="white" opacity="0.8"/><circle cx="61" cy="37" r="2.5" fill="white" opacity="0.8"/><path d="M40 55 Q50 64 60 55" stroke="#2a6010" stroke-width="3" fill="none" stroke-linecap="round"/><path d="M43 23 Q36 12 30 7" stroke="#4a9020" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="30" cy="7" r="4" fill="#68c034"/><path d="M57 23 Q64 12 70 7" stroke="#4a9020" stroke-width="2.5" fill="none" stroke-linecap="round"/><circle cx="70" cy="7" r="4" fill="#68c034"/><circle cx="50" cy="87" r="10" fill="#ffe84d"/><circle cx="50" cy="87" r="7" fill="#fff59d"/><circle cx="50" cy="87" r="3.5" fill="white" opacity="0.9"/></svg>'+
+      /* BLUU-LK-LUMI (27.10.2026): aktuelle Lumi statt alter Zeichnung; begeistert bei XP, froh bei Wiederholung */
+      (window.bluu ? '<span class="lk-lumi" aria-hidden="true">' + bluu('Maskottchen', { groesse: 112, stimmung: earnedXp > 0 ? 'stolz' : 'froh', winken: earnedXp > 0 ? 'nein' : 'ja', grund: document.documentElement.getAttribute('data-theme') === 'light' ? 'hell' : 'dunkel' }) + '</span>' : '')+
       '<div style="font-size:18px;font-weight:800;color:var(--text);margin-top:.75rem">Set '+letter+' abgeschlossen!</div>'+
       '<div style="font-size:13px;color:var(--text3);margin-top:.25rem">'+title+'</div>'+
       (earnedXp>0?'<div style="margin-top:.6rem;font-size:14px;font-weight:700;color:var(--green)">+'+earnedXp+' XP verdient</div>':'<div style="margin-top:.6rem;font-size:13px;color:var(--text3)">Wiederholung – das Set war schon gelernt, keine XP.</div>')+
-      (badgeEarned?'<div style="margin-top:.75rem;padding:.5rem 1rem;background:color-mix(in srgb,var(--green) 12%,var(--bg2));border-radius:8px;font-size:13px;color:var(--green);font-weight:600">🏅 Abzeichen erhalten: '+badgeLabel+'</div>':
+      (badgeEarned?'<div style="margin-top:.75rem;padding:.5rem 1rem;background:color-mix(in srgb,var(--green) 12%,var(--bg2));border-radius:8px;font-size:13px;color:var(--green);font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px">'+(window.bluu?bluu('Abzeichen',{zeichen:'blitz',form:'sechseck',stufe:2,farbe:'#727F0E',zustand:'erreicht',animiert:'nein',groesse:26}):'')+'Abzeichen erhalten: '+badgeLabel+'</div>':
         (badgeLabel?'<div style="margin-top:.75rem;font-size:12px;color:var(--text3)">Abzeichen „'+badgeLabel+'" – weiter so!</div>':''))+
       (speicherFehler?'<div role="alert" style="margin-top:.75rem;padding:.5rem 1rem;border-radius:8px;font-size:12px;background:color-mix(in srgb,#b91c1c 10%,var(--bg2));color:#b91c1c">Der Abschluss konnte nicht gespeichert werden – bitte später noch einmal lernen. ('+speicherFehler+')</div>':'')+
       '<button class="btn-cta" style="margin-top:1.25rem;width:100%" onclick="this.closest(\'.lk-badge-pop\').remove();exitLernkartenSet()">Weitere Sets →</button>'+
