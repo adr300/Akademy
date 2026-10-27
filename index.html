@@ -3400,8 +3400,8 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 @media (max-width:900px){#view-admin .inhalt-tabelle{display:block;overflow-x:auto;table-layout:auto;}#view-admin .inhalt-tabelle thead th{width:auto;min-width:110px;}#view-admin .progress-table{display:block;overflow-x:auto;}}
 
 /* ── Übersicht: Leerzustände statt leerer Abschnitte ── */
-#bluu-weiter:empty::before{content:'Noch keine Lektion begonnen. Der erste Schritt liegt im Katalog: Modul wählen, erste Lektion starten.';}
-#bluu-meine-module:empty::before{content:'Noch kein Modul in Arbeit. Sobald eine Lektion begonnen ist, steht ihr Modul hier mit Fortschritt.';}
+#bluu-weiter:empty::before{content:'Noch nichts begonnen. Der erste Schritt liegt im Katalog: Modul wählen, erstes Kapitel lesen.';}
+#bluu-meine-module:empty::before{content:'Noch kein Modul in Arbeit. Sobald Du ein Kapitel liest, steht das Modul hier mit Fortschritt.';}
 #bluu-zuletzt:empty::before{content:'Noch kein Abzeichen verdient. Das erste kommt mit der ersten abgeschlossenen Lektion.';}
 #bluu-weiter:empty::before,#bluu-meine-module:empty::before,#bluu-zuletzt:empty::before{display:flex;align-items:center;padding:18px 20px;border:1px dashed var(--ln-2);border-radius:var(--r-surface);color:var(--fg-2);font-size:14px;line-height:1.5;grid-column:1/-1;}
 #bluu-weiter:empty,#bluu-meine-module:empty,#bluu-zuletzt:empty{display:block;margin-top:var(--sp-5);}
@@ -3484,6 +3484,75 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 /* Rang-Emblem: Level 1 ruht (t0), bis Level 6-7 Doppelring (t4); Klassen setzt bluuRangTier */
 .bdg.t0,.bdg.t0:hover,.hero-rang:hover .bdg.t0,.profile-rang-emblem.bdg.t0:hover{--lift:0px;--rot:0deg;--sc:1;--shy:0px;--sh:transparent;transform:none;filter:none;}
 .bdg.t0::before,.bdg.t0::after{animation:none!important;}
+/* BLUU-HERO-GLAS (27.10.2026): «Quiet Energy Glass» – helle, ruhige Übersicht statt Landschaft mit Dauer-Animationen.
+   Eine Glasfläche (statisch, wenig Unschärfe) mit Tagesaufgabe und Level, dahinter ein geometrisches Energie-Element (Ringe, Wechselstromwelle,
+   Lime-Knoten). Bewegung: Eintritt 600/750 ms, danach nur 2 px Schweben des Elements in 11 s (aus bei «Bewegung reduzieren» und html.praesentation). */
+#bluu-hero.hero-band{background:radial-gradient(520px 240px at 78% 46%,rgba(183,194,27,.07),rgba(183,194,27,0) 70%),linear-gradient(180deg,#1A2935,#1D2F3E);color:#EAF1F7;}
+:root[data-theme="light"] #bluu-hero.hero-band{background:radial-gradient(520px 240px at 78% 46%,rgba(183,194,27,.10),rgba(183,194,27,0) 70%),linear-gradient(180deg,#F7F8F9,#EDF2F6);color:#243A4C;border-bottom:1px solid #DDE3E8;}
+#bluu-hero .hero-band-inhalt{position:relative;z-index:1;padding-top:40px;padding-bottom:44px;align-items:center;}
+#bluu-hero .hero-energie{position:absolute;z-index:0;right:max(-60px,calc(50vw - 700px));top:50%;width:520px;height:240px;margin-top:-120px;overflow:visible;pointer-events:none;}
+#bluu-hero .he-ring{stroke:rgba(234,241,247,.09);stroke-width:1;}
+#bluu-hero .he-2{stroke:rgba(234,241,247,.07);}
+#bluu-hero .he-3{stroke:rgba(234,241,247,.05);}
+#bluu-hero .he-welle{stroke:#6F93B1;stroke-opacity:.45;stroke-width:1.5;}
+#bluu-hero .he-bogen{stroke:#B7C21B;stroke-width:2.5;}
+#bluu-hero .he-knoten{fill:#B7C21B;}
+#bluu-hero .he-halo{fill:rgba(183,194,27,.2);}
+:root[data-theme="light"] #bluu-hero .he-ring{stroke:rgba(36,58,76,.10);}
+:root[data-theme="light"] #bluu-hero .he-2{stroke:rgba(36,58,76,.075);}
+:root[data-theme="light"] #bluu-hero .he-3{stroke:rgba(36,58,76,.055);}
+:root[data-theme="light"] #bluu-hero .he-welle{stroke-opacity:.38;}
+:root[data-theme="light"] #bluu-hero .he-halo{fill:rgba(183,194,27,.22);}
+#bluu-hero .hero-glas{flex:0 1 700px;margin-left:auto;min-width:0;display:flex;align-items:center;gap:20px 32px;padding:16px 22px;border-radius:18px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);box-shadow:0 18px 36px -24px rgba(0,0,0,.6);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
+:root[data-theme="light"] #bluu-hero .hero-glas{background:rgba(255,255,255,.58);border-color:rgba(255,255,255,.95);box-shadow:0 0 0 1px rgba(36,58,76,.07),0 18px 36px -24px rgba(36,58,76,.35);}
+#bluu-hero .hero-glas .hero-heute{flex:1 1 auto;border-left:0;padding:2px 0;}
+#bluu-hero .hero-glas .hero-rang{margin:0;padding:4px 8px;border-left:1px solid rgba(255,255,255,.12);border-radius:0 10px 10px 0;padding-left:24px;}
+:root[data-theme="light"] #bluu-hero .hero-gruss h1{color:#243A4C;}
+:root[data-theme="light"] #bluu-hero .hero-zeile,:root[data-theme="light"] #bluu-hero .hero-label{color:#4F6B82;}
+:root[data-theme="light"] #bluu-hero .hero-label.lime{color:#727F0E;}
+:root[data-theme="light"] #bluu-hero .hero-heute-titel{color:#1B2E3E;}
+:root[data-theme="light"] #bluu-hero .hero-heute-titel .bonus,:root[data-theme="light"] #bluu-hero .hero-rang-rest,:root[data-theme="light"] #bluu-hero .hero-rang-xp small{color:#4F6B82;}
+:root[data-theme="light"] #bluu-hero .hero-heute:hover .hero-label{color:#727F0E;}
+:root[data-theme="light"] #bluu-hero .hero-rang{color:#243A4C;border-left-color:rgba(36,58,76,.12);}
+:root[data-theme="light"] #bluu-hero .hero-rang-xp{color:#243A4C;}
+:root[data-theme="light"] #bluu-hero .hero-rang:hover{background:rgba(36,58,76,.05);}
+:root[data-theme="light"] #bluu-hero .hero-heute-titel .bonus::after{color:#8C9412;}
+:root[data-theme="light"] #bluu-hero .hero-xp-linie{background:rgba(36,58,76,.08);}
+:root[data-theme="light"] #bluu-hero .hero-xp-linie>div{background:#B7C21B;}
+:root[data-theme="light"] #bluu-hero :focus-visible{outline-color:#8C9412;}
+#bluu-hero .hero-xp-linie>div::after{display:none;}
+/* Bewegung: einmaliger Eintritt, danach kaum wahrnehmbares Schweben – nur transform/opacity */
+#bluu-hero .hero-gruss>*{animation:hero-ein .6s cubic-bezier(.16,1,.3,1) both;}
+#bluu-hero .hero-gruss>*+*{animation-delay:.06s;}
+#bluu-hero .hero-glas{animation:hero-glas-ein .75s cubic-bezier(.16,1,.3,1) .1s both;}
+#bluu-hero .hero-energie{animation:hero-energie-ein .9s cubic-bezier(.16,1,.3,1) both,hero-schweben 11s cubic-bezier(.45,0,.55,1) .9s infinite alternate;}
+@keyframes hero-ein{from{opacity:0;transform:translateY(8px)}}
+@keyframes hero-glas-ein{from{opacity:0;transform:scale(.98)}}
+@keyframes hero-energie-ein{from{opacity:0}}
+@keyframes hero-schweben{to{transform:translateY(-2px)}}
+html.praesentation #bluu-hero .hero-energie{animation:hero-energie-ein .9s cubic-bezier(.16,1,.3,1) both;}
+@media (prefers-reduced-motion:reduce){#bluu-hero .hero-gruss>*,#bluu-hero .hero-glas,#bluu-hero .hero-energie{animation:none;}}
+@media (max-width:900px){
+  #bluu-hero .hero-band-inhalt{padding-top:28px;padding-bottom:30px;}
+  #bluu-hero .hero-glas{flex:1 1 100%;margin-left:0;flex-wrap:wrap;padding:14px 16px;gap:12px 20px;}
+  #bluu-hero .hero-glas .hero-rang{border-left:0;padding-left:0;}
+  #bluu-hero .hero-energie{right:-150px;top:0;margin-top:-30px;opacity:.75;}
+}
+@media (max-width:640px){#bluu-hero .hero-band-inhalt{padding-top:22px;padding-bottom:24px;}}
+/* BLUU-ABZEICHEN-RUHE (27.10.2026): Hover wächst mit der Stufe – t1 fast still, t2 leicht, t3 deutlich, nur t4 (höchste) federt */
+.bdg{transition:transform .4s var(--ease-out),filter .4s var(--ease-out);}
+.bdg.t1{--lift:0px;--rot:0deg;--sc:1.015;--shy:0px;--sh:transparent;}
+.bdg.t2{--lift:-1px;--rot:0deg;--sc:1.025;--shy:3px;--sh:rgba(27,46,62,.12);}
+.bdg.t3{--lift:-2px;--rot:-1.5deg;--sc:1.045;--shy:6px;--sh:rgba(27,46,62,.2);}
+.bdg.t4{--lift:-4px;--rot:-4deg;--sc:1.08;--shy:12px;--sh:rgba(27,46,62,.3);transition:transform .55s var(--ease-spring),filter .4s var(--ease-out);}
+/* BLUU-KNOEPFE-DUNKEL (27.10.2026): im dunklen Thema tragen alle Knöpfe das Lime der Palette – gefüllt (primär) oder als Lime-Kontur */
+:root:not([data-theme="light"]) .kachel-btn:not(.primaer):not(:disabled){border-color:rgba(183,194,27,.6);color:#EAF1F7;}
+:root:not([data-theme="light"]) .kachel-btn:not(.primaer):not(:disabled):hover{background:rgba(183,194,27,.14);border-color:#B7C21B;}
+:root:not([data-theme="light"]) .ls-btn:not(.ghost),:root:not([data-theme="light"]) .ls .ls-btn:not(.ghost){background:#B7C21B;border-color:#B7C21B;color:#1B2E3E;}
+:root:not([data-theme="light"]) .ls-btn:not(.ghost):hover,:root:not([data-theme="light"]) .ls .ls-btn:not(.ghost):hover{background:#C9D24A;border-color:#C9D24A;color:#1B2E3E;}
+:root:not([data-theme="light"]) .ls-btn.ghost,:root:not([data-theme="light"]) .ls .ls-btn.ghost{border-color:rgba(183,194,27,.6);color:#EAF1F7;}
+:root:not([data-theme="light"]) .ls-btn.ghost:hover,:root:not([data-theme="light"]) .ls .ls-btn.ghost:hover{background:rgba(183,194,27,.14);border-color:#B7C21B;}
 /* Katalog: Fachbereich ist ein Abschnitt mit Icon, Titel und Satz; kein Kasten mit farbiger Kante, keine Karte in der Karte */
 .modul-gruppe,.modul-gruppe:first-child{margin-top:24px;padding:20px 22px 22px;border:1px solid var(--ln);border-left-width:1px;border-radius:var(--r-surface);background:var(--sf-1);box-shadow:var(--e-1);}
 .modul-gruppe:first-child{margin-top:20px;}
@@ -4408,15 +4477,13 @@ class Component extends DCLogic {
 
       <!-- BLUU-PLATTFORM: Übersicht wie im Canvas (Hero-Band · Ihr Stand · Ihre Lernpfade). Alle IDs der App bleiben erhalten. -->
       <section class="hero hero-band" id="bluu-hero" aria-label="Begrüßung und Rang" data-tour-target="uebersicht">
-        <div class="hero-landschaft" aria-hidden="true">
-          <svg class="trasse" viewBox="0 0 1440 104" preserveAspectRatio="none" aria-hidden="true"><path d="M317 104L327 30L333 30L343 104M304 46H356M312 62H348M320 90L337 62M340 90L323 62M324 62L335 46M336 62L325 46M304 46V50M356 46V50M312 62V66M348 62V66M677 104L687 30L693 30L703 104M664 46H716M672 62H708M680 90L697 62M700 90L683 62M684 62L695 46M696 62L685 46M664 46V50M716 46V50M672 62V66M708 62V66" fill="none" stroke="#AFC3D3" stroke-opacity=".3" stroke-width="1.2" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path><g fill="none" stroke="#AFC3D3" stroke-opacity=".34" stroke-width="1" vector-effect="non-scaling-stroke"><path d="M0 40Q152 66 304 50Q484 66 664 50Q1052 74 1440 58"></path><path d="M0 46Q178 68 356 50Q536 68 716 50Q1078 80 1440 62"></path><path d="M0 60Q156 78 312 66Q492 78 672 66Q1056 86 1440 74"></path></g><path class="fluss" d="M0 40Q152 66 304 50Q484 66 664 50Q1052 74 1440 58" fill="none" stroke="#E4EB8F" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 46" vector-effect="non-scaling-stroke"></path><path class="fluss b" d="M0 60Q156 78 312 66Q492 78 672 66Q1056 86 1440 74" fill="none" stroke="#B7C21B" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="1.5 58.5" vector-effect="non-scaling-stroke"></path></svg>
-          <svg class="windpark" viewBox="0 0 220 100" aria-hidden="true"><path d="M58.4 100L59.4 46L60.6 46L61.6 100ZM128.4 100L129.4 24L130.6 24L131.6 100ZM192.4 100L193.4 58L194.6 58L195.6 100Z" fill="#AFC3D3" fill-opacity=".5"></path><path class="kabel" d="M0 76Q30 82 59 70Q95 80 129 64Q162 80 193 72Q207 78 220 74" fill="none" stroke="#AFC3D3" stroke-opacity=".45" stroke-width="1"></path><path class="strom-kabel" d="M0 76Q30 82 59 70Q95 80 129 64Q162 80 193 72Q207 78 220 74" fill="none" stroke="#E4EB8F" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="1.5 22"></path><g fill="#EAF1F7" fill-opacity=".72"><g class="rotor r1" style="transform-origin:60px 46px"><path transform="rotate(0 60 46)" d="M60 46C62.2 36.9 61.2 25.2 60 20C59.2 27.8 58.6 38.2 60 46Z"></path><path transform="rotate(120 60 46)" d="M60 46C62.2 36.9 61.2 25.2 60 20C59.2 27.8 58.6 38.2 60 46Z"></path><path transform="rotate(240 60 46)" d="M60 46C62.2 36.9 61.2 25.2 60 20C59.2 27.8 58.6 38.2 60 46Z"></path></g><g class="rotor r2" style="transform-origin:130px 24px"><path transform="rotate(0 130 24)" d="M130 24C132.2 12.1 131.2 -3.2 130 -10C129.2 0.2 128.6 13.8 130 24Z"></path><path transform="rotate(120 130 24)" d="M130 24C132.2 12.1 131.2 -3.2 130 -10C129.2 0.2 128.6 13.8 130 24Z"></path><path transform="rotate(240 130 24)" d="M130 24C132.2 12.1 131.2 -3.2 130 -10C129.2 0.2 128.6 13.8 130 24Z"></path></g><g class="rotor r3" style="transform-origin:194px 58px"><path transform="rotate(0 194 58)" d="M194 58C196.2 51.0 195.2 42.0 194 38C193.2 44.0 192.6 52.0 194 58Z"></path><path transform="rotate(120 194 58)" d="M194 58C196.2 51.0 195.2 42.0 194 38C193.2 44.0 192.6 52.0 194 58Z"></path><path transform="rotate(240 194 58)" d="M194 58C196.2 51.0 195.2 42.0 194 38C193.2 44.0 192.6 52.0 194 58Z"></path></g></g><g fill="#B7C21B"><circle class="nabe" cx="60" cy="46" r="2.2"></circle><circle class="nabe" cx="130" cy="24" r="2.2"></circle><circle class="nabe" cx="194" cy="58" r="2.2"></circle></g></svg>
-        </div>
+        <svg class="hero-energie" viewBox="0 0 520 240" aria-hidden="true" focusable="false"><g fill="none" stroke-linecap="round"><circle class="he-ring" cx="380" cy="120" r="70"/><circle class="he-ring he-2" cx="380" cy="120" r="104"/><circle class="he-ring he-3" cx="380" cy="120" r="138"/><path class="he-welle" d="M0 150C40 150 60 96 100 96S160 150 200 150S260 96 300 96S360 150 400 150S460 96 520 96"/><path class="he-bogen" d="M380 -18A138 138 0 0 1 499.5 51"/></g><circle class="he-halo" cx="499.5" cy="51" r="11"/><circle class="he-knoten" cx="499.5" cy="51" r="4.5"/></svg>
         <div class="hero-band-inhalt">
           <div class="hero-gruss">
             <h1 id="hero-gruss">Willkommen.</h1>
             <p class="hero-zeile" id="hero-zeile">Eine Aufgabe, ein Level.</p>
           </div>
+          <div class="hero-glas">
           <button type="button" class="hero-heute" id="hero-heute" onclick="bluuHeuteStarten()">
             <span class="hero-label">Heute dran</span>
             <span class="hero-heute-titel" id="hero-heute-titel">Tagesaufgabe wird geladen …</span>
@@ -4429,6 +4496,7 @@ class Component extends DCLogic {
               <span class="hero-rang-rest" id="hero-rang-rest"></span>
             </span>
           </button>
+          </div>
         </div>
         <div class="hero-xp-linie" role="progressbar" aria-label="Fortschritt zum nächsten Level" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="hero-xp-linie"><div id="hero-xp-fill"></div></div>
         <div class="hero-pills" style="display:none">
@@ -4437,6 +4505,7 @@ class Component extends DCLogic {
           <div class="hero-pill"><span id="pill-questions">0 Tests</span></div>
         </div>
       </section>
+      <script>/* BLUU-HERO-GLAS: Präsentationsmodus ohne Umgebungsbewegung – ?praesentation=1 schaltet ein, ?praesentation=0 aus (bleibt gespeichert) */(function(){try{var q=new URLSearchParams(location.search).get('praesentation');if(q==='1')localStorage.setItem('bluu-praesentation','1');if(q==='0')localStorage.removeItem('bluu-praesentation');if(localStorage.getItem('bluu-praesentation')==='1')document.documentElement.classList.add('praesentation');}catch(e){}})();</script>
 
       <!-- Weiter lernen: nächste Lektion und Glühwürmchen als Begleiter (BLUU-PLATTFORM) -->
       <section class="bluu-band bluu-band-weiss" id="bluu-weiter-band" aria-labelledby="weiter-titel" data-tour-target="weiter">
@@ -12824,7 +12893,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
       '<div><span class="kachel-label">Als Nächstes · ' + esc(f.kurz) + '</span><h3 class="kachel-titel gross">' + esc(c.title) + '</h3></div></div>' +
       '<p class="kachel-text">' + esc(modulTitel(m)) + ' · Lektion ' + buchst + ' von ' + s.n + ' · ' + (c.slides || []).length + ' Slides · ' + (c.questions || []).length + ' Fragen</p>' +
       '<div class="weiter-schritt"><div class="pfad-balken"><div style="width:' + pct + '%;background:' + bluuMotivFarbe(m.motiv || 'energie') + '"></div></div><span>' + s.fertig + ' / ' + s.n + ' abgeschlossen</span></div>' +
-      '<div class="kachel-fuss"><span class="kachel-meta">' + (s.pfade && s.pfade[0] ? 'Zertifikat über das Programm «' + esc(s.pfade[0].title) + '»' : '') + '</span><span><button type="button" class="kachel-btn" onclick="bluuModulOeffnenCode(' + esc(JSON.stringify(m.code || m.thema)) + ')">Zum Modul</button>' +
+      '<div class="kachel-fuss"><span class="kachel-meta"></span><span><button type="button" class="kachel-btn" onclick="bluuModulOeffnenCode(' + esc(JSON.stringify(m.code || m.thema)) + ')">Zum Modul</button>' +
       '<button type="button" class="kachel-btn primaer" onclick="bluuKursStarten(' + c.id + ')">Lektion starten</button></span></div></article>' +
       '<article class="bluu-kachel-karte">' + begleiter('erklaert', 'Ich begleite dich durch die Lektion.', 'Frag mich vorher, worum es geht, oder danach, was hängen bleiben sollte.', chipsZu(c.title)) + '</article>';
   };
@@ -12846,7 +12915,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
       const arten = [s && s.n ? 'Lektionen' : '', s && s.ls && s.ls.n ? 'Kapitel' : '', s && s.lk && s.lk.n ? 'Sets' : ''].filter(Boolean);
       const einheit = ' ' + (arten.length > 1 ? 'Schritte' : (arten[0] || 'Lektionen'));
       const pfad = s && s.pfade && s.pfade.find((lp) => s.alleFertig);
-      const zert = s && s.alleFertig && pfad ? '<button type="button" class="kachel-btn" onclick="event.stopPropagation();downloadPathCert(' + esc(JSON.stringify(String(pfad.id))) + ',' + esc(JSON.stringify(pfad.title)) + ',' + esc(JSON.stringify(pfad.icon || '')) + ')">Zertifikat ↓</button>' : '';
+      const zert = ''; /* BLUU-OHNE-LEKTION: kein Zertifikat-Knopf an Modulen */
       return '<article class="bluu-kachel-karte meine-karte klickbar" onclick="bluuModulOeffnen(' + modulIndex(m) + ')">' +
         '<div class="kachel-kopf"><span class="bluu-kachel">' + (window.bluuSzene ? bluuSzene(m.motiv || 'energie', pct === 100 ? 'fertig' : (pct ? 'aktiv' : 'voll'), 48, 'modul:' + (m.code || m.thema), pct) : B('PfadIcon', { motiv: m.motiv || 'energie', status: pct === 100 ? 'fertig' : (pct ? 'aktiv' : 'neu'), fortschritt: pct, groesse: 48 })) + '</span>' +
         '<div><span class="kachel-label">Modul · ' + esc(fachVon(m.bereich).kurz) + '</span><h3 class="kachel-titel">' + esc(modulTitel(m)) + '</h3></div>' +
@@ -12915,7 +12984,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
     if (window.bluuInhaltErgaenzen) bluuInhaltErgaenzen(m);
     const stand = (window.bluuInhaltStand && bluuInhaltStand(m.code || m.thema)) || null;
     const zNow = zugangVon(m, stand);
-    const um = m.untermodule || [];
+    const um = stand && stand.ls && stand.ls.n ? [] : (m.untermodule || []);
     document.getElementById('modul-kopf').innerHTML =
       document.querySelector('#screen-module .hero-landschaft').outerHTML +
       '<div class="hero-band-inhalt">' +
@@ -12924,10 +12993,10 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
       '<div><div class="hero-eye">Modul · ' + esc(fachVon(m.bereich).name) + '</div>' +
       '<h1>' + esc(modulTitel(m)) + '</h1>' + (programmVon(m) ? '<p class="hero-sub">Teil des Programms «' + esc(programmVon(m).title) + '»</p>' : '') + '</div></div>' +
       /* Fakten nur aus belegten Daten: Lektionen, Umfang (Slides/Fragen), Zugang, Programm */
-      '<dl class="modul-fakten"><div><dt>Lektionen</dt><dd>' + (um.length || '–') + '</dd></div>' +
-      '<div><dt>Umfang</dt><dd>' + ((m.umfang || '').replace(/^\d+ Lektionen? · /, '') || '–') + '</dd></div>' +
+      '<dl class="modul-fakten">' + (stand && stand.ls && stand.ls.n ? '<div><dt>Kapitel</dt><dd>' + stand.ls.n + '</dd></div>' : '<div><dt>Lektionen</dt><dd>' + (um.length || '–') + '</dd></div>') +
+      '<div><dt>Umfang</dt><dd>' + ((m.umfang || '').replace(/^\d+ Lektionen? · /, '').replace(stand && stand.ls && stand.ls.n ? / · \d+ Lektion(en)? · \d+ Slides · \d+ Fragen/ : /(?!)/, '') || '–') + '</dd></div>' +
       '<div><dt>Zugang</dt><dd>' + ZUGANG[zNow].label + '</dd></div>' +
-      '<div><dt>Zertifikat</dt><dd>' + (programmVon(m) ? 'über das Programm' : '–') + '</dd></div></dl>' +
+      '</dl>' +
       /* Phase 2: der nächste Schritt steht im Hero — ein Klick, kein Reiterwechsel */
       (zugangOffen(zNow) && stand && naechsterSchritt(m, stand).primaer ? '<div class="hero-aktion">' + schrittTaste(m, stand) + '</div>' : '') + '</div>';
 
@@ -12978,7 +13047,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
         ? '<button type="button" class="kachel-btn' + (lsAktion ? '' : ' primaer') + '" onclick="bluuInhaltZu(\'' + esc(m.code || m.thema) + '\',' + stand.aktuell + ')">' + (stand.alleFertig ? 'Lektionen wiederholen' : (stand.fertig ? 'Weiter mit ' : 'Starten mit ') + esc(bz(um[stand.aktuell][0], stand.aktuell)) + ' · ' + esc(um[stand.aktuell][1])) + '</button>'
         : (z === 'einzeln' ? modulAktion(m, z, 0, modulIndex(m), false) + (stand && um.length ? '<button type="button" class="kachel-btn" onclick="bluuInhaltZu(\'' + esc(m.code || m.thema) + '\',0)">Vorschau: ' + esc(um[0][0]) + ' · ' + esc(um[0][1]) + '</button>' : '') : '')) + lkAktion + (window.bluuCheckKnopf ? bluuCheckKnopf(m.code || m.thema) : '');
       const pfadFertig = stand && stand.alleFertig && lp;
-      const zertKnopf = pfadFertig ? '<button type="button" class="kachel-btn" onclick="downloadPathCert(' + esc(JSON.stringify(String(lp.id))) + ',' + esc(JSON.stringify(lp.title)) + ',' + esc(JSON.stringify(lp.icon || '')) + ')">Zertifikat herunterladen</button>' : '';
+      const zertKnopf = ''; /* BLUU-OHNE-LEKTION: kein Zertifikat-Knopf im Modul */
       inhalt.innerHTML = '<div class="modul-zwei">' +
         '<div class="modul-regionen">' +
         /* Region 1: Produkt — Beschreibung, Vorteile, Dauer nur aus Datenfeldern (m.beschreibung, m.vorteile, m.dauerMinuten) */
@@ -12990,11 +13059,11 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
         (!m.beschreibung && f.text ? '<div><dt>Worum es geht</dt><dd>' + esc(f.text) + '</dd></div>' : '') +
         (m.dauerMinuten ? '<div><dt>Dauer</dt><dd>ca. ' + esc(String(m.dauerMinuten)) + ' Minuten</dd></div>' : '') +
         '<div><dt>Enthält</dt><dd>' + (teile.length ? esc(teile.join(' · ')) : 'Noch kein Inhalt') + '</dd></div>' +
-        '<div><dt>Programm</dt><dd>' + (lp ? 'Teil von «' + esc(lp.title) + '». Das Zertifikat vergibt das Programm, sobald alle seine Lektionen bestanden sind – nicht das Modul allein.' : 'Keinem Programm zugeordnet; kein Zertifikat über dieses Modul.') + '</dd></div>' +
+        (lp ? '<div><dt>Programm</dt><dd>Teil von «' + esc(lp.title) + '».</dd></div>' : '') +
         '</dl></section>' +
         /* Region 2: Curriculum-Vorschau */
         '<section class="modul-region"><div class="bluu-kopfzeile"><h3 class="bluu-h3">' + (stand && stand.ls && stand.ls.n ? (stand.n ? 'Kapitel und Lektionen' : 'Kapitel') : 'Lektionen') + '</h3><span class="kachel-meta">' + (stand ? festStand(stand) : '') + '</span></div>' +
-        '<p class="kachel-text">' + (stand && stand.ls && stand.ls.n ? 'Erst lesen, dann üben: Die Kapitel des Lernskripts sind in Ruhe lesbar (Denk kurz nach, Text mit Grafik, Mitmach-Aufgabe, drei Häkchen); die Lektionen darunter sind die Übungen und Tests auf der Plattform, in Reihenfolge freigeschaltet.' : 'Freigeschaltete Lektionen sind anklickbar. Gesperrte öffnen sich nach der vorherigen – so stellt die Akademie die Reihenfolge sicher.') + '</p>' +
+        '<p class="kachel-text">' + (stand && stand.ls && stand.ls.n ? 'Erst lesen, dann üben: Die Kapitel des Lernskripts sind in Ruhe lesbar (Denk kurz nach, Text mit Grafik, Mitmach-Aufgabe, drei Häkchen). Geübt wird im Reiter Übungen, wiederholt mit den Lernkarten.' : 'Freigeschaltete Lektionen sind anklickbar. Gesperrte öffnen sich nach der vorherigen – so stellt die Akademie die Reihenfolge sicher.') + '</p>' +
         '<ol class="aufbau-liste">' + liste + '</ol></section>' +
         '</div>' +
         /* Region 3 + 4: Zugang und Aktion */
@@ -13554,7 +13623,9 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
   window.bluuInhaltStand = function (code) {
     const m = modulVon(code); if (!m) return null;
     const lk = lkStand(m), ls = lsStand(m), s = stand(m);
-    if (!s.liste.length) return (lk || ls || s.pfade.length ? { done: {}, aktuell: 0, alleFertig: false, n: 0, fertig: 0, naechster: null, pfade: s.pfade, archiv: s.archiv.length, lk, ls } : null);
+    /* BLUU-OHNE-LEKTION (27.10.2026): Module mit Lernskript zeigen keine alten Lektionen mehr (Praxisfall und Wissenstest liegen
+       in den Übungen bzw. der Abschlussprüfung); Stand, Weiter-lernen und «Meine Module» rechnen nur Kapitel und Sets */
+    if (!s.liste.length || (ls && ls.n)) return (lk || ls || s.pfade.length ? { done: {}, aktuell: 0, alleFertig: false, n: 0, fertig: 0, naechster: null, pfade: s.pfade, archiv: s.archiv.length, lk, ls } : null);
     const n = s.liste.length, f = s.liste.filter(({ c }) => fertig(c)).length;
     return { done: s.done, aktuell: s.aktuell, alleFertig: s.alleFertig, n, fertig: f, naechster: s.liste[s.aktuell].c, pfade: s.pfade, archiv: s.archiv.length, lk, ls };
   };
@@ -13685,15 +13756,18 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
   function pruefung(s, m) {
     const pr = pruefungsKurs(s.liste);
     const andere = s.liste.filter(({ c }) => c !== pr);
-    const n = andere.filter(({ c }) => fertig(c)).length;
-    const frei = andere.length === 0 || n === andere.length;
+    /* BLUU-OHNE-LEKTION: Module mit Übungen schalten die Prüfung nach allen Untermodulen frei */
+    const ub = m && m.lernskript && window.bluuUeben && bluuUeben.stand ? bluuUeben.stand(m.lernskript) : null;
+    const mitUb = !!(ub && ub.n), soll = mitUb ? ub.n : andere.length, einheit = mitUb ? 'Untermodule der Übungen' : 'Kurse';
+    const n = mitUb ? ub.fertig : andere.filter(({ c }) => fertig(c)).length;
+    const frei = soll === 0 || n === soll;
     const motiv = m.motiv || 'energie';
     if (!pr) return '<div class="platzhalter">' + B('Maskottchen', { groesse: 72, stimmung: 'denkt' }) +
-      '<div><span class="kachel-label">Platz reserviert</span><h3>Abschlussprüfung</h3><p>Ein Kurs mit «Abschlusstest» im Titel wird hier automatisch zur Abschlussprüfung des Moduls. Bisher: ' + n + ' / ' + andere.length + ' Kurse abgeschlossen.</p></div></div>';
+      '<div><span class="kachel-label">Platz reserviert</span><h3>Abschlussprüfung</h3><p>Ein Kurs mit «Abschlusstest» im Titel wird hier automatisch zur Abschlussprüfung des Moduls. Bisher: ' + n + ' / ' + soll + ' ' + einheit + ' abgeschlossen.</p></div></div>';
     return '<div class="modul-zwei"><div><h3 class="bluu-h3">' + esc(pr.title) + '</h3>' +
-      '<p class="bluu-lead">' + (pr.questions || []).length + ' Fragen · ab 70 % bestanden. ' + (frei ? 'Alle Kurse des Moduls sind abgeschlossen, die Prüfung ist frei.' : 'Öffnet sich, wenn alle Kurse des Moduls abgeschlossen sind.') + '</p>' +
-      '<div class="pfad-balken" style="margin-top:14px"><div style="width:' + (andere.length ? Math.round(n / andere.length * 100) : 100) + '%;background:' + (frei ? 'var(--lime)' : bluuMotivFarbe(motiv)) + '"></div></div>' +
-      '<p class="ik-meta" style="margin-top:8px">' + n + ' / ' + andere.length + ' Kurse abgeschlossen' + (fertig(pr) ? ' · Prüfung bestanden' + (note(pr) != null ? ' mit ' + note(pr) + ' %' : '') : '') + '</p>' +
+      '<p class="bluu-lead">' + (pr.questions || []).length + ' Fragen · ab 70 % bestanden. ' + (frei ? 'Alle ' + (mitUb ? 'Übungen' : 'Kurse') + ' des Moduls sind abgeschlossen, die Prüfung ist frei.' : 'Öffnet sich, wenn alle ' + einheit + ' abgeschlossen sind.') + '</p>' +
+      '<div class="pfad-balken" style="margin-top:14px"><div style="width:' + (soll ? Math.round(n / soll * 100) : 100) + '%;background:' + (frei ? 'var(--lime)' : bluuMotivFarbe(motiv)) + '"></div></div>' +
+      '<p class="ik-meta" style="margin-top:8px">' + n + ' / ' + soll + ' ' + einheit + ' abgeschlossen' + (fertig(pr) ? ' · Prüfung bestanden' + (note(pr) != null ? ' mit ' + note(pr) + ' %' : '') : '') + '</p>' +
       '<div style="margin-top:18px">' + (frei ? '<button type="button" class="kachel-btn primaer" onclick="bluuKursStarten(' + pr.id + ')">' + (fertig(pr) ? 'Prüfung wiederholen' : 'Prüfung starten') + '</button>' : '<button type="button" class="kachel-btn" disabled>Noch gesperrt</button>') + '</div></div>' +
       '<aside class="modul-seite"><div class="bluu-leer">' + B('Abzeichen', { zeichen: bluuZeichen(motiv), form: 'sechseck', stufe: 1, farbe: bluuMotivFarbe(motiv), zustand: fertig(pr) ? 'erreicht' : 'gesperrt', animiert: 'nein', groesse: 64 }) + '<span>' + (fertig(pr) ? 'Trophäe des Moduls erreicht.' : 'Trophäe des Moduls nach bestandener Prüfung.') + '</span></div></aside></div>';
   }
@@ -15319,6 +15393,8 @@ window.BLUU_UEBEN = {"1.1.1":{"modul":"1.1.1","titel":"1x1 der Energiewirtschaft
   const ton = (m) => TON[m && m.bereich] || TON.grundlagen;
 
   window.bluuUeben = {
+    /* Stand der Übungen eines Moduls (für die Freischaltung der Abschlussprüfung) */
+    stand: (modul) => { const d = (window.BLUU_UEBEN || {})[modul]; if (!d) return null; let z = {}; try { z = JSON.parse(localStorage.getItem('bluu-ueben-' + modul + '-' + ((typeof currentUser !== 'undefined' && currentUser && currentUser.id) || 'gast'))) || {}; } catch (e) { z = {}; } const done = z.done || {}; return { n: d.untermodule.length, fertig: d.untermodule.filter((u) => done[u.key]).length }; },
     hat: (modul, key) => { const d = (window.BLUU_UEBEN || {})[modul]; return !!(d && (!key || d.untermodule.some((u) => u.key === key))); },
     ergaenzen: (m) => { const id = m && m.lernskript; const d = id && (window.BLUU_UEBEN || {})[id]; if (!d) return false; m.status = 'freigeschaltet'; if (!m.teile) m.teile = {}; m.teile.uebungen = 'bereit'; m.umfang = (m.umfang ? m.umfang + ' · ' : '') + 'Übungen in ' + d.untermodule.length + ' Untermodulen'; return true; },
     html: (modul, m) => { M = modul; MOD = m || null; CODE = m ? (m.code || m.thema) : null; laden(); return '<div class="ls ls-rd ueben" id="ueben-wurzel" style="--ls-ton:' + ton(m) + '">' + inner() + '</div>'; },

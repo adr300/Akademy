@@ -121,6 +121,10 @@ Lumi bewegt sich weich und nie mechanisch: Spline-Easing für alle SMIL-Animatio
 
 Keine Spurlinien hinter Lumi: Das Licht des Glühwürmchens ist das Motiv (Schein im Flug, Lichtblitz beim Erscheinen, Aufleuchten der berührten Karte, Lichtwelle bei der Landung). Flüge laufen als Bogen über `translate`/`rotate`/`scale`, nie über `left`/`top`.
 
+## Hero der Übersicht
+
+«Quiet Energy Glass»: helle Fläche (dunkles Thema: Navy-Verlauf), eine statische Glasfläche mit Tagesaufgabe und Level, dahinter ein geometrisches Energie-Element (Ringe, Welle, Lime-Bogen). Keine Dauer-Animationen außer 2 px Schweben in 11 s. Präsentationsmodus `?praesentation=1`. Modul- und Katalog-Hero bleiben das Navy-Band.
+
 ## Was nicht erlaubt ist
 
 Emoji als Icons in der Verwaltung, farbige Glows, Gloss-Verläufe auf Abzeichen, Platzhalterzahlen, Versalien im Fließtext, Text unter 11 px, neue Farbwerte außerhalb der Tokens.
