@@ -15449,5 +15449,296 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
 })();
 </script>
 <!-- BLUU-LUMI:ENDE -->
+<!-- BLUU-LUMICHAT:START -->
+<style>
+/* BLUU-LUMICHAT (27.10.2026): Lumi im KI-Fenster mit Flügeln (Figur ab 44 px gerendert, verkleinert angezeigt),
+   Kopf mit Name und Rolle, Begrüßungskarte beim ersten Öffnen mit Vorschlägen. Adrians Chat-Logik bleibt. */
+.chat-head{gap:12px;}
+.chat-head-icon.bluu-figur{width:50px;height:50px;position:relative;display:grid;place-items:center;}
+.chat-head-icon.bluu-figur::before{content:'';position:absolute;inset:4px;border-radius:50%;background:radial-gradient(circle,rgba(228,235,143,.45),rgba(228,235,143,0) 70%);}
+.chat-head-icon.bluu-figur svg{position:relative;width:50px!important;height:50px!important;}
+.chat-head-info strong{display:block;font-family:var(--disp);font-stretch:108%;font-size:16px;color:#fff;}
+.chat-head-info .lumi-rolle{display:block;font-size:12px;color:#E4EB8F;font-weight:600;}
+.chat-avatar{width:36px;height:36px;}
+.chat-avatar svg{width:36px!important;height:36px!important;}
+.lumi-hallo{align-self:stretch;flex:none;text-align:center;padding:12px 14px 14px;margin:0 0 2px;border:1px solid var(--border2);border-radius:14px;background:var(--bg);position:relative;overflow:hidden;}
+.lumi-hallo::before{content:'';position:absolute;left:50%;top:0;width:120px;height:120px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,rgba(228,235,143,.55),rgba(228,235,143,0) 68%);pointer-events:none;}
+.lumi-hallo .figur{position:relative;display:inline-block;width:80px;height:80px;animation:lumi-hallo-ein .7s cubic-bezier(.34,1.56,.64,1) both;}
+.lumi-hallo .figur svg{width:80px!important;height:80px!important;}
+.lumi-hallo h3{position:relative;margin:2px 0 4px;font-family:var(--disp);font-stretch:108%;font-size:17px;color:var(--text);}
+.lumi-hallo p{position:relative;margin:0 auto 6px;max-width:30em;font-size:13px;line-height:1.5;color:var(--text2);}
+.lumi-hallo p.klein{font-size:11.5px;color:var(--text3);margin-bottom:0;}
+.lumi-vorschlaege{position:relative;display:flex;flex-direction:column;gap:6px;align-items:stretch;margin-top:10px;}
+.lumi-vorschlaege button{text-align:left;}
+.lumi-vorschlaege button{font:inherit;font-size:12.5px;border:1px solid var(--border2);background:var(--bg2);color:var(--text);border-radius:999px;padding:6px 12px;cursor:pointer;transition:border-color .2s,background .2s;}
+.lumi-vorschlaege button:hover{border-color:#B7C21B;background:rgba(228,235,143,.18);}
+.lumi-vorschlaege button:focus-visible{outline:2px solid #B7C21B;outline-offset:2px;}
+@keyframes lumi-hallo-ein{from{opacity:0;transform:translateY(10px) scale(.85)}}
+@media (prefers-reduced-motion:reduce){.lumi-hallo .figur{animation:none;}}
+</style>
+<script>
+(function () {
+  if (!window.bluu) return;
+  const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const dunkel = () => document.documentElement.getAttribute('data-theme') !== 'light';
+  /* Figur ab 44 px rendern (sonst entfallen Flügel und Details), per CSS verkleinert */
+  const figur = (opt) => bluu('Maskottchen', Object.assign({ groesse: 56 }, opt));
+  const kopf = document.querySelector('[data-bluu-figur="kopf"]');
+  if (kopf) kopf.innerHTML = figur({ grund: 'dunkel', stimmung: 'freundlich' });
+  const info = document.querySelector('.chat-head-info strong');
+  if (info && !document.querySelector('.chat-head-info .lumi-rolle')) info.insertAdjacentHTML('afterend', '<span class="lumi-rolle">Dein KI-Assistent</span>');
+  const GESICHT = figur({ stimmung: 'erklaert' }), DENKT = figur({ stimmung: 'denkt' });
+  /* Avatare in den Antworten: dieselbe Figur mit Flügeln */
+  const altBubble = window.appendBubble;
+  if (typeof altBubble === 'function') window.appendBubble = function (role, text, isTyping) {
+    const r = altBubble.apply(this, arguments);
+    try { if (role === 'ai' && r && r.querySelector) { const av = r.querySelector('.chat-avatar'); if (av) av.innerHTML = isTyping ? DENKT : GESICHT; } } catch (e) {}
+    return r;
+  };
+  /* Erste Öffnung: Begrüßungskarte statt der Standardzeile */
+  const VORSCHLAEGE = ['Was ist eine Marktlokation?', 'Erklär mir die GPKE in drei Sätzen.', 'Stell mir eine Übungsfrage.'];
+  window.bluuLumiFrage = function (i) {
+    const f = VORSCHLAEGE[i]; const inp = document.getElementById('chat-input');
+    if (!f || !inp || typeof sendChatMsg !== 'function') return;
+    inp.value = f; sendChatMsg();
+  };
+  const begruessung = () => {
+    const msgs = document.getElementById('chat-msgs'); if (!msgs || msgs.querySelector('.lumi-hallo')) return;
+    const frei = typeof _chatRemaining !== 'undefined' ? _chatRemaining : null, limit = typeof CHAT_LIMIT !== 'undefined' ? CHAT_LIMIT : null;
+    const karte = document.createElement('div'); karte.className = 'lumi-hallo';
+    karte.innerHTML = '<span class="figur">' + bluu('Maskottchen', { groesse: 80, stimmung: 'freundlich', winken: 'ja', grund: dunkel() ? 'dunkel' : 'hell' }) + '</span>' +
+      '<h3>Hallo, ich heiße Lumi!</h3>' +
+      '<p>Ich bin Dein KI-Assistent in der BluuAkademie und beantworte Fragen zu den Kursinhalten und zur Energiewirtschaft.</p>' +
+      '<p class="klein">Frag nach Begriffen, lass Dir etwas erklären oder Dich abfragen.' + (frei != null && limit != null ? ' Heute noch ' + frei + ' von ' + limit + ' Fragen.' : '') + '</p>' +
+      '<div class="lumi-vorschlaege">' + VORSCHLAEGE.map((v, i) => '<button type="button" onclick="bluuLumiFrage(' + i + ')">' + esc(v) + '</button>').join('') + '</div>';
+    msgs.prepend(karte);
+  };
+  const altToggle = window.toggleChat;
+  if (typeof altToggle === 'function') window.toggleChat = function () {
+    let erst = false;
+    try { erst = !_chatGreeted; if (erst) _chatGreeted = true; } catch (e) {}
+    const r = altToggle.apply(this, arguments);
+    try { if (erst && _chatOpen) begruessung(); } catch (e) {}
+    return r;
+  };
+})();
+</script>
+<!-- BLUU-LUMICHAT:ENDE -->
+<!-- BLUU-AUFTRITT:START -->
+<style>
+/* BLUU-AUFTRITT (27.10.2026): Lumis Auftritt nach den Willkommensfolien, 13 s, Storyboard «Welcome Animation»:
+   1 Funke · 2 Lichtkugel mit Silhouette und kreisenden Teilchen · 3 Lumi tritt aus der Kugel, schaut sich um, wendet sich zu Dir ·
+   4 Flug mit Leuchtspur, Karten Module, Lernpfade, Wiki, KI-Assistent erscheinen · 5 Schlussbild mit Gruß und «Rundgang starten».
+   Überspringbar (Taste, Esc), «Bewegung reduzieren» zeigt sofort das Schlussbild. Danach folgt der Rundgang (BLUU-LUMI). */
+.auftritt{position:fixed;inset:0;z-index:1400;overflow:hidden;opacity:0;transition:opacity .6s;font-family:'IBM Plex Sans',system-ui,sans-serif;
+  background:radial-gradient(ellipse at 66% 52%,rgba(244,248,200,.55),rgba(247,248,249,0) 55%),rgba(247,248,249,.86);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
+.auftritt.an{opacity:1;}
+.auftritt.weg{opacity:0;pointer-events:none;}
+:root:not([data-theme="light"]) .auftritt{background:radial-gradient(ellipse at 66% 52%,rgba(183,194,27,.16),rgba(15,26,36,0) 55%),rgba(15,26,36,.88);}
+.auftritt .spur{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.auftritt .spur path{fill:none;stroke:#D4DC5A;stroke-width:3;stroke-linecap:round;stroke-dasharray:6 14;opacity:0;}
+.auftritt.p4 .spur path,.auftritt.p5 .spur path{opacity:.8;animation:auftritt-spur 2.6s ease-out both;}
+@keyframes auftritt-spur{from{stroke-dashoffset:900;opacity:0}to{stroke-dashoffset:0}}
+.auftritt .buehne{position:absolute;left:66%;top:52%;width:0;height:0;}
+.auftritt .funke{position:absolute;left:-7px;top:-7px;width:14px;height:14px;border-radius:50%;background:#E4EB8F;box-shadow:0 0 18px 8px rgba(212,220,90,.7);opacity:0;}
+.auftritt.p1 .funke{opacity:1;animation:auftritt-puls 1.1s ease-in-out infinite;}
+@keyframes auftritt-puls{50%{transform:scale(1.35);box-shadow:0 0 26px 12px rgba(212,220,90,.85)}}
+.auftritt .kugel{position:absolute;left:-120px;top:-120px;width:240px;height:240px;border-radius:50%;opacity:0;transform:scale(.06);
+  background:radial-gradient(circle at 46% 42%,rgba(255,255,240,.95),rgba(236,242,150,.88) 38%,rgba(212,220,90,.62) 66%,rgba(212,220,90,.0) 72%);
+  box-shadow:0 0 60px 18px rgba(228,235,143,.55);transition:transform 1.4s cubic-bezier(.22,1,.36,1),opacity .9s;}
+.auftritt.p2 .kugel{opacity:1;transform:scale(1);}
+.auftritt.p3 .kugel,.auftritt.p4 .kugel,.auftritt.p5 .kugel{opacity:0;transform:scale(1.35);transition:transform 1.1s ease-out,opacity 1.1s ease-out;}
+.auftritt .ring{position:absolute;left:-150px;top:-150px;width:300px;height:300px;border-radius:50%;border:2px solid rgba(212,220,90,.55);border-left-color:transparent;border-bottom-color:transparent;opacity:0;transition:opacity .8s,transform 1.2s;}
+.auftritt .ring.b{left:-128px;top:-128px;width:256px;height:256px;border-color:rgba(255,255,255,.75);border-right-color:transparent;border-top-color:transparent;}
+.auftritt.p2 .ring{opacity:1;animation:auftritt-dreh 3.2s linear infinite;}
+.auftritt.p2 .ring.b{animation-duration:2.4s;animation-direction:reverse;}
+.auftritt.p3 .ring,.auftritt.p4 .ring,.auftritt.p5 .ring{opacity:0;transform:scale(1.8) rotate(200deg);}
+@keyframes auftritt-dreh{to{transform:rotate(360deg)}}
+.auftritt .teilchen{position:absolute;left:0;top:0;opacity:0;transition:opacity .8s;}
+.auftritt .teilchen i{position:absolute;left:0;top:0;width:var(--d,7px);height:var(--d,7px);margin:calc(var(--d,7px) / -2);border-radius:50%;background:#E4EB8F;box-shadow:0 0 10px 3px rgba(212,220,90,.6);
+  transform:rotate(var(--w,0deg)) translateX(var(--r,150px));animation:auftritt-kreis var(--t,6s) linear infinite;}
+@keyframes auftritt-kreis{to{transform:rotate(calc(var(--w,0deg) + 360deg)) translateX(var(--r,150px))}}
+.auftritt.p2 .teilchen,.auftritt.p3 .teilchen{opacity:1;}
+.auftritt.p4 .teilchen,.auftritt.p5 .teilchen{opacity:0;}
+.auftritt .silhouette{position:absolute;left:-75px;top:-80px;width:150px;height:150px;opacity:0;filter:brightness(0);mix-blend-mode:multiply;transition:opacity 1s;}
+.auftritt.p2.halb .silhouette{opacity:.32;}
+.auftritt.p3 .silhouette,.auftritt.p3.halb .silhouette,.auftritt.p5 .silhouette{opacity:0;transition:opacity .6s;}
+.auftritt .figur{position:absolute;left:66%;top:52%;width:168px;height:168px;margin:-88px 0 0 -84px;opacity:0;transform:scale(.7);
+  transition:left 1.1s cubic-bezier(.45,0,.2,1),top 1.1s cubic-bezier(.45,0,.2,1),opacity .8s,transform .9s cubic-bezier(.34,1.56,.64,1);filter:drop-shadow(0 18px 18px rgba(27,46,62,.18));}
+.auftritt .figur svg{width:168px!important;height:168px!important;}
+.auftritt .figur::after{content:'';position:absolute;left:50%;bottom:-6px;width:90px;height:14px;margin-left:-45px;border-radius:50%;background:rgba(27,46,62,.12);filter:blur(4px);}
+.auftritt.p3 .figur,.auftritt.p4 .figur,.auftritt.p5 .figur{opacity:1;transform:scale(1);}
+.auftritt .figur.schaut .innen{animation:auftritt-schaut 1.6s ease-in-out both;}
+@keyframes auftritt-schaut{25%{transform:rotate(-9deg) translateX(-6px)}60%{transform:rotate(8deg) translateX(6px)}}
+.auftritt .figur.fliegt .innen{animation:auftritt-flug .9s ease-in-out both;}
+@keyframes auftritt-flug{40%{transform:rotate(-10deg)}}
+.auftritt .figur.nickt .innen{animation:auftritt-nick .8s ease-in-out 2;}
+@keyframes auftritt-nick{50%{transform:translateY(5px) rotate(3deg)}}
+.auftritt .figur .innen{display:block;transform-origin:50% 60%;}
+.auftritt .karten{position:absolute;left:7%;top:44%;width:min(44%,560px);display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.auftritt .karte{display:flex;gap:14px;align-items:center;padding:16px 18px;background:#fff;border:1px solid #DDE3E8;border-radius:16px;box-shadow:0 1px 2px rgba(27,46,62,.05),0 18px 36px -24px rgba(27,46,62,.45);
+  opacity:0;transform:translateY(14px) scale(.96);transition:opacity .6s,transform .7s cubic-bezier(.34,1.56,.64,1);}
+.auftritt .karte.da{opacity:1;transform:none;}
+.auftritt .karte.zeigt{border-color:#B7C21B;box-shadow:0 0 0 4px rgba(183,194,27,.18),0 18px 36px -24px rgba(27,46,62,.45);}
+.auftritt .karte .ik{flex:none;width:46px;height:46px;border-radius:12px;background:#EEF3F6;display:grid;place-items:center;color:#243A4C;}
+.auftritt .karte .ik svg{width:26px;height:26px;}
+.auftritt .karte .ik.lumi svg{width:46px!important;height:46px!important;}
+.auftritt .karte b{display:block;font-family:var(--disp,'Archivo'),sans-serif;font-stretch:108%;font-size:17px;color:#243A4C;}
+.auftritt .karte span.sub{display:block;font-size:12.5px;color:#4F6B82;line-height:1.35;margin-top:2px;}
+:root:not([data-theme="light"]) .auftritt .karte{background:#1B2E3E;border-color:#3B5062;}
+:root:not([data-theme="light"]) .auftritt .karte b{color:#EAF1F7;}
+:root:not([data-theme="light"]) .auftritt .karte span.sub{color:#AFC3D3;}
+:root:not([data-theme="light"]) .auftritt .karte .ik{background:#223544;color:#EAF1F7;}
+.auftritt .gruss{position:absolute;left:7%;top:13%;max-width:min(52%,660px);opacity:0;transform:translateY(12px);transition:opacity .8s,transform .8s cubic-bezier(.22,1,.36,1);}
+.auftritt.p5.text .gruss{opacity:1;transform:none;}
+.auftritt .gruss .marke{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#4F6B82;margin:0 0 10px;}
+.auftritt .gruss h2{margin:0;font-family:var(--disp,'Archivo'),sans-serif;font-stretch:108%;font-weight:800;font-size:clamp(30px,3.6vw,50px);line-height:1.05;letter-spacing:-.015em;color:#243A4C;}
+.auftritt .gruss h2 em{font-style:normal;color:#8C9412;}
+.auftritt .gruss p{margin:10px 0 0;font-size:18px;color:#4F6B82;}
+:root:not([data-theme="light"]) .auftritt .gruss h2{color:#EAF1F7;}
+:root:not([data-theme="light"]) .auftritt .gruss h2 em{color:#DCE566;}
+:root:not([data-theme="light"]) .auftritt .gruss p,:root:not([data-theme="light"]) .auftritt .gruss .marke{color:#AFC3D3;}
+.auftritt .knoepfe{display:flex;gap:10px;align-items:center;margin-top:20px;}
+.auftritt .los{font:inherit;font-weight:700;font-size:15px;background:#243A4C;color:#fff;border:0;border-radius:10px;padding:12px 20px;cursor:pointer;transition:background .2s,transform .15s;}
+.auftritt .los:hover{background:#1B2E3E;}
+.auftritt .los:active{transform:translateY(1px);}
+:root:not([data-theme="light"]) .auftritt .los{background:#B7C21B;color:#1B2E3E;}
+.auftritt .spaeter,.auftritt .skip{font:inherit;font-size:14px;background:none;border:0;color:#4F6B82;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:8px 6px;}
+:root:not([data-theme="light"]) .auftritt .spaeter,:root:not([data-theme="light"]) .auftritt .skip{color:#AFC3D3;}
+.auftritt .skip{position:absolute;right:22px;top:18px;text-decoration:none;border:1px solid rgba(79,107,130,.35);border-radius:999px;padding:6px 14px;font-size:13px;}
+.auftritt.p5.text .skip{display:none;}
+.auftritt button:focus-visible{outline:3px solid #B7C21B;outline-offset:3px;}
+.auftritt .sr{position:absolute;left:-9999px;}
+/* Schlussbild sofort (Überspringen, Bewegung reduzieren): keine Übergänge */
+.auftritt.sofort *,.auftritt.sofort{transition:none!important;animation:none!important;}
+@media (max-width:760px){
+  .auftritt .spur{display:none;}
+  .auftritt .buehne,.auftritt .figur{left:50%;top:34%;}
+  .auftritt .figur{width:128px;height:128px;margin:-68px 0 0 -64px;}.auftritt .figur svg{width:128px!important;height:128px!important;}
+  .auftritt .karten{left:16px;right:16px;top:auto;bottom:20px;width:auto;gap:10px;}
+  .auftritt .karte{padding:12px;gap:10px;}.auftritt .karte .ik{width:38px;height:38px;}.auftritt .karte b{font-size:15px;}.auftritt .karte span.sub{display:none;}
+  .auftritt .gruss{left:16px;right:16px;top:auto;bottom:calc(20px + 2 * 64px + 30px);max-width:none;}
+  .auftritt .gruss p{font-size:15px;}
+}
+@media (prefers-reduced-motion:reduce){.auftritt *{animation:none!important;}}
+</style>
+<script>
+(function () {
+  if (!window.bluu) return;
+  const ruhig = () => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } };
+  const mobil = () => window.innerWidth <= 760;
+  const userId = () => (typeof currentUser !== 'undefined' && currentUser && currentUser.id) || 'gast';
+  const TOUR_KEY = () => 'bluu-lumi-' + userId();
+  const tourOffen = () => { try { return !localStorage.getItem(TOUR_KEY()); } catch (e) { return false; } };
+  const IK = {
+    module: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/></svg>',
+    pfade: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 19c-2 0-3-1-3-2.5S4 14 6 14h11c2 0 3-1 3-2.5S19 9 17 9H9"/><path d="M6 6.5a2 2 0 1 1 0 .01M6 8.5v0"/><circle cx="6" cy="6" r="2.2"/><path d="M18 19.5c0-1.5-1.5-2.5-1.5-3.5a1.5 1.5 0 0 1 3 0c0 1-1.5 2-1.5 3.5z"/></svg>',
+    wiki: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 21V5"/><path d="M8 7h7M8 10.5h7M8 14h4"/></svg>'
+  };
+  const KARTEN = [
+    ['module', 'Module', 'Lernskript, Übungen und Lernkarten'],
+    ['pfade', 'Lernpfade', 'Schritt für Schritt zum Zertifikat'],
+    ['wiki', 'Wiki', 'Fachbegriffe schnell nachschlagen'],
+    ['lumi', 'KI-Assistent', 'Ich beantworte Deine Fragen']
+  ];
+  /* Start (Kugel) und Schlussplatz in % des Fensters; die Flugziele liegen an der oberen rechten Ecke jeder Karte (aus dem Layout) */
+  const START = [66, 52], SCHLUSS = [68, 50];
+  let A = null;
+  const zielVon = (i) => { const r = A.karten[i].getBoundingClientRect(); return [Math.min(94, (r.right - 14) / window.innerWidth * 100), Math.max(8, (r.top - 34) / window.innerHeight * 100)]; };
+  /* Leuchtspur durch alle Flugziele: Catmull-Rom-Kurve als kubische Bézier-Segmente (viewBox 0–100 in beiden Achsen) */
+  const spurPfad = (pkt) => { const P = [pkt[0]].concat(pkt, [pkt[pkt.length - 1]]); let d = 'M' + pkt[0][0].toFixed(1) + ' ' + pkt[0][1].toFixed(1);
+    for (let i = 1; i < P.length - 2; i++) { const a = P[i - 1], b = P[i], c = P[i + 1], e = P[i + 2]; d += ' C' + (b[0] + (c[0] - a[0]) / 6).toFixed(1) + ' ' + (b[1] + (c[1] - a[1]) / 6).toFixed(1) + ' ' + (c[0] - (e[0] - b[0]) / 6).toFixed(1) + ' ' + (c[1] - (e[1] - b[1]) / 6).toFixed(1) + ' ' + c[0].toFixed(1) + ' ' + c[1].toFixed(1); }
+    return d; };
+  const figurSvg = (stimmung, winken) => bluu('Maskottchen', { groesse: 168, stimmung: stimmung || 'froh', winken: winken ? 'ja' : 'nein', grund: document.documentElement.getAttribute('data-theme') === 'light' ? 'hell' : 'dunkel' });
+  const stimmung = (st, winken) => { if (A) A.figur.innerHTML = '<span class="innen">' + figurSvg(st, winken) + '</span>'; };
+  const nach = (ms, fn) => { const id = setTimeout(() => { if (A) fn(); }, ms); A.timer.push(id); };
+  const pos = (x, y) => { if (!A || mobil()) return; A.figur.style.left = x + '%'; A.figur.style.top = y + '%'; };
+  const klasse = (k, an) => { if (A) A.el.classList.toggle(k, an !== false); };
+  const zeigeKarte = (i) => { if (!A) return; A.karten.forEach((k, j) => k.classList.toggle('zeigt', j === i)); if (A.karten[i]) A.karten[i].classList.add('da'); };
+  const schluss = (sofort) => {
+    if (!A) return;
+    A.timer.forEach(clearTimeout); A.timer = [];
+    if (sofort) A.el.classList.add('sofort');
+    ['p1', 'p2', 'halb', 'p3', 'p4'].forEach((k) => klasse(k, false)); klasse('p3'); klasse('p4'); klasse('p5'); klasse('text');
+    A.karten.forEach((k) => { k.classList.add('da'); k.classList.remove('zeigt'); });
+    pos(SCHLUSS[0], SCHLUSS[1]); stimmung('froh', true); A.figur.classList.add('nickt');
+    A.status.textContent = 'Willkommen in der BluuAkademie. Ich zeige Dir Deinen Lernweg.';
+    setTimeout(() => { if (A) { A.el.classList.remove('sofort'); A.los.focus({ preventScroll: true }); } }, 60);
+  };
+  const ende = (danach) => {
+    if (!A) return;
+    const a = A; A = null;
+    a.timer.forEach(clearTimeout); document.removeEventListener('keydown', a.tasten, true);
+    a.el.classList.add('weg');
+    setTimeout(() => a.el.remove(), 650);
+    if (typeof danach === 'function') setTimeout(danach, 250);
+  };
+  /* Auftritt abspielen; fertig(entscheidung) wird mit 'rundgang' oder 'spaeter' aufgerufen */
+  const spielen = (fertig) => {
+    if (A) ende();
+    const el = document.createElement('div'); el.className = 'auftritt'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Willkommen in der BluuAkademie');
+    const teilchen = Array.from({ length: 12 }, (_, i) => '<i style="--w:' + (i * 30) + 'deg;--r:' + (118 + (i % 4) * 16) + 'px;--t:' + (5 + (i % 5)) + 's;--d:' + (4 + (i % 3) * 3) + 'px"></i>').join('');
+    el.innerHTML = '<svg class="spur" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><path vector-effect="non-scaling-stroke" d=""/></svg>' +
+      '<div class="buehne" aria-hidden="true"><span class="funke"></span><span class="ring"></span><span class="ring b"></span><span class="kugel"></span><span class="teilchen">' + teilchen + '</span><span class="silhouette">' + bluu('Maskottchen', { groesse: 150, stimmung: 'neutral', animiert: 'nein', grund: 'hell' }) + '</span></div>' +
+      '<div class="figur" aria-hidden="true"></div>' +
+      '<div class="karten">' + KARTEN.map(([ik, titel, sub]) => '<div class="karte"><span class="ik' + (ik === 'lumi' ? ' lumi' : '') + '">' + (ik === 'lumi' ? bluu('Maskottchen', { groesse: 46, stimmung: 'froh', animiert: 'nein', grund: 'hell' }) : IK[ik]) + '</span><span><b>' + titel + '</b><span class="sub">' + sub + '</span></span></div>').join('') + '</div>' +
+      '<div class="gruss"><p class="marke">Lumi · Dein KI-Assistent</p><h2>Willkommen in der <em>BluuAkademie.</em></h2><p>Ich zeige Dir Deinen Lernweg.</p>' +
+      '<div class="knoepfe"><button type="button" class="los">Rundgang starten</button><button type="button" class="spaeter">Später</button></div></div>' +
+      '<button type="button" class="skip">Überspringen</button><p class="sr" aria-live="polite"></p>';
+    document.body.appendChild(el);
+    A = { el, figur: el.querySelector('.figur'), karten: [...el.querySelectorAll('.karte')], los: el.querySelector('.los'), status: el.querySelector('.sr'), timer: [] };
+    A.tasten = (e) => { if (!A) return; if (e.key === 'Escape') { e.preventDefault(); if (!A.el.classList.contains('text')) schluss(true); else ende(() => fertig && fertig('spaeter')); } };
+    document.addEventListener('keydown', A.tasten, true);
+    A.los.addEventListener('click', () => ende(() => fertig && fertig('rundgang')));
+    el.querySelector('.spaeter').addEventListener('click', () => ende(() => fertig && fertig('spaeter')));
+    el.querySelector('.skip').addEventListener('click', () => schluss(true));
+    stimmung('neugierig');
+    /* Flugziele aus dem echten Layout der Karten, Spur durch alle Ziele */
+    A.ziele = A.karten.map((_, i) => zielVon(i));
+    el.querySelector('.spur path').setAttribute('d', spurPfad([START].concat(A.ziele, [SCHLUSS])));
+    requestAnimationFrame(() => { if (A) el.classList.add('an'); });
+    if (ruhig()) { schluss(true); return; }
+    /* Zeitplan (ms) nach dem Storyboard */
+    nach(300, () => klasse('p1'));
+    nach(1700, () => { klasse('p1', false); klasse('p2'); });
+    nach(2500, () => klasse('halb'));
+    nach(4300, () => { klasse('p2', false); klasse('halb', false); klasse('p3'); stimmung('ueberrascht'); });
+    nach(5300, () => { stimmung('neugierig'); A.figur.classList.add('schaut'); });
+    nach(7000, () => { A.figur.classList.remove('schaut'); stimmung('freundlich', true); });
+    nach(8200, () => { klasse('p4'); A.figur.classList.add('fliegt'); stimmung('erklaert'); pos(A.ziele[0][0], A.ziele[0][1]); });
+    KARTEN.forEach((_, i) => {
+      nach(8500 + i * 800, () => { zeigeKarte(i); if (i > 0) { A.figur.classList.remove('fliegt'); void A.figur.offsetWidth; A.figur.classList.add('fliegt'); pos(A.ziele[i][0], A.ziele[i][1]); } });
+    });
+    nach(11900, () => { zeigeKarte(-1); A.figur.classList.remove('fliegt'); void A.figur.offsetWidth; A.figur.classList.add('fliegt'); klasse('p5'); pos(SCHLUSS[0], SCHLUSS[1]); stimmung('froh', true); });
+    nach(12900, () => { A.figur.classList.remove('fliegt'); A.figur.classList.add('nickt'); klasse('text'); A.status.textContent = 'Willkommen in der BluuAkademie. Ich zeige Dir Deinen Lernweg.'; A.los.focus({ preventScroll: true }); });
+  };
+
+  /* Verkettung: Willkommensfolien → Auftritt → Rundgang. «Später» merkt sich die Entscheidung wie «Überspringen» im Rundgang. */
+  const L = window.bluuLumiIntro;
+  const rundgang = L && L.start;
+  const mitRundgang = () => spielen((wahl) => { if (wahl === 'rundgang' && rundgang) rundgang(); else { try { localStorage.setItem(TOUR_KEY(), 'spaeter'); } catch (e) {} } });
+  window.bluuLumiAuftritt = { spielen, mitRundgang, schluss: () => schluss(true), ende: () => ende(), laeuft: () => !!A };
+  if (L) {
+    /* Manuell (Menü «Rundgang»): erst der Auftritt, dann der Rundgang */
+    L.start = function () { mitRundgang(); };
+    /* Automatisch nach dem Login: nicht gleichzeitig mit den Willkommensfolien; erscheinen sie, übernimmt closeWelcome */
+    L.auto = function () {
+      if (!tourOffen()) return;
+      const vu = document.getElementById('view-user'); if (!vu || getComputedStyle(vu).display === 'none') return;
+      const w = document.getElementById('welcome');
+      const gesehen = (() => { try { return !!localStorage.getItem('bluuak_welcomed_' + userId()); } catch (e) { return true; } })();
+      if (gesehen) { setTimeout(() => { if (!A && tourOffen()) mitRundgang(); }, 900); return; }
+      let n = 0; const warte = setInterval(() => { n += 1; if (w && w.classList.contains('show')) { clearInterval(warte); return; } if (n > 14) { clearInterval(warte); if (!A && tourOffen()) mitRundgang(); } }, 300);
+    };
+  }
+  const altClose = window.closeWelcome;
+  if (typeof altClose === 'function') window.closeWelcome = function () {
+    const r = altClose.apply(this, arguments);
+    setTimeout(() => { if (!A && tourOffen()) mitRundgang(); }, 650);
+    return r;
+  };
+})();
+</script>
+<!-- BLUU-AUFTRITT:ENDE -->
 </body>
 </html>
