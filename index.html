@@ -3039,6 +3039,71 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
   .ls.ls-rd .rd-abb-bild,.ls.ls-rd .rd-tab-rahmen{overflow-x:auto;}.ls.ls-rd .rd-abb svg{min-width:560px;}.ls.ls-rd .rd-toc ol{columns:1;}.ls.ls-rd .rd-begriffe{grid-template-columns:minmax(0,1fr);}.ls.ls-rd .rd-k-merksatz{grid-template-columns:minmax(0,1fr);}
   .ls.ls-rd .rd-ueben{margin:44px 0 0;padding:24px 0 6px;}.ls.ls-rd .rd-ziele li{grid-template-columns:24px minmax(0,1fr);}.ls.ls-rd .rd-stufe{grid-column:2;}}
 /* BLUU-REDAKTION:ENDE */
+/* BLUU-LESEFASSUNG:START — Lesefassung für alle Lernskripte und die Übungen: Text direkt auf der Seite, keine getönten Flächen,
+   Trennung nur durch Linien und Weißraum wie im Reiter «Überblick» (27.10.2026) */
+.ls.ls-rd .ls-main{background:none;border:0;border-radius:0;padding:0 0 48px;}
+.ls.ls-rd .ls-main .ls-card,.ls.ls-rd .ls-main .ls-denk,.ls.ls-rd .ls-main .ls-mach,.ls.ls-rd .ls-main .ls-und,.ls.ls-rd .ls-main .ls-kann,.ls.ls-rd .ls-main .ls-job,.ls.ls-rd .ls-main .ls-stolper,.ls.ls-rd .ls-main .ls-alltag,.ls.ls-rd .ls-main .ls-kurz{background:none;border:0;border-top:1px solid var(--rd-linie);border-radius:0;box-shadow:none;padding:22px 0;margin:0;}
+.ls.ls-rd .ls-main .ls-bub,.ls.ls-rd .ls-main .ls-done,.ls.ls-rd .ls-main .stinfo,.ls.ls-rd .ls-main .ls-ok{background:none;border:0;box-shadow:none;padding-left:0;padding-right:0;}
+.ls.ls-rd .ls-main .ls-merk{background:none;border:0;border-top:1px solid var(--rd-linie);border-bottom:1px solid var(--rd-linie);border-radius:0;color:var(--rd-kopf);padding:16px 0;font-family:inherit;font-weight:500;font-size:.95em;}
+.ls.ls-rd .ls-main .ls-merk::before,.ls.ls-rd .ls-main .ls-merk::after{display:none;}
+.ls.ls-rd .ls-main .ls-merk b{color:var(--rd-kicker);}
+.ls.ls-rd .ls-main .ls-tag svg,.ls.ls-rd .ls-main .ls-denk .ls-tag svg,.ls.ls-rd .ls-main .ls-mach .ls-tag svg{background:none;padding:0;width:16px;height:16px;color:var(--rd-kicker);}
+.ls.ls-rd .ls-main .ls-stolper details,.ls.ls-rd .ls-main .ls-job details,.ls.ls-rd .ls-main .ls-stolper details[open],.ls.ls-rd .ls-main .ls-job details[open]{background:none;border:0;border-bottom:1px solid var(--rd-linie);border-radius:0;padding:12px 0;margin:0;}
+.ls.ls-rd .ls-main .ls-job-nr,.ls.ls-rd .ls-main .ls-stolper summary::before{background:none;border:1.5px solid var(--rd-steel);color:var(--rd-kopf);border-radius:50%;}
+.ls.ls-rd .ls-main .ls-tabelle thead th{background:none;}
+.ls.ls-rd .ls-main .ls-tabelle tbody tr:hover td,.ls.ls-rd .ls-main .ls-tabelle tbody tr:hover th{background:none;}
+.ls.ls-rd .ls-main .ls-stufe[aria-pressed="true"],.ls.ls-rd .ls-main .ls-stufe-k[aria-pressed="true"],.ls.ls-rd .ls-main .ls-schritt[aria-pressed="true"],.ls.ls-rd .ls-main .ls-chain .st[aria-expanded="true"]{background:none;border-color:var(--rd-kopf);}
+.ls.ls-rd .ls-main .ls-stufe,.ls.ls-rd .ls-main .ls-stufe-k,.ls.ls-rd .ls-main .ls-schritt,.ls.ls-rd .ls-main .ls-chain .st{background:none;}
+.ls.ls-rd .ls-main textarea,.ls.ls-rd .ls-main input[type=text]{background:none;}
+.ls.ls-rd .ls-tipp{background:none;border-top:1px solid var(--rd-linie);border-radius:0;padding:14px 4px 0;}
+.ls.ls-rd .ls-fort{background:none;}
+/* Startseite: Kapiteltabelle mit Sprung ins Kapitel */
+.ls.ls-rd .rd-kapitel tbody th{padding:0;}
+.ls.ls-rd .rd-kap-link{display:flex;gap:12px;align-items:baseline;width:100%;padding:10px 12px 10px 0;background:none;border:0;font:inherit;font-weight:650;color:var(--rd-kopf);text-align:left;cursor:pointer;}
+.ls.ls-rd .rd-kap-link:hover span:last-child{text-decoration:underline;text-decoration-color:var(--rd-steel);text-underline-offset:3px;}
+.ls.ls-rd .rd-kap-link:focus-visible{outline:2px solid var(--rd-lime);outline-offset:2px;}
+.ls.ls-rd .rd-kap-b{flex:none;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--rd-steel);display:inline-grid;place-items:center;font-family:var(--disp);font-size:12px;font-weight:700;color:var(--rd-kopf);}
+.ls.ls-rd .rd-kapitel tr.fertig .rd-kap-b{border-color:var(--rd-lime);background:var(--rd-lime);color:#1B2E3E;}
+.ls.ls-rd .rd-kap-zeit{white-space:nowrap;color:var(--rd-leise);}
+/* Übungen in der Lesefassung */
+.ls.ls-rd.ueben{--ls-fs:18px;}
+.ls.ls-rd.ueben .ub-screen{font-size:.88em;}
+.ls.ls-rd.ueben .ub-screen h3{font-family:var(--disp);font-size:1.25em;color:var(--rd-kopf);margin:0 0 .5em;}
+.ls.ls-rd.ueben .ub-opt{background:none;border:0;border-bottom:1px solid var(--rd-linie);border-radius:0;margin:0;padding:12px 0;color:var(--rd-text);}
+.ls.ls-rd.ueben .ub-frage h4 + .ub-opt{border-top:1px solid var(--rd-linie);}
+.ls.ls-rd.ueben .ub-opt .k{background:none;border:1.5px solid var(--rd-steel);border-radius:50%;color:var(--rd-kopf);}
+.ls.ls-rd.ueben .ub-opt:hover{border-color:var(--rd-linie);color:var(--rd-kopf);}
+.ls.ls-rd.ueben .ub-opt:hover .k{border-color:var(--rd-kopf);}
+.ls.ls-rd.ueben .ub-opt[aria-pressed="true"]{background:none;color:var(--rd-kopf);font-weight:600;}
+.ls.ls-rd.ueben .ub-opt[aria-pressed="true"] .k{background:var(--rd-kopf);border-color:var(--rd-kopf);color:#fff;}
+.ls.ls-rd.ueben .ub-opt.ok{background:none;color:#4F6312;font-weight:600;}
+.ls.ls-rd.ueben .ub-opt.ok .k{background:#4F6312;border-color:#4F6312;color:#fff;}
+.ls.ls-rd.ueben .ub-opt.nein{background:none;color:#B04A31;}
+.ls.ls-rd.ueben .ub-opt.nein .k{background:#C04F35;border-color:#C04F35;color:#fff;}
+.ls.ls-rd.ueben .ub-folge li,.ls.ls-rd.ueben .ub-folge li.ok,.ls.ls-rd.ueben .ub-folge li.nein{background:none;border:0;border-bottom:1px solid var(--rd-linie);border-radius:0;margin:0;padding:10px 0;}
+.ls.ls-rd.ueben .ub-folge li.ok .nr{background:#4F6312;color:#fff;}
+.ls.ls-rd.ueben .ub-folge .nr{background:none;border:1.5px solid var(--rd-steel);}
+.ls.ls-rd.ueben .ub-fb,.ls.ls-rd.ueben .ub-fb.ok,.ls.ls-rd.ueben .ub-fb.falsch{background:none;border:0;border-top:1px solid var(--rd-linie);border-radius:0;padding:14px 0 0;margin-top:18px;}
+.ls.ls-rd.ueben .ub-fb.ok b{color:#4F6312;}
+.ls.ls-rd.ueben .ub-fb.falsch b{color:#B04A31;}
+.ls.ls-rd.ueben .ub-schritte i{height:4px;}
+:root:not([data-theme="light"]) .ls.ls-rd.ueben .ub-opt.ok,:root:not([data-theme="light"]) .ls.ls-rd.ueben .ub-fb.ok b{color:#C9D43A;}
+:root:not([data-theme="light"]) .ls.ls-rd.ueben .ub-opt.nein,:root:not([data-theme="light"]) .ls.ls-rd.ueben .ub-fb.falsch b{color:#E8957F;}
+:root:not([data-theme="light"]) .ls.ls-rd.ueben .ub-opt[aria-pressed="true"] .k{color:#13212D;}
+/* Keine Kacheln: Text steht nie in Kästen; interaktive Grafiken als Zeilen mit Linien, Fortschritt ohne Rahmen */
+.ls.ls-rd .ls-fort{border:0;border-radius:0;padding:0 0 14px;margin:0 0 16px;border-bottom:1px solid var(--rd-linie);}
+.ls.ls-rd .ls-ia-nr{position:static;display:block;margin:0 0 10px;}
+.ls.ls-rd .ls-main .ls-stufe,.ls.ls-rd .ls-main .ls-stufe-k,.ls.ls-rd .ls-main .ls-schritt,.ls.ls-rd .ls-main .ls-chain .st{border:0;border-bottom:1px solid var(--rd-linie);border-radius:0;box-shadow:none;padding:10px 0;}
+.ls.ls-rd .ls-main .ls-stufe-zeile{width:100%;}
+.ls.ls-rd .ls-main .ls-stufe[aria-pressed="true"],.ls.ls-rd .ls-main .ls-stufe-k[aria-pressed="true"],.ls.ls-rd .ls-main .ls-schritt[aria-pressed="true"],.ls.ls-rd .ls-main .ls-chain .st[aria-expanded="true"]{border-color:var(--rd-linie);border-bottom-color:var(--rd-kopf);}
+.ls.ls-rd .ls-main .ls-stufe[aria-pressed="true"] b,.ls.ls-rd .ls-main .ls-stufe-k[aria-pressed="true"] b,.ls.ls-rd .ls-main .ls-schritt[aria-pressed="true"] b,.ls.ls-rd .ls-main .ls-chain .st[aria-expanded="true"] b{text-decoration:underline;text-decoration-color:var(--rd-lime);text-decoration-thickness:3px;text-underline-offset:5px;}
+.ls.ls-rd .ls-main .ls-chain{gap:24px;}
+.ls.ls-rd .ls-main .ls-chain .track{display:none;}
+.ls.ls-rd .ls-main .ls-schritt .nr{background:none;border:1.5px solid var(--rd-steel);}
+.ls.ls-rd .ls-main .ls-schritt.war .nr{background:var(--rd-lime);border-color:var(--rd-lime);}
+.ls.ls-rd .ls-main .ls-comic .panel{border:0;border-radius:0;background:none;}
+.ls.ls-rd .ls-main .ls-comic .pn{background:none;border:1.5px solid var(--rd-steel);}
+/* BLUU-LESEFASSUNG:ENDE */
 /* BLUU-LERNSKRIPT:ENDE */
 /* BLUU-VERWALTUNG:START — Konsolidierung (24.10.2026): gemeinsame Verwaltungs-Bausteine, Manager-Überblick,
    Leerzustände, Wiki-Verdichtung, Inhaltsmuster. Baut auf den Tokens aus BLUU-SYSTEM auf; nichts Funktionales. */
@@ -14231,7 +14296,7 @@ window.BLUU_LERNSKRIPT_111 = {
 
   /* ── BLUU-REDAKTION:START (27.10.2026) — redaktionelle Lesefassung der Lernskript-Kapitel ── */
   const RD = () => ((window.BLUU_REDAKTION || {})[D() && D().modul] || {});
-  const rdAktiv = (k) => k !== 'start' && !!D() && D().modul === '1.1.1' && !!kapVon(k) && kapVon(k).form !== 'b';
+  const rdAktiv = (k) => k !== 'start' && !!D() && !!kapVon(k); /* BLUU-LESEFASSUNG: alle Module, auch Form B */
   let rdZ = { abb: 0, tab: 0 };
   const rdTxt = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\s?\[(\d{1,2})\]/g, (m, n) => '<sup class="rd-fn"><a href="#rd-q' + n + '" onclick="return bluuRd.quelle(' + n + ')" aria-label="Quelle ' + n + '">' + n + '</a></sup>');
   const STUFE = { 1: 'Verstehen', 2: 'Anwenden', 3: 'Analysieren' };
@@ -14294,6 +14359,9 @@ window.BLUU_LERNSKRIPT_111 = {
   };
   /* Kapitel ohne Neufassung: Originaltext unverändert, nur anders angeordnet */
   const rdAdapter = (k, c) => {
+    if (c.form === 'b') return rdAdapterB(k, c);
+    if (c.form === 'b') return rdAdapterB(k, c);
+    if (c.form === 'b') return rdAdapterB(k, c);
     const teile = (c.abschnitte || []).map((a) => ({ klein: true, titel: a.titel, bloecke: [a.text ? { p: a.text } : null, a.interaktiv ? { ia: a.interaktiv } : null, a.tabelle ? { tab: a.tabelle } : null].filter(Boolean) }));
     const extra = [];
     if (c.beispiel) extra.push({ kasten: { art: 'fall', titel: 'Beispiel', inhalt: [{ p: c.beispiel }] } });
@@ -14317,7 +14385,7 @@ window.BLUU_LERNSKRIPT_111 = {
     const iaListe = neu ? (c.abschnitte || []).map((a) => a.interaktiv).filter(Boolean) : [];
     return '<section class="rd-ueben" id="ls-dran"><p class="rd-kicker">Üben und anwenden</p><h2>Jetzt bist Du dran</h2><p class="rd-ueben-ein">Ab hier wird nicht mehr gelesen, sondern geübt. Die Aufgaben sind freiwillig und werden nicht bewertet; Deine Eingaben bleiben gespeichert. Bewertet wird erst in den Übungen ' + esc(k) + '.</p>' +
       (r.lumi ? '<div class="rd-lumi">' + wurm('erklaert', 46) + '<p>' + rdTxt(r.lumi) + '</p></div>' : '') +
-      (c.denk ? denk(k, c) : '') + iaListe.map((n) => '<section class="ls-card rd-ia-uebung"><div class="ls-tag">' + sym('monitor', 15) + ' Interaktiv</div>' + ia(n, k) + '</section>').join('') + (c.mitmach ? mitmach(k, c) : '') + (c.und ? und(k, c) : '') + kannKarte(k, c) + '</section>';
+      (c.denk ? denk(k, c) : '') + (c.form === 'b' ? rdJobSelbst(k, c) : '') + iaListe.map((n) => '<section class="ls-card rd-ia-uebung"><div class="ls-tag">' + sym('monitor', 15) + ' Interaktiv</div>' + ia(n, k) + '</section>').join('') + (c.mitmach ? mitmach(k, c) : '') + (c.und ? und(k, c) : '') + kannKarte(k, c) + '</section>';
   };
   const rdQuellen = (r) => r.quellen && r.quellen.length ? '<section class="rd-quellen" aria-labelledby="rd-q-t"><h2 class="rd-h-klein" id="rd-q-t">Quellen</h2><ol>' + r.quellen.map((q, i) => '<li id="rd-q' + (i + 1) + '"><span>' + esc(q.titel) + '</span>. ' + esc(q.hrsg || '') + (q.fassung ? ', ' + esc(q.fassung) : '') + (q.geprueft ? '. Abgerufen am ' + esc(q.geprueft) : '') + '.' + (q.url ? ' <a href="' + esc(q.url) + '" target="_blank" rel="noopener noreferrer">' + esc(q.url.replace(/^https?:\/\//, '')) + '</a>' : '') + '</li>').join('') + '</ol></section>' : '';
   const rdHerkunft = (r) => r.herkunft ? '<details class="rd-herkunft"><summary>Herkunft und Freigabestatus dieser Fassung</summary><p><b>Fassung ' + esc(r.fassung || '') + ', Stand ' + esc(r.stand || '') + (r.status === 'entwurf' ? ', Entwurf.' : '.') + '</b> Neue Inhalte sind vor der Nutzung in zertifizierungsorientierter Ausbildung fachlich zu prüfen.</p><h3>Aus der bisherigen Fassung übernommen</h3><ul>' + r.herkunft.original.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul><h3>Neu ergänzt, fachlich zu prüfen</h3><ul>' + r.herkunft.neu.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul></details>' : '';
@@ -14339,12 +14407,43 @@ window.BLUU_LERNSKRIPT_111 = {
     quelle(n) { return this.zu('rd-q' + n); }
   };
   /* BLUU-REDAKTION:ENDE */
+  /* ── BLUU-LESEFASSUNG:START (27.10.2026) — Form-B-Kapitel und Startseite in der Lesefassung; Inhalte unverändert, nur angeordnet ── */
+  const rdAdapterB = (k, c) => {
+    const darum = c.darum || [], stolper = c.stolper || [], set = lkSet(k);
+    const teile = (c.wichtig || []).map((b) => ({ klein: true, titel: b.titel || '', bloecke: [b.text ? { p: b.text } : null, b.tabelle ? { tab: { titel: b.tabelle.titel || '', kopf: b.tabelle.kopf, zeilen: b.tabelle.zeilen } } : null, b.reihe ? { schritte: b.reihe.map((r) => [r[0], r[1] || '']) } : null, b.notiz ? { p: b.notiz } : null].filter(Boolean) }));
+    if (darum.length > 1) teile.unshift({ klein: true, titel: 'Darum geht es', bloecke: darum.slice(1).map((p) => ({ p })) });
+    return {
+      einstieg: darum[0] || '', lesezeit: c.lesezeit, teile,
+      synthese: c.merksatz || stolper.length ? { text: c.merksatz ? '**Merksatz:** ' + c.merksatz : '', irrtuemer: stolper.length ? stolper.map((x) => [x[0], 'Richtig ist: ' + x[1]]) : null } : null,
+      lumi: c.danach ? 'Weiter geht es mit den ' + c.danach + (set ? ' und ' + set.cards.length + ' Lernkarten zu diesem Kapitel.' : '.') : ''
+    };
+  };
+  const rdJobSelbst = (k, c) =>
+    (c.job && c.job.length ? '<section class="ls-card ls-job"><div class="ls-tag">' + sym('hand', 15) + ' Mitten im Job</div><p class="ls-hint">Situationen, wie sie Dir im Projekt begegnen: Überleg erst selbst – dann klapp die Antwort auf.</p>' + c.job.map((j, i) => '<details><summary><span class="ls-job-nr">' + (i + 1) + '</span>' + esc(j.f) + '</summary>' + (j.tip ? '<p class="ls-job-tipp"><b>Hinweis:</b> ' + esc(j.tip) + '</p>' : '') + '<p><b>So könnte Deine Antwort lauten:</b> ' + esc(j.b) + '</p></details>').join('') + '</section>' : '') +
+    (c.selbst ? '<section class="ls-card ls-mach"><div class="ls-tag">' + sym('stift', 15) + ' Erklär es Dir selbst</div><h3>' + esc(c.selbst.frage) + '</h3><p class="ls-hint">Schreib es in eigenen Worten – so, als würdest Du es jemandem erklären.</p><label class="ls-sr" for="ls-selbst-' + k + '">Deine Erklärung</label>' + feld(k, 'selbst', 'Meine Erklärung …', 3) + '<details class="ls-loesung"><summary>So könnte Deine Antwort lauten</summary><p>' + esc(c.selbst.antwort) + '</p></details></section>' : '');
+  const rdStart = () => {
+    const d = D(), st = d.start || {}, kap = KAP(), n = kap.filter((x) => fertig(x.key)).length, weiter = kap.find((x) => !fertig(x.key)) || kap[0], kopf = st.wegKopf || [];
+    return werkzeug('start') +
+      '<header class="rd-kopf"><p class="rd-kicker">Bevor es losgeht</p><h1>' + esc(d.titel) + '</h1>' + (d.untertitel ? '<p class="rd-einstieg">' + esc(d.untertitel) + '</p>' : '') + '<p class="rd-meta">' + kap.length + ' Kapitel · ' + n + ' geschafft · Stand ' + esc(d.stand || '') + '</p></header>' +
+      (st.gruss ? '<div class="rd-lumi">' + wurm('winkt', 46) + '<p>' + rdTxt(st.gruss) + '</p></div>' : '') +
+      '<section class="rd-teil rd-teil-klein rd-teil-erst">' + (st.text ? '<p>' + rdTxt(st.text) + '</p>' : '') +
+      (st.schritte && st.schritte.length ? '<h3>' + esc(st.schritteTitel || 'So arbeitest Du mit diesem Lernskript') + '</h3><ol class="rd-schritte">' + st.schritte.map(([t, x]) => '<li><h4>' + esc(t) + '</h4><p>' + esc(x) + '</p></li>').join('') + '</ol>' : '') +
+      (st.bereit && st.bereit.length ? '<h3>Leg Dir bereit</h3><ul class="rd-liste">' + st.bereit.map((x) => '<li>' + rdTxt(x) + '</li>').join('') + '</ul>' : '') +
+      (st.aufbau && st.aufbau.length ? '<h3>So ist jedes Kapitel aufgebaut</h3><dl class="rd-begriffe">' + st.aufbau.map(([a, b]) => '<div><dt>' + esc(a) + '</dt><dd>' + rdTxt(b) + '</dd></div>').join('') + '</dl>' : '') + '</section>' +
+      '<section class="rd-teil"><p class="rd-kicker">' + esc(st.wegTitel || 'Dein Weg durch das Modul') + '</p><h2>Die Kapitel</h2>' + (st.weg ? '<p>' + rdTxt(st.weg) + '</p>' : '') +
+      '<figure class="rd-tab rd-kapitel"><div class="rd-tab-rahmen"><table><thead><tr><th scope="col">' + esc(kopf[0] || 'Kapitel') + '</th><th scope="col">' + esc(kopf[2] || 'Das kannst Du danach') + '</th><th scope="col">' + esc(kopf[1] || 'Lesezeit') + '</th></tr></thead><tbody>' +
+      kap.map((x) => '<tr' + (fertig(x.key) ? ' class="fertig"' : '') + '><th scope="row"><button type="button" class="rd-kap-link" onclick="bluuLs.gehe(' + attr(x.key) + ')"><span class="rd-kap-b">' + esc(x.key) + '</span><span>' + esc(x.titel) + '</span></button></th><td>' + esc(x.mitmach ? x.mitmach.titel : (x.kann && x.kann[0] ? x.kann[0] : '')) + '</td><td class="rd-kap-zeit">' + esc(String(x.lesezeit || '').replace(/^ca\.\s*/, 'ca. ')) + (fertig(x.key) ? '<br>geschafft' : '') + '</td></tr>').join('') +
+      '</tbody></table></div></figure></section>' +
+      '<div class="ls-next"><button type="button" class="ls-btn lime" onclick="bluuLs.gehe(' + attr(weiter.key) + ')">' + (n ? 'Weiter mit Kapitel ' + esc(weiter.key) : 'Mit Kapitel ' + esc(weiter.key) + ' beginnen') + ' ' + sym('weiter', 16) + '</button></div>' +
+      '<p class="ls-foot">Lernskript ' + esc(d.modul) + ' · Stand ' + esc(d.stand || '') + '.</p>';
+  };
+  /* BLUU-LESEFASSUNG:ENDE */
   /* ── Rendern ── */
   function render(m, el) {
     laden();
     const k = S.kapitel === 'start' || kapVon(S.kapitel) ? S.kapitel : 'start';
     const rd = rdAktiv(k); /* BLUU-REDAKTION: Lesefassung statt Dreispalter */
-    el.innerHTML = '<div class="ls ' + (rd ? 'ls-rd' : 'ls-drei') + '" style="--ls-fs:' + [18, 20, 22][S.fs] + 'px;--ls-ton:' + ton() + '">' + rail(k) + '<div class="ls-main">' + (k === 'start' ? startSeite() : (rd ? rdSeite(k) : kapitelSeite(k))) + '</div>' + (rd ? '' : seite(k)) + '</div>';
+    el.innerHTML = '<div class="ls ' + (rd || k === 'start' ? 'ls-rd' : 'ls-drei') + '" style="--ls-fs:' + [18, 20, 22][S.fs] + 'px;--ls-ton:' + ton() + '">' + rail(k) + '<div class="ls-main">' + (k === 'start' ? rdStart() : (rd ? rdSeite(k) : kapitelSeite(k))) + '</div>' + (rd || k === 'start' ? '' : seite(k)) + '</div>';
     if (k !== 'start') rechne(k);
     lesebalken();
   }
@@ -14793,7 +14892,7 @@ window.BLUU_UEBEN = {"1.1.1":{"modul":"1.1.1","titel":"1x1 der Energiewirtschaft
     const test = () => { try { const l = window.bluuInhaltLektionen && CODE ? bluuInhaltLektionen(CODE) : []; return l.find((c) => /wissenstest|abschlusstest/i.test(c.title || '')) || null; } catch (e) { return null; } };
     const wt = !nx ? test() : null;
     return '<div class="ls-werkzeug"><span class="ls-wo">' + ikon('lesen', 14) + ' Übungen ' + esc(M) + '</span></div>' +
-      '<h1 class="ls-h1">' + esc(st.Titel || d.titel) + '</h1>' + (st.Untertitel ? '<p class="ls-lead" style="margin-top:0">' + esc(st.Untertitel) + '</p>' : '') + (st.Einleitung ? '<p>' + esc(st.Einleitung) + '</p>' : '') +
+      '<header class="rd-kopf"><p class="rd-kicker">Startseite</p><h1>' + esc(st.Titel || d.titel) + '</h1>' + (st.Untertitel ? '<p class="rd-einstieg">' + esc(st.Untertitel) + '</p>' : '') + '</header>' + (st.Einleitung ? '<p>' + esc(st.Einleitung) + '</p>' : '') +
       '<div class="ub-fortschritt"><span class="ls-tag">Fortschritt</span><div>' + n + ' von ' + ges + ' Untermodulen abgeschlossen</div><div class="ls-rail-bar" aria-hidden="true"><i style="width:' + Math.round(100 * n / Math.max(1, ges)) + '%"></i></div></div>' +
       (d.auffrischer ? '<section class="ls-card ls-alltag"><div class="ls-tag">Auffrischer</div><h3>' + esc(d.auffrischer.titel) + '</h3><p class="ls-hint">' + esc(d.auffrischer.hinweis || 'Vorwissen auffrischen, ohne Wertung.') + (d.auffrischer.richtzeit ? ' Richtzeit ' + esc(d.auffrischer.richtzeit) + '.' : '') + '</p><div class="ls-btns"><button type="button" class="ls-btn ghost" onclick="bluuUeben.gehe(\'R\')">' + (Z.done.R ? 'Auffrischer wiederholen' : 'Auffrischer starten') + '</button></div></section>' : '') +
       '<section class="ls-card"><div class="ls-tag">Untermodule</div><p class="ls-hint">In Reihenfolge freigeschaltet: Jedes Untermodul endet mit Selbstcheck und Merksatz.</p>' +
@@ -14813,23 +14912,22 @@ window.BLUU_UEBEN = {"1.1.1":{"modul":"1.1.1","titel":"1x1 der Energiewirtschaft
       ? (k === 'R' ? '<button type="button" class="ls-btn" onclick="bluuUeben.abschliessen(\'R\')">Zur Startseite ' + ikon('weiter', 16) + '</button>' : '<button type="button" class="ls-btn"' + (kann ? '' : ' disabled') + ' onclick="bluuUeben.abschliessen(' + attr(k) + ')">Untermodul ' + esc(k) + ' abschließen ' + ikon('weiter', 16) + '</button>')
       : '<button type="button" class="ls-btn' + (pruefKnopf ? ' ghost' : '') + '"' + (kann ? '' : ' disabled title="Erst die Aufgabe lösen"') + ' onclick="bluuUeben.screen(' + attr(k) + ',' + (i + 1) + ')">' + (sc.typ === 'start' ? 'Los geht’s' : 'Weiter') + ' ' + ikon('weiter', 16) + '</button>';
     const zurueck = i > 0 ? '<button type="button" class="ls-textlink" onclick="bluuUeben.screen(' + attr(k) + ',' + (i - 1) + ')">' + ikon('zurueck', 14) + ' Zurück</button>' : '<button type="button" class="ls-textlink" onclick="bluuUeben.gehe(\'start\')">' + ikon('zurueck', 14) + ' Startseite</button>';
-    return '<div class="ls-werkzeug"><span class="ls-wo">' + ikon('lesen', 14) + ' Übungen ' + esc(M) + ' · ' + (k === 'R' ? 'Auffrischer' : 'Untermodul ' + esc(k)) + ' · Screen ' + (i + 1) + ' von ' + n + '</span></div>' +
-      '<h1 class="ls-h1"><span class="l">' + esc(k) + '</span>' + esc(um.titel) + '</h1>' +
-      '<div class="ls-meta">' + (um.richtzeit ? '<span class="ls-chip">' + ikon('uhr') + ' Richtzeit ' + esc(um.richtzeit) + '</span>' : '') + (um.ergebnis ? '<span class="ls-chip">' + ikon('ziel') + ' ' + esc(um.ergebnis) + '</span>' : '') + (um.folie ? '<span class="ls-chip">' + ikon('folie') + ' ' + esc(um.folie) + '</span>' : '') + '</div>' +
+    return '<div class="ls-werkzeug"><span class="ls-wo">' + ikon('lesen', 14) + ' Übungen ' + esc(M) + ' · Screen ' + (i + 1) + ' von ' + n + '</span></div>' +
+      '<header class="rd-kopf"><p class="rd-kicker">' + (k === 'R' ? 'Auffrischer' : 'Untermodul ' + esc(k)) + '</p><h1>' + esc(um.titel) + '</h1><p class="rd-meta">' + [um.richtzeit ? 'Richtzeit ' + esc(um.richtzeit) : '', um.ergebnis ? 'Ergebnis: ' + esc(um.ergebnis) : '', um.folie ? esc(um.folie) : ''].filter(Boolean).join(' · ') + '</p></header>' +
       '<div class="ub-schritte" aria-hidden="true">' + um.screens.map((x, j) => '<i class="' + (j === i ? 'cur' : (j < i || geschafft(x) && Z.g[x.id] ? 'done' : '')) + '"></i>').join('') + '</div>' +
       '<section class="ls-card ub-screen"><div class="ls-tag">' + esc((sc.typ === 'sc' && sc.wertung === false ? 'Auffrischer · ohne Wertung' : TYP[sc.typ] || 'Inhalt') + ' · ' + sc.id) + '</div>' + (sc.typ !== 'selbst' ? '<h3>' + esc(sc.titel) + '</h3>' : '') + inhalt(sc, um) + (auf ? fb(sc) : '') +
       '<div class="ls-btns">' + pruefKnopf + loesKnopf + '</div></section>' +
       '<div class="ls-next">' + weiter + zurueck + '</div>' +
       '<p class="ls-foot">Übungen ' + esc(M) + ' · ' + (k === 'R' ? 'Auffrischer' : 'Untermodul ' + esc(k)) + ' · Dein Stand wird nach jeder Eingabe gespeichert; Du steigst beim letzten Screen wieder ein.</p>';
   };
-  const inner = () => rail() + '<div class="ls-main">' + (Z.aktuell === 'start' || !umVon(Z.aktuell) || !frei(Z.aktuell) ? startSeite() : umSeite(Z.aktuell)) + '</div>' + aside();
+  const inner = () => rail() + '<div class="ls-main">' + (Z.aktuell === 'start' || !umVon(Z.aktuell) || !frei(Z.aktuell) ? startSeite() : umSeite(Z.aktuell)) + '</div>';
   const zeichne = (oben) => { const el = document.getElementById('ueben-wurzel'); if (!el) return; el.innerHTML = inner(); if (oben) { try { el.scrollIntoView({ block: 'start', behavior: 'smooth' }); } catch (e) {} } };
   const ton = (m) => TON[m && m.bereich] || TON.grundlagen;
 
   window.bluuUeben = {
     hat: (modul, key) => { const d = (window.BLUU_UEBEN || {})[modul]; return !!(d && (!key || d.untermodule.some((u) => u.key === key))); },
     ergaenzen: (m) => { const id = m && m.lernskript; const d = id && (window.BLUU_UEBEN || {})[id]; if (!d) return false; m.status = 'freigeschaltet'; if (!m.teile) m.teile = {}; m.teile.uebungen = 'bereit'; m.umfang = (m.umfang ? m.umfang + ' · ' : '') + 'Übungen in ' + d.untermodule.length + ' Untermodulen'; return true; },
-    html: (modul, m) => { M = modul; MOD = m || null; CODE = m ? (m.code || m.thema) : null; laden(); return '<div class="ls ueben ls-drei" id="ueben-wurzel" style="--ls-ton:' + ton(m) + '">' + inner() + '</div>'; },
+    html: (modul, m) => { M = modul; MOD = m || null; CODE = m ? (m.code || m.thema) : null; laden(); return '<div class="ls ls-rd ueben" id="ueben-wurzel" style="--ls-ton:' + ton(m) + '">' + inner() + '</div>'; },
     oeffne: (modul, key, code) => { M = modul; laden(); Z.aktuell = key && frei(key) ? key : 'start'; speichern(); if (window.bluuModulReiter) bluuModulReiter('uebungen'); setTimeout(() => { const el = document.getElementById('ueben-wurzel'); if (el) el.scrollIntoView({ block: 'start' }); }, 50); },
     gehe: (k) => { if (k !== 'start' && !frei(k)) return; Z.aktuell = k; speichern(); zeichne(true); },
     screen: (k, i) => { Z.screen[k] = i; speichern(); zeichne(true); },
