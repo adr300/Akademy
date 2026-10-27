@@ -3500,6 +3500,14 @@ html.praesentation .hero-landschaft .rotor,html.praesentation .hero-landschaft .
 .bdg.t2{--lift:-1px;--rot:0deg;--sc:1.025;--shy:3px;--sh:rgba(27,46,62,.12);}
 .bdg.t3{--lift:-2px;--rot:-1.5deg;--sc:1.045;--shy:6px;--sh:rgba(27,46,62,.2);}
 .bdg.t4{--lift:-4px;--rot:-4deg;--sc:1.08;--shy:12px;--sh:rgba(27,46,62,.3);transition:transform .55s var(--ease-spring),filter .4s var(--ease-out);}
+/* BLUU-ERFOLGE-RUHE (27.10.2026): Karte in «Erfolge» hebt sich nur bei hohen Stufen; niedrige Stufen zeigen nur die Kante.
+   Ringe am Profil-Emblem erst ab t3. Reihenfolge: t0 nichts · t1 Kante · t2 Kante + leichter Schatten · t3 −1 px + Ring · t4 −2 px + Doppelring + Feder */
+.erfolg:not(.zu):hover{transform:none;box-shadow:none;}
+.erfolg:has(.bdg.t2):not(.zu):hover{box-shadow:0 10px 22px -18px rgba(36,58,76,.35);}
+.erfolg:has(.bdg.t3):not(.zu):hover{transform:translateY(-1px);box-shadow:0 14px 28px -20px rgba(36,58,76,.45);}
+.erfolg:has(.bdg.t4):not(.zu):hover{transform:translateY(-2px);box-shadow:0 16px 32px -20px rgba(36,58,76,.5);}
+.profile-rang-emblem.bdg.t1:hover::after,.profile-rang-emblem.bdg.t1:hover::before,.profile-rang-emblem.bdg.t2:hover::after,.profile-rang-emblem.bdg.t2:hover::before,
+.profile-rang-emblem.bdg.t3:hover::before,.titel-emblem.bdg.t1:hover::after,.titel-emblem.bdg.t2:hover::after{animation:none;}
 /* BLUU-KNOEPFE-DUNKEL (27.10.2026): im dunklen Thema tragen alle Knöpfe das Lime der Palette – gefüllt (primär) oder als Lime-Kontur */
 :root:not([data-theme="light"]) .kachel-btn:not(.primaer):not(:disabled){border-color:rgba(183,194,27,.6);color:#EAF1F7;}
 :root:not([data-theme="light"]) .kachel-btn:not(.primaer):not(:disabled):hover{background:rgba(183,194,27,.14);border-color:#B7C21B;}
@@ -4129,7 +4137,7 @@ class Component extends DCLogic {
       dBand: vor(meister), bandFarbe: mix(farbe, '#1B2E3E', 0.35),
       dKrone: vor(meister),
       funkenA: fA.join(''), funkenB: fB.join(''), funkeHell: mix(farbe, '#FFFFFF', 0.3),
-      blinken: (!zu && p.animiert !== 'nein' && !ruhig) ? '1;.2;1' : '1',
+      blinken: (!zu && p.animiert !== 'nein' && !ruhig) ? (s >= 4 ? '1;.2;1' : (s === 3 ? '1;.6;1' : '1')) : '1', /* BLUU-ABZEICHEN-RUHE: Funkeln wächst mit der Stufe */
       dSchloss: vor(zu)
     };
   }
@@ -4191,7 +4199,7 @@ class Component extends DCLogic {
       feder2: lime ? '#C9D24A' : mix(farbe, '#FFFFFF', 0.5),
       feder3: lime ? '#9DA816' : mix(farbe, '#FFFFFF', 0.15),
       funkelnLime: fL.join(''), funkelnBlau: fB.join(''),
-      blinken: ruhig ? '1' : '1;.2;1',
+      blinken: ruhig ? '1' : (s >= 7 ? '1;.2;1' : '1;.55;1'), /* BLUU-ABZEICHEN-RUHE */
       dKrone: vor(s >= 7),
       plakette: s === 1 ? '#FFFFFF' : (lime ? '#B7C21B' : farbe),
       plaketteRand: s === 1 ? '#66788A' : (lime ? '#B7C21B' : farbe),
