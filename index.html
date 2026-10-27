@@ -2921,7 +2921,7 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 .ls.ls-rd .rd-kopf h1{font-family:var(--disp);font-size:2.1em;line-height:1.06;font-weight:800;letter-spacing:-.022em;color:var(--rd-kopf);margin:0 0 .45em;text-wrap:balance;}
 .ls.ls-rd .rd-einstieg{font-size:1.06em;line-height:1.6;color:var(--rd-text);margin:0 0 14px;text-wrap:pretty;}
 .ls.ls-rd .rd-meta{font-size:.78em;color:var(--rd-leise);margin:0;}
-.ls.ls-rd .rd-status{font-size:.8em;line-height:1.5;color:var(--rd-text);background:var(--rd-flaeche);border-radius:8px;padding:10px 14px;margin:16px 0 0;}
+.ls.ls-rd .rd-status{font-size:.8em;line-height:1.5;color:var(--rd-text);background:none;border-radius:0;padding:0;margin:14px 0 0;}
 .ls.ls-rd .rd-h-klein{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--rd-kicker);margin:0 0 10px;}
 /* Lernziele und Inhalt */
 .ls.ls-rd .rd-ziele{border-top:1px solid var(--rd-linie);padding-top:18px;margin:0 0 26px;}
@@ -2959,7 +2959,7 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 .ls.ls-rd .rd-abb figcaption b,.ls.ls-rd .rd-tab figcaption b{color:var(--rd-kopf);font-weight:700;}
 .ls.ls-rd .rd-tab td{hyphens:auto;-webkit-hyphens:auto;}
 .ls.ls-rd .rd-tab table{width:100%;border-collapse:collapse;font-size:.8em;line-height:1.5;}
-.ls.ls-rd .rd-tab thead th{background:var(--rd-flaeche);color:var(--rd-kopf);font-weight:700;text-align:left;padding:10px 12px;border-bottom:1.5px solid var(--rd-kopf);vertical-align:bottom;}
+.ls.ls-rd .rd-tab thead th{background:none;color:var(--rd-kopf);font-weight:700;text-align:left;padding:10px 12px;border-bottom:1.5px solid var(--rd-kopf);vertical-align:bottom;}
 .ls.ls-rd .rd-tab tbody th,.ls.ls-rd .rd-tab tbody td{padding:10px 12px;border-bottom:1px solid var(--rd-linie);text-align:left;vertical-align:top;color:var(--rd-text);}
 .ls.ls-rd .rd-tab tbody th{font-weight:650;color:var(--rd-kopf);}
 .ls.ls-rd .rd-tab-fuss{font-size:.8em!important;color:var(--rd-leise)!important;margin:8px 0 0!important;}
@@ -2982,15 +2982,15 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 .ls.ls-rd .rd-s-auf{fill:#1B2E3E;}
 .ls.ls-rd .rd-s-band{fill:var(--rd-lime-fl);}
 /* Kästen nur für Rechenwege, Fälle, Hinweise, Merksätze */
-.ls.ls-rd .rd-kasten{margin:1.8em 0;background:var(--rd-flaeche);border-left:4px solid var(--rd-lime);border-radius:0 8px 8px 0;padding:16px 20px 6px;}
+.ls.ls-rd .rd-kasten{margin:2em 0;background:none;border:0;border-top:1px solid var(--rd-linie);border-bottom:1px solid var(--rd-linie);border-radius:0;padding:18px 0 8px;}
 .ls.ls-rd .rd-kasten-kopf{font-family:var(--disp);font-size:12px!important;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--rd-kopf)!important;margin:0 0 10px!important;line-height:1.4!important;}
 .ls.ls-rd .rd-kasten p{font-size:.85em;}
-.ls.ls-rd .rd-k-fall{background:none;border:1px solid var(--rd-linie);border-left:4px solid var(--rd-steel);}
+.ls.ls-rd .rd-k-fall{background:none;}
 .ls.ls-rd .rd-k-hinweis{border-left-color:var(--rd-steel);}
-.ls.ls-rd .rd-k-merksatz{display:grid;grid-template-columns:9em minmax(0,1fr);gap:4px 16px;padding:18px 20px;}
+.ls.ls-rd .rd-k-merksatz{display:grid;grid-template-columns:9em minmax(0,1fr);gap:4px 16px;padding:18px 0;}
 .ls.ls-rd .rd-k-merksatz .rd-kasten-kopf{margin:3px 0 0!important;}
 .ls.ls-rd .rd-k-merksatz p{font-size:.95em;line-height:1.55;margin:0;color:var(--rd-kopf);}
-.ls.ls-rd .rd-formel{font-family:'IBM Plex Mono',monospace;font-size:1em!important;font-weight:500;color:var(--rd-kopf)!important;background:var(--rd-papier);border-radius:6px;padding:10px 14px;margin:0 0 1em!important;overflow-x:auto;}
+.ls.ls-rd .rd-formel{font-family:'IBM Plex Mono',monospace;font-size:1em!important;font-weight:500;color:var(--rd-kopf)!important;background:none;border-radius:0;padding:2px 0;margin:0 0 1em!important;overflow-x:auto;}
 /* Fallanalyse-Schritte */
 .ls.ls-rd .rd-schritte{list-style:none;margin:1.4em 0;padding:0;counter-reset:rds;}
 .ls.ls-rd .rd-schritte li{counter-increment:rds;position:relative;padding:0 0 4px 46px;margin:0 0 14px;}
@@ -3012,9 +3012,15 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 .ls.ls-rd .rd-check details[open] summary::before{content:'–';}
 .ls.ls-rd .rd-check details p{padding:0 0 12px 24px;}
 /* Übungsteil: klar vom Lesen getrennt */
-.ls.ls-rd .rd-ueben{margin:56px -48px 0;padding:34px 48px 10px;background:var(--rd-flaeche);border-top:3px solid var(--rd-kopf);}
+.ls.ls-rd .rd-ueben{margin:56px 0 0;padding:30px 0 10px;background:none;border-top:2px solid var(--rd-kopf);}
 .ls.ls-rd .rd-ueben h2{font-family:var(--disp);font-size:1.5em;font-weight:800;letter-spacing:-.018em;color:var(--rd-kopf);margin:0 0 .4em;}
-.ls.ls-rd .rd-ueben .ls-card{background:var(--rd-papier);}
+.ls.ls-rd .rd-ueben .ls-card{background:none;border:0;border-top:1px solid var(--rd-linie);border-radius:0;box-shadow:none;padding:22px 0;margin:0;}
+.ls.ls-rd .rd-ueben .ls-bub,.ls.ls-rd .rd-ueben .ls-ok{background:none;border:0;box-shadow:none;}
+.ls.ls-rd .rd-ueben .ls-bub{padding:0;}
+.ls.ls-rd .ls-ia{background:none;border:0;box-shadow:none;padding:0;}
+.ls.ls-rd .ls-comic .panel{border:0;border-top:1px solid var(--rd-linie);border-bottom:1px solid var(--rd-linie);border-radius:0;padding:12px 0;background:none;}
+.ls.ls-rd .ls-comic figcaption{background:none;padding:6px 0 0;border-radius:0;}
+.ls.ls-rd .rd-kasten .rd-abb-bild{border:0;padding:8px 0 0;}
 .ls.ls-rd .rd-ia-uebung .ls-ia{background:none;padding:0;border:0;box-shadow:none;}
 .ls.ls-rd .rd-lumi{display:flex;gap:12px;align-items:center;margin:0 0 18px;}
 .ls.ls-rd .rd-lumi p{margin:0;font-size:.85em;line-height:1.55;color:var(--rd-text);}
@@ -3024,14 +3030,14 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 .ls.ls-rd .rd-quellen li{margin:0 0 8px;scroll-margin-top:90px;}
 .ls.ls-rd .rd-quellen li span{font-weight:600;color:var(--rd-kopf);}
 .ls.ls-rd .rd-quellen a{color:var(--rd-kicker);word-break:break-all;}
-.ls.ls-rd .rd-herkunft{margin:18px 0 24px;font-size:.8em;border:1px solid var(--rd-linie);border-radius:8px;padding:0 16px;}
+.ls.ls-rd .rd-herkunft{margin:18px 0 24px;font-size:.8em;border:0;border-top:1px solid var(--rd-linie);border-bottom:1px solid var(--rd-linie);border-radius:0;padding:0;}
 .ls.ls-rd .rd-herkunft summary{cursor:pointer;padding:12px 0;font-weight:600;color:var(--rd-kopf);}
 .ls.ls-rd .rd-herkunft h3{font-family:var(--disp);font-size:1em;margin:12px 0 6px;color:var(--rd-kopf);}
 .ls.ls-rd .rd-herkunft ul{margin:0 0 12px;padding-left:1.2em;line-height:1.55;}
 @media (max-width:960px){.ls.ls-rd{grid-template-columns:minmax(0,1fr);gap:20px;}.ls.ls-rd .ls-main{max-width:none;}}
 @media (max-width:640px){.ls.ls-rd .ls-main{padding:22px 18px 32px;border-radius:0;border-left:0;border-right:0;}.ls.ls-rd .rd-kopf h1{font-size:1.75em;}.ls.ls-rd .rd-teil h2,.ls.ls-rd .rd-ueben h2{font-size:1.35em;}.ls.ls-rd .rd-einstieg{font-size:1em;}.ls.ls-rd .rd-teil p{font-size:.88em;}
   .ls.ls-rd .rd-abb-bild,.ls.ls-rd .rd-tab-rahmen{overflow-x:auto;}.ls.ls-rd .rd-abb svg{min-width:560px;}.ls.ls-rd .rd-toc ol{columns:1;}.ls.ls-rd .rd-begriffe{grid-template-columns:minmax(0,1fr);}.ls.ls-rd .rd-k-merksatz{grid-template-columns:minmax(0,1fr);}
-  .ls.ls-rd .rd-ueben{margin:44px -18px 0;padding:26px 18px 6px;}.ls.ls-rd .rd-ziele li{grid-template-columns:24px minmax(0,1fr);}.ls.ls-rd .rd-stufe{grid-column:2;}}
+  .ls.ls-rd .rd-ueben{margin:44px 0 0;padding:24px 0 6px;}.ls.ls-rd .rd-ziele li{grid-template-columns:24px minmax(0,1fr);}.ls.ls-rd .rd-stufe{grid-column:2;}}
 /* BLUU-REDAKTION:ENDE */
 /* BLUU-LERNSKRIPT:ENDE */
 /* BLUU-VERWALTUNG:START — Konsolidierung (24.10.2026): gemeinsame Verwaltungs-Bausteine, Manager-Überblick,
