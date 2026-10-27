@@ -2910,28 +2910,28 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 /* BLUU-ANTWORTEN:ENDE */
 /* BLUU-TF1:ENDE */
 /* BLUU-REDAKTION:START — redaktionelle Lesefassung (27.10.2026): eine Lesespalte, Typografie und Weißraum statt Kästen */
-.ls.ls-rd{--rd-kopf:#1B2E3E;--rd-text:#24323F;--rd-leise:#526677;--rd-kicker:#4F6B82;--rd-linie:#D6E0E8;--rd-flaeche:#EEF3F6;--rd-steel:#6F93B1;--rd-lime:#B7C21B;--rd-lime-fl:#F2F5D6;--rd-papier:#FFFFFF;
+.ls.ls-rd{--rd-kopf:#1B2E3E;--rd-text:#43424F;--rd-leise:#526677;--rd-kicker:#4F6B82;--rd-linie:#D6E0E8;--rd-flaeche:#EEF3F6;--rd-steel:#6F93B1;--rd-lime:#B7C21B;--rd-lime-fl:#F2F5D6;--rd-papier:#FFFFFF;
   display:grid;grid-template-columns:232px minmax(0,1fr);gap:36px;align-items:start;}
 :root:not([data-theme="light"]) .ls.ls-rd{--rd-kopf:#EEF3F7;--rd-text:#D8E2EA;--rd-leise:#A7B9C8;--rd-kicker:#9DB7CC;--rd-linie:#2E4457;--rd-flaeche:#1D3143;--rd-steel:#8FB0CB;--rd-lime:#C9D43A;--rd-lime-fl:#2B3418;--rd-papier:#132332;}
-.ls.ls-rd .ls-main{max-width:800px;width:100%;background:var(--rd-papier);border:1px solid var(--rd-linie);border-radius:12px;padding:30px 48px 48px;color:var(--rd-text);box-shadow:none;}
+.ls.ls-rd .ls-main{max-width:none;width:100%;background:var(--rd-papier);border:1px solid var(--rd-linie);border-radius:12px;padding:30px 44px 48px;color:var(--rd-text);box-shadow:none;}
 .ls.ls-rd .ls-main p{max-width:none;}
 /* Kopf */
 .ls.ls-rd .rd-kopf{margin:6px 0 34px;}
-.ls.ls-rd .rd-kicker{font-family:var(--disp);font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--rd-kicker);margin:0 0 10px;}
-.ls.ls-rd .rd-kopf h1{font-family:var(--disp);font-size:2.5em;line-height:1.06;font-weight:800;letter-spacing:-.022em;color:var(--rd-kopf);margin:0 0 .45em;text-wrap:balance;}
-.ls.ls-rd .rd-einstieg{font-size:1.24em;line-height:1.5;color:var(--rd-text);margin:0 0 14px;text-wrap:pretty;}
-.ls.ls-rd .rd-meta{font-size:.82em;color:var(--rd-leise);margin:0;}
-.ls.ls-rd .rd-status{font-size:.86em;line-height:1.5;color:var(--rd-text);background:var(--rd-flaeche);border-radius:8px;padding:10px 14px;margin:16px 0 0;}
-.ls.ls-rd .rd-h-klein{font-family:var(--disp);font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--rd-kicker);margin:0 0 10px;}
+.ls.ls-rd .rd-kicker{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--rd-kicker);margin:0 0 10px;}
+.ls.ls-rd .rd-kopf h1{font-family:var(--disp);font-size:2.1em;line-height:1.06;font-weight:800;letter-spacing:-.022em;color:var(--rd-kopf);margin:0 0 .45em;text-wrap:balance;}
+.ls.ls-rd .rd-einstieg{font-size:1.06em;line-height:1.6;color:var(--rd-text);margin:0 0 14px;text-wrap:pretty;}
+.ls.ls-rd .rd-meta{font-size:.78em;color:var(--rd-leise);margin:0;}
+.ls.ls-rd .rd-status{font-size:.8em;line-height:1.5;color:var(--rd-text);background:var(--rd-flaeche);border-radius:8px;padding:10px 14px;margin:16px 0 0;}
+.ls.ls-rd .rd-h-klein{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--rd-kicker);margin:0 0 10px;}
 /* Lernziele und Inhalt */
 .ls.ls-rd .rd-ziele{border-top:1px solid var(--rd-linie);padding-top:18px;margin:0 0 26px;}
-.ls.ls-rd .rd-ziele-ein{font-size:.92em;color:var(--rd-leise);margin:0 0 6px;}
+.ls.ls-rd .rd-ziele-ein{font-size:.85em;color:var(--rd-leise);margin:0 0 6px;}
 .ls.ls-rd .rd-ziele ol{list-style:none;margin:0;padding:0;counter-reset:rdz;}
-.ls.ls-rd .rd-ziele li{counter-increment:rdz;display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--rd-linie);font-size:.95em;line-height:1.5;}
+.ls.ls-rd .rd-ziele li{counter-increment:rdz;display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:4px 10px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--rd-linie);font-size:.85em;line-height:1.6;}
 .ls.ls-rd .rd-ziele li::before{content:counter(rdz);font-family:var(--disp);font-weight:700;color:var(--rd-kicker);}
 .ls.ls-rd .rd-stufe{font-family:var(--disp);font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--rd-kicker);white-space:nowrap;}
 .ls.ls-rd .rd-toc{margin:0 0 8px;}
-.ls.ls-rd .rd-toc ol{margin:0;padding:0 0 0 1.4em;columns:2;column-gap:32px;font-size:.92em;}
+.ls.ls-rd .rd-toc ol{margin:0;padding:0 0 0 1.4em;columns:2;column-gap:32px;font-size:.85em;}
 .ls.ls-rd .rd-toc li{margin:0 0 6px;break-inside:avoid;color:var(--rd-kicker);}
 .ls.ls-rd .rd-toc a{color:var(--rd-text);text-decoration:underline;text-decoration-color:var(--rd-linie);text-underline-offset:3px;}
 .ls.ls-rd .rd-toc a:hover{text-decoration-color:var(--rd-steel);color:var(--rd-kopf);}
@@ -2939,26 +2939,26 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 .ls.ls-rd .rd-teil{border-top:1px solid var(--rd-linie);margin:44px 0 0;padding-top:30px;}
 .ls.ls-rd .rd-teil-klein{border-top:0;margin-top:34px;padding-top:0;}
 .ls.ls-rd .rd-teil-klein.rd-teil-erst{border-top:1px solid var(--rd-linie);padding-top:30px;}
-.ls.ls-rd .rd-teil-klein > h3:first-child{margin-top:0;font-size:1.35em;}
-.ls.ls-rd .rd-teil h2{font-family:var(--disp);font-size:1.85em;line-height:1.15;font-weight:800;letter-spacing:-.018em;color:var(--rd-kopf);margin:0 0 .6em;text-wrap:balance;}
-.ls.ls-rd .rd-teil h3{font-family:var(--disp);font-size:1.2em;line-height:1.3;font-weight:700;color:var(--rd-kopf);margin:1.9em 0 .5em;}
-.ls.ls-rd .rd-teil h4{font-family:var(--disp);font-size:1.02em;font-weight:700;color:var(--rd-kopf);margin:0 0 .3em;}
-.ls.ls-rd .rd-teil p,.ls.ls-rd .rd-ueben-ein{font-size:.98em;line-height:1.72;margin:0 0 1em;color:var(--rd-text);}
+.ls.ls-rd .rd-teil-klein > h3:first-child{margin-top:0;font-size:1.2em;}
+.ls.ls-rd .rd-teil h2{font-family:var(--disp);font-size:1.5em;line-height:1.15;font-weight:800;letter-spacing:-.018em;color:var(--rd-kopf);margin:0 0 .6em;text-wrap:balance;}
+.ls.ls-rd .rd-teil h3{font-family:var(--disp);font-size:1.08em;line-height:1.3;font-weight:700;color:var(--rd-kopf);margin:1.9em 0 .5em;}
+.ls.ls-rd .rd-teil h4{font-family:var(--disp);font-size:.95em;font-weight:700;color:var(--rd-kopf);margin:0 0 .3em;}
+.ls.ls-rd .rd-teil p,.ls.ls-rd .rd-ueben-ein{font-size:.85em;line-height:1.7;margin:0 0 1em;color:var(--rd-text);}
 .ls.ls-rd .rd-teil p strong{font-weight:650;color:var(--rd-kopf);}
 .ls.ls-rd .rd-fn{font-size:.68em;line-height:0;margin-left:1px;}
 .ls.ls-rd .rd-fn a{color:var(--rd-kicker);text-decoration:none;font-weight:700;padding:0 1px;}
 .ls.ls-rd .rd-fn a:hover{text-decoration:underline;}
 .ls.ls-rd .rd-liste{margin:0 0 1em;padding-left:1.2em;}
-.ls.ls-rd .rd-liste li{margin:0 0 .4em;line-height:1.65;}
+.ls.ls-rd .rd-liste li{margin:0 0 .4em;line-height:1.65;font-size:.85em;}
 /* Abbildungen und Tabellen */
 .ls.ls-rd .rd-abb,.ls.ls-rd .rd-tab{margin:1.8em 0;}
 .ls.ls-rd .rd-abb-bild{border-top:1px solid var(--rd-linie);border-bottom:1px solid var(--rd-linie);padding:18px 0;}
 .ls.ls-rd .rd-abb svg{display:block;width:100%;height:auto;font-family:'IBM Plex Sans',system-ui,sans-serif;}
-.ls.ls-rd .rd-abb figcaption,.ls.ls-rd .rd-tab figcaption{font-size:.82em;line-height:1.5;color:var(--rd-leise);margin-top:10px;}
+.ls.ls-rd .rd-abb figcaption,.ls.ls-rd .rd-tab figcaption{font-size:.76em;line-height:1.5;color:var(--rd-leise);margin-top:10px;}
 .ls.ls-rd .rd-tab figcaption{margin:0 0 8px;}
 .ls.ls-rd .rd-abb figcaption b,.ls.ls-rd .rd-tab figcaption b{color:var(--rd-kopf);font-weight:700;}
 .ls.ls-rd .rd-tab td{hyphens:auto;-webkit-hyphens:auto;}
-.ls.ls-rd .rd-tab table{width:100%;border-collapse:collapse;font-size:.88em;line-height:1.5;}
+.ls.ls-rd .rd-tab table{width:100%;border-collapse:collapse;font-size:.8em;line-height:1.5;}
 .ls.ls-rd .rd-tab thead th{background:var(--rd-flaeche);color:var(--rd-kopf);font-weight:700;text-align:left;padding:10px 12px;border-bottom:1.5px solid var(--rd-kopf);vertical-align:bottom;}
 .ls.ls-rd .rd-tab tbody th,.ls.ls-rd .rd-tab tbody td{padding:10px 12px;border-bottom:1px solid var(--rd-linie);text-align:left;vertical-align:top;color:var(--rd-text);}
 .ls.ls-rd .rd-tab tbody th{font-weight:650;color:var(--rd-kopf);}
@@ -2984,12 +2984,12 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 /* Kästen nur für Rechenwege, Fälle, Hinweise, Merksätze */
 .ls.ls-rd .rd-kasten{margin:1.8em 0;background:var(--rd-flaeche);border-left:4px solid var(--rd-lime);border-radius:0 8px 8px 0;padding:16px 20px 6px;}
 .ls.ls-rd .rd-kasten-kopf{font-family:var(--disp);font-size:12px!important;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--rd-kopf)!important;margin:0 0 10px!important;line-height:1.4!important;}
-.ls.ls-rd .rd-kasten p{font-size:.95em;}
+.ls.ls-rd .rd-kasten p{font-size:.85em;}
 .ls.ls-rd .rd-k-fall{background:none;border:1px solid var(--rd-linie);border-left:4px solid var(--rd-steel);}
 .ls.ls-rd .rd-k-hinweis{border-left-color:var(--rd-steel);}
 .ls.ls-rd .rd-k-merksatz{display:grid;grid-template-columns:9em minmax(0,1fr);gap:4px 16px;padding:18px 20px;}
 .ls.ls-rd .rd-k-merksatz .rd-kasten-kopf{margin:3px 0 0!important;}
-.ls.ls-rd .rd-k-merksatz p{font-size:1.06em;line-height:1.55;margin:0;color:var(--rd-kopf);}
+.ls.ls-rd .rd-k-merksatz p{font-size:.95em;line-height:1.55;margin:0;color:var(--rd-kopf);}
 .ls.ls-rd .rd-formel{font-family:'IBM Plex Mono',monospace;font-size:1em!important;font-weight:500;color:var(--rd-kopf)!important;background:var(--rd-papier);border-radius:6px;padding:10px 14px;margin:0 0 1em!important;overflow-x:auto;}
 /* Fallanalyse-Schritte */
 .ls.ls-rd .rd-schritte{list-style:none;margin:1.4em 0;padding:0;counter-reset:rds;}
@@ -2999,37 +2999,37 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 /* Synthese */
 .ls.ls-rd .rd-begriffe{margin:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 32px;}
 .ls.ls-rd .rd-begriffe div{padding:10px 0;border-bottom:1px solid var(--rd-linie);}
-.ls.ls-rd .rd-begriffe dt{font-weight:700;color:var(--rd-kopf);font-size:.95em;}
-.ls.ls-rd .rd-begriffe dd{margin:3px 0 0;font-size:.9em;line-height:1.55;color:var(--rd-text);}
+.ls.ls-rd .rd-begriffe dt{font-weight:700;color:var(--rd-kopf);font-size:.86em;}
+.ls.ls-rd .rd-begriffe dd{margin:3px 0 0;font-size:.82em;line-height:1.55;color:var(--rd-text);}
 .ls.ls-rd .rd-irrtuemer div{padding:10px 0;border-bottom:1px solid var(--rd-linie);}
 .ls.ls-rd .rd-irrtuemer p{margin:0!important;}
 .ls.ls-rd .rd-irrtum{font-style:italic;color:var(--rd-leise)!important;margin-bottom:4px!important;}
 .ls.ls-rd .rd-hinweis{font-size:.88em!important;color:var(--rd-leise)!important;}
 .ls.ls-rd .rd-check details{border-bottom:1px solid var(--rd-linie);}
-.ls.ls-rd .rd-check summary{cursor:pointer;padding:12px 0;font-weight:600;color:var(--rd-kopf);list-style:none;display:flex;gap:10px;}
+.ls.ls-rd .rd-check summary{cursor:pointer;padding:12px 0;font-size:.86em;font-weight:600;color:var(--rd-kopf);list-style:none;display:flex;gap:10px;}
 .ls.ls-rd .rd-check summary::-webkit-details-marker{display:none;}
 .ls.ls-rd .rd-check summary::before{content:'+';font-family:var(--disp);font-weight:700;color:var(--rd-kicker);width:14px;flex:none;}
 .ls.ls-rd .rd-check details[open] summary::before{content:'–';}
 .ls.ls-rd .rd-check details p{padding:0 0 12px 24px;}
 /* Übungsteil: klar vom Lesen getrennt */
 .ls.ls-rd .rd-ueben{margin:56px -48px 0;padding:34px 48px 10px;background:var(--rd-flaeche);border-top:3px solid var(--rd-kopf);}
-.ls.ls-rd .rd-ueben h2{font-family:var(--disp);font-size:1.85em;font-weight:800;letter-spacing:-.018em;color:var(--rd-kopf);margin:0 0 .4em;}
+.ls.ls-rd .rd-ueben h2{font-family:var(--disp);font-size:1.5em;font-weight:800;letter-spacing:-.018em;color:var(--rd-kopf);margin:0 0 .4em;}
 .ls.ls-rd .rd-ueben .ls-card{background:var(--rd-papier);}
 .ls.ls-rd .rd-ia-uebung .ls-ia{background:none;padding:0;border:0;box-shadow:none;}
 .ls.ls-rd .rd-lumi{display:flex;gap:12px;align-items:center;margin:0 0 18px;}
-.ls.ls-rd .rd-lumi p{margin:0;font-size:.95em;line-height:1.55;color:var(--rd-text);}
+.ls.ls-rd .rd-lumi p{margin:0;font-size:.85em;line-height:1.55;color:var(--rd-text);}
 /* Quellen und Herkunft */
 .ls.ls-rd .rd-quellen{margin:40px 0 0;border-top:1px solid var(--rd-linie);padding-top:20px;}
-.ls.ls-rd .rd-quellen ol{margin:0;padding-left:1.5em;font-size:.84em;line-height:1.55;color:var(--rd-text);}
+.ls.ls-rd .rd-quellen ol{margin:0;padding-left:1.5em;font-size:.78em;line-height:1.55;color:var(--rd-text);}
 .ls.ls-rd .rd-quellen li{margin:0 0 8px;scroll-margin-top:90px;}
 .ls.ls-rd .rd-quellen li span{font-weight:600;color:var(--rd-kopf);}
 .ls.ls-rd .rd-quellen a{color:var(--rd-kicker);word-break:break-all;}
-.ls.ls-rd .rd-herkunft{margin:18px 0 24px;font-size:.86em;border:1px solid var(--rd-linie);border-radius:8px;padding:0 16px;}
+.ls.ls-rd .rd-herkunft{margin:18px 0 24px;font-size:.8em;border:1px solid var(--rd-linie);border-radius:8px;padding:0 16px;}
 .ls.ls-rd .rd-herkunft summary{cursor:pointer;padding:12px 0;font-weight:600;color:var(--rd-kopf);}
 .ls.ls-rd .rd-herkunft h3{font-family:var(--disp);font-size:1em;margin:12px 0 6px;color:var(--rd-kopf);}
 .ls.ls-rd .rd-herkunft ul{margin:0 0 12px;padding-left:1.2em;line-height:1.55;}
 @media (max-width:960px){.ls.ls-rd{grid-template-columns:minmax(0,1fr);gap:20px;}.ls.ls-rd .ls-main{max-width:none;}}
-@media (max-width:640px){.ls.ls-rd .ls-main{padding:22px 18px 32px;border-radius:0;border-left:0;border-right:0;}.ls.ls-rd .rd-kopf h1{font-size:1.9em;}.ls.ls-rd .rd-teil h2,.ls.ls-rd .rd-ueben h2{font-size:1.5em;}.ls.ls-rd .rd-einstieg{font-size:1.1em;}.ls.ls-rd .rd-teil p{font-size:.94em;}
+@media (max-width:640px){.ls.ls-rd .ls-main{padding:22px 18px 32px;border-radius:0;border-left:0;border-right:0;}.ls.ls-rd .rd-kopf h1{font-size:1.75em;}.ls.ls-rd .rd-teil h2,.ls.ls-rd .rd-ueben h2{font-size:1.35em;}.ls.ls-rd .rd-einstieg{font-size:1em;}.ls.ls-rd .rd-teil p{font-size:.88em;}
   .ls.ls-rd .rd-abb-bild,.ls.ls-rd .rd-tab-rahmen{overflow-x:auto;}.ls.ls-rd .rd-abb svg{min-width:560px;}.ls.ls-rd .rd-toc ol{columns:1;}.ls.ls-rd .rd-begriffe{grid-template-columns:minmax(0,1fr);}.ls.ls-rd .rd-k-merksatz{grid-template-columns:minmax(0,1fr);}
   .ls.ls-rd .rd-ueben{margin:44px -18px 0;padding:26px 18px 6px;}.ls.ls-rd .rd-ziele li{grid-template-columns:24px minmax(0,1fr);}.ls.ls-rd .rd-stufe{grid-column:2;}}
 /* BLUU-REDAKTION:ENDE */
