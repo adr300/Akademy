@@ -6,7 +6,7 @@
 --   user_progress kennt den Kurs nur über course_index = Position in courses (sortiert nach sort_order). Wird ein Kurs
 --   gelöscht oder umsortiert, zeigt der Fortschritt aller Lernenden auf andere Kurse.
 -- Lösung
---   Neue Spalte course_id (uuid, FK courses.id, on delete set null). Backfill aus der heutigen Position. Das Frontend
+--   Neue Spalte course_id (gleicher Typ wie courses.id – heute bigint –, FK courses.id, on delete set null). Backfill aus der heutigen Position. Das Frontend
 --   schreibt course_id ab sofort mit (und fällt zurück, wenn die Spalte fehlt) und liest bevorzugt über course_id.
 --   course_index bleibt erhalten (Admin-Auswertungen, Unique-Key des Upserts) – nichts wird umnummeriert.
 -- Betroffene Tabellen
@@ -19,7 +19,16 @@
 -- ============================================================================
 begin;
 
-alter table public.user_progress add column if not exists course_id uuid references public.courses (id) on delete set null;
+do $$
+declare v_typ text;
+begin
+  select format_type(a.atttypid, a.atttypmod) into v_typ
+    from pg_attribute a where a.attrelid = 'public.courses'::regclass and a.attname = 'id' and not a.attisdropped;
+  if not exists (select 1 from information_schema.columns
+                  where table_schema = 'public' and table_name = 'user_progress' and column_name = 'course_id') then
+    execute format('alter table public.user_progress add column course_id %s references public.courses (id) on delete set null', v_typ);
+  end if;
+end $$;
 create index if not exists user_progress_course_id_idx on public.user_progress (course_id);
 
 -- Backfill nach heutiger Position

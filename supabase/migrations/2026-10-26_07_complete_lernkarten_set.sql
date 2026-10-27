@@ -1,6 +1,7 @@
 -- ============================================================================
 -- 2026-10-26_07  complete_lernkarten_set: Abschluss eines Lernkarten-Sets als eine Transaktion (Abschluss + Abzeichen + XP)
--- Status: VORBEREITET. Voraussetzungen: Migration 03 (award_xp) und 06 (Unique auf user_badges). Im SQL-Editor ausführen.
+-- Status: VORBEREITET. Voraussetzungen: Migration 01 (Unique auf lernkarten_progress), 03 (award_xp mit Ereignis) und
+--         06 (Unique auf user_badges). Im SQL-Editor ausführen.
 -- ----------------------------------------------------------------------------
 -- Zweck
 --   Heute macht der Browser drei getrennte Schreibzugriffe (lernkarten_progress, user_badges, user_xp). Schlägt einer fehl,
@@ -42,7 +43,7 @@ begin
       get diagnostics v_n = row_count;
       if v_n > 0 then
         v_awarded := true;
-        perform public.award_xp(v_badge.xp_reward);
+        perform public.award_xp(least(v_badge.xp_reward, 500), 'abzeichen:' || p_badge_key);
       end if;
     end if;
   end if;

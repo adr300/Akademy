@@ -6176,7 +6176,7 @@ async function triggerKonamiBadge(){
   if(badge&&!userBadges.some(ub=>ub.badge_id===badge.id)){
     await sb.from('user_badges').insert({user_id:currentUser.id,badge_id:badge.id});
     userBadges.push({badge_id:badge.id,earned_at:new Date().toISOString()});
-    await awardXP(badge.xp_reward||0);
+    await awardXP(badge.xp_reward||0,'abzeichen:'+badge.key);
     setTimeout(()=>showXPToast(badge.xp_reward,[badge],0),500);
   }
 }
@@ -6224,7 +6224,7 @@ async function triggerSteckdoseBadge(){
   if(!userBadges.some(ub=>{const b=allBadges.find(x=>x.id===ub.badge_id);return b?.key==='steckdose';})){
     await sb.from('user_badges').insert({user_id:currentUser.id,badge_id:badge.id});
     userBadges.push({badge_id:badge.id,earned_at:new Date().toISOString()});
-    await awardXP(badge.xp_reward||0);
+    await awardXP(badge.xp_reward||0,'abzeichen:'+badge.key);
     setTimeout(()=>showXPToast(badge.xp_reward,[badge],0),600);
   }
 }
@@ -7085,17 +7085,20 @@ function levelFromXP(xp){
   return lvl;
 }
 
-async function awardXP(amount){
+async function awardXP(amount,event){
   let newXP=(userXP.total_xp||0)+amount;
   let newLevel=levelFromXP(newXP);
   /* BLUU-XP (26.10.2026): Vergabe über public.award_xp (supabase/migrations/2026-10-26_03), wenn die Funktion existiert – der Server
-     rechnet dann total_xp und level; fehlt sie (PGRST202/42883), bleibt das bisherige Upsert aus dem Browser. */
+     rechnet dann total_xp und level; fehlt sie (PGRST202/42883), bleibt das bisherige Upsert aus dem Browser.
+     event (z. B. 'kurs:42', 'abzeichen:konami'): einmalige Ereignisse; der Server vergibt sie je Nutzer nur einmal (xp_events). */
   let perRpc=false;
   if(window.BLUU_XP_RPC!==false){
     try{
-      const r=await sb.rpc('award_xp',{p_amount:amount});
+      const fehltRpc=(e)=>e.code==='PGRST202'||e.code==='42883'||/Could not find the function|does not exist/i.test(e.message||'');
+      let r=await sb.rpc('award_xp',event?{p_amount:amount,p_event:String(event).slice(0,120)}:{p_amount:amount});
+      if(r.error&&event&&fehltRpc(r.error)) r=await sb.rpc('award_xp',{p_amount:amount});
       if(!r.error){ perRpc=true; const row=Array.isArray(r.data)?r.data[0]:r.data; if(row&&typeof row.total_xp==='number'){ newXP=row.total_xp; newLevel=typeof row.level==='number'?row.level:levelFromXP(newXP); } }
-      else if(r.error.code==='PGRST202'||r.error.code==='42883'||/Could not find the function|does not exist/i.test(r.error.message||'')) window.BLUU_XP_RPC=false;
+      else if(fehltRpc(r.error)) window.BLUU_XP_RPC=false;
       else console.warn('XP (RPC) failed:',r.error.message);
     }catch(e){console.warn('XP (RPC) failed:',e.message);}
   }
@@ -7177,7 +7180,7 @@ async function checkAndAwardBadges(courseId,score,sessionSecs){
       await sb.from('user_badges').insert({user_id:currentUser.id,badge_id:badge.id});
       userBadges.push({badge_id:badge.id,earned_at:new Date().toISOString()});
       earned.push(badge);
-      await awardXP(badge.xp_reward||0);
+      await awardXP(badge.xp_reward||0,'abzeichen:'+badge.key);
     }
   }
   // Streak badges (checked separately)
@@ -7187,7 +7190,7 @@ async function checkAndAwardBadges(courseId,score,sessionSecs){
       await sb.from('user_badges').insert({user_id:currentUser.id,badge_id:badge.id});
       userBadges.push({badge_id:badge.id,earned_at:new Date().toISOString()});
       earned.push(badge);
-      await awardXP(badge.xp_reward||0);
+      await awardXP(badge.xp_reward||0,'abzeichen:'+badge.key);
     }
   }
   return earned;
@@ -8144,7 +8147,7 @@ async function checkDailyBonus(courseId, score){
       {user_id:currentUser.id, course_id:courseId, completed_date:todayStr, completed:true, bonus_xp:bonus, user_started:true},
       {onConflict:'user_id,course_id,completed_date'}
     );
-    await awardXP(bonus);
+    await awardXP(bonus,'tagesbonus:'+courseId+':'+todayStr);
     return bonus;
   }catch(e){return 0;}
 }
@@ -8444,7 +8447,7 @@ async function _completeCourseFinish(reflectionSaved){
   let xpGained=0;
   if(!wasAlreadyCompleted&&!c.lokal){
     xpGained=50;
-    await awardXP(xpGained);
+    await awardXP(xpGained,'kurs:'+c.id);
     const newBadges=await checkAndAwardBadges(c.id,100,sessSecs);
     const dailyBonus=await checkDailyBonus(c.id,100);
     if(dailyBonus>0) xpGained+=dailyBonus;
@@ -8811,7 +8814,7 @@ async function showResult(){
   if(pass&&!wasAlreadyCompleted&&!c.lokal){
     // Base XP: 50 + bonus for score
     xpGained=50+Math.round(Math.max(0,pct-schwelle)/Math.max(1,100-schwelle)*50);
-    await awardXP(xpGained);
+    await awardXP(xpGained,'kurs:'+c.id);
     newBadges=await checkAndAwardBadges(c.id,pct,sessSecs);
     // Daily challenge bonus
     const dailyBonus=await checkDailyBonus(c.id,pct);
@@ -12249,7 +12252,7 @@ async function completeLernkartenSet(){
       if(!already){
         await sb.from('user_badges').insert({user_id:currentUser.id, badge_id:badge.id});
         userBadges.push({badge_id:badge.id, earned_at:new Date().toISOString()});
-        if(typeof awardXP==='function') await awardXP(badge.xp_reward||50);
+        if(typeof awardXP==='function') await awardXP(badge.xp_reward||50,'abzeichen:'+badge.key);
         badgeEarned = true;
       }
     }

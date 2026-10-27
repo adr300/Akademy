@@ -25,7 +25,7 @@ begin;
 create table if not exists public.question_answers (
   id           bigserial primary key,
   user_id      uuid        not null references auth.users (id) on delete cascade,
-  course_id    bigint      not null,
+  course_id    bigint      not null,  -- courses.id (bigint); bewusst ohne FK, damit das Protokoll das Löschen eines Kurses überlebt
   question_id  bigint,
   attempt      text        not null,
   correct      boolean     not null,

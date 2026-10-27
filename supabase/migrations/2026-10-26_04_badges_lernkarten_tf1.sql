@@ -1,6 +1,6 @@
 -- ============================================================================
 -- 2026-10-26_04  Abzeichen für die Lernkarten-Sets 1.1.2 bis 1.1.5
--- Status: VORBEREITET, NICHT AUSGEFÜHRT. 1.1.2: Namen aus dem Lernkarten-Dokument (Entflechter … Rechnungsleser); 1.1.3–1.1.5: Set-Titel als Vorschlag.
+-- Status: VORBEREITET. 1.1.2: Namen aus dem Lernkarten-Dokument (Entflechter … Rechnungsleser); 1.1.3–1.1.5: Set-Titel als Vorschlag.
 -- ----------------------------------------------------------------------------
 -- Befund
 --   Die Sets von 1.1.1 vergeben beim Abschluss ein Abzeichen (badges.key «stromlaeufer» …, aus dem Lernkarten-Dokument).
@@ -9,16 +9,19 @@
 --   Abzeichen und auch keinen irreführenden Hinweis im Abschluss-Popup. Sobald diese Zeilen vorhanden sind, vergibt das
 --   Frontend sie ohne weitere Änderung (einmalig je Nutzer, wie bei 1.1.1 über user_badges).
 -- Betroffene Tabellen
---   public.badges (key, title, description, icon, xp_reward, sort_order) – SPALTENNAMEN BITTE PRÜFEN; das Frontend
---   liest key, title, description, icon, xp_reward, sort_order.
+--   public.badges – Pflicht sind key und title; das Frontend liest key, title, icon, xp_reward.
 -- Bestehende Daten
---   Nur Inserts mit on conflict (key) do nothing. Bereits vergebene Abzeichen bleiben unberührt.
+--   Nur Inserts für Schlüssel, die es noch nicht gibt (kein «on conflict», damit kein Unique-Index auf key nötig ist).
+--   Eingefügt werden nur die Spalten, die public.badges tatsächlich hat (description/icon/xp_reward/sort_order optional).
+--   Bereits vorhandene oder vergebene Abzeichen bleiben unberührt.
 -- Rollback
 --   delete from public.badges where key like 'lk-11[2345]-%';
 -- ============================================================================
 begin;
 
-insert into public.badges (key, title, description, icon, xp_reward, sort_order) values
+create temp table _bluu_neue_badges (key text, title text, description text, icon text, xp_reward integer, sort_order integer) on commit drop;
+
+insert into _bluu_neue_badges (key, title, description, icon, xp_reward, sort_order) values
   -- 1.1.2 Aufbau des Energiemarktes
   ('lk-112-A', 'Entflechter', 'Lernkarten-Set A von Modul 1.1.2 gelernt', '🏅', 50, 200),
   ('lk-112-B', 'Monopol-Kenner',           'Lernkarten-Set B von Modul 1.1.2 gelernt', '🏅', 50, 201),
@@ -52,7 +55,22 @@ insert into public.badges (key, title, description, icon, xp_reward, sort_order)
   ('lk-115-D', 'Die Marktlokations-ID',                  'Lernkarten-Set D von Modul 1.1.5 gelernt', '🏅', 50, 233),
   ('lk-115-E', 'NeLo-, NeBe-, Ressourcen- und Paket-ID', 'Lernkarten-Set E von Modul 1.1.5 gelernt', '🏅', 50, 234),
   ('lk-115-F', 'Vergabe, Zuordnung und Prüfziffern',     'Lernkarten-Set F von Modul 1.1.5 gelernt', '🏅', 50, 235),
-  ('lk-115-G', 'Praxisfall: Der ID-Check',               'Lernkarten-Set G von Modul 1.1.5 gelernt', '🏅', 50, 236)
-on conflict (key) do nothing;
+  ('lk-115-G', 'Praxisfall: Der ID-Check',               'Lernkarten-Set G von Modul 1.1.5 gelernt', '🏅', 50, 236);
+
+do $$
+declare v_spalten text; v_n integer;
+begin
+  select string_agg(quote_ident(c), ', ' order by o) into v_spalten
+    from unnest(array['key','title','description','icon','xp_reward','sort_order']) with ordinality as t(c, o)
+   where exists (select 1 from information_schema.columns
+                  where table_schema = 'public' and table_name = 'badges' and column_name = t.c);
+  if v_spalten is null or v_spalten not like '%key%' or v_spalten not like '%title%' then
+    raise exception 'public.badges hat keine Spalten key/title – Migration 04 abgebrochen';
+  end if;
+  execute format('insert into public.badges (%1$s) select %1$s from _bluu_neue_badges n
+                   where not exists (select 1 from public.badges b where b.key = n.key)', v_spalten);
+  get diagnostics v_n = row_count;
+  raise notice 'Migration 04: % Abzeichen neu angelegt (Spalten: %)', v_n, v_spalten;
+end $$;
 
 commit;
