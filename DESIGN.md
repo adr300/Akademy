@@ -123,7 +123,7 @@ Keine Spurlinien hinter Lumi: Das Licht des Glühwürmchens ist das Motiv (Schei
 
 ## Hero der Übersicht
 
-Navy-Band mit Trasse und Windpark (wie ausgeliefert). Glas nur als eine Fläche unter Tagesaufgabe und Level (statisch, Blur 8 px, helle Kante). Präsentationsmodus `?praesentation=1` hält die Landschaft an.
+Navy-Band mit Trasse und Windpark (wie ausgeliefert). Glas als Schicht über dem ganzen Band (durchscheinender Lichtverlauf, helle Ober- und Unterkante), nie als Kasten um Inhalte. Präsentationsmodus `?praesentation=1` hält die Landschaft an.
 
 ## Was nicht erlaubt ist
 

@@ -3484,17 +3484,15 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 /* Rang-Emblem: Level 1 ruht (t0), bis Level 6-7 Doppelring (t4); Klassen setzt bluuRangTier */
 .bdg.t0,.bdg.t0:hover,.hero-rang:hover .bdg.t0,.profile-rang-emblem.bdg.t0:hover{--lift:0px;--rot:0deg;--sc:1;--shy:0px;--sh:transparent;transform:none;filter:none;}
 .bdg.t0::before,.bdg.t0::after{animation:none!important;}
-/* BLUU-HERO-GLAS (27.10.2026, Navy): Hero bleibt das Navy-Band mit Trasse und Windpark; nur Tagesaufgabe und Level liegen auf einer
-   Glasfläche (statisch, leichte Unschärfe, feine helle Kante). Präsentationsmodus (?praesentation=1) hält die Landschaft an. */
-#bluu-hero .hero-glas{flex:0 1 700px;margin-left:auto;min-width:0;display:flex;align-items:center;gap:20px 32px;padding:14px 22px;border-radius:16px;
-  background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.14);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 16px 32px -22px rgba(0,0,0,.55);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
-#bluu-hero .hero-glas .hero-heute{flex:1 1 auto;border-left:0;padding:2px 0;}
-#bluu-hero .hero-glas .hero-rang{margin:0;padding:4px 8px 4px 24px;border-left:1px solid rgba(255,255,255,.14);border-radius:0 10px 10px 0;}
-@media (max-width:900px){
-  #bluu-hero .hero-glas{flex:1 1 100%;margin-left:0;flex-wrap:wrap;padding:12px 16px;gap:12px 20px;}
-  #bluu-hero .hero-glas .hero-rang{border-left:0;padding-left:0;}
-}
+/* BLUU-HERO-GLAS (27.10.2026, Band): Glas liegt über dem ganzen Navy-Band, nicht um die Inhalte – ein durchscheinender Lichtverlauf
+   mit heller Ober- und Unterkante über Trasse und Windpark; Text und Knöpfe liegen darüber, ohne Kasten. Statisch, keine Animation. */
+#bluu-hero .hero-band-inhalt{z-index:2;}
+#bluu-hero::after{content:'';display:block;position:absolute;inset:0;left:0;top:0;right:0;bottom:0;width:auto;height:auto;margin:0;border-radius:0;transform:none;opacity:1;animation:none;z-index:1;pointer-events:none;
+  background:linear-gradient(112deg,rgba(255,255,255,.11) 0%,rgba(255,255,255,.05) 34%,rgba(255,255,255,0) 58%),
+    radial-gradient(70% 120% at 85% -10%,rgba(228,235,143,.10),rgba(228,235,143,0) 60%),
+    linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0) 45%,rgba(255,255,255,.03));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -1px 0 rgba(255,255,255,.08);}
+#bluu-hero .hero-xp-linie{z-index:2;}
 html.praesentation .hero-landschaft .rotor,html.praesentation .hero-landschaft .fluss,html.praesentation .hero-landschaft .strom-kabel,html.praesentation .hero-landschaft .nabe,html.praesentation .hero-xp-linie>div::after{animation:none;}
 /* BLUU-ABZEICHEN-RUHE (27.10.2026): Hover wächst mit der Stufe – t1 fast still, t2 leicht, t3 deutlich, nur t4 (höchste) federt */
 .bdg{transition:transform .4s var(--ease-out),filter .4s var(--ease-out);}
@@ -4442,7 +4440,6 @@ class Component extends DCLogic {
             <h1 id="hero-gruss">Willkommen.</h1>
             <p class="hero-zeile" id="hero-zeile">Eine Aufgabe, ein Level.</p>
           </div>
-          <div class="hero-glas">
           <button type="button" class="hero-heute" id="hero-heute" onclick="bluuHeuteStarten()">
             <span class="hero-label">Heute dran</span>
             <span class="hero-heute-titel" id="hero-heute-titel">Tagesaufgabe wird geladen …</span>
@@ -4455,7 +4452,6 @@ class Component extends DCLogic {
               <span class="hero-rang-rest" id="hero-rang-rest"></span>
             </span>
           </button>
-          </div>
         </div>
         <div class="hero-xp-linie" role="progressbar" aria-label="Fortschritt zum nächsten Level" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="hero-xp-linie"><div id="hero-xp-fill"></div></div>
         <div class="hero-pills" style="display:none">
