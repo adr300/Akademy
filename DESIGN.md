@@ -123,7 +123,7 @@ Keine Spurlinien hinter Lumi: Das Licht des Glühwürmchens ist das Motiv (Schei
 
 ## Hero der Übersicht
 
-«Quiet Energy Glass»: helle Fläche (dunkles Thema: Navy-Verlauf), eine statische Glasfläche mit Tagesaufgabe und Level, dahinter ein geometrisches Energie-Element (Ringe, Welle, Lime-Bogen). Keine Dauer-Animationen außer 2 px Schweben in 11 s. Präsentationsmodus `?praesentation=1`. Modul- und Katalog-Hero bleiben das Navy-Band.
+Navy-Band mit Trasse und Windpark (wie ausgeliefert). Glas nur als eine Fläche unter Tagesaufgabe und Level (statisch, Blur 8 px, helle Kante). Präsentationsmodus `?praesentation=1` hält die Landschaft an.
 
 ## Was nicht erlaubt ist
 
