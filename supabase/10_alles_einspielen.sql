@@ -212,7 +212,8 @@ grant execute on function public.award_xp(integer, text) to authenticated;
 --   delete from public.badges where key like 'lk-11[2345]-%';
 -- ============================================================================
 
-create temp table _bluu_neue_badges (key text, title text, description text, icon text, xp_reward integer, sort_order integer) on commit drop;
+drop table if exists _bluu_neue_badges;
+create temp table _bluu_neue_badges (key text, title text, description text, icon text, xp_reward integer, sort_order integer);
 
 insert into _bluu_neue_badges (key, title, description, icon, xp_reward, sort_order) values
   -- 1.1.2 Aufbau des Energiemarktes
