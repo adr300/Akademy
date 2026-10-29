@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>1.1.5 Praxisfall – Lokationen und Identifikatoren</title></head><body>
+<p>Bluuakademie-Kursdatei – in der Verwaltung unter «Kurs importieren» hochladen. Erzeugt aus den Word-Dateien des Zips «TF1 Grundlagen» (scratchpad/tf1_kurse.js).</p>
+<!--ENERGYACADEMY_COURSE-->
+{
+ "title": "1.1.5 Praxisfall – Lokationen und Identifikatoren",
+ "icon": "🧾",
+ "icon_bg": "#EEF3F6",
+ "tag_bg": "#243A4C",
+ "tag_color": "#BEC60E",
+ "btn_color": "#243A4C",
+ "slides": [
+  {
+   "tag": "Praxisfall",
+   "title": "Wozu dieser Praxisfall?",
+   "content": "<p>Der Praxisfall zeigt einen Auszug aus einem Stammdatenimport. Einsatz: Lernplattform (Untermodul G) und Reflexionsgespräch; im Live-Seminar arbeiten die Gruppen mit drei weiteren Auszügen (Arbeitsblätter 6–8).</p><div class=\"kasten hinweis\"><strong>Hinweis</strong>Alle IDs sind fiktiv. Sie folgen den Bildungsvorschriften der BDEW-Anwendungshilfe „Identifikatoren in der Marktkommunikation“ (V1.2, 07.02.2025) – die gültigen IDs haben eine korrekte Prüfziffer.</div>"
+  },
+  {
+   "tag": "Praxisfall",
+   "title": "Übungsblatt: Importauszug",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Nr.</th><th>Feld</th><th>Wert</th><th>Gültig?</th><th>Begründung</th></tr></thead><tbody><tr><th scope=\"row\">1</th><td>MaLo-ID</td><td>51238609130</td><td></td><td></td></tr><tr><th scope=\"row\">2</th><td>MaLo-ID</td><td>5123860913</td><td></td><td></td></tr><tr><th scope=\"row\">3</th><td>MaLo-ID</td><td>51238609131</td><td></td><td></td></tr><tr><th scope=\"row\">4</th><td>MaLo-ID</td><td>20431876507</td><td></td><td></td></tr><tr><th scope=\"row\">5</th><td>MP-ID Netzbetreiber</td><td>9900123456787</td><td></td><td></td></tr><tr><th scope=\"row\">6</th><td>MP-ID Gaslieferant</td><td>9800123456789</td><td></td><td></td></tr><tr><th scope=\"row\">7</th><td>MP-ID Lieferant</td><td>9990123456780</td><td></td><td></td></tr><tr><th scope=\"row\">8</th><td>MaLo-ID</td><td>EZ7Q4M2K812</td><td></td><td></td></tr><tr><th scope=\"row\">9</th><td>TR-ID</td><td>C7H4N2W9Q51</td><td></td><td></td></tr><tr><th scope=\"row\">10</th><td>Paket-ID</td><td>P9A7K3M2Q18</td><td></td><td></td></tr></tbody></table></div><p>Prüfe jeden Eintrag in drei Schritten: 1. Länge und Zeichen, 2. Codetyp, 3. Prüfziffer.</p>"
+  },
+  {
+   "tag": "Praxisfall",
+   "title": "Aufgaben für Modul 1.1.5",
+   "content": "<ol><li>Prüfe den Eintrag im Feld „MaLo-ID“: 51238609130</li><li>Prüfe den Eintrag im Feld „MaLo-ID“: 5123860913</li><li>Prüfe den Eintrag im Feld „MaLo-ID“: 51238609131</li><li>Prüfe den Eintrag im Feld „MaLo-ID“: 20431876507</li><li>Prüfe den Eintrag im Feld „MP-ID Netzbetreiber“: 9900123456787</li><li>Prüfe den Eintrag im Feld „MP-ID Gaslieferant“: 9800123456789</li><li>Prüfe den Eintrag im Feld „MP-ID Lieferant“: 9990123456780</li><li>Prüfe den Eintrag im Feld „MaLo-ID“: EZ7Q4M2K812</li><li>Prüfe den Eintrag im Feld „TR-ID“: C7H4N2W9Q51</li><li>Prüfe den Eintrag im Feld „Paket-ID“: P9A7K3M2Q18</li></ol>"
+  },
+  {
+   "tag": "Praxisfall",
+   "title": "Lösungen",
+   "content": "<details><summary>1</summary><p><strong>Wert</strong> 51238609130</p><p><strong>Ergebnis</strong> gültig</p><p><strong>Begründung</strong> MaLo-ID, 11 Ziffern, Prüfziffer 0 korrekt</p></details><details><summary>2</summary><p><strong>Wert</strong> 5123860913</p><p><strong>Ergebnis</strong> ungültig</p><p><strong>Begründung</strong> Nur 10 Stellen – eine MaLo-ID hat 11</p></details><details><summary>3</summary><p><strong>Wert</strong> 51238609131</p><p><strong>Ergebnis</strong> ungültig</p><p><strong>Begründung</strong> Prüfziffer falsch – richtig wäre 0 (Rechenweg unten)</p></details><details><summary>4</summary><p><strong>Wert</strong> 20431876507</p><p><strong>Ergebnis</strong> gültig</p><p><strong>Begründung</strong> MaLo-ID aus dem DVGW-Bereich (erste Ziffer 2); die Sparte ist daraus nicht ablesbar</p></details><details><summary>5</summary><p><strong>Wert</strong> 9900123456787</p><p><strong>Ergebnis</strong> gültig</p><p><strong>Begründung</strong> MP-ID Strom (99), Prüfziffer 7 korrekt</p></details><details><summary>6</summary><p><strong>Wert</strong> 9800123456789</p><p><strong>Ergebnis</strong> gültig</p><p><strong>Begründung</strong> MP-ID Gas (98), Prüfziffer 9 korrekt</p></details><details><summary>7</summary><p><strong>Wert</strong> 9990123456780</p><p><strong>Ergebnis</strong> ungültig</p><p><strong>Begründung</strong> Beginnt mit 99 (BDEW/Strom) – an Stelle 3 sind beim BDEW nur 0 bis 8 zulässig</p></details><details><summary>8</summary><p><strong>Wert</strong> EZ7Q4M2K812</p><p><strong>Ergebnis</strong> falsches Feld</p><p><strong>Begründung</strong> Codetyp E = Netzlokations-ID; MaLo-IDs sind rein numerisch</p></details><details><summary>9</summary><p><strong>Wert</strong> C7H4N2W9Q51</p><p><strong>Ergebnis</strong> falscher Typ</p><p><strong>Begründung</strong> Codetyp C = steuerbare Ressource, erwartet war D (technische Ressource)</p></details><details><summary>10</summary><p><strong>Wert</strong> P9A7K3M2Q18</p><p><strong>Ergebnis</strong> gültig</p><p><strong>Begründung</strong> Paket-ID (P, 9), ASCII-Prüfziffer 8 korrekt</p></details><p>Ergebnis: Gültig sind nur Einträge, bei denen Länge, Codetyp und Prüfziffer stimmen; fehlerhafte IDs werden mit dem Netzbetreiber geklärt.</p><p>Quelle: BDEW-Anwendungshilfe „Identifikatoren in der Marktkommunikation“, Version 1.2 (07.02.2025), Kapitel 2 bis 8.</p>"
+  }
+ ],
+ "questions": []
+}
+<!--/ENERGYACADEMY_COURSE-->
+</body></html>

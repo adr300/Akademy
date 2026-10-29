@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>1.1.1 Übungen F – Energiedaten und EDM</title></head><body>
+<p>Bluuakademie-Kursdatei – in der Verwaltung unter «Kurs importieren» hochladen. Erzeugt aus den Word-Dateien des Zips «TF1 Grundlagen» (scratchpad/tf1_kurse.js).</p>
+<!--ENERGYACADEMY_COURSE-->
+{
+ "title": "1.1.1 Übungen F – Energiedaten und EDM",
+ "icon": "✏️",
+ "icon_bg": "#EEF3F6",
+ "tag_bg": "#243A4C",
+ "tag_color": "#BEC60E",
+ "btn_color": "#243A4C",
+ "slides": [
+  {
+   "tag": "F0",
+   "title": "Startscreen",
+   "content": "<p>Viele Marktteilnehmer erzeugen oder benötigen Daten. Damit Abrechnung und Bilanzierung funktionieren, müssen diese Daten erfasst, geprüft, zugeordnet und weitergegeben werden.</p><p class=\"quelle\">Richtzeit 25 Min. · Ergebnis: EDM-Zweck, Beteiligte und Verarbeitungskette verstehen</p>"
+  },
+  {
+   "tag": "F1",
+   "title": "Lernkarte: Warum EDM?",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Aspekt</th><th>Teilnehmertext</th></tr></thead><tbody><tr><th scope=\"row\">Viele Beteiligte</th><td>Kunden, Lieferanten, Netz- und Messprozesse nutzen Daten aus unterschiedlichen Quellen.</td></tr><tr><th scope=\"row\">Datenqualität</th><td>Daten müssen zusammengeführt, geprüft und fachlich richtig zugeordnet werden.</td></tr><tr><th scope=\"row\">Folgeprozesse</th><td>Abrechnung, Bilanzierung und weitere Marktprozesse benötigen korrekte und konsistente Energiedaten.</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "F3",
+   "title": "Lernkarte: Gut zu wissen – Kunde und Marktlokation",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Begriff</th><th>Teilnehmertext</th></tr></thead><tbody><tr><th scope=\"row\">Kunde</th><td>Im BDEW-Rollenmodell ist der Kunde keine eigene Marktrolle.</td></tr><tr><th scope=\"row\">Marktlokation</th><td>Der Kunde wird im Markt über die Marktlokation abgebildet – den Ort, an dem Energie entnommen oder eingespeist wird.</td></tr><tr><th scope=\"row\">Folge</th><td>In Marktprozessen und Datenformaten steht deshalb meist die Marktlokation im Mittelpunkt.</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "F8",
+   "title": "Selbstcheck, Merksatz und Abschluss",
+   "content": "<h3>Erklär es Dir selbst</h3><p>Erkläre, warum ein falsch zugeordneter Messwert ein Problem ist.</p><details><summary>Musterantwort zeigen</summary><p>Abrechnung und Bilanzierung bauen auf den Daten auf. Ist ein Wert falsch zugeordnet, arbeiten alle Folgeprozesse mit falschen Zahlen.</p></details><p class=\"quelle\">„Konnte ich erklären“ / „teilweise“ / „noch nicht“. Bei „noch nicht“ erscheint der Hinweis auf Folie 8–9 bzw. das Lernskript, Abschnitt F.</p><div class=\"kasten merke\"><strong>Merksatz</strong>EDM = Messung → Datenverarbeitung → Weitergabe. Ohne korrekte Zuordnung keine korrekte Abrechnung und Bilanzierung.</div>"
+  }
+ ],
+ "questions": [
+  {
+   "question": "Wer ist gemeint? Ordne jede Aussage Kunde, Lieferant oder Netzbetreiber zu: „„Verbraucht Strom und zahlt über den Lieferanten.““",
+   "opt_a": "Kunde",
+   "opt_b": "Lieferant",
+   "opt_c": "Netzbetreiber",
+   "opt_d": null,
+   "correct_index": 0,
+   "question_type": "multiple_choice",
+   "feedback": "Der Kunde steht auf der Verbrauchsseite. · Glühwürmchen-Tipp: „Der Kunde ist keine Marktrolle, aber er zahlt. Die anderen beiden unterscheiden sich so: Einer liefert, einer betreibt das Netz.“"
+  },
+  {
+   "question": "Wer ist gemeint? Ordne jede Aussage Kunde, Lieferant oder Netzbetreiber zu: „„Beliefert den Kunden und erstellt die Abrechnung.““",
+   "opt_a": "Kunde",
+   "opt_b": "Lieferant",
+   "opt_c": "Netzbetreiber",
+   "opt_d": null,
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "Lieferung und Endkundenabrechnung liegen beim Lieferanten. · Glühwürmchen-Tipp: „Der Kunde ist keine Marktrolle, aber er zahlt. Die anderen beiden unterscheiden sich so: Einer liefert, einer betreibt das Netz.“"
+  },
+  {
+   "question": "Wer ist gemeint? Ordne jede Aussage Kunde, Lieferant oder Netzbetreiber zu: „„Stellt die Netznutzung sicher.““",
+   "opt_a": "Kunde",
+   "opt_b": "Lieferant",
+   "opt_c": "Netzbetreiber",
+   "opt_d": null,
+   "correct_index": 2,
+   "question_type": "multiple_choice",
+   "feedback": "Der Netzbetreiber betreibt das Netz, über das der Strom fließt. · Glühwürmchen-Tipp: „Der Kunde ist keine Marktrolle, aber er zahlt. Die anderen beiden unterscheiden sich so: Einer liefert, einer betreibt das Netz.“"
+  },
+  {
+   "question": "Wer ist gemeint? Ordne jede Aussage Kunde, Lieferant oder Netzbetreiber zu: „„Misst den Verbrauch (als Messstellenbetreiber).““",
+   "opt_a": "Kunde",
+   "opt_b": "Lieferant",
+   "opt_c": "Netzbetreiber",
+   "opt_d": null,
+   "correct_index": 2,
+   "question_type": "multiple_choice",
+   "feedback": "Der Messstellenbetrieb wird häufig vom Netzbetreiber übernommen. Die genaue Rollenlogik wird in Messwesen/WiM vertieft. · Glühwürmchen-Tipp: „Der Kunde ist keine Marktrolle, aber er zahlt. Die anderen beiden unterscheiden sich so: Einer liefert, einer betreibt das Netz.“"
+  },
+  {
+   "question": "Ordne die drei Schritte des Energiedatenmanagements.",
+   "question_type": "sort",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2
+   ],
+   "feedback": "1. Messung – Der Stromverbrauch wird durch Zähler erfasst. · 2. Datenverarbeitung – Daten werden gesammelt, geprüft und zugeordnet. · 3. Weitergabe – Daten werden an Netzbetreiber, Lieferanten und Folgeprozesse übermittelt. · Glühwürmchen-Tipp: „Am Anfang steht der Zähler, am Ende braucht jemand den Wert.“",
+   "opt_a": "Messung",
+   "opt_b": "Datenverarbeitung",
+   "opt_c": "Weitergabe"
+  },
+  {
+   "question": "Ordne den Weg eines Messwerts.",
+   "question_type": "sort",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "feedback": "1. Messwert entsteht – Am Zähler wird der Verbrauch erfasst. · 2. Daten werden geprüft – Fehlerhafte oder unplausible Werte fallen auf. · 3. Fachliche Zuordnung – Der Wert wird dem richtigen Datensatz zugeordnet. · 4. Nutzung in Abrechnung und Bilanzierung – Erst jetzt ist der Wert für Folgeprozesse nutzbar. · Glühwürmchen-Tipp: „Ich verrat Dir was: Ein Wert wird erst geprüft, bevor man ihn irgendwo einsortiert.“",
+   "opt_a": "Messwert entsteht",
+   "opt_b": "Daten werden geprüft",
+   "opt_c": "Fachliche Zuordnung",
+   "opt_d": "Nutzung in Abrechnung und Bilanzierung"
+  },
+  {
+   "question": "Wähle alle richtigen Aussagen aus.",
+   "opt_a": "Messung soll vollständig ersetzt werden.",
+   "opt_b": "Marktprozesse sollen fehlerfrei funktionieren.",
+   "opt_c": "Daten sollen nicht mehr weitergegeben werden.",
+   "opt_d": "Netzbetreiber und Lieferanten sollen dieselben Daten nutzen.",
+   "correct_index": -1,
+   "correct_multi": [
+    1,
+    3
+   ],
+   "question_type": "multiple_choice",
+   "feedback": "A: Messung ist der erste Schritt der Kette. · B: Datenqualität ist Grundlage funktionierender Prozesse. · C: Weitergabe ist ausdrücklich Teil des EDM-Ablaufs. · D: Gleiche Datenstände vermeiden Folgefehler. · Glühwürmchen-Tipp: „Denk daran, wer alles mit den Daten arbeitet – und was ein falscher Wert anrichten kann. Mehr als eine Antwort kann stimmen.“"
+  },
+  {
+   "question": "Ein Verbrauchswert wird dem falschen Datensatz zugeordnet. Was ist die plausibelste Folge?",
+   "opt_a": "Das Netz wird automatisch abgeschaltet.",
+   "opt_b": "Abrechnung und Bilanzierung können mit falschen Daten arbeiten.",
+   "opt_c": "Der Verbrauch verschwindet physikalisch.",
+   "opt_d": "Die Einheit kWh wird zu kW.",
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "Falsch zugeordnete Daten wirken sich auf alle Folgeprozesse aus. · Hinweis: „Wenn der Wert beim falschen Datensatz landet: Wessen Rechnung und welche Bilanz stimmen dann nicht mehr?“",
+   "scenario": null,
+   "_art": "Fallentscheidung (Single Choice)."
+  }
+ ]
+}
+<!--/ENERGYACADEMY_COURSE-->
+</body></html>

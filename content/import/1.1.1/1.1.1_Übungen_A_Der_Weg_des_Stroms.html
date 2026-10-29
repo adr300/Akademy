@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>1.1.1 Übungen A – Der Weg des Stroms</title></head><body>
+<p>Bluuakademie-Kursdatei – in der Verwaltung unter «Kurs importieren» hochladen. Erzeugt aus den Word-Dateien des Zips «TF1 Grundlagen» (scratchpad/tf1_kurse.js).</p>
+<!--ENERGYACADEMY_COURSE-->
+{
+ "title": "1.1.1 Übungen A – Der Weg des Stroms",
+ "icon": "✏️",
+ "icon_bg": "#EEF3F6",
+ "tag_bg": "#243A4C",
+ "tag_color": "#BEC60E",
+ "btn_color": "#243A4C",
+ "slides": [
+  {
+   "tag": "Modul",
+   "title": "1x1 der Energiewirtschaft",
+   "content": "<h3>Energiefluss, Energieformen, Energiedaten und die Kilowattstunde – für Strom und Gas</h3><p>Du baust das Grundgerüst der Energiewirtschaft auf: wie Strom und Gas zu uns kommen, welche Energieformen es gibt, warum Energiedaten so wichtig sind und wie Du mit Kilowattstunden rechnest. Am Ende prüfst Du eine echte Strom- und Gasrechnung.</p>"
+  },
+  {
+   "tag": "A0",
+   "title": "Startscreen",
+   "content": "<p>Strom entsteht nicht an der Steckdose. Zwischen Erzeugung und Nutzung liegt ein technisches System aus Erzeugungsanlagen und Netzen. In diesem Untermodul baust Du diese Grundkette auf.</p><p class=\"quelle\">Richtzeit 20 Min. · Ergebnis: Erzeugung, Netz und Verbrauch als Kette verstehen</p>"
+  },
+  {
+   "tag": "A1",
+   "title": "Lernkarte: Drei Stationen",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Station</th><th>Teilnehmertext</th></tr></thead><tbody><tr><th scope=\"row\">Erzeugung</th><td>Strom wird z. B. in Kraftwerken, Wind- und Solaranlagen erzeugt.</td></tr><tr><th scope=\"row\">Stromnetz</th><td>Strom wird über Übertragungs- und Verteilnetze transportiert und verteilt.</td></tr><tr><th scope=\"row\">Verbrauch</th><td>Haushalte und Unternehmen nutzen den Strom.</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "A7",
+   "title": "Selbstcheck, Merksatz und Abschluss",
+   "content": "<h3>Erklär es Dir selbst</h3><p>Erkläre in zwei Sätzen, wie Strom vom Windpark zu einem Haushalt kommt und warum es dafür ein Netz braucht.</p><details><summary>Musterantwort zeigen</summary><p>Der Strom wird im Windpark erzeugt, über das Netz transportiert und verteilt und im Haushalt verbraucht. Das Netz braucht es, weil Erzeugung und Verbrauch räumlich getrennt sind.</p></details><p class=\"quelle\">„Konnte ich erklären“ / „teilweise“ / „noch nicht“. Bei „noch nicht“ erscheint der Hinweis auf Folie 3 bzw. das Lernskript, Abschnitt A.</p><div class=\"kasten merke\"><strong>Merksatz</strong>1 Erzeugung → 2 Stromnetz → 3 Verbrauch. Das Netz überbrückt die Entfernung und verteilt den Strom.</div>"
+  }
+ ],
+ "questions": [
+  {
+   "question": "Ordne die drei Stationen des Stromflusses.",
+   "question_type": "sort",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2
+   ],
+   "feedback": "1. Erzeugung – Am Anfang steht die Erzeugung elektrischer Energie. · 2. Stromnetz – Das Netz verbindet Erzeugung und Verbrauch. · 3. Verbrauch – Am Ende der Kette wird der Strom genutzt. · Glühwürmchen-Tipp: „Wo fängt die Reise des Stroms an – und wo kommt sie an?“",
+   "opt_a": "Erzeugung",
+   "opt_b": "Stromnetz",
+   "opt_c": "Verbrauch"
+  },
+  {
+   "question": "Wähle alle richtigen Aussagen aus.",
+   "opt_a": "Strom wird ausschließlich in Haushalten erzeugt.",
+   "opt_b": "Erzeugung und Verbrauch sind räumlich getrennt.",
+   "opt_c": "Das Netz wird nur für die Abrechnung benötigt.",
+   "opt_d": "Strom muss verteilt und gesteuert werden.",
+   "correct_index": -1,
+   "correct_multi": [
+    1,
+    3
+   ],
+   "question_type": "multiple_choice",
+   "feedback": "A: Strom wird aus vielen Quellen und an unterschiedlichen Orten erzeugt. · B: Erzeugung findet nicht automatisch am Ort des Verbrauchs statt. · C: Das Netz hat eine technische Transport- und Verteilfunktion. · D: Netze übernehmen Transport und Verteilung. · Glühwürmchen-Tipp: „Denk an die Entfernung zwischen Windpark und Kaffeemaschine – und daran, dass Strom auch gesteuert werden muss. Mehr als eine Antwort kann stimmen.“"
+  },
+  {
+   "question": "Ordne jedes Beispiel einer Station zu (Erzeugung, Stromnetz oder Verbrauch): „Ein Windpark speist Strom ein.“",
+   "opt_a": "Erzeugung",
+   "opt_b": "Stromnetz",
+   "opt_c": "Verbrauch",
+   "opt_d": null,
+   "correct_index": 0,
+   "question_type": "multiple_choice",
+   "feedback": "Einspeisung beginnt auf der Erzeugungsseite. · Glühwürmchen-Tipp: „Frag Dich bei jedem Beispiel: Macht es Strom, bringt es Strom oder braucht es Strom?“"
+  },
+  {
+   "question": "Ordne jedes Beispiel einer Station zu (Erzeugung, Stromnetz oder Verbrauch): „Eine Freileitung transportiert Strom über viele Kilometer.“",
+   "opt_a": "Erzeugung",
+   "opt_b": "Stromnetz",
+   "opt_c": "Verbrauch",
+   "opt_d": null,
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "Das ist die Transportfunktion des Netzes. · Glühwürmchen-Tipp: „Frag Dich bei jedem Beispiel: Macht es Strom, bringt es Strom oder braucht es Strom?“"
+  },
+  {
+   "question": "Ordne jedes Beispiel einer Station zu (Erzeugung, Stromnetz oder Verbrauch): „Eine Bäckerei betreibt Öfen und Maschinen mit Strom.“",
+   "opt_a": "Erzeugung",
+   "opt_b": "Stromnetz",
+   "opt_c": "Verbrauch",
+   "opt_d": null,
+   "correct_index": 2,
+   "question_type": "multiple_choice",
+   "feedback": "Hier wird elektrische Energie genutzt. · Glühwürmchen-Tipp: „Frag Dich bei jedem Beispiel: Macht es Strom, bringt es Strom oder braucht es Strom?“"
+  },
+  {
+   "question": "Ordne jedes Beispiel einer Station zu (Erzeugung, Stromnetz oder Verbrauch): „Eine Photovoltaikanlage auf dem Dach liefert Strom.“",
+   "opt_a": "Erzeugung",
+   "opt_b": "Stromnetz",
+   "opt_c": "Verbrauch",
+   "opt_d": null,
+   "correct_index": 0,
+   "question_type": "multiple_choice",
+   "feedback": "Solaranlagen gehören zur Erzeugung. · Glühwürmchen-Tipp: „Frag Dich bei jedem Beispiel: Macht es Strom, bringt es Strom oder braucht es Strom?“"
+  },
+  {
+   "question": "Ordne jedes Beispiel einer Station zu (Erzeugung, Stromnetz oder Verbrauch): „Ein Verteilnetz bringt Strom in eine Region.“",
+   "opt_a": "Erzeugung",
+   "opt_b": "Stromnetz",
+   "opt_c": "Verbrauch",
+   "opt_d": null,
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "Verteilung ist Aufgabe des Netzes. · Glühwürmchen-Tipp: „Frag Dich bei jedem Beispiel: Macht es Strom, bringt es Strom oder braucht es Strom?“"
+  },
+  {
+   "question": "Entscheide für jede Aussage, ob sie richtig oder falsch ist.",
+   "question_type": "true_false",
+   "correct_index": -1,
+   "feedback": "1: Das Netz ist die Verbindung zwischen beiden Seiten. · 2: Erzeugung und Verbrauch sind oft räumlich getrennt. · 3: Sie stellen elektrische Energie bereit. · Glühwürmchen-Tipp: „Psst … in einer Aussage steckt ein „immer“. Solche Wörter sind oft verdächtig.“",
+   "opt_a": "„Das Stromnetz verbindet Erzeugung und Verbrauch.“",
+   "match_a": "true",
+   "opt_b": "„Strom wird immer dort erzeugt, wo er verbraucht wird.“",
+   "match_b": "false",
+   "opt_c": "„Wind- und Solaranlagen gehören zur Erzeugung.“",
+   "match_c": "true"
+  },
+  {
+   "question": "Ein Windpark erzeugt Strom, ein Industriebetrieb verbraucht ihn 200 km entfernt. Welche Funktion verbindet beide Seiten unmittelbar?",
+   "opt_a": "Nutzenergie",
+   "opt_b": "Lieferantenrechnung",
+   "opt_c": "Stromnetz",
+   "opt_d": "Primärenergie",
+   "correct_index": 2,
+   "question_type": "multiple_choice",
+   "feedback": "Das Stromnetz überbrückt die Entfernung zwischen Erzeugung und Verbrauch. · Hinweis: „Gesucht ist weder eine Energieform noch ein Stück Papier – sondern das, was physisch dazwischenliegt.“",
+   "scenario": null,
+   "_art": "Fallentscheidung (Single Choice)."
+  }
+ ]
+}
+<!--/ENERGYACADEMY_COURSE-->
+</body></html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>1.1.4 Praxisfall – Marktrollen im Gasmarkt</title></head><body>
+<p>Bluuakademie-Kursdatei – in der Verwaltung unter «Kurs importieren» hochladen. Erzeugt aus den Word-Dateien des Zips «TF1 Grundlagen» (scratchpad/tf1_kurse.js).</p>
+<!--ENERGYACADEMY_COURSE-->
+{
+ "title": "1.1.4 Praxisfall – Marktrollen im Gasmarkt",
+ "icon": "🧾",
+ "icon_bg": "#EEF3F6",
+ "tag_bg": "#243A4C",
+ "tag_color": "#BEC60E",
+ "btn_color": "#243A4C",
+ "slides": [
+  {
+   "tag": "Praxisfall",
+   "title": "Wozu dieser Praxisfall?",
+   "content": "<p>Das Stammdatenblatt zeigt die Gas-Marktlokation von Familie Musterfrau im Musterweg 1 – dasselbe Haus wie im Praxisfall Strom aus Modul 1.1.3. Einsatz: Live-Seminar (Gruppenarbeit 2, Arbeitsblatt 4) und Lernplattform (Untermodul G).</p><div class=\"kasten hinweis\"><strong>Hinweis</strong>Alle Namen und IDs sind fiktiv. MaLo-ID und Marktpartner-IDs folgen der BDEW-Bildungsvorschrift einschließlich korrekter Prüfziffer. Brennwert und Zustandszahl sind Beispielwerte. Regelwerksstand: Oktober 2026.</div>"
+  },
+  {
+   "tag": "Praxisfall",
+   "title": "Stammdatenblatt Musterweg 1, Sparte Gas",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Anschlussnutzer</th><th>Familie Musterfrau</th></tr></thead><tbody><tr><th scope=\"row\">Adresse</th><td>Musterweg 1, 12345 Musterstadt</td></tr><tr><th scope=\"row\">Nutzung</th><td>Gasheizung und Warmwasser, ca. 18.000 kWh pro Jahr</td></tr></tbody></table></div><div class=\"tabelle-scroll\"><table><thead><tr><th>Objekt</th><th>ID bzw. Angabe</th><th>Bemerkung</th></tr></thead><tbody><tr><th scope=\"row\">Marktlokation Gas</th><td>31048572694</td><td>Die erste Ziffer 3 zeigt nur die Vergabestelle (DVGW-Bereich), nicht die Sparte</td></tr><tr><th scope=\"row\">Messlokation</th><td>DE0001231234500000000000000077001</td><td>Zählpunktbezeichnung</td></tr><tr><th scope=\"row\">Zähler</th><td>Balgengaszähler G4</td><td>Misst das Volumen in m³</td></tr><tr><th scope=\"row\">Mengenermittlung</th><td>Standardlastprofil Einfamilienhaus</td><td>Unter 1,5 Mio. kWh im Jahr und 500 kWh pro Stunde</td></tr></tbody></table></div><div class=\"tabelle-scroll\"><table><thead><tr><th>Rolle</th><th>Unternehmen</th><th>Marktpartner-ID</th></tr></thead><tbody><tr><th scope=\"row\">Verteilnetzbetreiber Gas</th><td>Netzgesellschaft Musterstadt GmbH</td><td>9800123456002</td></tr><tr><th scope=\"row\">Messstellenbetreiber Gas (grundzuständig)</th><td>Netzgesellschaft Musterstadt GmbH</td><td>9800123456101</td></tr><tr><th scope=\"row\">Lieferant Gas</th><td>Stadtwerke Musterstadt GmbH</td><td>9800987654008</td></tr><tr><th scope=\"row\">Bilanzkreisverantwortlicher</th><td>Stadtwerke Musterstadt Handel GmbH</td><td>9800555444005</td></tr><tr><th scope=\"row\">Marktgebietsverantwortlicher</th><td>Trading Hub Europe GmbH</td><td>—</td></tr></tbody></table></div><p>Bilanzkreis: Bilanzkreis der Stadtwerke Musterstadt Handel beim Marktgebietsverantwortlichen. Vorgelagert: Fernleitungsnetz im Marktgebiet Trading Hub Europe.</p>"
+  },
+  {
+   "tag": "Praxisfall",
+   "title": "Abrechnungsdaten (Beispiel)",
+   "content": "<div class=\"tabelle-scroll\"><table><thead><tr><th>Zählerstand alt / neu</th><th>12.400 m³ / 14.150 m³</th></tr></thead><tbody><tr><th scope=\"row\">Verbrauch</th><td>1.750 m³</td></tr><tr><th scope=\"row\">Brennwert</th><td>11,2 kWh/m³ (vom Netzbetreiber ermittelt)</td></tr><tr><th scope=\"row\">Zustandszahl</th><td>0,9500 (vom Netzbetreiber ermittelt)</td></tr><tr><th scope=\"row\">Energie</th><td>1.750 × 11,2 × 0,95 = 18.620 kWh</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "Praxisfall",
+   "title": "Aufgaben für Modul 1.1.4",
+   "content": "<ol><li>Welche Rollen sind an der Gas-Marktlokation von Familie Musterfrau beteiligt?</li><li>Welches Verfahren der Mengenermittlung gilt – und warum?</li><li>Rechne den Verbrauch aus den Zählerständen in kWh um.</li><li>Familie Musterfrau wechselt den Gaslieferanten. Was ändert sich, was bleibt?</li><li>Wer ermittelt Brennwert und Zustandszahl?</li><li>Bei wem führt der Bilanzkreisverantwortliche seinen Bilanzkreis?</li><li>Der Bilanzkreis ist am Gastag 15.1. um 20 MWh unterdeckt. Was passiert?</li><li>Wie viele Kapazitätsverträge braucht ein Händler, der Gas an der Grenze einspeist und an einen Industriekunden in Musterstadt liefert?</li></ol>"
+  },
+  {
+   "tag": "Praxisfall",
+   "title": "Lösungen",
+   "content": "<details><summary>1</summary><p><strong>Lösung</strong> Verteilnetzbetreiber und grundzuständiger MSB (Netzgesellschaft Musterstadt), Lieferant (Stadtwerke Musterstadt), Bilanzkreisverantwortlicher (Stadtwerke Musterstadt Handel), Marktgebietsverantwortlicher (Trading Hub Europe); vorgelagert die Fernleitungsnetzbetreiber.</p></details><details><summary>2</summary><p><strong>Lösung</strong> Standardlastprofil – der Verbrauch liegt deutlich unter 1,5 Mio. kWh im Jahr und unter 500 kWh pro Stunde.</p></details><details><summary>3</summary><p><strong>Lösung</strong> 1.750 m³ × 11,2 kWh/m³ × 0,95 = 18.620 kWh.</p></details><details><summary>4</summary><p><strong>Lösung</strong> Es gelten die Prozesse nach GeLi Gas. Neu: Lieferant und in der Regel der Bilanzkreis. Gleich: MaLo-ID, Messlokation, Zähler, Netzbetreiber, Messstellenbetreiber.</p></details><details><summary>5</summary><p><strong>Lösung</strong> Der Netzbetreiber.</p></details><details><summary>6</summary><p><strong>Lösung</strong> Beim Marktgebietsverantwortlichen Trading Hub Europe – mit ihm hat er den Bilanzkreisvertrag geschlossen.</p></details><details><summary>7</summary><p><strong>Lösung</strong> Der MGV gleicht physisch aus und bewertet die 20 MWh zum Ende des Gastages (16.1., 6:00 Uhr) als Ausgleichsenergie, die mit dem BKV abgerechnet wird.</p></details><details><summary>8</summary><p><strong>Lösung</strong> Zwei: einen Einspeisevertrag mit dem Fernleitungsnetzbetreiber an der Grenze und einen Ausspeisevertrag mit dem Netzbetreiber des Industriekunden (Entry-Exit, § 20 Abs. 1b EnWG).</p></details><p>Ergebnis: An der Gas-Marktlokation wirken Verteilnetzbetreiber, Messstellenbetreiber, Lieferant, BKV und MGV zusammen; der Jahresverbrauch beträgt 18.620 kWh.</p><p>Quellen: EnWG (Stand 29.03.2026) §§ 16, 16a, 20; BNetzA-Festlegungen GaBi Gas 2.1, KARLA Gas 2.0, GeLi Gas 3.0 (12.09.2025) und GeLi Gas 2.0; Kooperationsvereinbarung Gas; BDEW-Anwendungshilfe „Identifikatoren in der Marktkommunikation“.</p>"
+  }
+ ],
+ "questions": []
+}
+<!--/ENERGYACADEMY_COURSE-->
+</body></html>

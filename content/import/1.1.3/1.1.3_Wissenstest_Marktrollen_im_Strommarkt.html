@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>1.1.3 Wissenstest – Marktrollen im Strommarkt</title></head><body>
+<p>Bluuakademie-Kursdatei – in der Verwaltung unter «Kurs importieren» hochladen. Erzeugt aus den Word-Dateien des Zips «TF1 Grundlagen» (scratchpad/tf1_kurse.js).</p>
+<!--ENERGYACADEMY_COURSE-->
+{
+ "title": "1.1.3 Wissenstest – Marktrollen im Strommarkt",
+ "icon": "🧪",
+ "icon_bg": "#EEF3F6",
+ "tag_bg": "#243A4C",
+ "tag_color": "#BEC60E",
+ "btn_color": "#243A4C",
+ "slides": [
+  {
+   "tag": "Wissenstest",
+   "title": "Marktrollen im Strommarkt",
+   "content": "<p>Der Wissenstest steht am Ende des Selbststudiums. Alle 20 Fragen sind geschlossen und werden mit A, B, C oder D beantwortet; jede Frage hat genau eine richtige Antwort. Bestanden ist der Test ab 16 richtigen Antworten (rund 80 %). Die Antwortpositionen sind gemischt (je 5× A, 5× B, 5× C, 5× D). Die Zeile „Bezug“ ordnet jede Frage einem Untermodul zu und wird nur intern für die Wiederholungsempfehlung genutzt.</p>"
+  }
+ ],
+ "questions": [
+  {
+   "question": "Wofür steht im Rollenmodell die Frage „Wo gilt was?“",
+   "opt_a": "Rollen",
+   "opt_b": "Gebiete",
+   "opt_c": "Objekte",
+   "opt_d": "Identifikatoren",
+   "question_type": "multiple_choice",
+   "correct_index": 1,
+   "feedback": "Gebiete wie Netzgebiet oder Regelzone legen fest, wo welche Zuständigkeit gilt."
+  },
+  {
+   "question": "Welche Zuordnung ist korrekt?",
+   "opt_a": "Bilanzkreis = Objekt, Bilanzkreisverantwortlicher = Rolle",
+   "opt_b": "Bilanzkreis = Rolle, Bilanzkreisverantwortlicher = Objekt",
+   "opt_c": "Marktlokation = Rolle, Lieferant = Objekt",
+   "opt_d": "Regelzone = Objekt, Netzbetreiber = Gebiet",
+   "question_type": "multiple_choice",
+   "correct_index": 0,
+   "feedback": "Der Bilanzkreis ist das Mengenkonto; die Rolle dazu ist der Bilanzkreisverantwortliche."
+  },
+  {
+   "question": "Wie wird der Kunde im BDEW-Rollenmodell abgebildet?",
+   "opt_a": "Als eigene Marktrolle",
+   "opt_b": "Als Lieferant",
+   "opt_c": "Über die Marktlokation",
+   "opt_d": "Über den Bilanzkreis",
+   "question_type": "multiple_choice",
+   "correct_index": 2,
+   "feedback": "Der Kunde ist keine Marktrolle; er wird über die Marktlokation abgebildet."
+  },
+  {
+   "question": "Ein Stadtwerk ist für Strom Netzbetreiber, Messstellenbetreiber und Lieferant. Wie viele Strom-Marktpartner-IDs hat es?",
+   "opt_a": "Eine",
+   "opt_b": "Zwei",
+   "opt_c": "Drei",
+   "opt_d": "Vier",
+   "question_type": "multiple_choice",
+   "correct_index": 2,
+   "feedback": "Für jede Sparte und jede Rolle gibt es genau eine MP-ID."
+  },
+  {
+   "question": "Was gilt, wenn ein Unternehmen Netzbetreiber und Lieferant zugleich ist?",
+   "opt_a": "Netz und Vertrieb bleiben getrennt; sensible Netzinformationen sind vertraulich.",
+   "opt_b": "Der Vertrieb darf alle Netzdaten frei nutzen.",
+   "opt_c": "Es muss eine der beiden Rollen abgeben.",
+   "opt_d": "Beide Rollen nutzen eine gemeinsame Marktpartner-ID.",
+   "question_type": "multiple_choice",
+   "correct_index": 0,
+   "feedback": "Rollen bleiben getrennt – mit eigener MP-ID und den Regeln der Entflechtung."
+  },
+  {
+   "question": "Wer beantragt die Marktlokations-ID und ordnet sie der Marktlokation zu?",
+   "opt_a": "Der Lieferant",
+   "opt_b": "Der Messstellenbetreiber",
+   "opt_c": "Die Codevergabestelle",
+   "opt_d": "Der Netzbetreiber",
+   "question_type": "multiple_choice",
+   "correct_index": 3,
+   "feedback": "Die Codevergabestelle gibt IDs aus – beantragt und zugeordnet werden sie vom Netzbetreiber."
+  },
+  {
+   "question": "Nach einem Sturm fällt bei einer Kundin der Strom aus. Wer behebt die Störung?",
+   "opt_a": "Der Lieferant",
+   "opt_b": "Der Netzbetreiber",
+   "opt_c": "Der Bilanzkreisverantwortliche",
+   "opt_d": "Der Messstellenbetreiber",
+   "question_type": "multiple_choice",
+   "correct_index": 1,
+   "feedback": "Störungen im Netz behebt der Netzbetreiber."
+  },
+  {
+   "question": "Wo beschafft ein Lieferant typischerweise den Strom für seine Kunden?",
+   "opt_a": "An der Börse oder über bilaterale Verträge",
+   "opt_b": "Beim Netzbetreiber",
+   "opt_c": "Beim Messstellenbetreiber",
+   "opt_d": "Bei der Bundesnetzagentur",
+   "question_type": "multiple_choice",
+   "correct_index": 0,
+   "feedback": "Der Lieferant kauft am Großhandelsmarkt ein – an der Börse oder direkt bei Handelspartnern."
+  },
+  {
+   "question": "Wer ist in der Regel grundzuständiger Messstellenbetreiber?",
+   "opt_a": "Der Lieferant",
+   "opt_b": "Der Übertragungsnetzbetreiber",
+   "opt_c": "Der örtliche Netzbetreiber",
+   "opt_d": "Der Bilanzkreisverantwortliche",
+   "question_type": "multiple_choice",
+   "correct_index": 2,
+   "feedback": "Der Anschlussnutzer kann aber einen wettbewerblichen MSB beauftragen."
+  },
+  {
+   "question": "Die Bedarfsprognose eines BKV war zu niedrig. Was tut er?",
+   "opt_a": "Er lässt die Messwerte vom MSB anpassen.",
+   "opt_b": "Er meldet Kunden beim Netzbetreiber ab.",
+   "opt_c": "Er wechselt in eine andere Regelzone.",
+   "opt_d": "Er beschafft kurzfristig zusätzliche Energiemengen.",
+   "question_type": "multiple_choice",
+   "correct_index": 3,
+   "feedback": "So gleicht er die Abweichung in seinem Bilanzkreis aus."
+  },
+  {
+   "question": "Wer rechnet verbleibende Abweichungen in Bilanzkreisen als Ausgleichsenergie ab?",
+   "opt_a": "Der Verteilnetzbetreiber",
+   "opt_b": "Der Übertragungsnetzbetreiber als Bilanzkreiskoordinator",
+   "opt_c": "Der Lieferant",
+   "opt_d": "Die Bundesnetzagentur",
+   "question_type": "multiple_choice",
+   "correct_index": 1,
+   "feedback": "Der ÜNB führt das Bilanzkreissystem seiner Regelzone."
+  },
+  {
+   "question": "In welchem Gebiet werden Bilanzkreise gebildet?",
+   "opt_a": "Innerhalb eines Netzgebiets",
+   "opt_b": "Innerhalb einer Regelzone",
+   "opt_c": "Innerhalb eines Bundeslandes",
+   "opt_d": "Im Marktgebiet Trading Hub Europe",
+   "question_type": "multiple_choice",
+   "correct_index": 1,
+   "feedback": "Bis Ende 2025 stand das in § 4 StromNZV, seit 2026 regeln es Festlegungen der Bundesnetzagentur."
+  },
+  {
+   "question": "Wie viele Regelzonen gibt es in Deutschland?",
+   "opt_a": "Eine",
+   "opt_b": "Zwei",
+   "opt_c": "Vier",
+   "opt_d": "Sechzehn",
+   "question_type": "multiple_choice",
+   "correct_index": 2,
+   "feedback": "50Hertz, Amprion, TenneT und TransnetBW."
+  },
+  {
+   "question": "Ein Lieferant kauft für eine Viertelstunde 2,0 MWh, seine Kunden verbrauchen 2,3 MWh. Was gilt, wenn der BKV nicht nachsteuert?",
+   "opt_a": "Die Differenz von 0,3 MWh wird als Ausgleichsenergie abgerechnet.",
+   "opt_b": "Der Bilanzkreis gilt trotzdem als ausgeglichen.",
+   "opt_c": "Die Kunden werden vom Netz getrennt.",
+   "opt_d": "Dem Lieferanten werden 0,3 MWh gutgeschrieben.",
+   "question_type": "multiple_choice",
+   "correct_index": 0,
+   "feedback": "Versorgt werden die Kunden trotzdem – die Differenz wird abgerechnet."
+  },
+  {
+   "question": "Wer betreibt das Übertragungsnetz und ist Bilanzkreiskoordinator seiner Regelzone?",
+   "opt_a": "Der Lieferant",
+   "opt_b": "Der Messstellenbetreiber",
+   "opt_c": "Der Verteilernetzbetreiber",
+   "opt_d": "Der Übertragungsnetzbetreiber",
+   "question_type": "multiple_choice",
+   "correct_index": 3,
+   "feedback": "Die vier ÜNB betreiben das Höchstspannungsnetz und koordinieren die Bilanzkreise ihrer Regelzone."
+  },
+  {
+   "question": "Auf welchem Sollwert halten die Übertragungsnetzbetreiber die Netzfrequenz?",
+   "opt_a": "50 Hertz",
+   "opt_b": "230 Hertz",
+   "opt_c": "400 Hertz",
+   "opt_d": "60 Hertz",
+   "question_type": "multiple_choice",
+   "correct_index": 0,
+   "feedback": "Erzeugung und Verbrauch müssen im Gleichgewicht sein; die Frequenz wird um 50 Hertz gehalten."
+  },
+  {
+   "question": "Was kennzeichnet die Gebotszone Deutschland–Luxemburg?",
+   "opt_a": "Sie ist das Gebiet eines Verteilernetzbetreibers.",
+   "opt_b": "Dort gilt ein einheitlicher Börsenstrompreis.",
+   "opt_c": "Sie ist das Marktgebiet für Gas.",
+   "opt_d": "Sie ist die Regelzone eines Übertragungsnetzbetreibers.",
+   "question_type": "multiple_choice",
+   "correct_index": 1,
+   "feedback": "Deutschland und Luxemburg bilden eine gemeinsame Gebotszone."
+  },
+  {
+   "question": "Welche Reihenfolge beschreibt den Weg eines Messwerts?",
+   "opt_a": "Marktlokation → Lieferant misst → Messlokation → Abrechnung",
+   "opt_b": "Abrechnung → Messlokation → MSB übermittelt → Marktlokation",
+   "opt_c": "Messlokation → MSB übermittelt → Zuordnung zur Marktlokation → Abrechnung und Bilanzierung",
+   "opt_d": "MSB übermittelt → Messwert entsteht → Bilanzierung → Marktlokation",
+   "question_type": "multiple_choice",
+   "correct_index": 2,
+   "feedback": "Gemessen wird in der Technikwelt, genutzt in der Marktwelt."
+  },
+  {
+   "question": "Wer verbindet Marktwelt und Technikwelt, indem er Marktlokationen und Messlokationen einander zuordnet?",
+   "opt_a": "Der Lieferant",
+   "opt_b": "Der Bilanzkreisverantwortliche",
+   "opt_c": "Der Übertragungsnetzbetreiber",
+   "opt_d": "Der Netzbetreiber",
+   "question_type": "multiple_choice",
+   "correct_index": 3,
+   "feedback": "Der Netzbetreiber ordnet Markt- und Messlokationen einander zu."
+  },
+  {
+   "question": "Eine Kundin wechselt den Stromlieferanten. Was bleibt gleich?",
+   "opt_a": "Lieferant und Bilanzkreis",
+   "opt_b": "Nur die Zählernummer",
+   "opt_c": "Nichts – alle IDs werden neu vergeben",
+   "opt_d": "MaLo-ID, Messlokation und Netzbetreiber",
+   "question_type": "multiple_choice",
+   "correct_index": 3,
+   "feedback": "Es ändern sich der Lieferant und meist der Bilanzkreis – der Rest bleibt."
+  }
+ ],
+ "pass_threshold": 80,
+ "is_final_exam": true
+}
+<!--/ENERGYACADEMY_COURSE-->
+</body></html>

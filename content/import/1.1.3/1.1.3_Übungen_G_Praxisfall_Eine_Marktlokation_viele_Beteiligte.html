@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>1.1.3 Übungen G – Praxisfall: Eine Marktlokation, viele Beteiligte</title></head><body>
+<p>Bluuakademie-Kursdatei – in der Verwaltung unter «Kurs importieren» hochladen. Erzeugt aus den Word-Dateien des Zips «TF1 Grundlagen» (scratchpad/tf1_kurse.js).</p>
+<!--ENERGYACADEMY_COURSE-->
+{
+ "title": "1.1.3 Übungen G – Praxisfall: Eine Marktlokation, viele Beteiligte",
+ "icon": "✏️",
+ "icon_bg": "#EEF3F6",
+ "tag_bg": "#243A4C",
+ "tag_color": "#BEC60E",
+ "btn_color": "#243A4C",
+ "slides": [
+  {
+   "tag": "G0",
+   "title": "Startscreen",
+   "content": "<p>Familie Musterfrau wohnt im Musterweg 1 und hat eine PV-Anlage auf dem Dach. Die App zeigt Dir das Stammdatenblatt ihres Anschlusses. Darin findest Du alle Rollen, Objekte, Gebiete und IDs aus diesem Modul wieder.</p><p class=\"quelle\">Richtzeit 20 Min. · Ergebnis: Ein Stammdatenblatt lesen und Änderungen richtig einordnen</p>"
+  },
+  {
+   "tag": "G1",
+   "title": "Lernkarte: So liest Du das Stammdatenblatt",
+   "content": "<p>Die App zeigt das Stammdatenblatt aus dem Begleitmaterial „Praxisfall Stammdaten einer Marktlokation“ als Bild mit antippbaren Markierungen.</p><div class=\"tabelle-scroll\"><table><thead><tr><th>Bereich</th><th>Teilnehmertext</th></tr></thead><tbody><tr><th scope=\"row\">Objekte</th><td>Zwei Marktlokationen (Bezug und Einspeisung), eine Messlokation mit Zweirichtungszähler.</td></tr><tr><th scope=\"row\">Marktpartner</th><td>Netzbetreiber, Messstellenbetreiber und Lieferant – jeweils mit eigener Marktpartner-ID.</td></tr><tr><th scope=\"row\">Zuordnungen</th><td>Bilanzkreis des Lieferanten, Netzgebiet und Regelzone.</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "G5",
+   "title": "Selbstcheck, Merksatz und Abschluss",
+   "content": "<h3>Erklär es Dir selbst</h3><p>Erkläre anhand des Stammdatenblatts, welche Angaben sich bei einem Lieferantenwechsel ändern und welche bleiben.</p><details><summary>Musterantwort zeigen</summary><p>Es ändern sich der Lieferant und in der Regel der Bilanzkreis. MaLo-ID, Messlokation, Zähler, Netzbetreiber und Messstellenbetreiber bleiben gleich.</p></details><p class=\"quelle\">„Konnte ich erklären“ / „teilweise“ / „noch nicht“. Bei „noch nicht“ erscheint der Hinweis auf Folie 14 bzw. das Lernskript, Abschnitt G.</p><div class=\"kasten merke\"><strong>Merksatz</strong>An einer Marktlokation wirken alle Rollen zusammen. IDs und Zuordnungen machen sichtbar, wer wofür zuständig ist – und was sich bei Wechseln ändert.</div><div class=\"tabelle-scroll\"><table><thead><tr><th>Feld</th><th>Speicherung</th></tr></thead><tbody><tr><th scope=\"row\">module_id</th><td>1.1.3</td></tr><tr><th scope=\"row\">task_status_A–G</th><td>nicht begonnen / in Bearbeitung / abgeschlossen</td></tr><tr><th scope=\"row\">self_check</th><td>Selbsteinschätzung je Untermodul</td></tr><tr><th scope=\"row\">closed_answers / retry_count / hint_shown</th><td>letzte Auswahl, Anzahl Wiederholungen, angezeigte Tipps</td></tr><tr><th scope=\"row\">started_at / completed_at</th><td>Zeitstempel je Untermodul (Nachweis des begleiteten Selbststudiums)</td></tr><tr><th scope=\"row\">test_status / test_score / test_attempts</th><td>Wissenstest: Status, richtige Antworten (von 20), Versuche</td></tr></tbody></table></div>"
+  }
+ ],
+ "questions": [
+  {
+   "question": "Was steht hier im Stammdatenblatt?",
+   "question_type": "match",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2
+   ],
+   "feedback": "51238609130 → MaLo-ID (11 Ziffern – die Bezugs-Marktlokation.) · DE0001231234500000000000000012345 → Zählpunktbezeichnung (33 Zeichen, beginnt mit DE – die Messlokation.) · 9900123456787 → MP-ID (13 Ziffern, beginnt mit 99 – ein Strom-Marktpartner.)",
+   "opt_a": "51238609130",
+   "match_a": "MaLo-ID",
+   "opt_b": "DE0001231234500000000000000012345",
+   "match_b": "Zählpunktbezeichnung",
+   "opt_c": "9900123456787",
+   "match_c": "MP-ID"
+  },
+  {
+   "question": "Was steht hier im Stammdatenblatt?",
+   "question_type": "match",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1
+   ],
+   "feedback": "Netzgesellschaft Musterstadt (Messstelle → Rolle (Eine Marktrolle – hier der grundzuständige MSB.) · Bilanzkreis der Stadtwerke → Objekt (Das Mengenkonto, in dem die Bezugs-Marktlokation geführt wird.)",
+   "opt_a": "Netzgesellschaft Musterstadt (Messstellenbetreiber)",
+   "match_a": "Rolle",
+   "opt_b": "Bilanzkreis der Stadtwerke",
+   "match_b": "Objekt"
+  },
+  {
+   "question": "Familie Musterfrau wechselt den Stromlieferanten. Was ändert sich bei der Bezugs-Marktlokation?",
+   "opt_a": "Die MaLo-ID",
+   "opt_b": "Der Netzbetreiber",
+   "opt_c": "Der Lieferant und in der Regel der Bilanzkreis",
+   "opt_d": "Die Zählpunktbezeichnung",
+   "correct_index": 2,
+   "question_type": "multiple_choice",
+   "feedback": "Der neue Lieferant führt die Marktlokation meist in einem anderen Bilanzkreis. MaLo-ID, Messlokation und Netzbetreiber bleiben.",
+   "scenario": null,
+   "_art": "Fallentscheidung (Single Choice)."
+  },
+  {
+   "question": "Der Messstellenbetreiber tauscht den Zähler gegen ein intelligentes Messsystem. Was ändert sich?",
+   "opt_a": "Die Zählernummer",
+   "opt_b": "Die MaLo-ID",
+   "opt_c": "Der Lieferant",
+   "opt_d": "Die Regelzone",
+   "correct_index": 0,
+   "question_type": "multiple_choice",
+   "feedback": "Die Zählernummer gehört zum Gerät. Marktlokation und Messlokation bleiben bestehen.",
+   "scenario": null,
+   "_art": "Fallentscheidung (Single Choice)."
+  },
+  {
+   "question": "Die Gemeinde vergibt die Konzession für das Stromnetz an einen neuen Netzbetreiber. Was passiert mit der MaLo-ID?",
+   "opt_a": "Sie wird neu vergeben.",
+   "opt_b": "Sie erhält eine neue Prüfziffer.",
+   "opt_c": "Sie wird durch die Zählpunktbezeichnung ersetzt.",
+   "opt_d": "Sie bleibt unverändert.",
+   "correct_index": 3,
+   "question_type": "multiple_choice",
+   "feedback": "Laut BDEW bleibt die MaLo-ID auch bei einem Netzbetreiberwechsel unverändert.",
+   "scenario": null,
+   "_art": "Fallentscheidung (Single Choice)."
+  },
+  {
+   "question": "Entscheide für jede Aussage, ob sie richtig oder falsch ist.",
+   "question_type": "true_false",
+   "correct_index": -1,
+   "feedback": "1: Je Rolle gibt es eine eigene MP-ID. · 2: Es sind zwei Marktlokationen mit zwei IDs. · 3: Bilanzkreise werden innerhalb einer Regelzone gebildet.",
+   "opt_a": "„Netzbetreiber und Messstellenbetreiber können dasselbe Unternehmen sein und treten trotzdem mit getrennten Marktpartner-IDs auf.“",
+   "match_a": "true",
+   "opt_b": "„Die Einspeise-Marktlokation hat dieselbe MaLo-ID wie die Bezugs-Marktlokation.“",
+   "match_b": "false",
+   "opt_c": "„Der Bilanzkreis der Bezugs-Marktlokation liegt innerhalb einer Regelzone.“",
+   "match_c": "true"
+  }
+ ]
+}
+<!--/ENERGYACADEMY_COURSE-->
+</body></html>

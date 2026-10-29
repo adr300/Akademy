@@ -1,0 +1,282 @@
+[
+ {
+  "modul": "1.1.1",
+  "titel": "1x1 der Energiewirtschaft",
+  "uebungen": [
+   {
+    "title": "1.1.1 Übungen A – Der Weg des Stroms",
+    "slides": 4,
+    "fragen": 9
+   },
+   {
+    "title": "1.1.1 Übungen B – Stromnetz und Spannungsebenen",
+    "slides": 3,
+    "fragen": 12
+   },
+   {
+    "title": "1.1.1 Übungen C – Der Weg des Gases",
+    "slides": 3,
+    "fragen": 6
+   },
+   {
+    "title": "1.1.1 Übungen D – Primär-, End- und Nutzenergie",
+    "slides": 3,
+    "fragen": 12
+   },
+   {
+    "title": "1.1.1 Übungen E – Energiequellen und Energiemix",
+    "slides": 3,
+    "fragen": 14
+   },
+   {
+    "title": "1.1.1 Übungen F – Energiedaten und EDM",
+    "slides": 4,
+    "fragen": 8
+   },
+   {
+    "title": "1.1.1 Übungen G – Leistung, Energie und Einheiten",
+    "slides": 6,
+    "fragen": 13
+   },
+   {
+    "title": "1.1.1 Übungen H – Gas: vom Kubikmeter zur Kilowattstunde",
+    "slides": 4,
+    "fragen": 7
+   },
+   {
+    "title": "1.1.1 Übungen I – Praxisfall: Die Energierechnung lesen",
+    "slides": 3,
+    "fragen": 6
+   }
+  ],
+  "wissenstest": {
+   "title": "1.1.1 Wissenstest – 1x1 der Energiewirtschaft",
+   "fragen": 24,
+   "bestandenAb": 19
+  },
+  "praxisfall": {
+   "title": "1.1.1 Praxisfall – 1x1 der Energiewirtschaft",
+   "slides": 6,
+   "fragen": 0
+  },
+  "ersatz": 2
+ },
+ {
+  "modul": "1.1.2",
+  "titel": "Aufbau des Energiemarktes",
+  "uebungen": [
+   {
+    "title": "1.1.2 Übungen A – Unbundling: Warum so viele Beteiligte?",
+    "slides": 6,
+    "fragen": 10
+   },
+   {
+    "title": "1.1.2 Übungen B – Erzeugung, Netz und Vertrieb",
+    "slides": 4,
+    "fragen": 8
+   },
+   {
+    "title": "1.1.2 Übungen C – Marktstruktur und Marktrollen",
+    "slides": 5,
+    "fragen": 13
+   },
+   {
+    "title": "1.1.2 Übungen D – Der Kunde im Zentrum",
+    "slides": 3,
+    "fragen": 3
+   },
+   {
+    "title": "1.1.2 Übungen E – Regulierung im Überblick",
+    "slides": 4,
+    "fragen": 4
+   },
+   {
+    "title": "1.1.2 Übungen F – Standardisierte Marktprozesse",
+    "slides": 4,
+    "fragen": 5
+   },
+   {
+    "title": "1.1.2 Übungen G – Strom und Gas im Vergleich",
+    "slides": 4,
+    "fragen": 11
+   },
+   {
+    "title": "1.1.2 Übungen H – Wertschöpfung und Energiedienstleister",
+    "slides": 4,
+    "fragen": 9
+   },
+   {
+    "title": "1.1.2 Übungen I – Praxisfall: Wer steckt hinter der Rechnung?",
+    "slides": 3,
+    "fragen": 5
+   }
+  ],
+  "wissenstest": {
+   "title": "1.1.2 Wissenstest – Aufbau des Energiemarktes",
+   "fragen": 24,
+   "bestandenAb": 19
+  },
+  "praxisfall": {
+   "title": "1.1.2 Praxisfall – Aufbau des Energiemarktes",
+   "slides": 6,
+   "fragen": 3
+  },
+  "ersatz": 6
+ },
+ {
+  "modul": "1.1.3",
+  "titel": "Marktrollen im Strommarkt",
+  "uebungen": [
+   {
+    "title": "1.1.3 Übungen A – Warum ein Rollenmodell?",
+    "slides": 6,
+    "fragen": 9
+   },
+   {
+    "title": "1.1.3 Übungen B – Ein Unternehmen, mehrere Rollen",
+    "slides": 3,
+    "fragen": 3
+   },
+   {
+    "title": "1.1.3 Übungen C – Netzbetreiber und Lieferant",
+    "slides": 4,
+    "fragen": 7
+   },
+   {
+    "title": "1.1.3 Übungen D – Messstellenbetreiber und Bilanzkreisverantwortlicher",
+    "slides": 4,
+    "fragen": 7
+   },
+   {
+    "title": "1.1.3 Übungen E – Übertragungsnetzbetreiber, Bilanzkreis und Gebiete",
+    "slides": 5,
+    "fragen": 8
+   },
+   {
+    "title": "1.1.3 Übungen F – Marktwelt und Technikwelt",
+    "slides": 3,
+    "fragen": 2
+   },
+   {
+    "title": "1.1.3 Übungen G – Praxisfall: Eine Marktlokation, viele Beteiligte",
+    "slides": 3,
+    "fragen": 6
+   }
+  ],
+  "wissenstest": {
+   "title": "1.1.3 Wissenstest – Marktrollen im Strommarkt",
+   "fragen": 20,
+   "bestandenAb": 16
+  },
+  "praxisfall": {
+   "title": "1.1.3 Praxisfall – Marktrollen im Strommarkt",
+   "slides": 6,
+   "fragen": 0
+  },
+  "ersatz": 5
+ },
+ {
+  "modul": "1.1.4",
+  "titel": "Marktrollen im Gasmarkt",
+  "uebungen": [
+   {
+    "title": "1.1.4 Übungen A – Gas ist anders",
+    "slides": 5,
+    "fragen": 7
+   },
+   {
+    "title": "1.1.4 Übungen B – Rollenmodell und Entry-Exit",
+    "slides": 4,
+    "fragen": 6
+   },
+   {
+    "title": "1.1.4 Übungen C – Netzbetreiber und Marktgebietsverantwortlicher",
+    "slides": 4,
+    "fragen": 7
+   },
+   {
+    "title": "1.1.4 Übungen D – Transportkunde, Lieferant und BKV",
+    "slides": 4,
+    "fragen": 6
+   },
+   {
+    "title": "1.1.4 Übungen E – Messung und Objekte im Gas",
+    "slides": 4,
+    "fragen": 4
+   },
+   {
+    "title": "1.1.4 Übungen F – Marktgebiet und Regelwerke",
+    "slides": 4,
+    "fragen": 3
+   },
+   {
+    "title": "1.1.4 Übungen G – Zusammenspiel und Praxis",
+    "slides": 3,
+    "fragen": 3
+   }
+  ],
+  "wissenstest": {
+   "title": "1.1.4 Wissenstest – Marktrollen im Gasmarkt",
+   "fragen": 20,
+   "bestandenAb": 16
+  },
+  "praxisfall": {
+   "title": "1.1.4 Praxisfall – Marktrollen im Gasmarkt",
+   "slides": 5,
+   "fragen": 0
+  },
+  "ersatz": 5
+ },
+ {
+  "modul": "1.1.5",
+  "titel": "Lokationen und Identifikatoren",
+  "uebungen": [
+   {
+    "title": "1.1.5 Übungen A – Warum IDs? Der Überblick",
+    "slides": 6,
+    "fragen": 4
+   },
+   {
+    "title": "1.1.5 Übungen B – Marktlokation, Messlokation und Zählpunkt",
+    "slides": 4,
+    "fragen": 9
+   },
+   {
+    "title": "1.1.5 Übungen C – Die Marktpartner-ID",
+    "slides": 3,
+    "fragen": 3
+   },
+   {
+    "title": "1.1.5 Übungen D – Die Marktlokations-ID",
+    "slides": 3,
+    "fragen": 3
+   },
+   {
+    "title": "1.1.5 Übungen E – NeLo-, NeBe-, Ressourcen- und Paket-ID",
+    "slides": 4,
+    "fragen": 6
+   },
+   {
+    "title": "1.1.5 Übungen F – Vergabe, Zuordnung und Prüfziffern",
+    "slides": 4,
+    "fragen": 9
+   },
+   {
+    "title": "1.1.5 Übungen G – Praxisfall: Der ID-Check",
+    "slides": 3,
+    "fragen": 6
+   }
+  ],
+  "wissenstest": {
+   "title": "1.1.5 Wissenstest – Lokationen und Identifikatoren",
+   "fragen": 24,
+   "bestandenAb": 19
+  },
+  "praxisfall": {
+   "title": "1.1.5 Praxisfall – Lokationen und Identifikatoren",
+   "slides": 4,
+   "fragen": 0
+  },
+  "ersatz": 5
+ }
+]

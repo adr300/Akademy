@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>1.1.5 Übungen G – Praxisfall: Der ID-Check</title></head><body>
+<p>Bluuakademie-Kursdatei – in der Verwaltung unter «Kurs importieren» hochladen. Erzeugt aus den Word-Dateien des Zips «TF1 Grundlagen» (scratchpad/tf1_kurse.js).</p>
+<!--ENERGYACADEMY_COURSE-->
+{
+ "title": "1.1.5 Übungen G – Praxisfall: Der ID-Check",
+ "icon": "✏️",
+ "icon_bg": "#EEF3F6",
+ "tag_bg": "#243A4C",
+ "tag_color": "#BEC60E",
+ "btn_color": "#243A4C",
+ "slides": [
+  {
+   "tag": "G0",
+   "title": "Startscreen",
+   "content": "<p>Bei einem Stammdatenimport kommen Hunderte IDs auf einmal. Einige davon sind fehlerhaft. Du prüfst einen Auszug – genau wie es in Datenmigrationen und in der Marktkommunikation täglich passiert.</p><p class=\"quelle\">Richtzeit 20 Min. · Ergebnis: IDs erkennen, prüfen und Fehler im Import finden</p>"
+  },
+  {
+   "tag": "G1",
+   "title": "Lernkarte: ID-Check in drei Schritten",
+   "content": "<p>Die App zeigt den Importauszug aus dem Begleitmaterial „Praxisfall ID-Check“.</p><div class=\"tabelle-scroll\"><table><thead><tr><th>Schritt</th><th>Teilnehmertext</th></tr></thead><tbody><tr><th scope=\"row\">1 Länge und Zeichen</th><td>Passen Anzahl und Art der Zeichen zum Feld? (MP-ID 13 Ziffern, MaLo-ID 11 Ziffern, die übrigen 11 Zeichen)</td></tr><tr><th scope=\"row\">2 Codetyp</th><td>Passt das erste Zeichen zur erwarteten ID? (99/98, 1–9, E, F, A–D, P9)</td></tr><tr><th scope=\"row\">3 Prüfziffer</th><td>Stimmt die letzte Stelle mit dem Rechenverfahren überein?</td></tr></tbody></table></div>"
+  },
+  {
+   "tag": "G5",
+   "title": "Selbstcheck, Merksatz und Abschluss",
+   "content": "<h3>Erklär es Dir selbst</h3><p>Erkläre, wie Du eine unbekannte ID in drei Schritten prüfst.</p><details><summary>Musterantwort zeigen</summary><p>Erstens Länge und Zeichen prüfen, zweitens am ersten Zeichen den Codetyp erkennen, drittens die Prüfziffer nachrechnen. Fällt ein Schritt durch, ist die ID fehlerhaft und muss geklärt werden.</p></details><p class=\"quelle\">„Konnte ich erklären“ / „teilweise“ / „noch nicht“. Bei „noch nicht“ erscheint der Hinweis auf Folie 12–13 bzw. das Lernskript, Abschnitt G.</p><div class=\"kasten merke\"><strong>Merksatz</strong>Länge – Codetyp – Prüfziffer. Fehlerhafte IDs werden geklärt, nicht „repariert“.</div><div class=\"tabelle-scroll\"><table><thead><tr><th>Feld</th><th>Speicherung</th></tr></thead><tbody><tr><th scope=\"row\">module_id</th><td>1.1.5</td></tr><tr><th scope=\"row\">task_status_A–G</th><td>nicht begonnen / in Bearbeitung / abgeschlossen</td></tr><tr><th scope=\"row\">self_check</th><td>Selbsteinschätzung je Untermodul</td></tr><tr><th scope=\"row\">closed_answers / retry_count / hint_shown</th><td>letzte Auswahl, Anzahl Wiederholungen, angezeigte Tipps</td></tr><tr><th scope=\"row\">started_at / completed_at</th><td>Zeitstempel je Untermodul (Nachweis des begleiteten Selbststudiums)</td></tr><tr><th scope=\"row\">test_status / test_score / test_attempts</th><td>Wissenstest: Status, richtige Antworten (von 24), Versuche</td></tr></tbody></table></div>"
+  }
+ ],
+ "questions": [
+  {
+   "question": "Bestimme den Typ jeder ID.",
+   "question_type": "match",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2
+   ],
+   "feedback": "9800123456789 → MP-ID (Gas) (13 Ziffern, beginnt mit 98.) · 20431876507 → MaLo-ID (11 Ziffern, rein numerisch.) · F3B91X7K204 → NeBe-ID (Codetyp F.)",
+   "opt_a": "9800123456789",
+   "match_a": "MP-ID (Gas)",
+   "opt_b": "20431876507",
+   "match_b": "MaLo-ID",
+   "opt_c": "F3B91X7K204",
+   "match_c": "NeBe-ID"
+  },
+  {
+   "question": "Bestimme den Typ jeder ID.",
+   "question_type": "match",
+   "correct_index": -1,
+   "correct_order": [
+    0,
+    1,
+    2
+   ],
+   "feedback": "D5K2M8P1R30 → Technische Ressource (Codetyp D.) · P9A7K3M2Q18 → Paket-ID (Codetyp P, danach 9.) · DE0001231234500000000000000012345 → Zählpunktbezeichnung (33 Zeichen, beginnt mit DE.)",
+   "opt_a": "D5K2M8P1R30",
+   "match_a": "Technische Ressource",
+   "opt_b": "P9A7K3M2Q18",
+   "match_b": "Paket-ID",
+   "opt_c": "DE0001231234500000000000000012345",
+   "match_c": "Zählpunktbezeichnung"
+  },
+  {
+   "question": "Im Feld MaLo-ID steht 5123860913. Was ist das Problem?",
+   "opt_a": "Die Prüfziffer ist falsch.",
+   "opt_b": "Es ist eine Gas-MaLo-ID.",
+   "opt_c": "Es ist eine MP-ID.",
+   "opt_d": "Die ID ist zu kurz – sie hat nur 10 Stellen.",
+   "correct_index": 3,
+   "question_type": "multiple_choice",
+   "feedback": "Eine MaLo-ID hat 11 Ziffern.",
+   "scenario": null,
+   "_art": "Fallentscheidung (Single Choice)."
+  },
+  {
+   "question": "Im Feld MaLo-ID steht 51238609131. Die Prüfziffer müsste 0 sein. Wie gehst Du vor?",
+   "opt_a": "Prüfziffer auf 0 ändern und importieren",
+   "opt_b": "ID als ungültig markieren und mit dem Netzbetreiber klären",
+   "opt_c": "ID trotzdem importieren – die Prüfziffer ist nur ein Hinweis",
+   "opt_d": "Die Sparte auf Gas setzen",
+   "correct_index": 1,
+   "question_type": "multiple_choice",
+   "feedback": "Eine falsche Prüfziffer zeigt einen Fehler. Raten ist keine Lösung – die richtige ID muss geklärt werden.",
+   "scenario": null,
+   "_art": "Fallentscheidung (Single Choice)."
+  },
+  {
+   "question": "Im Feld MaLo-ID steht EZ7Q4M2K812. Was ist richtig?",
+   "opt_a": "Es ist eine NeLo-ID – der Wert steht im falschen Feld.",
+   "opt_b": "Es ist eine gültige MaLo-ID für Gas.",
+   "opt_c": "Es ist eine Paket-ID.",
+   "opt_d": "MaLo-IDs dürfen Buchstaben enthalten – alles in Ordnung.",
+   "correct_index": 0,
+   "question_type": "multiple_choice",
+   "feedback": "Codetyp E steht für die Netzlokation; MaLo-IDs sind rein numerisch.",
+   "scenario": null,
+   "_art": "Fallentscheidung (Single Choice)."
+  },
+  {
+   "question": "Entscheide für jede Aussage, ob sie richtig oder falsch ist.",
+   "question_type": "true_false",
+   "correct_index": -1,
+   "feedback": "1: Erst die Prüfziffer bestätigt die ID. · 2: Dann muss der Wert geklärt werden. · 3: Die erste Ziffer zeigt nur die Vergabestelle.",
+   "opt_a": "„Eine ID mit richtiger Länge und richtigem Codetyp ist automatisch gültig.“",
+   "match_a": "false",
+   "opt_b": "„Eine falsche Prüfziffer zeigt, dass die ID fehlerhaft ist.“",
+   "match_b": "true",
+   "opt_c": "„Aus der MaLo-ID 20431876507 lässt sich ablesen, dass es um Gas geht.“",
+   "match_c": "false"
+  }
+ ]
+}
+<!--/ENERGYACADEMY_COURSE-->
+</body></html>

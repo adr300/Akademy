@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><title>1.1.5 Wissenstest – Lokationen und Identifikatoren</title></head><body>
+<p>Bluuakademie-Kursdatei – in der Verwaltung unter «Kurs importieren» hochladen. Erzeugt aus den Word-Dateien des Zips «TF1 Grundlagen» (scratchpad/tf1_kurse.js).</p>
+<!--ENERGYACADEMY_COURSE-->
+{
+ "title": "1.1.5 Wissenstest – Lokationen und Identifikatoren",
+ "icon": "🧪",
+ "icon_bg": "#EEF3F6",
+ "tag_bg": "#243A4C",
+ "tag_color": "#BEC60E",
+ "btn_color": "#243A4C",
+ "slides": [
+  {
+   "tag": "Wissenstest",
+   "title": "Lokationen und Identifikatoren",
+   "content": "<p>Der Wissenstest steht am Ende des Selbststudiums. Alle 24 Fragen sind geschlossen und werden mit A, B, C oder D beantwortet; jede Frage hat genau eine richtige Antwort. Bestanden ist der Test ab 19 richtigen Antworten (rund 80 %). Die Antwortpositionen sind gemischt (je 6× A, 6× B, 6× C, 6× D). Die Zeile „Bezug“ ordnet jede Frage einem Untermodul zu und wird nur intern für die Wiederholungsempfehlung genutzt.</p>"
+  }
+ ],
+ "questions": [
+  {
+   "question": "Warum arbeitet die Marktkommunikation mit Codenummern statt mit Namen und Adressen?",
+   "opt_a": "Weil Namen und Adressen nicht eindeutig sind und Nachrichten automatisch zugeordnet werden müssen",
+   "opt_b": "Weil Codenummern kürzer zu schreiben sind",
+   "opt_c": "Weil Namen aus Datenschutzgründen verboten sind",
+   "opt_d": "Weil nur Netzbetreiber Namen verwenden dürfen",
+   "question_type": "multiple_choice",
+   "correct_index": 0,
+   "feedback": "Codenummern identifizieren Partner und Objekte eindeutig und dauerhaft."
+  },
+  {
+   "question": "Wie wird die Messlokation identifiziert?",
+   "opt_a": "Über die MaLo-ID",
+   "opt_b": "Über die NeLo-ID",
+   "opt_c": "Über die Zählpunktbezeichnung (33 Zeichen, beginnt mit DE)",
+   "opt_d": "Über die MP-ID des Messstellenbetreibers",
+   "question_type": "multiple_choice",
+   "correct_index": 2,
+   "feedback": "Die Zählpunktbezeichnung ist nicht Teil der Anwendungshilfe, gehört aber dazu."
+  },
+  {
+   "question": "Für welche Sparte gelten NeLo-, NeBe-, Ressourcen- und Paket-ID?",
+   "opt_a": "Nur für Gas",
+   "opt_b": "Nur für Strom",
+   "opt_c": "Für Strom und Gas",
+   "opt_d": "Für Gas und Wärme",
+   "question_type": "multiple_choice",
+   "correct_index": 1,
+   "feedback": "Laut BDEW betreffen diese Regelungen die Sparte Strom."
+  },
+  {
+   "question": "Was ist eine Marktlokation?",
+   "opt_a": "Der Ort, an dem Energie verbraucht oder erzeugt wird",
+   "opt_b": "Der Zähler im Hausanschlussraum",
+   "opt_c": "Das Netzgebiet eines Netzbetreibers",
+   "opt_d": "Der Bilanzkreis eines Lieferanten",
+   "question_type": "multiple_choice",
+   "correct_index": 0,
+   "feedback": "Darauf beziehen sich Belieferung, Abrechnung und Bilanzierung."
+  },
+  {
+   "question": "Ein Haus hat eine PV-Anlage mit Überschusseinspeisung und einen Zweirichtungszähler. Was trifft in der Regel zu?",
+   "opt_a": "Eine Marktlokation, eine Messlokation",
+   "opt_b": "Eine Marktlokation, zwei Messlokationen",
+   "opt_c": "Zwei Marktlokationen, eine Messlokation",
+   "opt_d": "Zwei Marktlokationen, zwei Messlokationen",
+   "question_type": "multiple_choice",
+   "correct_index": 2,
+   "feedback": "Bezug und Einspeisung sind zwei Marktlokationen, gemessen wird an einer Messlokation."
+  },
+  {
+   "question": "Wer betreibt die Messlokation?",
+   "opt_a": "Der Lieferant",
+   "opt_b": "Der Bilanzkreisverantwortliche",
+   "opt_c": "Die Codevergabestelle",
+   "opt_d": "Der Messstellenbetreiber",
+   "question_type": "multiple_choice",
+   "correct_index": 3,
+   "feedback": "Der MSB ist für Zähler und Messeinrichtungen an der Messlokation zuständig."
+  },
+  {
+   "question": "Was ändert sich bei einem Zählertausch?",
+   "opt_a": "Die Marktlokations-ID",
+   "opt_b": "Die Zählernummer",
+   "opt_c": "Die Zählpunktbezeichnung",
+   "opt_d": "Der Lieferant",
+   "question_type": "multiple_choice",
+   "correct_index": 1,
+   "feedback": "Die Zählernummer gehört zum Gerät; Marktlokation und Messlokation bleiben."
+  },
+  {
+   "question": "Wie viele Stellen hat eine MP-ID?",
+   "opt_a": "11",
+   "opt_b": "33",
+   "opt_c": "16",
+   "opt_d": "13",
+   "question_type": "multiple_choice",
+   "correct_index": 3,
+   "feedback": "13 Ziffern – die letzte ist die Prüfziffer."
+  },
+  {
+   "question": "Eine MP-ID beginnt mit 98. Was bedeutet das?",
+   "opt_a": "DVGW-Codenummer, Sparte Gas",
+   "opt_b": "BDEW-Codenummer, Sparte Strom",
+   "opt_c": "Es handelt sich um eine Netzlokation.",
+   "opt_d": "Die Prüfziffer lautet 8.",
+   "question_type": "multiple_choice",
+   "correct_index": 0,
+   "feedback": "99 steht für BDEW/Strom, 98 für DVGW/Gas."
+  },
+  {
+   "question": "Ein Unternehmen ist Lieferant für Strom und für Gas. Wie viele MP-IDs hat es für diese Rolle?",
+   "opt_a": "Eine – die Rolle ist dieselbe",
+   "opt_b": "Drei",
+   "opt_c": "Zwei – eine je Sparte",
+   "opt_d": "Keine – die MP-ID hat nur der Netzbetreiber",
+   "question_type": "multiple_choice",
+   "correct_index": 2,
+   "feedback": "Für jede Sparte und jede Rolle gibt es genau eine MP-ID."
+  },
+  {
+   "question": "Wer beantragt die MaLo-ID und ordnet sie der Marktlokation zu?",
+   "opt_a": "Der Lieferant",
+   "opt_b": "Der Netzbetreiber",
+   "opt_c": "Der Messstellenbetreiber",
+   "opt_d": "Die Codevergabestelle",
+   "question_type": "multiple_choice",
+   "correct_index": 1,
+   "feedback": "Die Codevergabestelle gibt aus, der Netzbetreiber beantragt und ordnet zu."
+  },
+  {
+   "question": "Was verrät die erste Ziffer einer MaLo-ID?",
+   "opt_a": "Ob es um Strom oder Gas geht",
+   "opt_b": "In welcher Regelzone sie liegt",
+   "opt_c": "Ob es sich um Einspeisung oder Entnahme handelt",
+   "opt_d": "Welche Vergabestelle sie ausgegeben hat (BDEW oder DVGW)",
+   "question_type": "multiple_choice",
+   "correct_index": 3,
+   "feedback": "Laut BDEW lässt die Vergabestelle keinen Rückschluss auf die Sparte zu."
+  },
+  {
+   "question": "Ein neuer Netzbetreiber übernimmt das Netz. Was passiert mit den MaLo-IDs?",
+   "opt_a": "Sie bleiben unverändert.",
+   "opt_b": "Sie werden neu vergeben.",
+   "opt_c": "Sie erhalten eine neue Prüfziffer.",
+   "opt_d": "Sie werden durch eine Paket-ID ersetzt.",
+   "question_type": "multiple_choice",
+   "correct_index": 0,
+   "feedback": "Die MaLo-ID bleibt auch beim Netzbetreiberwechsel bestehen."
+  },
+  {
+   "question": "Welche Aussage zur MaLo-ID ist richtig?",
+   "opt_a": "Sie gilt nur für Entnahmestellen im Strombereich.",
+   "opt_b": "Sie kann nach Wegfall einer Marktlokation neu vergeben werden.",
+   "opt_c": "Sie gilt auch für Einspeise-Marktlokationen und darf nur einmal zugeordnet werden.",
+   "opt_d": "Sie kann auch Buchstaben enthalten.",
+   "question_type": "multiple_choice",
+   "correct_index": 2,
+   "feedback": "Einspeisung und Entnahme, Strom und Gas – und jede ID nur einmal."
+  },
+  {
+   "question": "Mit welchem Zeichen beginnt eine NeLo-ID?",
+   "opt_a": "F",
+   "opt_b": "E",
+   "opt_c": "P",
+   "opt_d": "D",
+   "question_type": "multiple_choice",
+   "correct_index": 1,
+   "feedback": "E = Netzlokation, F = Netzbereich, P = Paket, D = technische Ressource."
+  },
+  {
+   "question": "Wofür wird die NeBe-ID benötigt?",
+   "opt_a": "Für den Lieferantenwechsel",
+   "opt_b": "Für die Bilanzierung im Gasmarkt",
+   "opt_c": "Für den Wechsel des Messstellenbetreibers",
+   "opt_d": "Für Netzbereiche der netzorientierten Steuerung nach § 14a EnWG",
+   "question_type": "multiple_choice",
+   "correct_index": 3,
+   "feedback": "Netzbereiche sind relevant für steuerbare Verbrauchseinrichtungen wie Wärmepumpen oder private Ladepunkte."
+  },
+  {
+   "question": "Wer ordnet einer steuerbaren Ressource ihre SR-ID zu?",
+   "opt_a": "Der Einsatzverantwortliche",
+   "opt_b": "Der Netzbetreiber",
+   "opt_c": "Die Codevergabestelle",
+   "opt_d": "Der Bilanzkreisverantwortliche",
+   "question_type": "multiple_choice",
+   "correct_index": 0,
+   "feedback": "Der Netzbetreiber stellt genug SR-IDs bereit – zuordnen tut sie der Einsatzverantwortliche."
+  },
+  {
+   "question": "Was identifiziert die Paket-ID?",
+   "opt_a": "Ein Bündel von Bilanzkreisen",
+   "opt_b": "Alle Messlokationen eines Messstellenbetreibers",
+   "opt_c": "Die Lokationen, die von einem Netzbetreiberwechsel betroffen sind",
+   "opt_d": "Ein Datenpaket in einer EDIFACT-Nachricht",
+   "question_type": "multiple_choice",
+   "correct_index": 2,
+   "feedback": "Sie wird von der Codevergabestelle in einer öffentlichen Liste geführt."
+  },
+  {
+   "question": "Wer gibt MaLo-IDs aus?",
+   "opt_a": "Der Netzbetreiber",
+   "opt_b": "Die Codevergabestellen von BDEW bzw. DVGW",
+   "opt_c": "Die Bundesnetzagentur",
+   "opt_d": "Der Lieferant",
+   "question_type": "multiple_choice",
+   "correct_index": 1,
+   "feedback": "Ausgabe durch die Vergabestelle, Zuordnung durch den Netzbetreiber."
+  },
+  {
+   "question": "Welches Prüfziffernverfahren gilt für die MaLo-ID?",
+   "opt_a": "Das ASCII-Verfahren",
+   "opt_b": "Das Modulo-97-Verfahren wie bei der IBAN",
+   "opt_c": "Gar keins – die MaLo-ID hat keine Prüfziffer",
+   "opt_d": "Das Lok- und Waggon-Verfahren",
+   "question_type": "multiple_choice",
+   "correct_index": 3,
+   "feedback": "Lok- und Waggon für MP-ID und MaLo-ID, ASCII für die IDs mit Buchstaben."
+  },
+  {
+   "question": "Berechne die Prüfziffer der MaLo-ID 2043187650_ (ungerade Stellen 2+4+1+7+5, gerade Stellen 0+3+8+6+0).",
+   "opt_a": "7",
+   "opt_b": "3",
+   "opt_c": "0",
+   "opt_d": "6",
+   "question_type": "multiple_choice",
+   "correct_index": 0,
+   "feedback": "19 + 17 × 2 = 53, Abstand zu 60 = 7."
+  },
+  {
+   "question": "Beim ASCII-Verfahren ergibt die Gesamtsumme 115. Wie lautet die Prüfziffer?",
+   "opt_a": "1",
+   "opt_b": "15",
+   "opt_c": "5",
+   "opt_d": "0",
+   "question_type": "multiple_choice",
+   "correct_index": 2,
+   "feedback": "Abstand von 115 zum nächsten Vielfachen von 10 (120) = 5."
+  },
+  {
+   "question": "Im Feld MaLo-ID steht „EZ7Q4M2K812“. Was ist richtig?",
+   "opt_a": "Es ist eine gültige MaLo-ID für Gas.",
+   "opt_b": "Es ist eine NeLo-ID – der Wert steht im falschen Feld.",
+   "opt_c": "Es ist eine Paket-ID.",
+   "opt_d": "MaLo-IDs dürfen Buchstaben enthalten – alles in Ordnung.",
+   "question_type": "multiple_choice",
+   "correct_index": 1,
+   "feedback": "Codetyp E = Netzlokation; MaLo-IDs sind rein numerisch."
+  },
+  {
+   "question": "Bei einem Import fällt eine MaLo-ID mit falscher Prüfziffer auf. Wie gehst Du vor?",
+   "opt_a": "Prüfziffer anpassen und importieren",
+   "opt_b": "Prüfziffer ignorieren – sie ist nur ein Hinweis",
+   "opt_c": "Die Sparte der Marktlokation ändern",
+   "opt_d": "ID als ungültig behandeln und mit dem Netzbetreiber klären",
+   "question_type": "multiple_choice",
+   "correct_index": 3,
+   "feedback": "Eine falsche Prüfziffer zeigt einen Fehler. Die richtige ID muss geklärt, nicht erraten werden."
+  }
+ ],
+ "pass_threshold": 80,
+ "is_final_exam": true
+}
+<!--/ENERGYACADEMY_COURSE-->
+</body></html>
