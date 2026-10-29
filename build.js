@@ -8,14 +8,16 @@ fs.mkdirSync(path.join(root, 'dist'), { recursive: true });
 fs.writeFileSync(path.join(root, 'dist', 'index.html'), html);
 console.log('Built dist/index.html');
 
-// Copy static folders (videos, etc.) to dist/
-for (const folder of ['videos']) {
-  const src = path.join(root, folder);
-  if (!fs.existsSync(src)) continue;
-  const dst = path.join(root, 'dist', folder);
+// Copy static folders (videos, etc.) to dist/ — recursive
+function copyDir(src, dst) {
   fs.mkdirSync(dst, { recursive: true });
   for (const f of fs.readdirSync(src)) {
-    fs.copyFileSync(path.join(src, f), path.join(dst, f));
-    console.log(`Copied ${folder}/${f}`);
+    const s = path.join(src, f), d = path.join(dst, f);
+    if (fs.statSync(s).isDirectory()) copyDir(s, d);
+    else { fs.copyFileSync(s, d); console.log(`Copied ${path.relative(root, s)}`); }
   }
+}
+for (const folder of ['videos']) {
+  const src = path.join(root, folder);
+  if (fs.existsSync(src)) copyDir(src, path.join(root, 'dist', folder));
 }
