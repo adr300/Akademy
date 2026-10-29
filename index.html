@@ -2854,8 +2854,11 @@ ol.ls-schritte b{font-family:var(--disp);font-stretch:108%;font-size:1.05em;}
 .chrome-top .tb-info{flex:1 1 200px;}
 .tb-title{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.3;}
 .lk-card-wrap{height:auto;min-height:280px;}
-.lk-card{display:grid;min-height:280px;height:auto;}
-.lk-card-face{grid-area:1 / 1;position:relative;inset:auto;min-height:280px;}
+.lk-card{display:grid;min-height:280px;height:auto;transform:none!important;}
+.lk-card-face{grid-area:1 / 1;position:relative;inset:auto;min-height:280px;transition:opacity .25s ease;}
+.lk-card-back{transform:none;opacity:0;pointer-events:none;}
+.lk-card.flipped .lk-card-front{opacity:0;pointer-events:none;}
+.lk-card.flipped .lk-card-back{opacity:1;pointer-events:auto;}
 .lk-card-text{max-width:440px;overflow-wrap:anywhere;}
 .lk-card-front .lk-glow.lk-maskottchen{width:72px;height:84px;flex:none;margin:0 0 14px;align-items:flex-start;overflow:visible;}
 .lk-card-front .lk-glow.lk-maskottchen svg{width:72px;height:72px;}
