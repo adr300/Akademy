@@ -8298,6 +8298,12 @@ function getEmbedUrl(url){
   if(vm) return `https://player.vimeo.com/video/${vm[1]}`;
   return url;
 }
+function videoHtmlFor(embedUrl){
+  if(!embedUrl) return '';
+  if(/\.(mp4|webm|ogg)(\?|$)/i.test(embedUrl))
+    return `<div class="slide-video"><video src="${embedUrl}" controls controlsList="nodownload" style="width:100%;height:100%;border-radius:8px"></video></div>`;
+  return `<div class="slide-video"><iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+}
 
 function renderSlide(){
   const c=courses[ci],s=c.slides[si],total=c.slides.length;
@@ -8313,7 +8319,7 @@ function renderSlide(){
     vis=`<div class="info-grid">${stats.map(([n,l])=>`<div class="info-tile"><div class="info-num">${n}</div><div class="info-lbl">${l||''}</div></div>`).join('')}</div>`;
   }
   const embedUrl=si===0?getEmbedUrl(c.video_url):null;
-  const videoHtml=embedUrl?`<div class="slide-video"><iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`:'';
+  const videoHtml=videoHtmlFor(embedUrl);
   document.getElementById('slide-body').innerHTML=`
     ${videoHtml}
     <div class="slide-tag" style="background:${s.tag_bg||c.tag_bg||'var(--bg3)'};color:${s.tag_color||c.tag_color||'#3F74A6'}">${s.tag||''}</div>
@@ -8339,7 +8345,7 @@ function renderVideoOnlySlide(){
   document.getElementById('sl-prog').style.width='0%';
   document.getElementById('sl-prog').style.background=c.btn_color||'#3F74A6';
   const embedUrl=getEmbedUrl(c.video_url);
-  document.getElementById('slide-body').innerHTML=embedUrl?`<div class="slide-video"><iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`:'';
+  document.getElementById('slide-body').innerHTML=videoHtmlFor(embedUrl);
   document.getElementById('dots').innerHTML='';
   document.getElementById('btn-prev').style.visibility='hidden';
   const rb=document.querySelector('.btn-report');if(rb)rb.style.display='none';
