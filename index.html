@@ -8301,7 +8301,7 @@ function getEmbedUrl(url){
 function videoHtmlFor(embedUrl){
   if(!embedUrl) return '';
   if(/\.(mp4|webm|ogg)(\?|$)/i.test(embedUrl))
-    return `<div class="slide-video"><video src="${embedUrl}" controls controlsList="nodownload" style="width:100%;height:100%;border-radius:8px"></video></div>`;
+    return `<div style="border-radius:var(--rx);overflow:hidden;margin-bottom:1.5rem"><video src="${embedUrl}" controls controlsList="nodownload" style="width:100%;display:block"></video></div>`;
   return `<div class="slide-video"><iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
 }
 
@@ -12462,6 +12462,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
        Die vier älteren Fassungen (Pfad «1x1 Energiewirtschaft» A–G, Kurs «1x1 der Energiewirtschaft», Kapitel-A-Proben)
        liegen im Archiv; Adrians Kurs «Lernskript» (9 Slides) ist durch den interaktiven Reiter ersetzt. */
     { code: 'grundlagen-1x1', titel: '1x1 der Energiewirtschaft', bereich: 'grundlagen', motiv: 'energie', status: 'geplant', fest: true, lernkarten: '1.1.1', lernskript: '1.1.1',
+      video_url: '/videos/intro-1x1-energiewirtschaft.mp4',
       pfade: ['^1x1 der Energiewirtschaft$', '^Einführung in die Energiewirtschaft$'], kurse: ['^Übungen$', '^1[.]1[.]1 '], ausblenden: ['^Lernskript$'],
       archivPfade: ['^1x1 Energiewirtschaft$', '^Lernskript$'], archiv: ['^1x1 der Energiewirtschaft$', '^1[.]1[.]1 A', 'Kapitel A$', 'Wissenscheck'],
       beschreibung: 'Vom Kraftwerk bis zur Rechnung: das Lernskript mit neun Kapiteln, die Übungen auf der Plattform, Lernkarten zu jedem Kapitel und der Abschlusstest.' },
@@ -13076,6 +13077,8 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
         '<div><dt>Enthält</dt><dd>' + (teile.length ? esc(teile.join(' · ')) : 'Noch kein Inhalt') + '</dd></div>' +
         (lp ? '<div><dt>Programm</dt><dd>Teil von «' + esc(lp.title) + '».</dd></div>' : '') +
         '</dl></section>' +
+        /* Region 1b: Einführungsvideo, falls vorhanden */
+        (m.video_url ? '<section class="modul-region"><h3 class="bluu-h3">Einführungsvideo</h3>' + videoHtmlFor(getEmbedUrl(m.video_url)) + '</section>' : '') +
         /* Region 2: Curriculum-Vorschau */
         '<section class="modul-region"><div class="bluu-kopfzeile"><h3 class="bluu-h3">' + (stand && stand.ls && stand.ls.n ? (stand.n ? 'Kapitel und Lektionen' : 'Kapitel') : 'Lektionen') + '</h3><span class="kachel-meta">' + (stand ? festStand(stand) : '') + '</span></div>' +
         '<p class="kachel-text">' + (stand && stand.ls && stand.ls.n ? 'Erst lesen, dann üben: Die Kapitel des Lernskripts sind in Ruhe lesbar (Denk kurz nach, Text mit Grafik, Mitmach-Aufgabe, drei Häkchen). Geübt wird im Reiter Übungen, wiederholt mit den Lernkarten.' : 'Freigeschaltete Lektionen sind anklickbar. Gesperrte öffnen sich nach der vorherigen – so stellt die Akademie die Reihenfolge sicher.') + '</p>' +
