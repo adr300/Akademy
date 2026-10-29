@@ -4596,8 +4596,8 @@ class Component extends DCLogic {
           <div style="font-size:13px;color:var(--text3)">Modul 1.1.1 · 1x1 der Energiewirtschaft</div>
           <div id="lk-dash-progress" style="font-size:11px;color:var(--text3)"></div>
         </div>
-        <div id="lk-gw-widget" style="display:flex;align-items:center;gap:14px;padding:12px 14px;background:color-mix(in srgb,var(--green) 5%,var(--bg2));border:1px solid color-mix(in srgb,var(--green) 20%,var(--border2));border-radius:12px;margin-bottom:14px;cursor:pointer" onclick="openLernkartenScreen()">
-          <svg id="lk-dash-gw-svg" class="lk-glow" viewBox="0 0 100 100" style="width:52px;height:52px;flex-shrink:0;margin-bottom:0" onclick="gwClick(event)"><ellipse cx="33" cy="30" rx="19" ry="10" fill="#dce6ee" stroke="#243a4c" stroke-width="2.5" transform="rotate(-30 33 30)"/><ellipse cx="60" cy="27" rx="19" ry="10" fill="#dce6ee" stroke="#243a4c" stroke-width="2.5" transform="rotate(30 60 27)"/><ellipse cx="47" cy="46" rx="12" ry="16" fill="#243a4c"/><ellipse cx="47" cy="63" rx="12" ry="13" fill="#bec60e"/><circle cx="47" cy="25" r="9" fill="#243a4c"/><circle cx="44" cy="24" r="2.5" fill="#fff"/><circle cx="51" cy="24" r="2.5" fill="#fff"/><path d="M43 18 Q37 7 31 8 M51 18 Q57 7 63 8" stroke="#243a4c" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
+        <div id="lk-gw-widget" style="display:flex;align-items:center;gap:14px;padding:12px 14px;background:color-mix(in srgb,var(--green) 5%,var(--bg2));border:1px solid color-mix(in srgb,var(--green) 20%,var(--border2));border-radius:12px;margin-bottom:14px;cursor:pointer" onclick="gwWidgetClick()">
+          <svg id="lk-dash-gw-svg" class="lk-glow" viewBox="0 0 100 100" style="width:52px;height:52px;flex-shrink:0;margin-bottom:0"><ellipse cx="33" cy="30" rx="19" ry="10" fill="#dce6ee" stroke="#243a4c" stroke-width="2.5" transform="rotate(-30 33 30)"/><ellipse cx="60" cy="27" rx="19" ry="10" fill="#dce6ee" stroke="#243a4c" stroke-width="2.5" transform="rotate(30 60 27)"/><ellipse cx="47" cy="46" rx="12" ry="16" fill="#243a4c"/><ellipse cx="47" cy="63" rx="12" ry="13" fill="#bec60e"/><circle cx="47" cy="25" r="9" fill="#243a4c"/><circle cx="44" cy="24" r="2.5" fill="#fff"/><circle cx="51" cy="24" r="2.5" fill="#fff"/><path d="M43 18 Q37 7 31 8 M51 18 Q57 7 63 8" stroke="#243a4c" stroke-width="3" fill="none" stroke-linecap="round"/></svg>
           <div style="flex:1;min-width:0">
             <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:3px">
               <span style="font-size:14px;font-weight:700;color:var(--text)">Glühwürmchen</span>
@@ -16554,12 +16554,15 @@ const MEME_VIDEOS=[
   '/videos/memes/hf_20261029_123544_ca9545b3-16c5-434e-bd4f-596c9d1ab377.mp4',
 ];
 let _gwClicks=0,_gwTimer=null;
-function gwClick(e){
-  e.stopPropagation();
+function gwWidgetClick(){
   _gwClicks++;
   clearTimeout(_gwTimer);
-  _gwTimer=setTimeout(()=>{ _gwClicks=0; },600);
-  if(_gwClicks>=3){ _gwClicks=0; playMeme(); }
+  if(_gwClicks>=3){
+    _gwClicks=0;
+    playMeme();
+    return;
+  }
+  _gwTimer=setTimeout(()=>{ if(_gwClicks>0){ openLernkartenScreen(); } _gwClicks=0; },400);
 }
 function playMeme(){
   const url=MEME_VIDEOS[Math.floor(Math.random()*MEME_VIDEOS.length)];
