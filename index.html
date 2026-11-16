@@ -3942,7 +3942,7 @@ class Component extends DCLogic {
       leibPuls: ruhig ? '1' : ({ muede: '.75;.85;.75', enttaeuscht: '.7;.78;.7' }[st] || '.92;1;.92'),
       winkenTeam: ruhig ? '0 71 89;0 71 89;0 71 89;0 71 89;0 71 89;0 71 89' : '0 71 89;-26 71 89;0 71 89;-26 71 89;0 71 89;0 71 89',
       label: look === 'platzhalter' ? 'Platz für das Maskottchen des KI-Assistenten'
-        : 'Lumi, ' + ({ froh: 'lächelt', neutral: 'neutral', freundlich: 'freundlich', neugierig: 'fragt', stolz: 'begeistert', muede: 'müde', denkt: 'überlegt', enttaeuscht: 'traurig', hoert: 'hört zu', erklaert: 'erklärt', hinweis: 'gibt einen Hinweis', nachdenklich: 'nachdenklich', verwirrt: 'verwirrt', ueberrascht: 'überrascht', fehler: 'meldet einen Fehler', arbeitet: 'arbeitet' }[st] || st),
+        : 'Malo, ' + ({ froh: 'lächelt', neutral: 'neutral', freundlich: 'freundlich', neugierig: 'fragt', stolz: 'begeistert', muede: 'müde', denkt: 'überlegt', enttaeuscht: 'traurig', hoert: 'hört zu', erklaert: 'erklärt', hinweis: 'gibt einen Hinweis', nachdenklich: 'nachdenklich', verwirrt: 'verwirrt', ueberrascht: 'überrascht', fehler: 'meldet einen Fehler', arbeitet: 'arbeitet' }[st] || st),
       dHeadset: vor(tm && p.headset !== 'nein'),
       dLaptop: vor(tm && st === 'arbeitet' && detail), dKarte: vor(tm && st === 'hinweis' && detail),
       dKinnTeam: vor(tm && ['neugierig', 'denkt', 'nachdenklich', 'verwirrt'].includes(st) && !winkt),
@@ -4419,7 +4419,7 @@ class Component extends DCLogic {
           </button>
           <button class="user-dropdown-item" onclick="closeUserDropdown();navGoOverview();setTimeout(function(){if(window.bluuLumiIntro)bluuLumiIntro.start();},250)">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M11 12h1v4h1"/></svg>
-            Rundgang mit Lumi
+            Rundgang mit Malo
           </button>
           <div class="user-dropdown-sep"></div>
           <button class="user-dropdown-item danger" onclick="closeUserDropdown();logout()">
@@ -11813,7 +11813,7 @@ window.replayWelcome=()=>{ if(currentUser) localStorage.removeItem('bluuak_welco
 </div>
 
 <!-- ── AI CHAT FAB + PANEL ── -->
-<button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="Lumi, Dein KI-Assistent" aria-label="Lumi öffnen" data-tour-target="assistent">
+<button class="chat-fab" id="chat-fab" onclick="toggleChat()" title="Malo, Dein KI-Assistent" aria-label="Malo öffnen" data-tour-target="assistent">
   <span class="bluu-figur" data-bluu-figur="fab"></span>
   <span class="chat-fab-badge" id="chat-fab-badge"></span>
 </button>
@@ -11822,7 +11822,7 @@ window.replayWelcome=()=>{ if(currentUser) localStorage.removeItem('bluuak_welco
   <div class="chat-head">
     <div class="chat-head-icon bluu-figur" data-bluu-figur="kopf"></div>
     <div class="chat-head-info">
-      <strong>Lumi</strong>
+      <strong>Malo</strong>
       <span id="chat-credits-lbl">KI-Assistent Energiewirtschaft</span>
     </div>
     <button class="chat-close-btn" onclick="toggleChatFullscreen()" id="chat-fs-btn" title="Vollbild">
@@ -12537,7 +12537,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
   const TEILE = [
     ['lernskript', 'Lernskript', 'M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 21V5', 'Das Lernskript zum Nachlesen und Drucken, gegliedert nach Untermodulen.'],
     ['uebungen', 'Übungen', 'M9 6h11M9 12h11M9 18h11M3.5 6l1 1 2-2M3.5 12l1 1 2-2M3.5 18l1 1 2-2', 'Übungen mit sofortiger Rückmeldung: Single und Multiple Choice, Richtig/Falsch, Zuordnung, Reihenfolge und Fallentscheidung.'],
-    ['lernkarten', 'Lernkarten', 'M7 6h12v14H7zM4 17V3h12', 'Lernkarten zum Wiederholen, mit Tipps von Lumi und Wiederholung nach Bedarf.'],
+    ['lernkarten', 'Lernkarten', 'M7 6h12v14H7zM4 17V3h12', 'Lernkarten zum Wiederholen, mit Tipps von Malo und Wiederholung nach Bedarf.'],
     ['pruefung', 'Abschlussprüfung', 'M5 3h14v12H5zM8 7h8M8 10h5M10 15l-1 6 3-2 3 2-1-6', 'Die Abschlussprüfung ist die letzte Lektion und öffnet sich nach allen anderen. Ein Zertifikat vergibt das Programm, zu dem das Modul gehört.'],
     ['video', 'Videos', 'M4 6h12v12H4zM16 10l5-3v10l-5-3', 'Videolektionen des Moduls, mit Reflexion danach.']
   ];
@@ -12562,7 +12562,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
   /* Begleiter-Karte: Figur, Satz, Fragen-Chips */
   const begleiter = (stimmung, titel, text, chips) =>
     '<div class="begleiter"><span class="begleiter-figur bluu-kachel">' + B('Maskottchen', { groesse: 64, stimmung }) + '</span>' +
-    '<div class="begleiter-text"><span class="kachel-label">Lumi, Dein Begleiter</span><h3 class="kachel-titel">' + esc(titel) + '</h3><p>' + esc(text) + '</p>' +
+    '<div class="begleiter-text"><span class="kachel-label">Malo, Dein Begleiter</span><h3 class="kachel-titel">' + esc(titel) + '</h3><p>' + esc(text) + '</p>' +
     (chips && chips.length ? '<div class="frag-chips">' + chips.join('') + '</div>' : '') + '</div></div>';
   const chipsZu = (thema) => [
     fragChip('Zusammenfassen', 'Fasse mir in fünf Sätzen zusammen, worum es bei «' + thema + '» geht und worauf ich achten sollte.'),
@@ -13851,7 +13851,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
         ? '<div class="lk-bewerten" role="group" aria-label="Wie gut wusstest Du es?"><button type="button" class="kachel-btn" onclick="bluuKarte(\'n\')"><strong>Nochmal</strong><span>gleich wieder</span></button><button type="button" class="kachel-btn" onclick="bluuKarte(\'f\')"><strong>Fast</strong><span>später in der Runde</span></button><button type="button" class="kachel-btn primaer" onclick="bluuKarte(\'g\')"><strong>Gewusst</strong><span>abgelegt</span></button></div>'
         : '<div style="margin-top:16px"><button type="button" class="kachel-btn primaer" onclick="bluuKarte(\'auf\')">Antwort aufdecken</button></div>') +
       (LK.hinweis ? '<p class="ik-meta" style="margin-top:12px;color:var(--teal)">' + esc(LK.hinweis) + '</p>' : '') +
-      (window.bluuFrag ? '<div class="frag-chips" style="margin-top:16px"><button type="button" class="frag-chip" onclick="bluuFrag(' + esc(JSON.stringify('Gib mir eine Eselsbrücke oder einen Merksatz zu dieser Frage, ohne die Antwort zu verraten: «' + k.q.question + '»')) + ')">' + GLUEH + 'Eselsbrücke von Lumi</button>' +
+      (window.bluuFrag ? '<div class="frag-chips" style="margin-top:16px"><button type="button" class="frag-chip" onclick="bluuFrag(' + esc(JSON.stringify('Gib mir eine Eselsbrücke oder einen Merksatz zu dieser Frage, ohne die Antwort zu verraten: «' + k.q.question + '»')) + ')">' + GLUEH + 'Eselsbrücke von Malo</button>' +
         '<button type="button" class="frag-chip" onclick="bluuFrag(' + esc(JSON.stringify('Erkläre mir den Hintergrund zu dieser Frage ausführlicher: «' + k.q.question + '»')) + ')">' + GLUEH + 'Hintergrund erklären</button></div>' : '');
   }
   window.bluuStapel = function (id, neu) {
@@ -13990,7 +13990,7 @@ function showLkCompletionPopup(letter, title, badgeLabel, badgeEarned, earnedXp,
 window.BLUU_LERNSKRIPT_111 = {
   modul: '1.1.1', titel: '1x1 der Energiewirtschaft', untertitel: 'Lernskript für die Lernplattform · Zum Lesen und Nachschlagen', stand: 'Oktober 2026',
   start: {
-    gruss: 'Hallo, ich bin Lumi, Dein Glühwürmchen! Ich begleite Dich durch dieses Lernskript – neun Kapitel, von der Erzeugung bis zur Rechnung.',
+    gruss: 'Hallo, ich bin Malo, Dein Glühwürmchen! Ich begleite Dich durch dieses Lernskript – neun Kapitel, von der Erzeugung bis zur Rechnung.',
     text: 'Dieses Lernskript erklärt Dir die Grundlagen der Energiewirtschaft in neun Kapiteln. Du kannst es am Stück lesen oder gezielt nachschlagen. Nach jedem Kapitel übst Du auf der Lernplattform, was Du gelesen hast.',
     /* Die vier Schritte stehen im PDF als Grafik ohne Textebene (Seite 1, «So arbeitest Du mit diesem Lernskript»); hier nur die Stationen, die der Text nennt */
     schritteTitel: 'So arbeitest Du mit diesem Lernskript',
@@ -15992,7 +15992,7 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
    Texte nennen nur, was die Seite wirklich hat. Weitere Schritte: Eintrag in SCHRITTE plus data-tour-target am Element. */
 (function () {
   const SCHRITTE = [
-    { ziel: 'uebersicht', stimmung: 'freundlich', winken: 'ja', text: 'Hallo! Ich bin Lumi, Dein Glühwürmchen. Hier oben siehst Du Deinen Lernfortschritt: Dein Level, Deine Punkte und die Aufgabe für heute.' },
+    { ziel: 'uebersicht', stimmung: 'freundlich', winken: 'ja', text: 'Hallo! Ich bin Malo, Dein Glühwürmchen. Hier oben siehst Du Deinen Lernfortschritt: Dein Level, Deine Punkte und die Aufgabe für heute.' },
     { ziel: 'weiter', stimmung: 'erklaert', text: 'Unter «Weiter lernen» machst Du genau dort weiter, wo Du aufgehört hast.' },
     { ziel: 'module', stimmung: 'erklaert', text: '«Meine Module» zeigt Deinen Fortschritt je Modul. Ist eines geschafft, siehst Du das hier auf einen Blick.' },
     { ziel: 'lernkarten', optional: true, stimmung: 'erklaert', text: 'Mit Lernkarten wiederholst Du Dein Wissen gezielt, Set für Set.' },
@@ -16170,7 +16170,7 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
     const g = groesse();
     const figur = document.createElement('div'); figur.className = 'lumi-figur'; figur.setAttribute('aria-hidden', 'true');
     const blase = document.createElement('section'); blase.className = 'lumi-blase weg'; blase.setAttribute('role', 'dialog'); blase.setAttribute('aria-labelledby', 'lumi-name'); blase.setAttribute('aria-describedby', 'lumi-sr');
-    blase.innerHTML = '<div class="lumi-kopf"><span class="lumi-name" id="lumi-name">Lumi</span><span class="lumi-zaehler"></span></div>' +
+    blase.innerHTML = '<div class="lumi-kopf"><span class="lumi-name" id="lumi-name">Malo</span><span class="lumi-zaehler"></span></div>' +
       '<p class="lumi-text" aria-hidden="true"></p><p class="lumi-sr" id="lumi-sr" aria-live="polite"></p>' +
       '<div class="lumi-fuss"><button type="button" class="lumi-link lumi-skip">Überspringen</button><button type="button" class="lumi-link lumi-beenden" hidden>Schließen</button><button type="button" class="lumi-link lumi-nochmal" hidden>Tour erneut starten</button><button type="button" class="lumi-link lumi-zurueck">Zurück</button><button type="button" class="lumi-btn lumi-weiter">Weiter</button></div>';
     document.body.appendChild(figur); document.body.appendChild(blase);
@@ -16259,7 +16259,7 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
     const frei = typeof _chatRemaining !== 'undefined' ? _chatRemaining : null, limit = typeof CHAT_LIMIT !== 'undefined' ? CHAT_LIMIT : null;
     const karte = document.createElement('div'); karte.className = 'lumi-hallo';
     karte.innerHTML = '<span class="figur">' + bluu('Maskottchen', { groesse: 80, stimmung: 'freundlich', winken: 'ja', grund: dunkel() ? 'dunkel' : 'hell' }) + '</span>' +
-      '<h3>Hallo, ich heiße Lumi!</h3>' +
+      '<h3>Hallo, ich heiße Malo!</h3>' +
       '<p>Ich bin Dein KI-Assistent in der BluuAkademie und beantworte Fragen zu den Kursinhalten und zur Energiewirtschaft.</p>' +
       '<p class="klein">Frag nach Begriffen, lass Dir etwas erklären oder Dich abfragen.' + (frei != null && limit != null ? ' Heute noch ' + frei + ' von ' + limit + ' Fragen.' : '') + '</p>' +
       '<div class="lumi-vorschlaege">' + VORSCHLAEGE.map((v, i) => '<button type="button" onclick="bluuLumiFrage(' + i + ')">' + esc(v) + '</button>').join('') + '</div>';
@@ -16475,7 +16475,7 @@ window.BLUU_LERNKARTEN = Object.assign(window.BLUU_LERNKARTEN || {}, {"1.1.2":[{
     el.innerHTML = '<div class="buehne" aria-hidden="true"><span class="funke"></span><span class="ring"></span><span class="ring b"></span><span class="kugel"></span><span class="teilchen">' + teilchen + '</span><span class="silhouette">' + bluu('Maskottchen', { groesse: 150, stimmung: 'neutral', animiert: 'nein', grund: 'hell' }) + '</span></div>' +
       '<div class="figur" aria-hidden="true"></div>' +
       '<div class="karten">' + KARTEN.map(([ik, titel, sub]) => '<div class="karte"><span class="ik' + (ik === 'lumi' ? ' lumi' : '') + '">' + (ik === 'lumi' ? bluu('Maskottchen', { groesse: 46, stimmung: 'froh', animiert: 'nein', grund: 'hell' }) : IK[ik]) + '</span><span><b>' + titel + '</b><span class="sub">' + sub + '</span></span></div>').join('') + '</div>' +
-      '<div class="gruss"><p class="marke">Lumi · Dein KI-Assistent</p><h2>Willkommen in der <em>BluuAkademie.</em></h2><p>Ich zeige Dir Deinen Lernweg.</p>' +
+      '<div class="gruss"><p class="marke">Malo · Dein KI-Assistent</p><h2>Willkommen in der <em>BluuAkademie.</em></h2><p>Ich zeige Dir Deinen Lernweg.</p>' +
       '<div class="knoepfe"><button type="button" class="los">Rundgang starten</button><button type="button" class="spaeter">Später</button></div></div>' +
       '<button type="button" class="skip">Überspringen</button><p class="sr" aria-live="polite"></p>';
     document.body.appendChild(el);
